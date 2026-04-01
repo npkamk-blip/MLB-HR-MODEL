@@ -4,7 +4,7 @@ import httpx
 import pandas as pd
 from pybaseball import batting_stats, pitching_stats
 from datetime import date
-import asyncio
+import threading
 import uvicorn
 
 app = FastAPI()
