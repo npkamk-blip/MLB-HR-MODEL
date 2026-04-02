@@ -242,15 +242,20 @@ async def fetch_player_info(player_id):
     """Fetch player handedness and info from MLB API"""
     try:
         async with httpx.AsyncClient(timeout=8) as client:
-            r = await client.get(f"{MLB_API}/people/{player_id}?hydrate=currentTeam")
+            r = await client.get(f"{MLB_API}/people/{player_id}")
             d = r.json()
         person = d.get("people",[{}])[0]
+        bat = person.get("batSide",{}).get("code","") or person.get("batSideCode","")
+        pit = person.get("pitchHand",{}).get("code","") or person.get("pitchHandCode","")
+        print(f"Player {player_id} {person.get('fullName','')} bat:{bat} pit:{pit}")
         return {
-            "bat_side": person.get("batSide",{}).get("code","R"),
-            "pitch_hand": person.get("pitchHand",{}).get("code","R"),
+            "bat_side": bat or "R",
+            "pitch_hand": pit or "R",
             "full_name": person.get("fullName",""),
         }
-    except: return {"bat_side":"R","pitch_hand":"R","full_name":""}
+    except Exception as e:
+        print(f"fetch_player_info error {player_id}: {e}")
+        return {"bat_side":"R","pitch_hand":"R","full_name":""}
 
 async def fetch_batter_splits(player_id, pit_hand, season=2026):
     """
@@ -264,26 +269,35 @@ async def fetch_batter_splits(player_id, pit_hand, season=2026):
                f"&sitCodes={split_code}")
         async with httpx.AsyncClient(timeout=10) as client:
             r = await client.get(url); d = r.json()
-        splits = d.get("stats",[{}])[0].get("splits",[])
-        if not splits: return None
-        s = splits[0].get("stat",{})
-        slg = float(s.get("sluggingPercentage",0) or 0)
-        avg = float(s.get("avg",0) or 0)
-        return {
-            "hr": int(s.get("homeRuns",0)),
-            "pa": int(s.get("plateAppearances",0)),
-            "slg": slg,
-            "avg": avg,
-            "iso": slg - avg,
-            "ops": float(s.get("ops",0) or 0),
-            "hr_rate": (int(s.get("homeRuns",0)) / max(int(s.get("plateAppearances",1)),1)) * 600,
-        }
-    except: return None
+        all_stats = d.get("stats",[])
+        for stat_group in all_stats:
+            splits = stat_group.get("splits",[])
+            for split in splits:
+                code = split.get("split",{}).get("code","")
+                if code != split_code: continue
+                s = split.get("stat",{})
+                slg = float(s.get("sluggingPercentage",0) or 0)
+                avg = float(s.get("avg",0) or 0)
+                pa = int(s.get("plateAppearances",0))
+                hr = int(s.get("homeRuns",0))
+                return {
+                    "hr": hr,
+                    "pa": pa,
+                    "slg": slg,
+                    "avg": avg,
+                    "iso": slg - avg,
+                    "ops": float(s.get("ops",0) or 0),
+                    "hr_rate": (hr / max(pa,1)) * 600,
+                }
+        return None
+    except Exception as e:
+        print(f"fetch_batter_splits error {player_id}: {e}")
+        return None
 
 async def fetch_pitcher_splits(player_id, season=2026):
     """
     Fetch pitcher splits vs LHB and RHB
-    Returns {vs_L: {hr9, era, whip}, vs_R: {hr9, era, whip}}
+    Returns {vsl: {hr9, era}, vsr: {hr9, era}}
     """
     try:
         url = (f"{MLB_API}/people/{player_id}/stats"
@@ -291,24 +305,31 @@ async def fetch_pitcher_splits(player_id, season=2026):
                f"&sitCodes=vsl,vsr")
         async with httpx.AsyncClient(timeout=10) as client:
             r = await client.get(url); d = r.json()
-        splits = d.get("stats",[{}])[0].get("splits",[])
+        all_stats = d.get("stats",[])
         result = {}
-        for split in splits:
-            desc = split.get("split",{}).get("code","")
-            s = split.get("stat",{})
-            ip = float(s.get("inningsPitched",0) or 0)
-            hr = int(s.get("homeRuns",0))
-            hr9 = (hr/ip)*9 if ip > 0 else 0
-            result[desc] = {
-                "hr9": round(hr9,2),
-                "era": float(s.get("era",0) or 0),
-                "whip": float(s.get("whip",0) or 0),
-                "hr": hr,
-                "ip": ip,
-                "pa": int(s.get("battersFaced",0)),
-            }
+        for stat_group in all_stats:
+            for split in stat_group.get("splits",[]):
+                code = split.get("split",{}).get("code","")
+                if code not in ("vsl","vsr"): continue
+                s = split.get("stat",{})
+                ip = float(s.get("inningsPitched",0) or 0)
+                hr = int(s.get("homeRuns",0))
+                hr9 = round((hr/ip)*9, 2) if ip > 0 else 0
+                era = float(s.get("era",0) or 0)
+                result[code] = {
+                    "hr9": hr9,
+                    "era": era,
+                    "whip": float(s.get("whip",0) or 0),
+                    "hr": hr,
+                    "ip": ip,
+                    "pa": int(s.get("battersFaced",0)),
+                }
+        if result:
+            print(f"Pitcher {player_id} splits {season}: {result}")
         return result
-    except: return {}
+    except Exception as e:
+        print(f"fetch_pitcher_splits error {player_id}: {e}")
+        return {}
 
 async def fetch_pitcher_season_stats(player_id, season=2025):
     """Fetch overall pitcher season stats for display"""
