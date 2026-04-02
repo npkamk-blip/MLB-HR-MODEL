@@ -17,8 +17,10 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
 .refresh-btn{background:var(--accent);color:#0a0a0a;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:7px 16px;cursor:pointer;transition:opacity .15s}
 .refresh-btn:hover{opacity:.85}
 .refresh-btn:disabled{opacity:.4;cursor:not-allowed}
-.container{max-width:980px;margin:0 auto;padding:24px 16px}
+.container{max-width:1020px;margin:0 auto;padding:24px 16px}
 .game-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+
+/* Game header */
 .game-bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:11px 18px;border-bottom:1px solid var(--border);background:var(--s2)}
 .team-block{display:flex;flex-direction:column;gap:3px}
 .team-block.right{align-items:flex-end}
@@ -27,50 +29,57 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
 .confirmed{background:rgba(200,241,53,.1);color:var(--accent);border:1px solid rgba(200,241,53,.25)}
 .proj-badge{background:rgba(255,170,51,.1);color:var(--warn);border:1px solid rgba(255,170,51,.25)}
 .game-time{font-size:11px;color:var(--muted);text-align:center;padding:0 10px;white-space:nowrap}
+
+/* Pitcher bar */
 .pit-bar{display:grid;grid-template-columns:1fr auto 1fr;border-bottom:1px solid var(--border);background:var(--s3)}
 .pit-side{padding:8px 18px}
 .pit-side.right{text-align:right}
-.pit-name-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.pit-name-row{display:flex;align-items:center;gap:6px;margin-bottom:3px}
 .pit-name-row.right{justify-content:flex-end}
 .pit-name{font-size:12px;font-weight:500;color:var(--text)}
 .pit-hand-badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:6px;text-transform:uppercase}
 .lhp{background:rgba(77,166,255,.12);color:var(--blue);border:1px solid rgba(77,166,255,.25)}
 .rhp{background:rgba(200,241,53,.08);color:var(--accent);border:1px solid rgba(200,241,53,.2)}
-.pit-stats{display:flex;gap:10px;flex-wrap:wrap}
-.pit-stats.right{justify-content:flex-end}
+.pit-stats-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.pit-stats-row.right{justify-content:flex-end}
 .pit-stat{font-size:11px;color:var(--muted)}
 .pit-stat span{color:var(--text);font-weight:500}
 .pit-stat.hi span{color:var(--danger)}
-.pit-stat.med-warn span{color:var(--warn)}
+.pit-stat.mw span{color:var(--warn)}
+.pit-pitches{display:flex;gap:6px;flex-wrap:wrap}
+.pit-pitches.right{justify-content:flex-end}
+.pitch-pill{font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(77,166,255,.08);color:var(--blue);border:1px solid rgba(77,166,255,.2)}
 .pit-blend{font-size:10px;color:var(--muted2);margin-top:3px}
 .pit-blend.right{text-align:right}
-.pit-vs-label{font-size:10px;color:var(--muted2);text-align:center;padding-top:8px;text-transform:uppercase;letter-spacing:.06em}
+.pit-vs-label{font-size:10px;color:var(--muted2);text-align:center;padding:8px 4px;text-transform:uppercase;letter-spacing:.06em}
+
+/* Weather */
 .weather{display:flex;align-items:center;gap:14px;padding:8px 18px;border-bottom:1px solid var(--border)}
 .w-temp{font-size:14px;font-weight:600}
 .w-wind{font-size:13px}
 .w-badge{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-left:auto;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
 .wx-out{background:rgba(200,241,53,.12);border:1px solid rgba(200,241,53,.3)}
-.wx-out .w-temp,.wx-out .w-wind{color:#b8e030}
-.wx-out .w-badge{color:var(--accent)}
+.wx-out .w-temp,.wx-out .w-wind{color:#b8e030}.wx-out .w-badge{color:var(--accent)}
 .wx-in{background:rgba(255,77,77,.1);border:1px solid rgba(255,77,77,.25)}
-.wx-in .w-temp,.wx-in .w-wind{color:#ff8080}
-.wx-in .w-badge{color:var(--danger)}
+.wx-in .w-temp,.wx-in .w-wind{color:#ff8080}.wx-in .w-badge{color:var(--danger)}
 .wx-left{background:rgba(77,166,255,.1);border:1px solid rgba(77,166,255,.25)}
-.wx-left .w-temp,.wx-left .w-wind{color:#80c0ff}
-.wx-left .w-badge{color:var(--blue)}
+.wx-left .w-temp,.wx-left .w-wind{color:#80c0ff}.wx-left .w-badge{color:var(--blue)}
 .wx-right{background:rgba(255,170,51,.1);border:1px solid rgba(255,170,51,.25)}
-.wx-right .w-temp,.wx-right .w-wind{color:#ffc060}
-.wx-right .w-badge{color:var(--warn)}
+.wx-right .w-temp,.wx-right .w-wind{color:#ffc060}.wx-right .w-badge{color:var(--warn)}
 .wx-calm,.wx-dome,.wx-neutral{border:1px solid var(--border)}
 .wx-calm .w-temp,.wx-calm .w-wind,.wx-dome .w-temp,.wx-dome .w-wind,.wx-neutral .w-temp,.wx-neutral .w-wind{color:var(--muted)}
 .wx-calm .w-badge,.wx-dome .w-badge,.wx-neutral .w-badge{color:var(--muted2)}
-.col-hdrs{display:grid;grid-template-columns:26px 1fr 88px 80px 96px 64px 60px;gap:8px;padding:6px 18px;border-bottom:1px solid var(--border);background:var(--bg)}
+
+/* Column headers — 7 cols: # | Batter | Barrel/EV | Barrel vs Pitches | Last 14d | DK | Score */
+.col-hdrs{display:grid;grid-template-columns:26px 1fr 88px 110px 96px 64px 60px;gap:8px;padding:6px 18px;border-bottom:1px solid var(--border);background:var(--bg)}
 .ch{font-size:10px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em}
 .ch.r{text-align:right}
 .ch.c{text-align:center}
+
+/* Batter rows */
 .batter{border-bottom:1px solid var(--border2)}
 .batter:last-child{border-bottom:none}
-.batter-row{display:grid;grid-template-columns:26px 1fr 88px 80px 96px 64px 60px;gap:8px;padding:11px 18px;align-items:start;cursor:pointer;transition:background .1s}
+.batter-row{display:grid;grid-template-columns:26px 1fr 88px 110px 96px 64px 60px;gap:8px;padding:11px 18px;align-items:start;cursor:pointer;transition:background .1s}
 .batter-row:hover{background:rgba(255,255,255,.02)}
 .rank{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--muted);text-align:center;line-height:1;padding-top:2px}
 .rank.r1{color:var(--accent)}
@@ -82,29 +91,48 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
 .tag.b{background:rgba(77,166,255,.1);color:var(--blue);border-color:rgba(77,166,255,.25)}
 .tag.w{background:rgba(255,170,51,.1);color:var(--warn);border-color:rgba(255,170,51,.25)}
 .tag.r{background:rgba(255,77,77,.1);color:var(--danger);border-color:rgba(255,77,77,.25)}
+
+/* Stat cells */
 .stat-cell{text-align:right;line-height:1.5}
 .stat-main{font-size:12px;font-weight:600;color:var(--accent)}
 .stat-sub{font-size:10px;color:var(--muted);margin-top:1px}
 .stat-na{font-size:12px;color:var(--muted2);text-align:right}
+
+/* Pitch matchup cell */
+.pitch-match-cell{text-align:right;line-height:1.6}
+.pm-row{display:flex;justify-content:flex-end;align-items:center;gap:6px;font-size:11px}
+.pm-pitch{color:var(--muted)}
+.pm-barrel{font-weight:600}
+.pm-high{color:var(--accent)}
+.pm-low{color:var(--danger)}
+.pm-neutral{color:var(--muted)}
+.pm-none{color:var(--muted2);font-size:10px}
+
+/* Form */
 .form-cell{text-align:right;line-height:1.4}
 .form-hr{font-size:12px;font-weight:600}
 .form-slg{font-size:10px;color:var(--muted);margin-top:1px}
 .fhot{color:var(--accent)}
 .fwarm{color:var(--warn)}
 .fcold{color:var(--muted)}
+
+/* DK */
 .dk-cell{text-align:right}
 .dk-val{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700}
 .dk-lbl{font-size:10px;color:var(--muted2);margin-top:1px}
 .dk-pos{color:#4dff88}
 .dk-none{font-size:12px;color:var(--muted2);text-align:right}
+
+/* Score */
 .scr-cell{text-align:right}
 .scr-num{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;line-height:1}
 .scr-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
 .s-strong{color:var(--blue)}
 .s-mod{color:#7bb8ff}
 .s-lean{color:var(--muted)}
+.expand-hint{font-size:10px;color:var(--muted2);margin-top:3px}
 
-/* Score breakdown panel */
+/* Score breakdown */
 .breakdown{display:none;background:#0d0d0d;border-top:1px solid var(--border);padding:16px 18px}
 .breakdown.open{display:block}
 .bd-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px}
@@ -126,7 +154,6 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
 .bd-final{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
 .bd-final-label{font-size:13px;font-weight:500;color:var(--muted)}
 .bd-final-score{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--blue)}
-.expand-hint{font-size:10px;color:var(--muted2);margin-top:2px}
 
 .loading{text-align:center;padding:50px 0;font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .dots{display:inline-flex;gap:5px;margin-top:14px}
@@ -139,7 +166,11 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
 .updated{font-size:11px;color:var(--muted);text-align:center;margin-top:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase}
 .no-games{text-align:center;padding:60px 20px;font-size:14px;color:var(--muted)}
 .pending{font-size:13px;color:var(--muted);padding:16px 18px;font-style:italic}
-@media(max-width:700px){.col-hdrs,.batter-row{grid-template-columns:22px 1fr 72px 64px 60px}.hide-sm{display:none}.container{padding:16px}}
+@media(max-width:760px){
+  .col-hdrs,.batter-row{grid-template-columns:22px 1fr 80px 80px 58px}
+  .hide-sm{display:none}
+  .container{padding:16px}
+}
 </style>
 </head>
 <body>
@@ -153,12 +184,10 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
     <button class="refresh-btn" id="refreshBtn" onclick="load()">Refresh</button>
   </div>
 </header>
-
 <div class="container">
   <div id="main"></div>
   <div class="updated" id="upd"></div>
 </div>
-
 <script>
 const API = 'https://web-production-c0e4.up.railway.app';
 document.getElementById('dateLbl').textContent = new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
@@ -189,38 +218,72 @@ function pitBarHTML(pit, side){
   const handCls = hand==='L'?'lhp':'rhp';
   const era = pit.era!=null?pit.era.toFixed(2):'—';
   const hr9 = pit.hr9!=null?pit.hr9.toFixed(2):'—';
-  const hr9Cls = parseFloat(hr9)>1.5?'hi':parseFloat(hr9)>1.1?'med-warn':'';
+  const hr9Cls = parseFloat(hr9)>1.5?'hi':parseFloat(hr9)>1.1?'mw':'';
   const isRight = side==='right';
+
   const nameRow = isRight
     ? `<div class="pit-name-row right"><span class="pit-hand-badge ${handCls}">${hand}HP</span><span class="pit-name">${pit.name||'TBD'}</span></div>`
     : `<div class="pit-name-row"><span class="pit-name">${pit.name||'TBD'}</span><span class="pit-hand-badge ${handCls}">${hand}HP</span></div>`;
-  let statsRow = `<div class="pit-stats ${isRight?'right':''}">
+
+  let statsRow = `<div class="pit-stats-row ${isRight?'right':''}">
     <span class="pit-stat">ERA <span>${era}</span></span>
     <span class="pit-stat ${hr9Cls}">HR/9 <span>${hr9}</span></span>`;
-  const ip26 = pit.ip_2026||0;
   if(pit.vs_L_hr9!=null) statsRow+=`<span class="pit-stat ${parseFloat(pit.vs_L_hr9)>1.3?'hi':''}">vsL <span>${pit.vs_L_hr9}</span></span>`;
   if(pit.vs_R_hr9!=null) statsRow+=`<span class="pit-stat ${parseFloat(pit.vs_R_hr9)>1.3?'hi':''}">vsR <span>${pit.vs_R_hr9}</span></span>`;
-  statsRow+=`</div>`;
-  const blendNote = pit.blend_note ? `<div class="pit-blend ${isRight?'right':''}">${ip26} IP 2026 · ${pit.blend_note}</div>` : '';
-  return `<div class="pit-side ${isRight?'right':''}">${nameRow}${statsRow}${blendNote}</div>`;
+  statsRow += `</div>`;
+
+  // Top 2 pitches
+  let pitchRow = '';
+  if(pit.top_pitches && pit.top_pitches.length){
+    pitchRow = `<div class="pit-pitches ${isRight?'right':''}">`;
+    pit.top_pitches.forEach(p=>{
+      pitchRow += `<span class="pitch-pill">${p.name} ${p.pct}%</span>`;
+    });
+    pitchRow += `</div>`;
+  }
+
+  const blend = pit.blend_note?`<div class="pit-blend ${isRight?'right':''}">${pit.ip_2026} IP 2026 · ${pit.blend_note}</div>`:'';
+
+  return `<div class="pit-side ${isRight?'right':''}">${nameRow}${statsRow}${pitchRow}${blend}</div>`;
 }
 
 function tagsHTML(reasons, projected, bat_hand, opp_hand, platoon_tag){
   let tags = '';
   if(projected) tags+=`<span class="tag w">Projected</span>`;
-  const matchup=`${bat_hand||'?'} vs ${opp_hand||'?'}HP`;
   const platoon = bat_hand && opp_hand && bat_hand !== opp_hand;
-  tags+=`<span class="tag ${platoon?'b':''}">${matchup}</span>`;
+  tags+=`<span class="tag ${platoon?'b':''}">${bat_hand||'?'} vs ${opp_hand||'?'}HP</span>`;
   if(platoon_tag) tags+=`<span class="tag g">${platoon_tag}</span>`;
   if(reasons&&reasons.length){
     tags+=reasons.slice(0,3).map(r=>{
       const g=r.includes('Barrel')||r.includes('HR/9')||r.includes('EV')||r.includes('Strong vs');
       const b=r.includes('ISO')||r.includes('HR/FB');
-      const w=r.includes('park')||r.includes('Fly ball');
+      const w=r.includes('park')||r.includes('Fly ball')||r.includes('ft)');
       return `<span class="tag ${g?'g':b?'b':w?'w':''}">${r}</span>`;
     }).join('');
   }
   return tags?`<div class="tags">${tags}</div>`:'';
+}
+
+function pitchMatchCell(pitchMatchup, overallBarrel){
+  if(!pitchMatchup || !pitchMatchup.length) return `<div class="stat-na">—</div>`;
+  let html = `<div class="pitch-match-cell">`;
+  pitchMatchup.forEach(pm=>{
+    if(pm.barrel_vs != null){
+      const diff = pm.barrel_vs - overallBarrel;
+      const cls = diff > 2 ? 'pm-high' : diff < -2 ? 'pm-low' : 'pm-neutral';
+      html += `<div class="pm-row">
+        <span class="pm-pitch">${pm.name} ${pm.pct}%</span>
+        <span class="pm-barrel ${cls}">${pm.barrel_vs.toFixed(1)}%</span>
+      </div>`;
+    } else {
+      html += `<div class="pm-row">
+        <span class="pm-pitch">${pm.name} ${pm.pct}%</span>
+        <span class="pm-none">—</span>
+      </div>`;
+    }
+  });
+  html += `</div>`;
+  return html;
 }
 
 function formCell(hr,pa,slg){
@@ -240,11 +303,10 @@ function dkCell(odds){
 function breakdownHTML(bd, score){
   if(!bd) return '';
   const tc = score>=65?'s-strong':score>=45?'s-mod':'s-lean';
-
   function bdRows(components, maxTotal){
-    return components.map(c=>{
+    return (components||[]).map(c=>{
       const neg = c.pts < 0;
-      const pct = maxTotal>0 ? Math.min(Math.abs(c.pts)/maxTotal*100,100) : 0;
+      const pct = maxTotal>0?Math.min(Math.abs(c.pts)/maxTotal*100,100):0;
       return `<div class="bd-row">
         <span class="bd-label">${c.label}</span>
         <div class="bd-bar-wrap"><div class="bd-bar ${neg?'neg':''}" style="width:${pct}%"></div></div>
@@ -252,30 +314,26 @@ function breakdownHTML(bd, score){
       </div>`;
     }).join('');
   }
-
-  return `<div class="breakdown" id="bd-${score}">
+  return `<div class="breakdown">
     <div class="bd-title">Score breakdown — click row to close</div>
     <div class="bd-section">
       <div class="bd-section-title">Season stats (70% weight)</div>
-      ${bdRows(bd.season_components||[], 25)}
-      <div class="bd-divider">
-        <div class="bd-total-row"><span class="bd-total-label">Season subtotal</span><span class="bd-total-val">${bd.season_subtotal}</span></div>
-      </div>
+      ${bdRows(bd.season_components, 25)}
+      <div class="bd-divider"><div class="bd-total-row"><span class="bd-total-label">Season subtotal</span><span class="bd-total-val">${bd.season_subtotal}</span></div></div>
     </div>
     <div class="bd-section">
       <div class="bd-section-title">Recent form — last 14 days (30% weight)</div>
-      ${bdRows(bd.form_components||[], 50)}
-      <div class="bd-divider">
-        <div class="bd-total-row"><span class="bd-total-label">Form subtotal</span><span class="bd-total-val">${bd.form_subtotal}</span></div>
-      </div>
+      ${bdRows(bd.form_components, 50)}
+      <div class="bd-divider"><div class="bd-total-row"><span class="bd-total-label">Form subtotal</span><span class="bd-total-val">${bd.form_subtotal}</span></div></div>
     </div>
     <div class="bd-section">
-      <div class="bd-section-title">Blend + adjustments</div>
+      <div class="bd-section-title">Adjustments</div>
       <div class="bd-row"><span class="bd-label">${bd.blend_note||''}</span><div class="bd-bar-wrap"></div><span class="bd-pts">${bd.blended}</span></div>
       <div class="bd-row"><span class="bd-label">Park factor (${bd.park_factor}x)</span><div class="bd-bar-wrap"><div class="bd-bar ${bd.park_adj<0?'neg':''}" style="width:${Math.min(Math.abs(bd.park_adj)*10,100)}%"></div></div><span class="bd-pts ${bd.park_adj<0?'neg':bd.park_adj>0?'':'neutral'}">${bd.park_adj>0?'+':''}${bd.park_adj}</span></div>
-      <div class="bd-row"><span class="bd-label">Weather bonus</span><div class="bd-bar-wrap"><div class="bd-bar ${bd.weather_bonus<0?'neg':''}" style="width:${Math.min(Math.abs(bd.weather_bonus)*20,100)}%"></div></div><span class="bd-pts ${bd.weather_bonus<0?'neg':bd.weather_bonus>0?'':'neutral'}">${bd.weather_bonus>0?'+':''}${bd.weather_bonus}</span></div>
+      <div class="bd-row"><span class="bd-label">Park dimensions${bd.park_dim_note?' ('+bd.park_dim_note+')':''}</span><div class="bd-bar-wrap"><div class="bd-bar ${(bd.park_dim_bonus||0)<0?'neg':''}" style="width:${Math.min(Math.abs(bd.park_dim_bonus||0)*20,100)}%"></div></div><span class="bd-pts ${(bd.park_dim_bonus||0)<0?'neg':(bd.park_dim_bonus||0)>0?'':'neutral'}">${(bd.park_dim_bonus||0)>0?'+':''}${bd.park_dim_bonus||0}</span></div>
+      <div class="bd-row"><span class="bd-label">Weather</span><div class="bd-bar-wrap"><div class="bd-bar ${bd.weather_bonus<0?'neg':''}" style="width:${Math.min(Math.abs(bd.weather_bonus)*20,100)}%"></div></div><span class="bd-pts ${bd.weather_bonus<0?'neg':bd.weather_bonus>0?'':'neutral'}">${bd.weather_bonus>0?'+':''}${bd.weather_bonus}</span></div>
       <div class="bd-row"><span class="bd-label">Pitcher vulnerability</span><div class="bd-bar-wrap"><div class="bd-bar" style="width:${Math.min((bd.pitcher_vuln||0)*10,100)}%"></div></div><span class="bd-pts">+${bd.pitcher_vuln||0}</span></div>
-      ${(bd.pitcher_breakdown||[]).map(p=>`<div class="bd-row" style="padding-left:12px"><span class="bd-label" style="color:var(--muted2)">↳ ${p.label}</span><div class="bd-bar-wrap"><div class="bd-bar" style="width:${Math.min(p.pts/p.max*100,100)}%"></div></div><span class="bd-pts">+${p.pts}</span></div>`).join('')}
+      ${(bd.pitcher_breakdown||[]).map(p=>`<div class="bd-row" style="padding-left:12px"><span class="bd-label" style="color:var(--muted2)">↳ ${p.label}</span><div class="bd-bar-wrap"><div class="bd-bar" style="width:${Math.min(p.pts/Math.max(p.max,1)*100,100)}%"></div></div><span class="bd-pts">+${p.pts}</span></div>`).join('')}
     </div>
     <div class="bd-final">
       <span class="bd-final-label">Final score</span>
@@ -286,15 +344,13 @@ function breakdownHTML(bd, score){
 
 function toggleBreakdown(el){
   const bd = el.nextElementSibling;
-  if(bd && bd.classList.contains('breakdown')){
-    bd.classList.toggle('open');
-  }
+  if(bd && bd.classList.contains('breakdown')) bd.classList.toggle('open');
 }
 
 async function load(){
   const main=document.getElementById('main'),upd=document.getElementById('upd'),btn=document.getElementById('refreshBtn');
   btn.disabled=true; upd.textContent='';
-  main.innerHTML=`<div class="loading">Loading Statcast · Splits · DraftKings<div class="dots"><span></span><span></span><span></span></div></div>`;
+  main.innerHTML=`<div class="loading">Loading Statcast · Splits · Pitch Data · DraftKings<div class="dots"><span></span><span></span><span></span></div></div>`;
 
   try {
     const resp = await fetch(API+'/games');
@@ -344,9 +400,9 @@ async function load(){
           <div class="ch c">#</div>
           <div class="ch">Batter</div>
           <div class="ch r hide-sm">Barrel / EV</div>
-          <div class="ch r hide-sm">ISO / HR·FB</div>
+          <div class="ch r">Barrel vs Pitches</div>
           <div class="ch r">Last 14 Days</div>
-          <div class="ch r">DK HR</div>
+          <div class="ch r hide-sm">DK HR</div>
           <div class="ch r">Score</div>
         </div>`;
 
@@ -359,11 +415,9 @@ async function load(){
           const tl=tierLbl(b.score);
           const sl=b.statline||{};
           const barrel=sl.barrel||0,ev=sl.ev||0,iso=sl.iso||0,hrfb=sl.hr_fb||0;
-          const isoStr='.'+String(Math.round(iso*1000)).padStart(3,'0');
           const barrelStr=barrel>0?barrel.toFixed(1)+'%':'—';
           const evStr=ev>0?ev.toFixed(1)+' mph':'—';
           const hrfbStr=hrfb>0?hrfb.toFixed(1)+'%':'—';
-          const uid=`${g.game_id}_${i}`;
 
           html+=`<div class="batter">
             <div class="batter-row" onclick="toggleBreakdown(this)">
@@ -372,12 +426,12 @@ async function load(){
                 <div class="bname">${b.name}</div>
                 <div class="bsub">${b.team} · vs ${typeof b.opp_pitcher==='object'?b.opp_pitcher.name||'TBD':b.opp_pitcher||'TBD'}</div>
                 ${tagsHTML(b.reasons,b.projected,b.bat_hand,b.opp_p_hand,b.platoon_tag)}
-                <div class="expand-hint">Click to see score breakdown</div>
+                <div class="expand-hint">Click to expand score breakdown</div>
               </div>
               <div class="hide-sm">${barrel>0?`<div class="stat-cell"><div class="stat-main">${barrelStr}</div><div class="stat-sub">${evStr} EV</div></div>`:`<div class="stat-na">—</div>`}</div>
-              <div class="hide-sm">${iso>0?`<div class="stat-cell"><div class="stat-main">${isoStr}</div><div class="stat-sub">${hrfbStr} HR·FB</div></div>`:`<div class="stat-na">—</div>`}</div>
+              ${pitchMatchCell(b.pitch_matchup, barrel)}
               ${formCell(b.recent_hr,b.recent_pa,b.recent_slg)}
-              ${dkCell(b.dk_odds)}
+              <div class="hide-sm">${dkCell(b.dk_odds)}</div>
               <div class="scr-cell">
                 <div class="scr-num ${tc}">${Math.round(b.score)}</div>
                 <div class="scr-lbl ${tc}">${tl}</div>
@@ -391,7 +445,7 @@ async function load(){
     }
 
     main.innerHTML=html;
-    upd.textContent='Updated '+new Date().toLocaleTimeString()+' · Statcast · Splits · DraftKings · '+data.date;
+    upd.textContent='Updated '+new Date().toLocaleTimeString()+' · Statcast · Pitch Matchups · DraftKings · '+data.date;
   } catch(e){
     main.innerHTML=`<div class="err"><strong>Error:</strong> ${e.message}</div>`;
   }
