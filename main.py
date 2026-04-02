@@ -100,25 +100,71 @@ STADIUMS = {
 
 def load_savant_data():
     print("Loading Statcast data...")
-    cols_bat = {"Name":"name","Barrel%":"barrel_pct","EV":"exit_velo","LA":"launch_angle","Hard%":"hard_hit_pct","ISO":"iso","HR":"hr","FB%":"fb_pct","HR/FB":"hr_fb_pct","Pull%":"pull_pct","PA":"pa"}
-    cols_pit = {"Name":"name","HR/9":"hr_per9","HR/FB":"hr_fb_pct","GB%":"gb_pct","FB%":"fb_pct","Hard%":"hard_hit_pct","ERA":"era","WHIP":"whip"}
     for season, kb, kp in [(SEASON_CURRENT,"batting_current","pitching_current"),(SEASON_PRIOR,"batting_prior","pitching_prior")]:
         try:
             bat = batting_stats(season, qual=10)
-            bat = bat.rename(columns=cols_bat)
+            print(f"{season} batting columns: {list(bat.columns[:30])}")
+            # Flexible column mapping — find the right columns
+            col_map = {}
+            for col in bat.columns:
+                cl = col.lower().strip()
+                if cl == 'name': col_map[col] = 'name'
+                elif 'barrel' in cl and '%' in cl: col_map[col] = 'barrel_pct'
+                elif cl in ['ev','exit velocity','avg exit velo']: col_map[col] = 'exit_velo'
+                elif cl == 'la' or cl == 'launch angle': col_map[col] = 'launch_angle'
+                elif 'hard' in cl and '%' in cl: col_map[col] = 'hard_hit_pct'
+                elif cl == 'iso': col_map[col] = 'iso'
+                elif cl == 'hr' or cl == 'home runs': col_map[col] = 'hr'
+                elif cl == 'fb%' or cl == 'fb %': col_map[col] = 'fb_pct'
+                elif 'hr/fb' in cl or 'hr fb' in cl: col_map[col] = 'hr_fb_pct'
+                elif 'pull' in cl and '%' in cl: col_map[col] = 'pull_pct'
+                elif cl == 'pa' or cl == 'plate appearances': col_map[col] = 'pa'
+            bat = bat.rename(columns=col_map)
+            # Convert pct columns from 0-100 scale if needed
+            for pct_col in ['barrel_pct','hard_hit_pct','hr_fb_pct','pull_pct','fb_pct']:
+                if pct_col in bat.columns:
+                    vals = pd.to_numeric(bat[pct_col], errors='coerce').fillna(0)
+                    # If values are 0-1 range, multiply by 100
+                    if vals.median() < 1.0:
+                        bat[pct_col] = vals * 100
+                    else:
+                        bat[pct_col] = vals
             _cache[kb] = bat
-            print(f"{season} batting: {len(bat)} players")
+            print(f"{season} batting loaded: {len(bat)} players")
+            if 'barrel_pct' in bat.columns:
+                print(f"  Sample barrel_pct: {bat['barrel_pct'].dropna().head(5).tolist()}")
         except Exception as e:
             print(f"{season} batting error: {e}")
+
         try:
             pit = pitching_stats(season, qual=10)
-            pit = pit.rename(columns=cols_pit)
+            col_map_p = {}
+            for col in pit.columns:
+                cl = col.lower().strip()
+                if cl == 'name': col_map_p[col] = 'name'
+                elif 'hr/9' in cl or 'hr9' in cl: col_map_p[col] = 'hr_per9'
+                elif 'hr/fb' in cl or 'hr fb' in cl: col_map_p[col] = 'hr_fb_pct'
+                elif cl == 'gb%' or cl == 'gb %' or 'ground' in cl and '%' in cl: col_map_p[col] = 'gb_pct'
+                elif cl == 'fb%' or cl == 'fb %': col_map_p[col] = 'fb_pct'
+                elif 'hard' in cl and '%' in cl: col_map_p[col] = 'hard_hit_pct'
+                elif cl == 'era': col_map_p[col] = 'era'
+                elif cl == 'whip': col_map_p[col] = 'whip'
+                elif cl == 'pa' or cl == 'plate appearances': col_map_p[col] = 'pa'
+            pit = pit.rename(columns=col_map_p)
+            for pct_col in ['hr_fb_pct','gb_pct','fb_pct','hard_hit_pct']:
+                if pct_col in pit.columns:
+                    vals = pd.to_numeric(pit[pct_col], errors='coerce').fillna(0)
+                    if vals.median() < 1.0:
+                        pit[pct_col] = vals * 100
+                    else:
+                        pit[pct_col] = vals
             _cache[kp] = pit
-            print(f"{season} pitching: {len(pit)} pitchers")
+            print(f"{season} pitching loaded: {len(pit)} pitchers")
         except Exception as e:
             print(f"{season} pitching error: {e}")
+
     _cache["ready"] = True
-    print("Data ready.")
+    print("All data ready.")
 
 @app.on_event("startup")
 async def startup_event():
@@ -129,30 +175,15 @@ def fuzzy_match(name, df):
         return None
     name_lower = name.lower()
     for _, row in df.iterrows():
-        rn = str(row["name"]).lower()
+        rn = str(row.get("name","")).lower()
         if rn == name_lower or rn in name_lower or name_lower in rn:
             return row
     parts = name_lower.split()
     if len(parts) >= 2:
         last = parts[-1]
         for _, row in df.iterrows():
-            if last in str(row["name"]).lower():
+            if last in str(row.get("name","")).lower():
                 return row
-    return None
-
-def fuzzy_match_name(name, name_list):
-    """Match a player name against a list of names, return best match or None"""
-    name_lower = name.lower()
-    for n in name_list:
-        nl = n.lower()
-        if nl == name_lower or nl in name_lower or name_lower in nl:
-            return n
-    parts = name_lower.split()
-    if len(parts) >= 2:
-        last = parts[-1]
-        for n in name_list:
-            if last in n.lower():
-                return n
     return None
 
 def get_blend_weights(pa_current):
@@ -180,27 +211,56 @@ def angle_diff(a, b):
     diff = abs(a - b) % 360
     return diff if diff <= 180 else 360 - diff
 
-def calc_weather_effect(home_team, wind_speed, wind_direction, temperature):
+def calc_weather_effect(home_team, wind_speed, wind_direction, temperature, batter_hand="R"):
     stadium = STADIUMS.get(home_team)
     if not stadium:
         return 0, "Unknown", f"{temperature}°F · {wind_speed} mph"
     if stadium.get("dome"):
         return 0, "Dome", f"Indoor · {temperature}°F"
+
     hr_bearing = stadium.get("hr_bearing", 225)
     open_factor = stadium.get("open_factor", 0.5)
     diff = angle_diff(wind_direction, hr_bearing)
     alignment = math.cos(math.radians(diff))
+
     if wind_speed < 5: speed_factor, wind_label = 0, "Calm"
     elif wind_speed < 10: speed_factor, wind_label = 0.3, f"{wind_speed} mph"
     elif wind_speed < 16: speed_factor, wind_label = 0.7, f"{wind_speed} mph"
     else: speed_factor, wind_label = 1.0, f"{wind_speed} mph"
+
     wind_effect = alignment * speed_factor * 10 * open_factor
+
     temp_effect = 3 if temperature >= 80 else 1 if temperature >= 70 else -3 if temperature < 50 else -1 if temperature < 60 else 0
     total = round(wind_effect + temp_effect)
-    if alignment > 0.5 and wind_speed >= 10: direction_label = "Blowing Out"
-    elif alignment < -0.5 and wind_speed >= 10: direction_label = "Blowing In"
-    elif wind_speed < 5: direction_label = "Calm"
-    else: direction_label = "Crosswind"
+
+    # Crosswind logic — account for batter handedness
+    if abs(alignment) <= 0.5 and wind_speed >= 10:
+        # True crosswind — determine direction
+        # If wind_direction is roughly 90 degrees clockwise from hr_bearing = blowing L to R
+        cross_diff = (wind_direction - hr_bearing) % 360
+        blowing_left_to_right = 45 < cross_diff < 225
+
+        if blowing_left_to_right:
+            direction_label = "Favors Lefties"
+            if batter_hand == "L":
+                total += 3
+            else:
+                total -= 2
+        else:
+            direction_label = "Favors Righties"
+            if batter_hand == "R":
+                total += 3
+            else:
+                total -= 2
+    elif alignment > 0.5 and wind_speed >= 10:
+        direction_label = "Blowing Out"
+    elif alignment < -0.5 and wind_speed >= 10:
+        direction_label = "Blowing In"
+    elif wind_speed < 5:
+        direction_label = "Calm"
+    else:
+        direction_label = "Crosswind"
+
     return total, direction_label, f"{temperature}°F · {wind_label}"
 
 async def fetch_weather(lat, lon, game_time_utc):
@@ -230,18 +290,14 @@ async def fetch_weather(lat, lon, game_time_utc):
             if f"T{hour:02d}:" in t:
                 idx = i
                 break
-        return round(temps[idx]) if idx < len(temps) else 70, \
-               round(speeds[idx]) if idx < len(speeds) else 0, \
-               round(directions[idx]) if idx < len(directions) else 0
+        return (round(temps[idx]) if idx < len(temps) else 70,
+                round(speeds[idx]) if idx < len(speeds) else 0,
+                round(directions[idx]) if idx < len(directions) else 0)
     except Exception as e:
         print(f"Weather error: {e}")
         return 70, 0, 0
 
 async def fetch_projected_lineup(team_id, team_name):
-    """
-    Pull last 5 games for a team and build a projected lineup
-    based on players who appeared most recently
-    """
     try:
         end = date.today()
         start = end - timedelta(days=10)
@@ -249,7 +305,6 @@ async def fetch_projected_lineup(team_id, team_name):
         async with httpx.AsyncClient(timeout=15) as client:
             r = await client.get(url)
             d = r.json()
-
         dates = d.get("dates", [])
         recent_games = []
         for date_entry in reversed(dates):
@@ -258,16 +313,12 @@ async def fetch_projected_lineup(team_id, team_name):
                     recent_games.append(game["gamePk"])
             if len(recent_games) >= 5:
                 break
-
-        # Track player appearances: {player_id: {name, appearances, last_order, hand}}
         player_data = defaultdict(lambda: {"name": "", "appearances": 0, "orders": [], "hand": "R", "id": 0})
-
         for gid in recent_games[:5]:
             try:
                 async with httpx.AsyncClient(timeout=10) as client:
                     r = await client.get(f"{MLB_API}/game/{gid}/boxscore")
                     box = r.json()
-
                 teams = box.get("teams", {})
                 for side in ["away", "home"]:
                     team_data = teams.get(side, {})
@@ -290,30 +341,18 @@ async def fetch_projected_lineup(team_id, team_name):
                             player_data[player_id]["hand"] = hand
             except:
                 continue
-
-        # Build projected lineup — players with 2+ appearances in last 5 games
         projected = []
         for pid, data in player_data.items():
             if data["appearances"] >= 2 and data["name"]:
                 avg_order = sum(data["orders"]) / len(data["orders"])
-                projected.append({
-                    "id": data["id"],
-                    "name": data["name"],
-                    "hand": data["hand"],
-                    "appearances": data["appearances"],
-                    "avg_order": avg_order
-                })
-
-        # Sort by average batting order position
+                projected.append({"id": data["id"], "name": data["name"], "hand": data["hand"], "appearances": data["appearances"], "avg_order": avg_order})
         projected.sort(key=lambda x: x["avg_order"])
         return projected[:9], "projected"
-
     except Exception as e:
         print(f"Projected lineup error for {team_name}: {e}")
         return [], "projected"
 
 async def fetch_dk_hr_props():
-    """Fetch DraftKings HR props from The Odds API"""
     if not ODDS_API_KEY:
         return {}
     try:
@@ -322,12 +361,10 @@ async def fetch_dk_hr_props():
                f"&oddsFormat=american&bookmakers=draftkings")
         async with httpx.AsyncClient(timeout=15) as client:
             r = await client.get(url)
-            if not r.ok:
+            if not r.is_success:
                 print(f"Odds API error: {r.status_code}")
                 return {}
             games = r.json()
-
-        # Build dict: {player_name_lower: odds}
         props = {}
         for game in games:
             for bk in game.get("bookmakers", []):
@@ -341,26 +378,21 @@ async def fetch_dk_hr_props():
                         price = outcome.get("price", 0)
                         if name and price:
                             props[name.lower()] = price
-        print(f"DK HR props loaded: {len(props)} players")
+        print(f"DK HR props: {len(props)} players")
         return props
     except Exception as e:
         print(f"DK props error: {e}")
         return {}
 
 def match_dk_odds(player_name, props):
-    """Match player name to DK props dict"""
-    if not props:
-        return None
+    if not props: return None
     name_lower = player_name.lower()
-    if name_lower in props:
-        return props[name_lower]
-    # Try last name match
+    if name_lower in props: return props[name_lower]
     parts = name_lower.split()
     if len(parts) >= 2:
         last = parts[-1]
         for k, v in props.items():
-            if last in k.lower():
-                return v
+            if last in k.lower(): return v
     return None
 
 def fmt_odds(o):
@@ -459,29 +491,34 @@ def root():
 def status():
     return {"ready":_cache["ready"],"batters_2026":len(_cache["batting_current"]),"batters_2025":len(_cache["batting_prior"]),"pitchers_2026":len(_cache["pitching_current"]),"pitchers_2025":len(_cache["pitching_prior"])}
 
+@app.get("/debug-columns")
+def debug_columns():
+    bat_cur = _cache["batting_current"]
+    bat_pri = _cache["batting_prior"]
+    sample = {}
+    for col in ["barrel_pct","exit_velo","iso","hr_fb_pct","pull_pct","pa"]:
+        if col in bat_pri.columns:
+            sample[f"2025_{col}"] = round(float(bat_pri[col].dropna().median()),2)
+        if col in bat_cur.columns:
+            sample[f"2026_{col}"] = round(float(bat_cur[col].dropna().median()),2)
+    return {"batting_2025_cols": list(bat_pri.columns[:40]) if not bat_pri.empty else [], "batting_2026_cols": list(bat_cur.columns[:40]) if not bat_cur.empty else [], "sample_medians": sample}
+
 @app.get("/games")
 async def get_games(form_days: int = 14):
     if not _cache["ready"]:
         return {"games":[],"date":date.today().isoformat(),"loading":True,"message":"Statcast data loading — try again in 60 seconds."}
-
     today = date.today().isoformat()
-
-    # Fetch schedule, DK props in parallel
     async with httpx.AsyncClient(timeout=30) as client:
         r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
         data = r.json()
-
     dk_props = await fetch_dk_hr_props()
-
     dates = data.get("dates",[])
     if not dates:
         return {"games":[],"date":today,"loading":False}
-
     games_out = []
     for game in dates[0].get("games",[]):
         if game.get("status",{}).get("abstractGameState") == "Final":
             continue
-
         gid       = game["gamePk"]
         away_team = game["teams"]["away"]["team"]["name"]
         home_team = game["teams"]["home"]["team"]["name"]
@@ -490,15 +527,11 @@ async def get_games(form_days: int = 14):
         away_p    = game["teams"]["away"].get("probablePitcher",{})
         home_p    = game["teams"]["home"].get("probablePitcher",{})
         gtime     = game.get("gameDate","")
-
-        # Weather
-        stadium = STADIUMS.get(home_team, {})
+        stadium   = STADIUMS.get(home_team, {})
         temp, wind_speed, wind_dir = 70, 0, 0
         if not stadium.get("dome") and stadium.get("lat"):
             temp, wind_speed, wind_dir = await fetch_weather(stadium["lat"], stadium["lon"], gtime)
-        weather_bonus, weather_label, weather_desc = calc_weather_effect(home_team, wind_speed, wind_dir, temp)
 
-        # Pitcher scoring
         def get_pit(name):
             c = fuzzy_match(name, _cache["pitching_current"])
             p = fuzzy_match(name, _cache["pitching_prior"])
@@ -509,11 +542,9 @@ async def get_games(form_days: int = 14):
         hp_vuln, hp_reasons = score_pitcher(hpc, hpp)
         ap_vuln, ap_reasons = score_pitcher(apc, app_)
 
-        # Try confirmed lineup first, fall back to projected
         lineup_away, lineup_home = [], []
         lineup_away_status = "projected"
         lineup_home_status = "projected"
-
         try:
             async with httpx.AsyncClient(timeout=15) as client:
                 r = await client.get(f"{MLB_API}/game/{gid}/boxscore")
@@ -522,29 +553,21 @@ async def get_games(form_days: int = 14):
             def extract(side):
                 players = teams.get(side,{}).get("players",{})
                 return sorted([p for p in players.values() if p.get("battingOrder") and int(p["battingOrder"])<=900],key=lambda x:int(x["battingOrder"]))[:9]
-            confirmed_away = extract("away")
-            confirmed_home = extract("home")
-            if confirmed_away:
-                lineup_away = confirmed_away
-                lineup_away_status = "confirmed"
-            if confirmed_home:
-                lineup_home = confirmed_home
-                lineup_home_status = "confirmed"
+            ca = extract("away")
+            ch = extract("home")
+            if ca: lineup_away = ca; lineup_away_status = "confirmed"
+            if ch: lineup_home = ch; lineup_home_status = "confirmed"
         except:
             pass
 
-        # Use projected lineup if confirmed not available
         if not lineup_away:
-            proj_away, _ = await fetch_projected_lineup(away_team_id, away_team)
-            lineup_away = proj_away
+            lineup_away, _ = await fetch_projected_lineup(away_team_id, away_team)
         if not lineup_home:
-            proj_home, _ = await fetch_projected_lineup(home_team_id, home_team)
-            lineup_home = proj_home
+            lineup_home, _ = await fetch_projected_lineup(home_team_id, home_team)
 
         all_batters = []
 
         async def process(batter, team, pit_vuln, pit_reasons, pit_name, pit_hand, is_projected=False):
-            # Handle both confirmed (MLB API format) and projected (our format) batters
             if "person" in batter:
                 name     = batter.get("person",{}).get("fullName","")
                 pid      = batter.get("person",{}).get("id")
@@ -558,6 +581,7 @@ async def get_games(form_days: int = 14):
             bp = fuzzy_match(name, _cache["batting_prior"])
             recent = await fetch_recent_form(pid, days=form_days) if pid else None
             pf = get_park_factor(home_team, bat_hand)
+            weather_bonus, weather_label, weather_desc = calc_weather_effect(home_team, wind_speed, wind_dir, temp, bat_hand)
             score, reasons, statline = score_batter(
                 bc.to_dict() if bc is not None else {},
                 bp.to_dict() if bp is not None else {},
@@ -567,59 +591,38 @@ async def get_games(form_days: int = 14):
             reasons += pit_reasons
             if pf >= 1.10: reasons.append("HR-friendly park")
             elif pf <= 0.90: reasons.append("Pitcher-friendly park")
-
-            # DK odds
             dk_odds = match_dk_odds(name, dk_props)
-
             all_batters.append({
-                "name": name,
-                "team": team,
-                "score": score,
-                "reasons": reasons,
-                "opp_pitcher": pit_name,
-                "bat_hand": bat_hand,
-                "park_factor": round(pf,2),
+                "name": name, "team": team, "score": score, "reasons": reasons,
+                "opp_pitcher": pit_name, "bat_hand": bat_hand, "park_factor": round(pf,2),
                 "statline": statline,
                 "recent_hr": recent.get("hr",0) if recent else 0,
                 "recent_pa": recent.get("pa",0) if recent else 0,
                 "recent_slg": round(recent.get("slg",0),3) if recent else 0,
                 "dk_odds": fmt_odds(dk_odds),
                 "projected": is_projected,
+                "weather_label": weather_label,
             })
 
-        away_projected = lineup_away_status == "projected"
-        home_projected = lineup_home_status == "projected"
-
+        away_proj = lineup_away_status == "projected"
+        home_proj = lineup_home_status == "projected"
         for b in lineup_away:
-            await process(b, away_team, hp_vuln, hp_reasons, home_p.get("fullName","TBD"), "R", away_projected)
+            await process(b, away_team, hp_vuln, hp_reasons, home_p.get("fullName","TBD"), "R", away_proj)
         for b in lineup_home:
-            await process(b, home_team, ap_vuln, ap_reasons, away_p.get("fullName","TBD"), "R", home_projected)
+            await process(b, home_team, ap_vuln, ap_reasons, away_p.get("fullName","TBD"), "R", home_proj)
 
         all_batters.sort(key=lambda x: x["score"], reverse=True)
-
-        lineups_posted = lineup_away_status == "confirmed" or lineup_home_status == "confirmed"
-
+        weather_bonus_game, weather_label_game, weather_desc_game = calc_weather_effect(home_team, wind_speed, wind_dir, temp)
         games_out.append({
-            "game_id": gid,
-            "away": away_team,
-            "home": home_team,
-            "time": gtime,
+            "game_id": gid, "away": away_team, "home": home_team, "time": gtime,
             "away_pitcher": away_p.get("fullName","TBD"),
             "home_pitcher": home_p.get("fullName","TBD"),
             "top_hr_candidates": all_batters[:3],
-            "lineups_posted": lineups_posted,
+            "lineups_posted": lineup_away_status=="confirmed" or lineup_home_status=="confirmed",
             "lineup_away_status": lineup_away_status,
             "lineup_home_status": lineup_home_status,
-            "weather": {
-                "label": weather_label,
-                "desc": weather_desc,
-                "temp": temp,
-                "wind_speed": wind_speed,
-                "wind_dir": wind_dir,
-                "bonus": weather_bonus
-            }
+            "weather": {"label": weather_label_game, "desc": weather_desc_game, "temp": temp, "wind_speed": wind_speed, "wind_dir": wind_dir}
         })
-
     return {"games":games_out,"date":today,"loading":False}
 
 @app.post("/refresh-cache")
