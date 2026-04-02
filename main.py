@@ -29,6 +29,7 @@ _cache = {
     "batting_prior": pd.DataFrame(),
     "pitching_current": pd.DataFrame(),
     "pitching_prior": pd.DataFrame(),
+    "player_hands": {},  # cache player handedness {player_id: {bat_side, pitch_hand}}
     "ready": False
 }
 
@@ -101,15 +102,14 @@ STADIUMS = {
 BAT_COL_MAP = {
     "Name": "name", "PA": "pa", "HR": "hr", "AVG": "avg", "ISO": "iso",
     "Barrel%": "barrel_pct", "EV": "exit_velo", "LA": "launch_angle",
-    "Hard%": "hard_hit_pct", "FB%": "fb_pct", "HR/FB": "hr_fb_pct",
-    "Pull%": "pull_pct",
+    "Hard%": "hard_hit_pct", "FB%": "fb_pct", "HR/FB": "hr_fb_pct", "Pull%": "pull_pct",
 }
 
 PIT_COL_MAP = {
     "Name": "name", "PA": "pa", "TBF": "pa", "HR": "hr", "ERA": "era",
     "WHIP": "whip", "HR/9": "hr_per9", "HR/FB": "hr_fb_pct",
-    "GB%": "gb_pct", "FB%": "fb_pct", "Hard%": "hard_hit_pct",
-    "HardHit%": "hard_hit_pct", "Barrel%": "barrel_pct_pit", "EV": "exit_velo_pit",
+    "GB%": "gb_pct", "FB%": "fb_pct", "Hard%": "hard_hit_pct", "HardHit%": "hard_hit_pct",
+    "IP": "ip",
 }
 
 def load_savant_data():
@@ -128,7 +128,7 @@ def load_savant_data():
         except Exception as e:
             print(f"{season} batting error: {e}")
         try:
-            pit = pitching_stats(season, qual=10)
+            pit = pitching_stats(season, qual=5)
             rename = {k:v for k,v in PIT_COL_MAP.items() if k in pit.columns}
             pit = pit.rename(columns=rename)
             for col in ["hr_fb_pct","gb_pct","fb_pct","hard_hit_pct"]:
@@ -159,11 +159,19 @@ def fuzzy_match(name, df):
             if last in str(row.get("name","")).lower(): return row
     return None
 
-def get_blend_weights(pa_current):
+def get_batter_blend_weights(pa_current):
     pa = float(pa_current or 0)
     if pa >= 150: return 1.0, 0.0
     elif pa >= 50: w = (pa-50)/100.0; return w, 1.0-w
     else: w = 0.20+(pa/50.0)*0.30; return w, 1.0-w
+
+def get_pitcher_blend_weights(ip_current):
+    """Option C: blend by innings pitched in current season"""
+    ip = float(ip_current or 0)
+    if ip >= 30: return 1.0, 0.0       # 100% current
+    elif ip >= 10: w = (ip-10)/20.0; return 0.5+w*0.5, 0.5-w*0.5  # 50-100% current
+    elif ip > 0: return 0.5, 0.5       # 50/50 under 10 IP
+    else: return 0.0, 1.0              # no current data, use prior
 
 def blend_stat(cv, pv, wc, wp):
     c, p = float(cv or 0), float(pv or 0)
@@ -238,101 +246,68 @@ async def fetch_weather(lat, lon, game_time_utc):
     except Exception as e:
         print(f"Weather error: {e}"); return 70, 0, 0
 
-async def fetch_player_info(player_id):
-    """Fetch player handedness and info from MLB API"""
+async def fetch_player_hand(player_id):
+    """Fetch player handedness — cached to avoid repeat calls"""
+    if player_id in _cache["player_hands"]:
+        return _cache["player_hands"][player_id]
     try:
         async with httpx.AsyncClient(timeout=8) as client:
             r = await client.get(f"{MLB_API}/people/{player_id}")
             d = r.json()
         person = d.get("people",[{}])[0]
-        bat = person.get("batSide",{}).get("code","") or person.get("batSideCode","")
-        pit = person.get("pitchHand",{}).get("code","") or person.get("pitchHandCode","")
-        print(f"Player {player_id} {person.get('fullName','')} bat:{bat} pit:{pit}")
-        return {
-            "bat_side": bat or "R",
-            "pitch_hand": pit or "R",
-            "full_name": person.get("fullName",""),
-        }
-    except Exception as e:
-        print(f"fetch_player_info error {player_id}: {e}")
-        return {"bat_side":"R","pitch_hand":"R","full_name":""}
+        bat = person.get("batSide",{}).get("code","R") or "R"
+        pit = person.get("pitchHand",{}).get("code","R") or "R"
+        result = {"bat_side": bat, "pitch_hand": pit, "name": person.get("fullName","")}
+        _cache["player_hands"][player_id] = result
+        return result
+    except:
+        return {"bat_side":"R","pitch_hand":"R","name":""}
 
 async def fetch_batter_splits(player_id, pit_hand, season=2026):
-    """
-    Fetch batter splits vs LHP or RHP from MLB Stats API
-    Returns split-specific stats: hr, pa, slg, avg, ops
-    """
     try:
         split_code = "vsl" if pit_hand == "L" else "vsr"
         url = (f"{MLB_API}/people/{player_id}/stats"
-               f"?stats=statSplits&group=hitting&season={season}"
-               f"&sitCodes={split_code}")
+               f"?stats=statSplits&group=hitting&season={season}&sitCodes={split_code}")
         async with httpx.AsyncClient(timeout=10) as client:
             r = await client.get(url); d = r.json()
-        all_stats = d.get("stats",[])
-        for stat_group in all_stats:
-            splits = stat_group.get("splits",[])
-            for split in splits:
-                code = split.get("split",{}).get("code","")
-                if code != split_code: continue
+        for stat_group in d.get("stats",[]):
+            for split in stat_group.get("splits",[]):
+                if split.get("split",{}).get("code","") != split_code: continue
                 s = split.get("stat",{})
                 slg = float(s.get("sluggingPercentage",0) or 0)
                 avg = float(s.get("avg",0) or 0)
                 pa = int(s.get("plateAppearances",0))
                 hr = int(s.get("homeRuns",0))
-                return {
-                    "hr": hr,
-                    "pa": pa,
-                    "slg": slg,
-                    "avg": avg,
-                    "iso": slg - avg,
-                    "ops": float(s.get("ops",0) or 0),
-                    "hr_rate": (hr / max(pa,1)) * 600,
-                }
+                return {"hr":hr,"pa":pa,"slg":slg,"avg":avg,"iso":slg-avg,
+                        "ops":float(s.get("ops",0) or 0),
+                        "hr_rate":(hr/max(pa,1))*600}
         return None
-    except Exception as e:
-        print(f"fetch_batter_splits error {player_id}: {e}")
-        return None
+    except: return None
 
 async def fetch_pitcher_splits(player_id, season=2026):
-    """
-    Fetch pitcher splits vs LHB and RHB
-    Returns {vsl: {hr9, era}, vsr: {hr9, era}}
-    """
     try:
         url = (f"{MLB_API}/people/{player_id}/stats"
-               f"?stats=statSplits&group=pitching&season={season}"
-               f"&sitCodes=vsl,vsr")
+               f"?stats=statSplits&group=pitching&season={season}&sitCodes=vsl,vsr")
         async with httpx.AsyncClient(timeout=10) as client:
             r = await client.get(url); d = r.json()
-        all_stats = d.get("stats",[])
         result = {}
-        for stat_group in all_stats:
+        for stat_group in d.get("stats",[]):
             for split in stat_group.get("splits",[]):
                 code = split.get("split",{}).get("code","")
                 if code not in ("vsl","vsr"): continue
                 s = split.get("stat",{})
                 ip = float(s.get("inningsPitched",0) or 0)
                 hr = int(s.get("homeRuns",0))
-                hr9 = round((hr/ip)*9, 2) if ip > 0 else 0
-                era = float(s.get("era",0) or 0)
                 result[code] = {
-                    "hr9": hr9,
-                    "era": era,
+                    "hr9": round((hr/ip)*9,2) if ip>0 else 0,
+                    "era": float(s.get("era",0) or 0),
                     "whip": float(s.get("whip",0) or 0),
-                    "hr": hr,
-                    "ip": ip,
-                    "pa": int(s.get("battersFaced",0)),
+                    "ip": ip, "pa": int(s.get("battersFaced",0)),
                 }
-        if result:
-            print(f"Pitcher {player_id} splits {season}: {result}")
         return result
-    except Exception as e:
-        print(f"fetch_pitcher_splits error {player_id}: {e}")
-        return {}
+    except: return {}
 
-async def fetch_pitcher_season_stats(player_id, season=2025):
-    """Fetch overall pitcher season stats for display"""
+async def fetch_pitcher_season_stats(player_id, season):
     try:
         url = f"{MLB_API}/people/{player_id}/stats?stats=season&group=pitching&season={season}"
         async with httpx.AsyncClient(timeout=8) as client:
@@ -345,8 +320,8 @@ async def fetch_pitcher_season_stats(player_id, season=2025):
         return {
             "era": float(s.get("era",0) or 0),
             "whip": float(s.get("whip",0) or 0),
-            "hr9": round((hr/ip)*9,2) if ip > 0 else 0,
-            "gb_pct": 0,
+            "hr9": round((hr/ip)*9,2) if ip>0 else 0,
+            "ip": ip,
         }
     except: return {}
 
@@ -362,7 +337,7 @@ async def fetch_projected_lineup(team_id, team_name):
                 if g.get("status",{}).get("abstractGameState") == "Final":
                     recent_games.append(g["gamePk"])
             if len(recent_games) >= 5: break
-        player_data = defaultdict(lambda: {"name":"","appearances":0,"orders":[],"hand":"R","id":0})
+        player_data = defaultdict(lambda: {"name":"","appearances":0,"orders":[],"id":0})
         for gid in recent_games[:5]:
             try:
                 async with httpx.AsyncClient(timeout=10) as client:
@@ -379,10 +354,10 @@ async def fetch_projected_lineup(team_id, team_name):
                             player_data[pid]["id"] = pid
                             player_data[pid]["appearances"] += 1
                             player_data[pid]["orders"].append(int(order)//100)
-                            # Get bat side from boxscore
-                            player_data[pid]["hand"] = person.get("batSide",{}).get("code","R")
             except: continue
-        projected = [{"id":d["id"],"name":d["name"],"hand":d["hand"],"appearances":d["appearances"],"avg_order":sum(d["orders"])/len(d["orders"])} for d in player_data.values() if d["appearances"]>=2 and d["name"]]
+        projected = [{"id":d["id"],"name":d["name"],"appearances":d["appearances"],
+                      "avg_order":sum(d["orders"])/len(d["orders"])}
+                     for d in player_data.values() if d["appearances"]>=2 and d["name"]]
         projected.sort(key=lambda x: x["avg_order"])
         return projected[:9], "projected"
     except Exception as e:
@@ -415,8 +390,7 @@ async def fetch_dk_hr_props():
                                 price = outcome.get("price",0)
                                 if name and price: props[name.lower()] = price
                 except: continue
-            if props:
-                print(f"DK HR props: {len(props)} via {market}"); return props
+            if props: print(f"DK HR props: {len(props)}"); return props
         return {}
     except Exception as e:
         print(f"DK props error: {e}"); return {}
@@ -450,102 +424,187 @@ async def fetch_recent_form(player_id, days=14):
         return {"hr":int(s.get("homeRuns",0)),"pa":int(s.get("plateAppearances",0)),"slg":slg,"iso":slg-avg}
     except: return None
 
-def score_batter(c, p, recent, park_factor, bat_hand, opp_hand, weather_bonus, bat_splits=None):
+def score_batter_detailed(c, p, recent, park_factor, bat_hand, opp_hand, weather_bonus, bat_splits=None):
+    """Score batter and return detailed breakdown of every component"""
     pa_cur = float(c.get("pa",0) or 0)
-    wc, wp = get_blend_weights(pa_cur)
+    wc, wp = get_batter_blend_weights(pa_cur)
 
-    # Use split-specific stats if available, else overall
-    if bat_splits and bat_splits.get("pa",0) >= 20:
-        iso    = bat_splits.get("iso", blend_stat(c.get("iso"), p.get("iso"), wc, wp))
-        slg    = bat_splits.get("slg", 0)
+    # Stats — use split-specific if available and sufficient
+    if bat_splits and bat_splits.get("pa",0) >= 30:
+        iso    = bat_splits.get("iso", 0) or blend_stat(c.get("iso"), p.get("iso"), wc, wp)
         hr_rate_split = bat_splits.get("hr_rate", 0)
         split_used = True
+        split_label = f"vs {'LHP' if opp_hand=='L' else 'RHP'} split"
     else:
         iso    = blend_stat(c.get("iso"), p.get("iso"), wc, wp)
-        slg    = 0
         hr_rate_split = 0
         split_used = False
+        split_label = f"2025/26 blend ({int(wc*100)}%/{int(wp*100)}%)"
 
     barrel = blend_stat(c.get("barrel_pct"), p.get("barrel_pct"), wc, wp)
     hr_fb  = blend_stat(c.get("hr_fb_pct"),  p.get("hr_fb_pct"), wc, wp)
     ev     = blend_stat(c.get("exit_velo"),  p.get("exit_velo"), wc, wp)
     pull   = blend_stat(c.get("pull_pct"),   p.get("pull_pct"),  wc, wp)
 
-    ss, reasons = 0, []
+    breakdown = []
+    ss = 0
 
+    # Barrel rate — 25pts max
     if barrel > 0:
-        ss += min(barrel/15.0,1.0)*25
-        if barrel > 8: reasons.append(f"Barrel {barrel:.1f}%")
+        pts = round(min(barrel/15.0,1.0)*25, 1)
+        ss += pts
+        breakdown.append({"label":f"Barrel rate {barrel:.1f}%","pts":pts,"max":25,"note":split_label})
+    else:
+        breakdown.append({"label":"Barrel rate","pts":0,"max":25,"note":"No data"})
 
+    # ISO — 20pts max
     if iso > 0:
-        ss += min(iso/0.280,1.0)*20
-        if iso > 0.160: reasons.append(f"ISO .{int(iso*1000)}")
+        pts = round(min(iso/0.280,1.0)*20, 1)
+        ss += pts
+        breakdown.append({"label":f"ISO .{int(iso*1000):03d}","pts":pts,"max":20,"note":split_label})
+    else:
+        breakdown.append({"label":"ISO","pts":0,"max":20,"note":"No data"})
 
+    # HR/FB — 15pts max
     if hr_fb > 0:
-        ss += min(hr_fb/25.0,1.0)*15
-        if hr_fb > 14: reasons.append(f"HR/FB {hr_fb:.1f}%")
+        pts = round(min(hr_fb/25.0,1.0)*15, 1)
+        ss += pts
+        breakdown.append({"label":f"HR/FB {hr_fb:.1f}%","pts":pts,"max":15,"note":split_label})
+    else:
+        breakdown.append({"label":"HR/FB","pts":0,"max":15,"note":"No data"})
 
+    # Exit velo — 15pts max
     if ev > 0:
-        ss += min((ev-85)/15.0,1.0)*15
-        if ev > 91: reasons.append(f"EV {ev:.1f} mph")
+        pts = round(min((ev-85)/15.0,1.0)*15, 1)
+        ss += pts
+        breakdown.append({"label":f"Exit velo {ev:.1f} mph","pts":pts,"max":15,"note":split_label})
+    else:
+        breakdown.append({"label":"Exit velo","pts":0,"max":15,"note":"No data"})
 
+    # Pull rate — 5pts max
     if pull > 0:
-        ss += min(pull/50.0,1.0)*5
+        pts = round(min(pull/50.0,1.0)*5, 1)
+        ss += pts
+        breakdown.append({"label":f"Pull rate {pull:.1f}%","pts":pts,"max":5,"note":split_label})
 
-    # Split bonus — if batter has real split data against this pitcher hand
+    # Split HR rate bonus — 15pts max
     if split_used and hr_rate_split > 0:
-        ss += min(hr_rate_split/30.0,1.0)*15
-        if hr_rate_split > 15: reasons.append(f"Strong vs {'LHP' if opp_hand=='L' else 'RHP'}")
+        pts = round(min(hr_rate_split/30.0,1.0)*15, 1)
+        ss += pts
+        breakdown.append({"label":f"HR rate vs {'LHP' if opp_hand=='L' else 'RHP'} ({hr_rate_split:.0f}/600)","pts":pts,"max":15,"note":"split data"})
     elif opp_hand and bat_hand:
-        # Fallback platoon bonus if no split data
-        if bat_hand != opp_hand: ss += 4
-        else: ss -= 3
+        if bat_hand != opp_hand:
+            ss += 4
+            breakdown.append({"label":f"Platoon advantage ({bat_hand} vs {opp_hand}P)","pts":4,"max":4,"note":"handedness"})
+        else:
+            ss -= 3
+            breakdown.append({"label":f"Platoon disadvantage ({bat_hand} vs {opp_hand}P)","pts":-3,"max":0,"note":"handedness"})
 
+    season_score = round(ss, 1)
+
+    # Recent form — 30% of final
     fs = 0
+    form_breakdown = []
     if recent and recent.get("pa",0) >= 5:
         rf_pa, rf_hr = recent.get("pa",1), recent.get("hr",0)
         rf_slg, rf_iso = recent.get("slg",0), recent.get("iso",0)
         hr_rate = (rf_hr/rf_pa)*100 if rf_pa > 0 else 0
-        fs += min(hr_rate/8.0,1.0)*50 + min(rf_slg/0.600,1.0)*30 + min(rf_iso/0.300,1.0)*20
+        p1 = round(min(hr_rate/8.0,1.0)*50, 1)
+        p2 = round(min(rf_slg/0.600,1.0)*30, 1)
+        p3 = round(min(rf_iso/0.300,1.0)*20, 1)
+        fs = p1+p2+p3
+        form_breakdown = [
+            {"label":f"HR rate last 14d ({rf_hr} HR/{rf_pa} PA)","pts":p1,"max":50},
+            {"label":f"SLG last 14d ({rf_slg:.3f})","pts":p2,"max":30},
+            {"label":f"ISO last 14d ({rf_iso:.3f})","pts":p3,"max":20},
+        ]
     else:
-        fs = ss * 0.5
+        fs = season_score * 0.5
+        form_breakdown = [{"label":"No recent form data — using 50% of season score","pts":round(fs,1),"max":100}]
 
-    final = (ss*0.70 + fs*0.30) * park_factor + weather_bonus
-    return round(min(final,99)), reasons, {
-        "barrel": round(barrel,1),
-        "ev": round(ev,1),
-        "iso": round(iso,3),
-        "hr_fb": round(hr_fb,1),
-        "split_used": split_used,
+    # Blend 70/30
+    blended = round(season_score * 0.70 + fs * 0.30, 1)
+
+    # Park factor
+    park_adj = round(blended * park_factor - blended, 1)
+    after_park = round(blended * park_factor, 1)
+
+    # Weather
+    after_weather = round(after_park + weather_bonus, 1)
+
+    reasons = []
+    if barrel > 8: reasons.append(f"Barrel {barrel:.1f}%")
+    if iso > 0.160: reasons.append(f"ISO .{int(iso*1000):03d}")
+    if hr_fb > 14: reasons.append(f"HR/FB {hr_fb:.1f}%")
+    if ev > 91: reasons.append(f"EV {ev:.1f} mph")
+    if split_used and hr_rate_split > 15: reasons.append(f"Strong vs {'LHP' if opp_hand=='L' else 'RHP'}")
+    elif bat_hand != opp_hand and not split_used: reasons.append(f"Platoon edge ({bat_hand} vs {opp_hand}P)")
+
+    score_breakdown = {
+        "season_components": breakdown,
+        "season_subtotal": season_score,
+        "form_components": form_breakdown,
+        "form_subtotal": round(fs, 1),
+        "blend_note": f"70% season ({round(season_score*0.70,1)}) + 30% form ({round(fs*0.30,1)}) = {blended}",
+        "blended": blended,
+        "park_factor": park_factor,
+        "park_adj": park_adj,
+        "after_park": after_park,
+        "weather_bonus": weather_bonus,
+        "after_weather": after_weather,
     }
 
-def score_pitcher(c, p, pit_splits=None, vs_hand=None):
-    pa = float(c.get("pa",0) or 0)
-    wc, wp = get_blend_weights(pa)
+    return round(min(after_weather, 99)), reasons, {
+        "barrel":round(barrel,1),"ev":round(ev,1),"iso":round(iso,3),"hr_fb":round(hr_fb,1),
+        "split_used":split_used,
+    }, score_breakdown
+
+def score_pitcher_detailed(c, p, pit_splits=None, vs_hand=None, ip_current=0):
+    """Score pitcher using IP-based blending (Option C)"""
+    ip_cur = float(ip_current or c.get("ip",0) or 0)
+    wc, wp = get_pitcher_blend_weights(ip_cur)
 
     # Use split-specific stats if available
+    split_note = ""
     if pit_splits and vs_hand and vs_hand in pit_splits:
         split = pit_splits[vs_hand]
-        hr9  = split.get("hr9", 0)
-        split_label = f"vs {'LHB' if vs_hand=='vsl' else 'RHB'}"
-        split_used = split.get("ip",0) >= 10
+        split_ip = split.get("ip",0)
+        if split_ip >= 5:
+            hr9  = split.get("hr9", 0)
+            split_note = f"split vs {'LHB' if vs_hand=='vsl' else 'RHB'} ({split_ip:.0f} IP)"
+        else:
+            hr9 = blend_stat(c.get("hr_per9"), p.get("hr_per9"), wc, wp)
+            split_note = f"overall ({ip_cur:.0f} IP {int(wc*100)}% 2026)"
     else:
         hr9 = blend_stat(c.get("hr_per9"), p.get("hr_per9"), wc, wp)
-        split_label = ""
-        split_used = False
+        split_note = f"overall ({ip_cur:.0f} IP {int(wc*100)}% 2026)"
 
     hrfb = blend_stat(c.get("hr_fb_pct"), p.get("hr_fb_pct"), wc, wp)
     gb   = blend_stat(c.get("gb_pct"),    p.get("gb_pct"),    wc, wp)
     hard = blend_stat(c.get("hard_hit_pct"), p.get("hard_hit_pct"), wc, wp)
 
     v, reasons = 0, []
+    pit_breakdown = []
+
     if hr9 > 0.5:
-        v += min(hr9/2.5,1.0)*10
-        if hr9 > 1.3: reasons.append(f"SP {hr9:.1f} HR/9{' '+split_label if split_used else ''}")
-    if hrfb > 0: v += min(hrfb/20.0,1.0)*5
-    if gb > 5 and gb < 36: v += 5; reasons.append("Fly ball SP")
-    if hard > 5 and hard > 40: v += 3; reasons.append(f"SP {hard:.0f}% hard contact")
-    return v, reasons
+        pts = round(min(hr9/2.5,1.0)*10, 1)
+        v += pts
+        pit_breakdown.append({"label":f"HR/9 {hr9:.2f} ({split_note})","pts":pts,"max":10})
+        if hr9 > 1.3: reasons.append(f"SP {hr9:.1f} HR/9")
+    if hrfb > 0:
+        pts = round(min(hrfb/20.0,1.0)*5, 1)
+        v += pts
+        pit_breakdown.append({"label":f"HR/FB {hrfb:.1f}%","pts":pts,"max":5})
+    if gb > 5 and gb < 36:
+        v += 5
+        pit_breakdown.append({"label":f"Fly ball pitcher (GB% {gb:.1f}%)","pts":5,"max":5})
+        reasons.append("Fly ball SP")
+    if hard > 5 and hard > 40:
+        v += 3
+        pit_breakdown.append({"label":f"Hard contact allowed {hard:.0f}%","pts":3,"max":3})
+        reasons.append(f"SP {hard:.0f}% hard contact")
+
+    return round(v, 1), reasons, pit_breakdown
 
 @app.get("/")
 def root():
@@ -553,27 +612,17 @@ def root():
 
 @app.get("/status")
 def status():
-    return {"ready":_cache["ready"],"batters_2026":len(_cache["batting_current"]),"batters_2025":len(_cache["batting_prior"]),"pitchers_2026":len(_cache["pitching_current"]),"pitchers_2025":len(_cache["pitching_prior"])}
-
-@app.get("/debug-columns")
-def debug_columns():
-    bat_pri = _cache["batting_prior"]; bat_cur = _cache["batting_current"]
-    pit_pri = _cache["pitching_prior"]; pit_cur = _cache["pitching_current"]
-    sample = {}
-    for col in ["barrel_pct","exit_velo","iso","hr_fb_pct","pull_pct","pa"]:
-        if not bat_pri.empty and col in bat_pri.columns:
-            sample[f"bat_2025_{col}"] = round(float(pd.to_numeric(bat_pri[col],errors="coerce").dropna().median()),2)
-        if not bat_cur.empty and col in bat_cur.columns:
-            sample[f"bat_2026_{col}"] = round(float(pd.to_numeric(bat_cur[col],errors="coerce").dropna().median()),2)
-    for col in ["hr_per9","hr_fb_pct","gb_pct","hard_hit_pct","era","pa"]:
-        if not pit_pri.empty and col in pit_pri.columns:
-            sample[f"pit_2025_{col}"] = round(float(pd.to_numeric(pit_pri[col],errors="coerce").dropna().median()),2)
-    return {"batting_2025_cols":list(bat_pri.columns) if not bat_pri.empty else [],"pitching_2025_cols":list(pit_pri.columns) if not pit_pri.empty else [],"sample_medians":sample}
+    return {"ready":_cache["ready"],
+            "batters_2026":len(_cache["batting_current"]),
+            "batters_2025":len(_cache["batting_prior"]),
+            "pitchers_2026":len(_cache["pitching_current"]),
+            "pitchers_2025":len(_cache["pitching_prior"])}
 
 @app.get("/games")
 async def get_games(form_days: int = 14):
     if not _cache["ready"]:
-        return {"games":[],"date":date.today().isoformat(),"loading":True,"message":"Statcast data loading — try again in 60 seconds."}
+        return {"games":[],"date":date.today().isoformat(),"loading":True,
+                "message":"Statcast data loading — try again in 60 seconds."}
     today = date.today().isoformat()
     async with httpx.AsyncClient(timeout=30) as client:
         r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
@@ -581,6 +630,7 @@ async def get_games(form_days: int = 14):
     dk_props = await fetch_dk_hr_props()
     dates = data.get("dates",[])
     if not dates: return {"games":[],"date":today,"loading":False}
+
     games_out = []
     for game in dates[0].get("games",[]):
         if game.get("status",{}).get("abstractGameState") == "Final": continue
@@ -593,25 +643,28 @@ async def get_games(form_days: int = 14):
         home_p       = game["teams"]["home"].get("probablePitcher",{})
         gtime        = game.get("gameDate","")
 
-        # Fetch pitcher handedness from MLB API
+        # Pitcher info
         away_p_id = away_p.get("id")
         home_p_id = home_p.get("id")
-        away_p_hand, home_p_hand = "R", "R"
-        away_p_stats, home_p_stats = {}, {}
-        away_p_splits, home_p_splits = {}, {}
+        away_p_hand = home_p_hand = "R"
+        away_p_cur_stats = home_p_cur_stats = {}
+        away_p_pri_stats = home_p_pri_stats = {}
+        away_p_splits = home_p_splits = {}
 
         if away_p_id:
-            info = await fetch_player_info(away_p_id)
+            info = await fetch_player_hand(away_p_id)
             away_p_hand = info.get("pitch_hand","R")
-            away_p_stats = await fetch_pitcher_season_stats(away_p_id, SEASON_PRIOR)
+            away_p_cur_stats = await fetch_pitcher_season_stats(away_p_id, SEASON_CURRENT)
+            away_p_pri_stats = await fetch_pitcher_season_stats(away_p_id, SEASON_PRIOR)
             away_p_splits = await fetch_pitcher_splits(away_p_id, SEASON_CURRENT)
             if not away_p_splits:
                 away_p_splits = await fetch_pitcher_splits(away_p_id, SEASON_PRIOR)
 
         if home_p_id:
-            info = await fetch_player_info(home_p_id)
+            info = await fetch_player_hand(home_p_id)
             home_p_hand = info.get("pitch_hand","R")
-            home_p_stats = await fetch_pitcher_season_stats(home_p_id, SEASON_PRIOR)
+            home_p_cur_stats = await fetch_pitcher_season_stats(home_p_id, SEASON_CURRENT)
+            home_p_pri_stats = await fetch_pitcher_season_stats(home_p_id, SEASON_PRIOR)
             home_p_splits = await fetch_pitcher_splits(home_p_id, SEASON_CURRENT)
             if not home_p_splits:
                 home_p_splits = await fetch_pitcher_splits(home_p_id, SEASON_PRIOR)
@@ -622,13 +675,13 @@ async def get_games(form_days: int = 14):
         if not stadium.get("dome") and stadium.get("lat"):
             temp, wind_speed, wind_dir = await fetch_weather(stadium["lat"], stadium["lon"], gtime)
 
-        def get_pit(name):
+        def get_pit_df(name):
             c = fuzzy_match(name, _cache["pitching_current"])
             p = fuzzy_match(name, _cache["pitching_prior"])
             return c.to_dict() if c is not None else {}, p.to_dict() if p is not None else {}
 
-        hpc, hpp = get_pit(home_p.get("fullName",""))
-        apc, app_ = get_pit(away_p.get("fullName",""))
+        hpc, hpp = get_pit_df(home_p.get("fullName",""))
+        apc, app_ = get_pit_df(away_p.get("fullName",""))
 
         # Lineups
         lineup_away, lineup_home = [], []
@@ -639,7 +692,8 @@ async def get_games(form_days: int = 14):
             teams = box.get("teams",{})
             def extract(side):
                 players = teams.get(side,{}).get("players",{})
-                return sorted([p for p in players.values() if p.get("battingOrder") and int(p["battingOrder"])<=900],key=lambda x:int(x["battingOrder"]))[:9]
+                return sorted([p for p in players.values() if p.get("battingOrder") and int(p["battingOrder"])<=900],
+                              key=lambda x:int(x["battingOrder"]))[:9]
             ca, ch = extract("away"), extract("home")
             if ca: lineup_away=ca; lineup_away_status="confirmed"
             if ch: lineup_home=ch; lineup_home_status="confirmed"
@@ -652,24 +706,27 @@ async def get_games(form_days: int = 14):
 
         all_batters = []
 
-        async def process(batter, team, opp_p_id, opp_p_hand, opp_p_splits, opp_p_stats_dict, opp_p_name, pit_c, pit_p, is_proj):
-            # Get batter info
+        async def process(batter, team, opp_p_id, opp_p_hand, opp_p_splits,
+                          opp_p_cur_stats, opp_p_pri_stats, opp_p_name, pit_c, pit_p, is_proj):
+            # Get batter identity
             if "person" in batter:
                 name     = batter.get("person",{}).get("fullName","")
                 pid      = batter.get("person",{}).get("id")
                 bat_hand = batter.get("person",{}).get("batSide",{}).get("code","")
             else:
-                name     = batter.get("name","")
-                pid      = batter.get("id")
-                bat_hand = batter.get("hand","")
+                name = batter.get("name","")
+                pid  = batter.get("id")
+                bat_hand = ""
 
-            # Fetch real handedness if missing
-            if not bat_hand and pid:
-                info = await fetch_player_info(pid)
-                bat_hand = info.get("bat_side","R")
+            # Always fetch real handedness from API (cached after first call)
+            if pid:
+                info = await fetch_player_hand(pid)
+                real_hand = info.get("bat_side","")
+                if real_hand: bat_hand = real_hand
+
             if not bat_hand: bat_hand = "R"
 
-            # Handle switch hitters — use opposite of pitcher hand
+            # Switch hitters bat opposite of pitcher
             if bat_hand == "S":
                 bat_hand = "L" if opp_p_hand == "R" else "R"
 
@@ -677,35 +734,54 @@ async def get_games(form_days: int = 14):
             bp = fuzzy_match(name, _cache["batting_prior"])
             recent = await fetch_recent_form(pid, days=form_days) if pid else None
 
-            # Fetch batter splits vs this pitcher hand
+            # Batter splits
             bat_splits = None
             if pid:
                 bat_splits = await fetch_batter_splits(pid, opp_p_hand, SEASON_CURRENT)
-                if not bat_splits or bat_splits.get("pa",0) < 20:
+                if not bat_splits or bat_splits.get("pa",0) < 30:
                     prior_splits = await fetch_batter_splits(pid, opp_p_hand, SEASON_PRIOR)
                     if prior_splits and prior_splits.get("pa",0) >= 50:
                         bat_splits = prior_splits
 
-            # Pitcher vulnerability using splits
+            # Pitcher scoring with IP-based blend
             vs_hand_code = "vsl" if bat_hand == "L" else "vsr"
-            pit_vuln, pit_reasons = score_pitcher(pit_c, pit_p, opp_p_splits, vs_hand_code)
+            ip_current = opp_p_cur_stats.get("ip", 0)
+            pit_vuln, pit_reasons, pit_breakdown = score_pitcher_detailed(
+                pit_c, pit_p, opp_p_splits, vs_hand_code, ip_current
+            )
 
             pf = get_park_factor(home_team, bat_hand)
-            weather_bonus, weather_label, _ = calc_weather_effect(home_team, wind_speed, wind_dir, temp, bat_hand)
+            weather_bonus, weather_label, _ = calc_weather_effect(
+                home_team, wind_speed, wind_dir, temp, bat_hand
+            )
 
-            score, reasons, statline = score_batter(
+            score, reasons, statline, score_breakdown = score_batter_detailed(
                 bc.to_dict() if bc is not None else {},
                 bp.to_dict() if bp is not None else {},
                 recent, pf, bat_hand, opp_p_hand, weather_bonus, bat_splits
             )
-            score = min(99, score + pit_vuln)
+
+            # Add pitcher vulnerability to score
+            final_score = min(99, score + pit_vuln)
+
+            # Complete score breakdown
+            score_breakdown["pitcher_vuln"] = pit_vuln
+            score_breakdown["pitcher_breakdown"] = pit_breakdown
+            score_breakdown["final"] = final_score
+
             reasons += pit_reasons
             if pf >= 1.10: reasons.append("HR-friendly park")
             elif pf <= 0.90: reasons.append("Pitcher-friendly park")
 
-            # Build split display
+            # Platoon tag — only show if pitcher is actually weak vs this hand
+            platoon_tag = None
+            if opp_p_splits and vs_hand_code in opp_p_splits:
+                split = opp_p_splits[vs_hand_code]
+                if split.get("ip",0) >= 10 and split.get("hr9",0) > 1.3:
+                    platoon_tag = f"SP weak vs {'LHB' if bat_hand=='L' else 'RHB'} ({split['hr9']:.1f} HR/9)"
+
             split_display = None
-            if bat_splits and bat_splits.get("pa",0) >= 20:
+            if bat_splits and bat_splits.get("pa",0) >= 30:
                 split_display = {
                     "vs": f"vs {'LHP' if opp_p_hand=='L' else 'RHP'}",
                     "hr": bat_splits.get("hr",0),
@@ -715,7 +791,7 @@ async def get_games(form_days: int = 14):
                 }
 
             all_batters.append({
-                "name":name,"team":team,"score":score,"reasons":reasons,
+                "name":name,"team":team,"score":final_score,"reasons":reasons,
                 "opp_pitcher":opp_p_name,"bat_hand":bat_hand,"opp_p_hand":opp_p_hand,
                 "park_factor":round(pf,2),"statline":statline,
                 "recent_hr":recent.get("hr",0) if recent else 0,
@@ -724,57 +800,66 @@ async def get_games(form_days: int = 14):
                 "dk_odds":fmt_odds(match_dk_odds(name, dk_props)),
                 "projected":is_proj,
                 "split_display":split_display,
+                "platoon_tag":platoon_tag,
+                "score_breakdown":score_breakdown,
             })
 
         away_proj = lineup_away_status == "projected"
         home_proj = lineup_home_status == "projected"
 
         for b in lineup_away:
-            await process(b, away_team, home_p_id, home_p_hand, home_p_splits, home_p_stats,
+            await process(b, away_team, home_p_id, home_p_hand, home_p_splits,
+                         home_p_cur_stats, home_p_pri_stats,
                          home_p.get("fullName","TBD"), hpc, hpp, away_proj)
         for b in lineup_home:
-            await process(b, home_team, away_p_id, away_p_hand, away_p_splits, away_p_stats,
+            await process(b, home_team, away_p_id, away_p_hand, away_p_splits,
+                         away_p_cur_stats, away_p_pri_stats,
                          away_p.get("fullName","TBD"), apc, app_, home_proj)
 
         all_batters.sort(key=lambda x: x["score"], reverse=True)
 
-        # Pitcher display stats
-        def fmt_pit_display(stats, splits, name, hand):
-            era = stats.get("era",0)
-            hr9 = stats.get("hr9",0)
-            gb  = stats.get("gb_pct",0)
+        def fmt_pit_display(cur_stats, pri_stats, splits, name, hand, p_id):
+            ip_cur = cur_stats.get("ip",0)
+            wc, wp = get_pitcher_blend_weights(ip_cur)
+            era = cur_stats.get("era",0) if ip_cur >= 3 else pri_stats.get("era",0)
+            hr9 = cur_stats.get("hr9",0) if ip_cur >= 3 else pri_stats.get("hr9",0)
             vs_l = splits.get("vsl",{})
             vs_r = splits.get("vsr",{})
             return {
-                "name": name,
-                "hand": hand,
+                "name": name, "hand": hand,
                 "era": round(era,2) if era else None,
                 "hr9": round(hr9,2) if hr9 else None,
-                "vs_L_hr9": round(vs_l.get("hr9",0),2) if vs_l else None,
-                "vs_R_hr9": round(vs_r.get("hr9",0),2) if vs_r else None,
-                "vs_L_era": round(vs_l.get("era",0),2) if vs_l else None,
-                "vs_R_era": round(vs_r.get("era",0),2) if vs_r else None,
+                "ip_2026": round(ip_cur,1),
+                "blend_note": f"{int(wc*100)}% 2026 / {int(wp*100)}% 2025",
+                "vs_L_hr9": round(vs_l.get("hr9",0),2) if vs_l.get("ip",0)>=5 else None,
+                "vs_R_hr9": round(vs_r.get("hr9",0),2) if vs_r.get("ip",0)>=5 else None,
+                "vs_L_era": round(vs_l.get("era",0),2) if vs_l.get("ip",0)>=5 else None,
+                "vs_R_era": round(vs_r.get("era",0),2) if vs_r.get("ip",0)>=5 else None,
             }
 
         wx_bonus, wx_label, wx_desc = calc_weather_effect(home_team, wind_speed, wind_dir, temp)
         games_out.append({
             "game_id":gid,"away":away_team,"home":home_team,"time":gtime,
-            "away_pitcher":fmt_pit_display(away_p_stats, away_p_splits, away_p.get("fullName","TBD"), away_p_hand),
-            "home_pitcher":fmt_pit_display(home_p_stats, home_p_splits, home_p.get("fullName","TBD"), home_p_hand),
+            "away_pitcher":fmt_pit_display(away_p_cur_stats, away_p_pri_stats, away_p_splits,
+                                           away_p.get("fullName","TBD"), away_p_hand, away_p_id),
+            "home_pitcher":fmt_pit_display(home_p_cur_stats, home_p_pri_stats, home_p_splits,
+                                           home_p.get("fullName","TBD"), home_p_hand, home_p_id),
             "top_hr_candidates":all_batters[:3],
             "lineups_posted":lineup_away_status=="confirmed" or lineup_home_status=="confirmed",
             "lineup_away_status":lineup_away_status,
             "lineup_home_status":lineup_home_status,
-            "weather":{"label":wx_label,"desc":wx_desc,"temp":temp,"wind_speed":wind_speed,"wind_dir":wind_dir}
+            "weather":{"label":wx_label,"desc":wx_desc,"temp":temp,
+                       "wind_speed":wind_speed,"wind_dir":wind_dir}
         })
+
     return {"games":games_out,"date":today,"loading":False}
 
 @app.post("/refresh-cache")
 def refresh_cache():
     _cache["ready"] = False
+    _cache["player_hands"] = {}
     threading.Thread(target=load_savant_data, daemon=True).start()
     return {"status":"Cache refresh started"}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
