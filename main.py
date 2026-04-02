@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import httpx
 import pandas as pd
-from pybaseball import batting_stats, pitching_stats, statcast_batter_arsenal_stats
+from pybaseball import batting_stats, pitching_stats, statcast_batter_pitch_arsenal
 from datetime import date, timedelta
 import threading
 import uvicorn
@@ -196,7 +196,7 @@ def load_savant_data():
 
     # Load batter arsenal stats (barrel rate vs pitch type) for 2026
     try:
-        arsenal = statcast_batter_arsenal_stats(SEASON_CURRENT, minPA=10)
+        arsenal = statcast_batter_pitch_arsenal(SEASON_CURRENT, minPA=10)
         print(f"Arsenal stats columns: {list(arsenal.columns[:20])}")
         _cache["batter_arsenal"] = arsenal
         print(f"Batter arsenal loaded: {len(arsenal)} rows")
@@ -204,7 +204,7 @@ def load_savant_data():
         print(f"Arsenal stats error: {e}")
         # Try with different min PA
         try:
-            arsenal = statcast_batter_arsenal_stats(SEASON_CURRENT, minPA=1)
+            arsenal = statcast_batter_pitch_arsenal(SEASON_CURRENT, minPA=1)
             _cache["batter_arsenal"] = arsenal
             print(f"Batter arsenal loaded (minPA=1): {len(arsenal)} rows")
         except Exception as e2:
