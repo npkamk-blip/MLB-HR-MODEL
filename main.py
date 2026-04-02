@@ -451,17 +451,24 @@ def status():
 
 @app.get("/debug-columns")
 def debug_columns():
-    bat_cur = _cache["batting_current"]
     bat_pri = _cache["batting_prior"]
+    bat_cur = _cache["batting_current"]
+    pit_pri = _cache["pitching_prior"]
+    pit_cur = _cache["pitching_current"]
     sample = {}
     for col in ["barrel_pct","exit_velo","iso","hr_fb_pct","pull_pct","pa"]:
         if not bat_pri.empty and col in bat_pri.columns:
-            sample[f"2025_{col}"] = round(float(pd.to_numeric(bat_pri[col],errors="coerce").dropna().median()),2)
+            sample[f"bat_2025_{col}"] = round(float(pd.to_numeric(bat_pri[col],errors="coerce").dropna().median()),2)
         if not bat_cur.empty and col in bat_cur.columns:
-            sample[f"2026_{col}"] = round(float(pd.to_numeric(bat_cur[col],errors="coerce").dropna().median()),2)
+            sample[f"bat_2026_{col}"] = round(float(pd.to_numeric(bat_cur[col],errors="coerce").dropna().median()),2)
+    for col in ["hr_per9","hr_fb_pct","gb_pct","hard_hit_pct","era","pa"]:
+        if not pit_pri.empty and col in pit_pri.columns:
+            sample[f"pit_2025_{col}"] = round(float(pd.to_numeric(pit_pri[col],errors="coerce").dropna().median()),2)
+        if not pit_cur.empty and col in pit_cur.columns:
+            sample[f"pit_2026_{col}"] = round(float(pd.to_numeric(pit_cur[col],errors="coerce").dropna().median()),2)
     return {
         "batting_2025_cols": list(bat_pri.columns) if not bat_pri.empty else [],
-        "batting_2026_cols": list(bat_cur.columns) if not bat_cur.empty else [],
+        "pitching_2025_cols": list(pit_pri.columns) if not pit_pri.empty else [],
         "sample_medians": sample
     }
 
