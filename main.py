@@ -433,12 +433,12 @@ def score_pitcher(c, p):
     gb   = blend_stat(c.get("gb_pct"),       p.get("gb_pct"),       wc, wp)
     hard = blend_stat(c.get("hard_hit_pct"), p.get("hard_hit_pct"), wc, wp)
     v, reasons = 0, []
-    if hr9 > 0:
+    if hr9 > 0.5:
         v += min(hr9/2.5,1.0)*10
         if hr9 > 1.3: reasons.append(f"SP {hr9:.1f} HR/9")
     if hrfb > 0: v += min(hrfb/20.0,1.0)*5
-    if gb < 40: v += 5; reasons.append("Fly ball SP")
-    if hard > 38: v += 3; reasons.append(f"SP {hard:.0f}% hard contact")
+    if gb > 5 and gb < 42: v += 5; reasons.append("Fly ball SP")
+    if hard > 5 and hard > 38: v += 3; reasons.append(f"SP {hard:.0f}% hard contact")
     return v, reasons
 
 @app.get("/")
