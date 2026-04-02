@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import httpx
 import pandas as pd
-from pybaseball import batting_stats, pitching_stats
+from pybaseball import batting_stats, pitching_stats, statcast_batter_arsenal_stats
 from datetime import date, timedelta
 import threading
 import uvicorn
@@ -29,9 +29,57 @@ _cache = {
     "batting_prior": pd.DataFrame(),
     "pitching_current": pd.DataFrame(),
     "pitching_prior": pd.DataFrame(),
-    "player_hands": {},  # cache player handedness {player_id: {bat_side, pitch_hand}}
+    "batter_arsenal": pd.DataFrame(),   # barrel rate vs pitch type 2026
+    "player_hands": {},
     "ready": False
 }
+
+# Pitch type display names
+PITCH_NAMES = {
+    "FF": "Fastball", "FA": "Fastball", "SI": "Sinker", "SL": "Slider",
+    "CH": "Changeup", "CU": "Curve", "FC": "Cutter", "FS": "Splitter",
+    "ST": "Sweeper", "KC": "Knuckle-Curve", "KN": "Knuckleball", "EP": "Eephus",
+}
+
+# Park dimensions: {team: {lf, lcf, cf, rcf, rf, lf_wall, rf_wall}}
+# Scoring uses: RHB pull to LF, LHB pull to RF
+# League avg: LF=331, CF=405, RF=327
+PARK_DIMS = {
+    "Arizona Diamondbacks":   {"lf":330,"cf":407,"rf":334,"lf_wall":7.5,"rf_wall":7.5,"dome":True},
+    "Atlanta Braves":         {"lf":335,"cf":400,"rf":325,"lf_wall":8,"rf_wall":8,"dome":False},
+    "Baltimore Orioles":      {"lf":333,"cf":400,"rf":318,"lf_wall":7,"rf_wall":7,"dome":False},
+    "Boston Red Sox":         {"lf":310,"cf":389,"rf":302,"lf_wall":37,"rf_wall":5,"dome":False},
+    "Chicago Cubs":           {"lf":355,"cf":400,"rf":353,"lf_wall":8,"rf_wall":8,"dome":False},
+    "Chicago White Sox":      {"lf":330,"cf":400,"rf":335,"lf_wall":8,"rf_wall":8,"dome":False},
+    "Cincinnati Reds":        {"lf":328,"cf":404,"rf":325,"lf_wall":12,"rf_wall":9,"dome":False},
+    "Cleveland Guardians":    {"lf":325,"cf":400,"rf":325,"lf_wall":9,"rf_wall":9,"dome":False},
+    "Colorado Rockies":       {"lf":347,"cf":415,"rf":350,"lf_wall":8,"rf_wall":8,"dome":False},
+    "Detroit Tigers":         {"lf":342,"cf":412,"rf":330,"lf_wall":8,"rf_wall":8,"dome":False},
+    "Houston Astros":         {"lf":315,"cf":409,"rf":326,"lf_wall":9,"rf_wall":9,"dome":True},
+    "Kansas City Royals":     {"lf":327,"cf":400,"rf":327,"lf_wall":8,"rf_wall":8,"dome":False},  # 2026 updated dims
+    "Los Angeles Angels":     {"lf":347,"cf":396,"rf":350,"lf_wall":8,"rf_wall":8,"dome":False},
+    "Los Angeles Dodgers":    {"lf":330,"cf":395,"rf":330,"lf_wall":8,"rf_wall":8,"dome":False},
+    "Miami Marlins":          {"lf":344,"cf":400,"rf":335,"lf_wall":8,"rf_wall":8,"dome":True},
+    "Milwaukee Brewers":      {"lf":342,"cf":400,"rf":337,"lf_wall":8,"rf_wall":8,"dome":True},
+    "Minnesota Twins":        {"lf":339,"cf":404,"rf":328,"lf_wall":8,"rf_wall":8,"dome":False},
+    "New York Mets":          {"lf":335,"cf":408,"rf":330,"lf_wall":8,"rf_wall":8,"dome":False},
+    "New York Yankees":       {"lf":318,"cf":408,"rf":314,"lf_wall":8,"rf_wall":8,"dome":False},
+    "Oakland Athletics":      {"lf":330,"cf":400,"rf":300,"lf_wall":8,"rf_wall":8,"dome":False},
+    "Philadelphia Phillies":  {"lf":329,"cf":401,"rf":330,"lf_wall":8,"rf_wall":8,"dome":False},
+    "Pittsburgh Pirates":     {"lf":325,"cf":399,"rf":320,"lf_wall":8,"rf_wall":8,"dome":False},
+    "San Diego Padres":       {"lf":357,"cf":396,"rf":382,"lf_wall":8,"rf_wall":8,"dome":False},
+    "San Francisco Giants":   {"lf":399,"cf":391,"rf":365,"lf_wall":8,"rf_wall":8,"dome":False},
+    "Seattle Mariners":       {"lf":331,"cf":401,"rf":326,"lf_wall":8,"rf_wall":8,"dome":True},
+    "St. Louis Cardinals":    {"lf":336,"cf":400,"rf":335,"lf_wall":8,"rf_wall":8,"dome":False},
+    "Tampa Bay Rays":         {"lf":315,"cf":404,"rf":322,"lf_wall":8,"rf_wall":8,"dome":True},
+    "Texas Rangers":          {"lf":329,"cf":407,"rf":326,"lf_wall":8,"rf_wall":8,"dome":True},
+    "Toronto Blue Jays":      {"lf":328,"cf":400,"rf":328,"lf_wall":8,"rf_wall":8,"dome":True},
+    "Washington Nationals":   {"lf":337,"cf":402,"rf":335,"lf_wall":8,"rf_wall":8,"dome":False},
+}
+
+# League averages for comparison
+LG_AVG_LF = 331
+LG_AVG_RF = 327
 
 PARK_FACTORS = {
     "Colorado Rockies":       {"L": 1.35, "R": 1.35},
@@ -51,7 +99,7 @@ PARK_FACTORS = {
     "Minnesota Twins":        {"L": 1.00, "R": 1.00},
     "Chicago White Sox":      {"L": 1.00, "R": 1.00},
     "Cleveland Guardians":    {"L": 0.98, "R": 0.97},
-    "Kansas City Royals":     {"L": 0.97, "R": 0.98},
+    "Kansas City Royals":     {"L": 1.02, "R": 1.02},  # updated for 2026 shorter fences
     "Detroit Tigers":         {"L": 0.97, "R": 0.95},
     "St. Louis Cardinals":    {"L": 0.96, "R": 0.97},
     "Washington Nationals":   {"L": 0.96, "R": 0.95},
@@ -100,16 +148,22 @@ STADIUMS = {
 }
 
 BAT_COL_MAP = {
-    "Name": "name", "PA": "pa", "HR": "hr", "AVG": "avg", "ISO": "iso",
-    "Barrel%": "barrel_pct", "EV": "exit_velo", "LA": "launch_angle",
-    "Hard%": "hard_hit_pct", "FB%": "fb_pct", "HR/FB": "hr_fb_pct", "Pull%": "pull_pct",
+    "Name":"name","PA":"pa","HR":"hr","AVG":"avg","ISO":"iso",
+    "Barrel%":"barrel_pct","EV":"exit_velo","LA":"launch_angle",
+    "Hard%":"hard_hit_pct","FB%":"fb_pct","HR/FB":"hr_fb_pct","Pull%":"pull_pct",
 }
 
 PIT_COL_MAP = {
-    "Name": "name", "PA": "pa", "TBF": "pa", "HR": "hr", "ERA": "era",
-    "WHIP": "whip", "HR/9": "hr_per9", "HR/FB": "hr_fb_pct",
-    "GB%": "gb_pct", "FB%": "fb_pct", "Hard%": "hard_hit_pct", "HardHit%": "hard_hit_pct",
-    "IP": "ip",
+    "Name":"name","PA":"pa","TBF":"pa","HR":"hr","ERA":"era",
+    "WHIP":"whip","HR/9":"hr_per9","HR/FB":"hr_fb_pct",
+    "GB%":"gb_pct","FB%":"fb_pct","Hard%":"hard_hit_pct","HardHit%":"hard_hit_pct","IP":"ip",
+}
+
+# Pitch usage columns in FanGraphs pitching data (Statcast codes)
+PITCH_USAGE_COLS = {
+    "FA% (sc)":"FF","FT% (sc)":"FT","FC% (sc)":"FC","FS% (sc)":"FS",
+    "SI% (sc)":"SI","SL% (sc)":"SL","CU% (sc)":"CU","CH% (sc)":"CH",
+    "KC% (sc)":"KC","KN% (sc)":"KN",
 }
 
 def load_savant_data():
@@ -139,6 +193,23 @@ def load_savant_data():
             print(f"{season} pitching: {len(pit)} pitchers")
         except Exception as e:
             print(f"{season} pitching error: {e}")
+
+    # Load batter arsenal stats (barrel rate vs pitch type) for 2026
+    try:
+        arsenal = statcast_batter_arsenal_stats(SEASON_CURRENT, minPA=10)
+        print(f"Arsenal stats columns: {list(arsenal.columns[:20])}")
+        _cache["batter_arsenal"] = arsenal
+        print(f"Batter arsenal loaded: {len(arsenal)} rows")
+    except Exception as e:
+        print(f"Arsenal stats error: {e}")
+        # Try with different min PA
+        try:
+            arsenal = statcast_batter_arsenal_stats(SEASON_CURRENT, minPA=1)
+            _cache["batter_arsenal"] = arsenal
+            print(f"Batter arsenal loaded (minPA=1): {len(arsenal)} rows")
+        except Exception as e2:
+            print(f"Arsenal stats fallback error: {e2}")
+
     _cache["ready"] = True
     print("All data ready.")
 
@@ -159,25 +230,132 @@ def fuzzy_match(name, df):
             if last in str(row.get("name","")).lower(): return row
     return None
 
+def get_pitcher_top_pitches(pitcher_name):
+    """Get top 2 pitch types and usage % from FanGraphs pitching data"""
+    pit_df = _cache["pitching_current"]
+    if pit_df.empty:
+        pit_df = _cache["pitching_prior"]
+    row = fuzzy_match(pitcher_name, pit_df)
+    if row is None:
+        # Try prior season
+        row = fuzzy_match(pitcher_name, _cache["pitching_prior"])
+    if row is None:
+        return []
+
+    pitches = []
+    for col, code in PITCH_USAGE_COLS.items():
+        if col in row.index:
+            val = float(row.get(col, 0) or 0)
+            if val > 5:  # Only pitches thrown more than 5% of the time
+                name = PITCH_NAMES.get(code, code)
+                pitches.append({"code": code, "name": name, "pct": round(val, 1)})
+
+    pitches.sort(key=lambda x: x["pct"], reverse=True)
+    return pitches[:2]
+
+def get_batter_barrel_vs_pitches(player_id, pitch_codes):
+    """Get batter's barrel rate vs specific pitch types from arsenal stats"""
+    arsenal = _cache["batter_arsenal"]
+    if arsenal.empty or not pitch_codes:
+        return {}
+
+    try:
+        # Arsenal stats indexed by player_id (mlb_id) and pitch_type
+        cols = list(arsenal.columns)
+        print(f"Arsenal cols: {cols[:15]}")
+
+        # Find player rows
+        id_col = None
+        for c in ["player_id","mlb_id","batter","IDfg"]:
+            if c in cols:
+                id_col = c
+                break
+
+        if not id_col:
+            return {}
+
+        player_rows = arsenal[arsenal[id_col] == player_id]
+        if player_rows.empty:
+            return {}
+
+        result = {}
+        pitch_col = None
+        for c in ["pitch_type","pitch_hand","pitch"]:
+            if c in cols:
+                pitch_col = c
+                break
+
+        barrel_col = None
+        for c in ["brl_percent","barrel_pct","brl%","Barrel%"]:
+            if c in cols:
+                barrel_col = c
+                break
+
+        if not pitch_col or not barrel_col:
+            return {}
+
+        for _, row in player_rows.iterrows():
+            pt = str(row.get(pitch_col,"")).upper()
+            barrel = float(row.get(barrel_col, 0) or 0)
+            if pt in pitch_codes:
+                result[pt] = round(barrel, 1)
+
+        return result
+    except Exception as e:
+        print(f"Arsenal lookup error: {e}")
+        return {}
+
+def get_park_dimension_bonus(home_team, bat_hand, pull_pct=40):
+    """
+    Calculate bonus/penalty based on park dimensions vs league average
+    RHB pull to LF → compare LF to league avg 331
+    LHB pull to RF → compare RF to league avg 327
+    High pull rate batters get more weight
+    """
+    dims = PARK_DIMS.get(home_team)
+    if not dims: return 0, ""
+
+    if dims.get("dome"): return 0, ""
+
+    pull_weight = min(pull_pct / 40.0, 1.5)  # normalize pull rate
+
+    if bat_hand == "R":
+        # Righty pulls to left field
+        lf = dims.get("lf", LG_AVG_LF)
+        diff = LG_AVG_LF - lf  # positive = shorter than avg = good
+        bonus = round((diff / 20.0) * 5 * pull_weight, 1)
+        if diff > 10: note = f"Short LF ({lf}ft)"
+        elif diff < -10: note = f"Deep LF ({lf}ft)"
+        else: note = ""
+    else:
+        # Lefty pulls to right field
+        rf = dims.get("rf", LG_AVG_RF)
+        diff = LG_AVG_RF - rf  # positive = shorter = good
+        bonus = round((diff / 20.0) * 5 * pull_weight, 1)
+        if diff > 10: note = f"Short RF ({rf}ft)"
+        elif diff < -10: note = f"Deep RF ({rf}ft)"
+        else: note = ""
+
+    return bonus, note
+
 def get_batter_blend_weights(pa_current):
     pa = float(pa_current or 0)
     if pa >= 150: return 1.0, 0.0
-    elif pa >= 50: w = (pa-50)/100.0; return w, 1.0-w
-    else: w = 0.20+(pa/50.0)*0.30; return w, 1.0-w
+    elif pa >= 50: w=(pa-50)/100.0; return w, 1.0-w
+    else: w=0.20+(pa/50.0)*0.30; return w, 1.0-w
 
 def get_pitcher_blend_weights(ip_current):
-    """Option C: blend by innings pitched in current season"""
     ip = float(ip_current or 0)
-    if ip >= 30: return 1.0, 0.0       # 100% current
-    elif ip >= 10: w = (ip-10)/20.0; return 0.5+w*0.5, 0.5-w*0.5  # 50-100% current
-    elif ip > 0: return 0.5, 0.5       # 50/50 under 10 IP
-    else: return 0.0, 1.0              # no current data, use prior
+    if ip >= 30: return 1.0, 0.0
+    elif ip >= 10: w=(ip-10)/20.0; return 0.5+w*0.5, 0.5-w*0.5
+    elif ip > 0: return 0.5, 0.5
+    else: return 0.0, 1.0
 
 def blend_stat(cv, pv, wc, wp):
     c, p = float(cv or 0), float(pv or 0)
-    if c == 0 and p == 0: return 0
-    if c == 0: return p
-    if p == 0: return c
+    if c==0 and p==0: return 0
+    if c==0: return p
+    if p==0: return c
     return c*wc + p*wp
 
 def get_park_factor(home_team, batter_hand):
@@ -247,7 +425,6 @@ async def fetch_weather(lat, lon, game_time_utc):
         print(f"Weather error: {e}"); return 70, 0, 0
 
 async def fetch_player_hand(player_id):
-    """Fetch player handedness — cached to avoid repeat calls"""
     if player_id in _cache["player_hands"]:
         return _cache["player_hands"][player_id]
     try:
@@ -255,9 +432,9 @@ async def fetch_player_hand(player_id):
             r = await client.get(f"{MLB_API}/people/{player_id}")
             d = r.json()
         person = d.get("people",[{}])[0]
-        bat = person.get("batSide",{}).get("code","R") or "R"
-        pit = person.get("pitchHand",{}).get("code","R") or "R"
-        result = {"bat_side": bat, "pitch_hand": pit, "name": person.get("fullName","")}
+        bat = person.get("batSide",{}).get("code","") or "R"
+        pit = person.get("pitchHand",{}).get("code","") or "R"
+        result = {"bat_side":bat,"pitch_hand":pit,"name":person.get("fullName","")}
         _cache["player_hands"][player_id] = result
         return result
     except:
@@ -279,8 +456,7 @@ async def fetch_batter_splits(player_id, pit_hand, season=2026):
                 pa = int(s.get("plateAppearances",0))
                 hr = int(s.get("homeRuns",0))
                 return {"hr":hr,"pa":pa,"slg":slg,"avg":avg,"iso":slg-avg,
-                        "ops":float(s.get("ops",0) or 0),
-                        "hr_rate":(hr/max(pa,1))*600}
+                        "ops":float(s.get("ops",0) or 0),"hr_rate":(hr/max(pa,1))*600}
         return None
     except: return None
 
@@ -298,12 +474,10 @@ async def fetch_pitcher_splits(player_id, season=2026):
                 s = split.get("stat",{})
                 ip = float(s.get("inningsPitched",0) or 0)
                 hr = int(s.get("homeRuns",0))
-                result[code] = {
-                    "hr9": round((hr/ip)*9,2) if ip>0 else 0,
-                    "era": float(s.get("era",0) or 0),
-                    "whip": float(s.get("whip",0) or 0),
-                    "ip": ip, "pa": int(s.get("battersFaced",0)),
-                }
+                result[code] = {"hr9":round((hr/ip)*9,2) if ip>0 else 0,
+                                "era":float(s.get("era",0) or 0),
+                                "whip":float(s.get("whip",0) or 0),
+                                "ip":ip,"pa":int(s.get("battersFaced",0))}
         return result
     except: return {}
 
@@ -317,12 +491,8 @@ async def fetch_pitcher_season_stats(player_id, season):
         s = splits[0].get("stat",{})
         ip = float(s.get("inningsPitched",0) or 0)
         hr = int(s.get("homeRuns",0))
-        return {
-            "era": float(s.get("era",0) or 0),
-            "whip": float(s.get("whip",0) or 0),
-            "hr9": round((hr/ip)*9,2) if ip>0 else 0,
-            "ip": ip,
-        }
+        return {"era":float(s.get("era",0) or 0),"whip":float(s.get("whip",0) or 0),
+                "hr9":round((hr/ip)*9,2) if ip>0 else 0,"ip":ip}
     except: return {}
 
 async def fetch_projected_lineup(team_id, team_name):
@@ -424,19 +594,19 @@ async def fetch_recent_form(player_id, days=14):
         return {"hr":int(s.get("homeRuns",0)),"pa":int(s.get("plateAppearances",0)),"slg":slg,"iso":slg-avg}
     except: return None
 
-def score_batter_detailed(c, p, recent, park_factor, bat_hand, opp_hand, weather_bonus, bat_splits=None):
-    """Score batter and return detailed breakdown of every component"""
+def score_batter_detailed(c, p, recent, park_factor, bat_hand, opp_hand,
+                           weather_bonus, park_dim_bonus, bat_splits=None,
+                           barrel_vs_pitches=None, pitcher_top_pitches=None):
     pa_cur = float(c.get("pa",0) or 0)
     wc, wp = get_batter_blend_weights(pa_cur)
 
-    # Stats — use split-specific if available and sufficient
     if bat_splits and bat_splits.get("pa",0) >= 30:
-        iso    = bat_splits.get("iso", 0) or blend_stat(c.get("iso"), p.get("iso"), wc, wp)
-        hr_rate_split = bat_splits.get("hr_rate", 0)
+        iso = bat_splits.get("iso",0) or blend_stat(c.get("iso"), p.get("iso"), wc, wp)
+        hr_rate_split = bat_splits.get("hr_rate",0)
         split_used = True
         split_label = f"vs {'LHP' if opp_hand=='L' else 'RHP'} split"
     else:
-        iso    = blend_stat(c.get("iso"), p.get("iso"), wc, wp)
+        iso = blend_stat(c.get("iso"), p.get("iso"), wc, wp)
         hr_rate_split = 0
         split_used = False
         split_label = f"2025/26 blend ({int(wc*100)}%/{int(wp*100)}%)"
@@ -449,7 +619,6 @@ def score_batter_detailed(c, p, recent, park_factor, bat_hand, opp_hand, weather
     breakdown = []
     ss = 0
 
-    # Barrel rate — 25pts max
     if barrel > 0:
         pts = round(min(barrel/15.0,1.0)*25, 1)
         ss += pts
@@ -457,7 +626,6 @@ def score_batter_detailed(c, p, recent, park_factor, bat_hand, opp_hand, weather
     else:
         breakdown.append({"label":"Barrel rate","pts":0,"max":25,"note":"No data"})
 
-    # ISO — 20pts max
     if iso > 0:
         pts = round(min(iso/0.280,1.0)*20, 1)
         ss += pts
@@ -465,7 +633,6 @@ def score_batter_detailed(c, p, recent, park_factor, bat_hand, opp_hand, weather
     else:
         breakdown.append({"label":"ISO","pts":0,"max":20,"note":"No data"})
 
-    # HR/FB — 15pts max
     if hr_fb > 0:
         pts = round(min(hr_fb/25.0,1.0)*15, 1)
         ss += pts
@@ -473,7 +640,6 @@ def score_batter_detailed(c, p, recent, park_factor, bat_hand, opp_hand, weather
     else:
         breakdown.append({"label":"HR/FB","pts":0,"max":15,"note":"No data"})
 
-    # Exit velo — 15pts max
     if ev > 0:
         pts = round(min((ev-85)/15.0,1.0)*15, 1)
         ss += pts
@@ -481,28 +647,45 @@ def score_batter_detailed(c, p, recent, park_factor, bat_hand, opp_hand, weather
     else:
         breakdown.append({"label":"Exit velo","pts":0,"max":15,"note":"No data"})
 
-    # Pull rate — 5pts max
     if pull > 0:
         pts = round(min(pull/50.0,1.0)*5, 1)
         ss += pts
         breakdown.append({"label":f"Pull rate {pull:.1f}%","pts":pts,"max":5,"note":split_label})
 
-    # Split HR rate bonus — 15pts max
+    # Pitch matchup bonus — barrel rate vs pitcher's top pitches
+    pitch_bonus = 0
+    pitch_breakdown = []
+    if barrel_vs_pitches and pitcher_top_pitches and barrel > 0:
+        for pitch in pitcher_top_pitches:
+            code = pitch["code"]
+            usage = pitch["pct"] / 100.0
+            brl_vs = barrel_vs_pitches.get(code)
+            if brl_vs is not None:
+                # Difference from overall barrel rate
+                diff = brl_vs - barrel
+                # Weight by pitch usage
+                pts = round(diff * usage * 2, 1)
+                pitch_bonus += pts
+                pitch_breakdown.append({
+                    "label": f"Barrel vs {pitch['name']} ({pitch['pct']}% usage): {brl_vs:.1f}% (overall {barrel:.1f}%)",
+                    "pts": pts,
+                    "max": 10
+                })
+        pitch_bonus = round(max(min(pitch_bonus, 10), -10), 1)
+        ss += pitch_bonus
+        breakdown.extend(pitch_breakdown)
+
+    # Split bonus
     if split_used and hr_rate_split > 0:
         pts = round(min(hr_rate_split/30.0,1.0)*15, 1)
         ss += pts
         breakdown.append({"label":f"HR rate vs {'LHP' if opp_hand=='L' else 'RHP'} ({hr_rate_split:.0f}/600)","pts":pts,"max":15,"note":"split data"})
     elif opp_hand and bat_hand:
-        if bat_hand != opp_hand:
-            ss += 4
-            breakdown.append({"label":f"Platoon advantage ({bat_hand} vs {opp_hand}P)","pts":4,"max":4,"note":"handedness"})
-        else:
-            ss -= 3
-            breakdown.append({"label":f"Platoon disadvantage ({bat_hand} vs {opp_hand}P)","pts":-3,"max":0,"note":"handedness"})
+        if bat_hand != opp_hand: ss += 4
+        else: ss -= 3
 
     season_score = round(ss, 1)
 
-    # Recent form — 30% of final
     fs = 0
     form_breakdown = []
     if recent and recent.get("pa",0) >= 5:
@@ -520,17 +703,12 @@ def score_batter_detailed(c, p, recent, park_factor, bat_hand, opp_hand, weather
         ]
     else:
         fs = season_score * 0.5
-        form_breakdown = [{"label":"No recent form data — using 50% of season score","pts":round(fs,1),"max":100}]
+        form_breakdown = [{"label":"No recent form — using 50% of season score","pts":round(fs,1),"max":100}]
 
-    # Blend 70/30
     blended = round(season_score * 0.70 + fs * 0.30, 1)
-
-    # Park factor
     park_adj = round(blended * park_factor - blended, 1)
     after_park = round(blended * park_factor, 1)
-
-    # Weather
-    after_weather = round(after_park + weather_bonus, 1)
+    after_weather = round(after_park + weather_bonus + park_dim_bonus, 1)
 
     reasons = []
     if barrel > 8: reasons.append(f"Barrel {barrel:.1f}%")
@@ -544,33 +722,31 @@ def score_batter_detailed(c, p, recent, park_factor, bat_hand, opp_hand, weather
         "season_components": breakdown,
         "season_subtotal": season_score,
         "form_components": form_breakdown,
-        "form_subtotal": round(fs, 1),
+        "form_subtotal": round(fs,1),
         "blend_note": f"70% season ({round(season_score*0.70,1)}) + 30% form ({round(fs*0.30,1)}) = {blended}",
         "blended": blended,
         "park_factor": park_factor,
         "park_adj": park_adj,
         "after_park": after_park,
         "weather_bonus": weather_bonus,
+        "park_dim_bonus": park_dim_bonus,
         "after_weather": after_weather,
     }
 
-    return round(min(after_weather, 99)), reasons, {
+    return round(min(after_weather,99)), reasons, {
         "barrel":round(barrel,1),"ev":round(ev,1),"iso":round(iso,3),"hr_fb":round(hr_fb,1),
         "split_used":split_used,
     }, score_breakdown
 
 def score_pitcher_detailed(c, p, pit_splits=None, vs_hand=None, ip_current=0):
-    """Score pitcher using IP-based blending (Option C)"""
     ip_cur = float(ip_current or c.get("ip",0) or 0)
     wc, wp = get_pitcher_blend_weights(ip_cur)
 
-    # Use split-specific stats if available
-    split_note = ""
     if pit_splits and vs_hand and vs_hand in pit_splits:
         split = pit_splits[vs_hand]
         split_ip = split.get("ip",0)
         if split_ip >= 5:
-            hr9  = split.get("hr9", 0)
+            hr9 = split.get("hr9",0)
             split_note = f"split vs {'LHB' if vs_hand=='vsl' else 'RHB'} ({split_ip:.0f} IP)"
         else:
             hr9 = blend_stat(c.get("hr_per9"), p.get("hr_per9"), wc, wp)
@@ -583,9 +759,7 @@ def score_pitcher_detailed(c, p, pit_splits=None, vs_hand=None, ip_current=0):
     gb   = blend_stat(c.get("gb_pct"),    p.get("gb_pct"),    wc, wp)
     hard = blend_stat(c.get("hard_hit_pct"), p.get("hard_hit_pct"), wc, wp)
 
-    v, reasons = 0, []
-    pit_breakdown = []
-
+    v, reasons, pit_breakdown = 0, [], []
     if hr9 > 0.5:
         pts = round(min(hr9/2.5,1.0)*10, 1)
         v += pts
@@ -596,15 +770,13 @@ def score_pitcher_detailed(c, p, pit_splits=None, vs_hand=None, ip_current=0):
         v += pts
         pit_breakdown.append({"label":f"HR/FB {hrfb:.1f}%","pts":pts,"max":5})
     if gb > 5 and gb < 36:
-        v += 5
-        pit_breakdown.append({"label":f"Fly ball pitcher (GB% {gb:.1f}%)","pts":5,"max":5})
+        v += 5; pit_breakdown.append({"label":f"Fly ball pitcher (GB% {gb:.1f}%)","pts":5,"max":5})
         reasons.append("Fly ball SP")
     if hard > 5 and hard > 40:
-        v += 3
-        pit_breakdown.append({"label":f"Hard contact allowed {hard:.0f}%","pts":3,"max":3})
+        v += 3; pit_breakdown.append({"label":f"Hard contact {hard:.0f}%","pts":3,"max":3})
         reasons.append(f"SP {hard:.0f}% hard contact")
 
-    return round(v, 1), reasons, pit_breakdown
+    return round(v,1), reasons, pit_breakdown
 
 @app.get("/")
 def root():
@@ -612,11 +784,20 @@ def root():
 
 @app.get("/status")
 def status():
+    arsenal_count = len(_cache["batter_arsenal"]) if not _cache["batter_arsenal"].empty else 0
     return {"ready":_cache["ready"],
             "batters_2026":len(_cache["batting_current"]),
             "batters_2025":len(_cache["batting_prior"]),
             "pitchers_2026":len(_cache["pitching_current"]),
-            "pitchers_2025":len(_cache["pitching_prior"])}
+            "pitchers_2025":len(_cache["pitching_prior"]),
+            "arsenal_rows":arsenal_count}
+
+@app.get("/debug-arsenal")
+def debug_arsenal():
+    arsenal = _cache["batter_arsenal"]
+    if arsenal.empty:
+        return {"status":"empty","cols":[]}
+    return {"cols":list(arsenal.columns),"rows":len(arsenal),"sample":arsenal.head(3).to_dict(orient="records")}
 
 @app.get("/games")
 async def get_games(form_days: int = 14):
@@ -634,7 +815,7 @@ async def get_games(form_days: int = 14):
     games_out = []
     for game in dates[0].get("games",[]):
         if game.get("status",{}).get("abstractGameState") == "Final": continue
-        gid          = game["gamePk"]
+        gid = game["gamePk"]
         away_team    = game["teams"]["away"]["team"]["name"]
         home_team    = game["teams"]["home"]["team"]["name"]
         away_team_id = game["teams"]["away"]["team"]["id"]
@@ -643,33 +824,34 @@ async def get_games(form_days: int = 14):
         home_p       = game["teams"]["home"].get("probablePitcher",{})
         gtime        = game.get("gameDate","")
 
-        # Pitcher info
         away_p_id = away_p.get("id")
         home_p_id = home_p.get("id")
         away_p_hand = home_p_hand = "R"
-        away_p_cur_stats = home_p_cur_stats = {}
-        away_p_pri_stats = home_p_pri_stats = {}
+        away_p_cur = home_p_cur = {}
+        away_p_pri = home_p_pri = {}
         away_p_splits = home_p_splits = {}
+        away_p_pitches = home_p_pitches = []
 
         if away_p_id:
             info = await fetch_player_hand(away_p_id)
             away_p_hand = info.get("pitch_hand","R")
-            away_p_cur_stats = await fetch_pitcher_season_stats(away_p_id, SEASON_CURRENT)
-            away_p_pri_stats = await fetch_pitcher_season_stats(away_p_id, SEASON_PRIOR)
+            away_p_cur = await fetch_pitcher_season_stats(away_p_id, SEASON_CURRENT)
+            away_p_pri = await fetch_pitcher_season_stats(away_p_id, SEASON_PRIOR)
             away_p_splits = await fetch_pitcher_splits(away_p_id, SEASON_CURRENT)
             if not away_p_splits:
                 away_p_splits = await fetch_pitcher_splits(away_p_id, SEASON_PRIOR)
+            away_p_pitches = get_pitcher_top_pitches(away_p.get("fullName",""))
 
         if home_p_id:
             info = await fetch_player_hand(home_p_id)
             home_p_hand = info.get("pitch_hand","R")
-            home_p_cur_stats = await fetch_pitcher_season_stats(home_p_id, SEASON_CURRENT)
-            home_p_pri_stats = await fetch_pitcher_season_stats(home_p_id, SEASON_PRIOR)
+            home_p_cur = await fetch_pitcher_season_stats(home_p_id, SEASON_CURRENT)
+            home_p_pri = await fetch_pitcher_season_stats(home_p_id, SEASON_PRIOR)
             home_p_splits = await fetch_pitcher_splits(home_p_id, SEASON_CURRENT)
             if not home_p_splits:
                 home_p_splits = await fetch_pitcher_splits(home_p_id, SEASON_PRIOR)
+            home_p_pitches = get_pitcher_top_pitches(home_p.get("fullName",""))
 
-        # Weather
         stadium = STADIUMS.get(home_team,{})
         temp, wind_speed, wind_dir = 70, 0, 0
         if not stadium.get("dome") and stadium.get("lat"):
@@ -683,7 +865,6 @@ async def get_games(form_days: int = 14):
         hpc, hpp = get_pit_df(home_p.get("fullName",""))
         apc, app_ = get_pit_df(away_p.get("fullName",""))
 
-        # Lineups
         lineup_away, lineup_home = [], []
         lineup_away_status = lineup_home_status = "projected"
         try:
@@ -707,26 +888,20 @@ async def get_games(form_days: int = 14):
         all_batters = []
 
         async def process(batter, team, opp_p_id, opp_p_hand, opp_p_splits,
-                          opp_p_cur_stats, opp_p_pri_stats, opp_p_name, pit_c, pit_p, is_proj):
-            # Get batter identity
+                          opp_p_cur, opp_p_pri, opp_p_name, pit_c, pit_p,
+                          opp_p_pitches, is_proj):
             if "person" in batter:
                 name     = batter.get("person",{}).get("fullName","")
                 pid      = batter.get("person",{}).get("id")
                 bat_hand = batter.get("person",{}).get("batSide",{}).get("code","")
             else:
-                name = batter.get("name","")
-                pid  = batter.get("id")
-                bat_hand = ""
+                name = batter.get("name",""); pid = batter.get("id"); bat_hand = ""
 
-            # Always fetch real handedness from API (cached after first call)
             if pid:
                 info = await fetch_player_hand(pid)
                 real_hand = info.get("bat_side","")
                 if real_hand: bat_hand = real_hand
-
             if not bat_hand: bat_hand = "R"
-
-            # Switch hitters bat opposite of pitcher
             if bat_hand == "S":
                 bat_hand = "L" if opp_p_hand == "R" else "R"
 
@@ -734,7 +909,6 @@ async def get_games(form_days: int = 14):
             bp = fuzzy_match(name, _cache["batting_prior"])
             recent = await fetch_recent_form(pid, days=form_days) if pid else None
 
-            # Batter splits
             bat_splits = None
             if pid:
                 bat_splits = await fetch_batter_splits(pid, opp_p_hand, SEASON_CURRENT)
@@ -743,42 +917,61 @@ async def get_games(form_days: int = 14):
                     if prior_splits and prior_splits.get("pa",0) >= 50:
                         bat_splits = prior_splits
 
-            # Pitcher scoring with IP-based blend
+            # Get barrel rate vs pitcher's top pitches
+            barrel_vs_pitches = {}
+            if pid and opp_p_pitches and not _cache["batter_arsenal"].empty:
+                pitch_codes = [p["code"] for p in opp_p_pitches]
+                barrel_vs_pitches = get_batter_barrel_vs_pitches(pid, pitch_codes)
+
             vs_hand_code = "vsl" if bat_hand == "L" else "vsr"
-            ip_current = opp_p_cur_stats.get("ip", 0)
+            ip_current = opp_p_cur.get("ip",0)
             pit_vuln, pit_reasons, pit_breakdown = score_pitcher_detailed(
                 pit_c, pit_p, opp_p_splits, vs_hand_code, ip_current
             )
 
             pf = get_park_factor(home_team, bat_hand)
-            weather_bonus, weather_label, _ = calc_weather_effect(
-                home_team, wind_speed, wind_dir, temp, bat_hand
-            )
+            weather_bonus, weather_label, _ = calc_weather_effect(home_team, wind_speed, wind_dir, temp, bat_hand)
+
+            # Park dimensions bonus
+            bc_dict = bc.to_dict() if bc is not None else {}
+            pull_pct = float(bc_dict.get("pull_pct", 0) or 0)
+            park_dim_bonus, park_dim_note = get_park_dimension_bonus(home_team, bat_hand, pull_pct)
 
             score, reasons, statline, score_breakdown = score_batter_detailed(
-                bc.to_dict() if bc is not None else {},
+                bc_dict,
                 bp.to_dict() if bp is not None else {},
-                recent, pf, bat_hand, opp_p_hand, weather_bonus, bat_splits
+                recent, pf, bat_hand, opp_p_hand, weather_bonus, park_dim_bonus,
+                bat_splits, barrel_vs_pitches, opp_p_pitches
             )
 
-            # Add pitcher vulnerability to score
             final_score = min(99, score + pit_vuln)
-
-            # Complete score breakdown
             score_breakdown["pitcher_vuln"] = pit_vuln
             score_breakdown["pitcher_breakdown"] = pit_breakdown
+            score_breakdown["park_dim_bonus"] = park_dim_bonus
+            score_breakdown["park_dim_note"] = park_dim_note
             score_breakdown["final"] = final_score
 
             reasons += pit_reasons
             if pf >= 1.10: reasons.append("HR-friendly park")
             elif pf <= 0.90: reasons.append("Pitcher-friendly park")
+            if park_dim_note: reasons.append(park_dim_note)
 
-            # Platoon tag — only show if pitcher is actually weak vs this hand
             platoon_tag = None
             if opp_p_splits and vs_hand_code in opp_p_splits:
                 split = opp_p_splits[vs_hand_code]
                 if split.get("ip",0) >= 10 and split.get("hr9",0) > 1.3:
                     platoon_tag = f"SP weak vs {'LHB' if bat_hand=='L' else 'RHB'} ({split['hr9']:.1f} HR/9)"
+
+            # Build pitch matchup display
+            pitch_matchup = []
+            for pitch in opp_p_pitches:
+                code = pitch["code"]
+                brl = barrel_vs_pitches.get(code)
+                pitch_matchup.append({
+                    "name": pitch["name"],
+                    "pct": pitch["pct"],
+                    "barrel_vs": brl,  # None if no data
+                })
 
             split_display = None
             if bat_splits and bat_splits.get("pa",0) >= 30:
@@ -801,6 +994,7 @@ async def get_games(form_days: int = 14):
                 "projected":is_proj,
                 "split_display":split_display,
                 "platoon_tag":platoon_tag,
+                "pitch_matchup":pitch_matchup,
                 "score_breakdown":score_breakdown,
             })
 
@@ -809,16 +1003,16 @@ async def get_games(form_days: int = 14):
 
         for b in lineup_away:
             await process(b, away_team, home_p_id, home_p_hand, home_p_splits,
-                         home_p_cur_stats, home_p_pri_stats,
-                         home_p.get("fullName","TBD"), hpc, hpp, away_proj)
+                         home_p_cur, home_p_pri, home_p.get("fullName","TBD"),
+                         hpc, hpp, home_p_pitches, away_proj)
         for b in lineup_home:
             await process(b, home_team, away_p_id, away_p_hand, away_p_splits,
-                         away_p_cur_stats, away_p_pri_stats,
-                         away_p.get("fullName","TBD"), apc, app_, home_proj)
+                         away_p_cur, away_p_pri, away_p.get("fullName","TBD"),
+                         apc, app_, away_p_pitches, home_proj)
 
         all_batters.sort(key=lambda x: x["score"], reverse=True)
 
-        def fmt_pit_display(cur_stats, pri_stats, splits, name, hand, p_id):
+        def fmt_pit_display(cur_stats, pri_stats, splits, name, hand, pitches):
             ip_cur = cur_stats.get("ip",0)
             wc, wp = get_pitcher_blend_weights(ip_cur)
             era = cur_stats.get("era",0) if ip_cur >= 3 else pri_stats.get("era",0)
@@ -826,30 +1020,28 @@ async def get_games(form_days: int = 14):
             vs_l = splits.get("vsl",{})
             vs_r = splits.get("vsr",{})
             return {
-                "name": name, "hand": hand,
-                "era": round(era,2) if era else None,
-                "hr9": round(hr9,2) if hr9 else None,
-                "ip_2026": round(ip_cur,1),
-                "blend_note": f"{int(wc*100)}% 2026 / {int(wp*100)}% 2025",
-                "vs_L_hr9": round(vs_l.get("hr9",0),2) if vs_l.get("ip",0)>=5 else None,
-                "vs_R_hr9": round(vs_r.get("hr9",0),2) if vs_r.get("ip",0)>=5 else None,
-                "vs_L_era": round(vs_l.get("era",0),2) if vs_l.get("ip",0)>=5 else None,
-                "vs_R_era": round(vs_r.get("era",0),2) if vs_r.get("ip",0)>=5 else None,
+                "name":name,"hand":hand,
+                "era":round(era,2) if era else None,
+                "hr9":round(hr9,2) if hr9 else None,
+                "ip_2026":round(ip_cur,1),
+                "blend_note":f"{int(wc*100)}% 2026 / {int(wp*100)}% 2025",
+                "vs_L_hr9":round(vs_l.get("hr9",0),2) if vs_l.get("ip",0)>=5 else None,
+                "vs_R_hr9":round(vs_r.get("hr9",0),2) if vs_r.get("ip",0)>=5 else None,
+                "top_pitches":pitches,
             }
 
         wx_bonus, wx_label, wx_desc = calc_weather_effect(home_team, wind_speed, wind_dir, temp)
         games_out.append({
             "game_id":gid,"away":away_team,"home":home_team,"time":gtime,
-            "away_pitcher":fmt_pit_display(away_p_cur_stats, away_p_pri_stats, away_p_splits,
-                                           away_p.get("fullName","TBD"), away_p_hand, away_p_id),
-            "home_pitcher":fmt_pit_display(home_p_cur_stats, home_p_pri_stats, home_p_splits,
-                                           home_p.get("fullName","TBD"), home_p_hand, home_p_id),
+            "away_pitcher":fmt_pit_display(away_p_cur, away_p_pri, away_p_splits,
+                                           away_p.get("fullName","TBD"), away_p_hand, away_p_pitches),
+            "home_pitcher":fmt_pit_display(home_p_cur, home_p_pri, home_p_splits,
+                                           home_p.get("fullName","TBD"), home_p_hand, home_p_pitches),
             "top_hr_candidates":all_batters[:3],
             "lineups_posted":lineup_away_status=="confirmed" or lineup_home_status=="confirmed",
             "lineup_away_status":lineup_away_status,
             "lineup_home_status":lineup_home_status,
-            "weather":{"label":wx_label,"desc":wx_desc,"temp":temp,
-                       "wind_speed":wind_speed,"wind_dir":wind_dir}
+            "weather":{"label":wx_label,"desc":wx_desc,"temp":temp,"wind_speed":wind_speed,"wind_dir":wind_dir}
         })
 
     return {"games":games_out,"date":today,"loading":False}
