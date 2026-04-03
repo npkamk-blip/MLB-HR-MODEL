@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import httpx
 import pandas as pd
-from pybaseball import batting_stats
 from datetime import date, timedelta
 import threading
 import uvicorn
@@ -144,48 +143,56 @@ def fetch_savant_csv_sync(url, timeout=30):
 def load_savant_data():
     print("Loading all data...")
 
-    # ── Batter season stats from pybaseball ──
+    # ── Batter season stats from Baseball Savant (FanGraphs blocks Railway) ──
     for season, kb in [(SEASON_CURRENT,"batting_current"),(SEASON_PRIOR,"batting_prior")]:
-        try:
-            bat = batting_stats(season, qual=10)
-            if bat is None or len(bat) == 0:
-                raise Exception("Empty dataframe returned")
-            # Rename columns
-            rename = {k:v for k,v in BAT_COL_MAP.items() if k in bat.columns}
-            bat = bat.rename(columns=rename)
-            # Safe pct conversion — check each column individually
-            for col in ["barrel_pct","hard_hit_pct","hr_fb_pct","pull_pct","fb_pct","k_pct"]:
-                if col not in bat.columns:
-                    continue
-                try:
-                    series = bat[col].copy()
-                    # Convert to numeric safely
-                    numeric = []
-                    for val in series:
-                        try:
-                            numeric.append(float(val) if val is not None and str(val) != 'nan' else 0.0)
-                        except:
-                            numeric.append(0.0)
-                    import numpy as np
-                    arr = np.array(numeric)
-                    # Check median to determine scale
-                    nonzero = arr[arr > 0]
-                    if len(nonzero) > 0 and np.median(nonzero) < 1.0:
-                        arr = arr * 100
-                    bat[col] = arr
-                except Exception as ce:
-                    print(f"  {season} {col} conversion error: {ce}")
-            _cache[kb] = bat
-            print(f"{season} batting: {len(bat)} players")
-            for col in ["barrel_pct","exit_velo","iso","hr_fb_pct"]:
-                if col in bat.columns:
-                    vals = [v for v in bat[col] if v and v > 0]
-                    if vals:
-                        print(f"  {col} median: {sorted(vals)[len(vals)//2]:.2f}")
-        except Exception as e:
-            import traceback
-            print(f"{season} batting error: {e}")
-            print(traceback.format_exc())
+        # Savant custom leaderboard — batter power/contact stats
+        url = (f"{SAVANT_BASE}/leaderboard/custom?year={season}&type=batter&filter=&min=25"
+               f"&selections=player_id,player_name,pa,barrel_batted_rate,hard_hit_percent,"
+               f"exit_velocity_avg,launch_angle_avg,sweet_spot_percent&csv=true")
+        bat = fetch_savant_csv_sync(url)
+        if bat.empty:
+            print(f"{season} batter Savant failed")
+            continue
+        bat.columns = [c.lower().strip() for c in bat.columns]
+        # Also fetch ISO/pull/FB from Savant sprint speed + batted ball leaderboard
+        url2 = (f"{SAVANT_BASE}/leaderboard/custom?year={season}&type=batter&filter=&min=25"
+                f"&selections=player_id,player_name,pa,iz_contact_percent,"
+                f"oz_swing_percent,whiff_percent&csv=true")
+        bat2 = fetch_savant_csv_sync(url2)
+
+        # Build unified batter dataframe with standardized column names
+        bat_clean = pd.DataFrame()
+        bat_clean["name"] = bat.get("player_name", bat.get("last_name, first_name", pd.Series()))
+        bat_clean["player_id"] = bat.get("player_id", pd.Series(dtype=int))
+        bat_clean["pa"] = pd.to_numeric(bat.get("pa", 0), errors="coerce").fillna(0)
+
+        # Barrel rate — Savant stores as 0-100
+        brl = bat.get("barrel_batted_rate", pd.Series(dtype=float))
+        bat_clean["barrel_pct"] = pd.to_numeric(brl, errors="coerce").fillna(0)
+
+        # Hard hit %
+        hh = bat.get("hard_hit_percent", pd.Series(dtype=float))
+        bat_clean["hard_hit_pct"] = pd.to_numeric(hh, errors="coerce").fillna(0)
+
+        # Exit velo
+        ev = bat.get("exit_velocity_avg", pd.Series(dtype=float))
+        bat_clean["exit_velo"] = pd.to_numeric(ev, errors="coerce").fillna(0)
+
+        # Launch angle
+        la = bat.get("launch_angle_avg", pd.Series(dtype=float))
+        bat_clean["launch_angle"] = pd.to_numeric(la, errors="coerce").fillna(0)
+
+        _cache[kb] = bat_clean
+        print(f"{season} batting (Savant): {len(bat_clean)} players")
+        for col in ["barrel_pct","exit_velo","hard_hit_pct"]:
+            vals = bat_clean[col].dropna()
+            vals = vals[vals > 0]
+            if len(vals) > 0:
+                print(f"  {col} median: {vals.median():.2f}")
+
+    # ── Also get ISO, pull%, FB%, K% from MLB Stats API per player ──
+    # These will be populated per-player at game time from batter splits
+    # For now Savant gives us the core power metrics we need
 
     # ── Pitcher batted ball stats from Baseball Savant ──
     for season, kp in [(SEASON_CURRENT,"pit_savant_current"),(SEASON_PRIOR,"pit_savant_prior")]:
@@ -233,8 +240,15 @@ def fuzzy_match_name(name, df, name_col="player_name"):
     return None
 
 def fuzzy_match(name, df):
-    """Match by 'name' column (pybaseball batting)"""
-    return fuzzy_match_name(name, df, name_col="name")
+    """Match by name column — works with both pybaseball and Savant formats"""
+    if df is None or df.empty: return None
+    # Try 'name' column first, then 'player_name'
+    for col in ["name", "player_name"]:
+        if col in df.columns:
+            result = fuzzy_match_name(name, df, name_col=col)
+            if result is not None:
+                return result
+    return None
 
 def get_pitcher_savant_stats(pitcher_name, season="current"):
     """Get pitcher batted ball stats from Savant cache"""
@@ -487,6 +501,36 @@ async def fetch_pitcher_season_stats(player_id, season):
             "k9":round((so/ip)*9,2) if ip>0 else 0,
             "k_pct":round((so/tbf)*100,1) if tbf>0 else 0,
             "ip":ip,
+        }
+    except: return {}
+
+async def fetch_batter_season_stats(player_id, season=2026):
+    """Fetch batter season stats from MLB Stats API — ISO, K%, OPS etc"""
+    try:
+        url = f"{MLB_API}/people/{player_id}/stats?stats=season&group=hitting&season={season}"
+        async with httpx.AsyncClient(timeout=8) as client:
+            r = await client.get(url); d = r.json()
+        splits = d.get("stats",[{}])[0].get("splits",[])
+        if not splits: return {}
+        s = splits[0].get("stat",{})
+        slg = float(s.get("sluggingPercentage",0) or 0)
+        avg = float(s.get("avg",0) or 0)
+        obp = float(s.get("obp",0) or 0)
+        so  = int(s.get("strikeOuts",0))
+        pa  = int(s.get("plateAppearances",1))
+        hr  = int(s.get("homeRuns",0))
+        fb_raw = int(s.get("flyBalls",0)) if "flyBalls" in s else 0
+        ab  = int(s.get("atBats",1))
+        return {
+            "iso": round(slg - avg, 3),
+            "slg": slg,
+            "avg": avg,
+            "obp": obp,
+            "ops": round(slg + obp, 3),
+            "k_pct": round((so/pa)*100, 1) if pa > 0 else 0,
+            "hr": hr,
+            "pa": pa,
+            "hr_rate": round((hr/pa)*600, 1) if pa > 0 else 0,
         }
     except: return {}
 
@@ -762,7 +806,7 @@ def root():
 def status():
     return {
         "ready":_cache["ready"],
-        "batters_2026":len(_cache["batting_current"]),
+        "batters_2026":len(_cache["batting_current"]),  # from Savant
         "batters_2025":len(_cache["batting_prior"]),
         "pit_savant_2026":len(_cache["pit_savant_current"]),
         "pit_savant_2025":len(_cache["pit_savant_prior"]),
@@ -876,6 +920,21 @@ async def get_games(form_days: int = 14):
             bp = fuzzy_match(name, _cache["batting_prior"])
             bc_dict = bc.to_dict() if bc is not None else {}
             bp_dict = bp.to_dict() if bp is not None else {}
+
+            # Supplement Savant stats with MLB API for ISO, K%, pull%
+            if pid:
+                mlb_stats_cur = await fetch_batter_season_stats(pid, SEASON_CURRENT)
+                mlb_stats_pri = await fetch_batter_season_stats(pid, SEASON_PRIOR)
+                # Add to bc_dict/bp_dict if not already present
+                for key in ["iso","k_pct","hr_rate"]:
+                    if key not in bc_dict or float(bc_dict.get(key,0) or 0) == 0:
+                        if mlb_stats_cur.get(key,0): bc_dict[key] = mlb_stats_cur[key]
+                    if key not in bp_dict or float(bp_dict.get(key,0) or 0) == 0:
+                        if mlb_stats_pri.get(key,0): bp_dict[key] = mlb_stats_pri[key]
+                # Use MLB API PA count as primary if Savant is 0
+                if float(bc_dict.get("pa",0) or 0) == 0:
+                    bc_dict["pa"] = mlb_stats_cur.get("pa", 0)
+
             pa_current = float(bc_dict.get("pa",0) or 0)
 
             recent = await fetch_recent_form(pid, days=form_days) if pid else None
