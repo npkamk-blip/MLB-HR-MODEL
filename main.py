@@ -137,34 +137,31 @@ def load_savant_data():
             print(f"{season} batting: {len(bat)} players")
         except Exception as e:
             print(f"{season} batting error: {e}")
-        try:
-            pit = pitching_stats(season, qual=1)
-            print(f"{season} pitching raw cols: {list(pit.columns[:20])}")
-            rename = {k:v for k,v in PIT_COL_MAP.items() if k in pit.columns}
-            pit = pit.rename(columns=rename)
-            for col in ["hr_fb_pct","gb_pct","fb_pct","hard_hit_pct","barrel_pct_allowed"]:
-                if col in pit.columns:
-                    pit[col] = pd.to_numeric(pit[col], errors="coerce").fillna(0)
-                    if pit[col].median() < 1.0: pit[col] = pit[col] * 100
-            _cache[kp] = pit
-            print(f"{season} pitching: {len(pit)} pitchers")
-        except Exception as e:
-            import traceback
-            print(f"{season} pitching error: {e}")
-            print(traceback.format_exc())
-            # Try with higher qual as fallback
+        pit_loaded = False
+        for qual_try in ["0", "n", 10, 20]:
             try:
-                pit = pitching_stats(season, qual=5)
-                rename = {k:v for k,v in PIT_COL_MAP.items() if k in pit.columns}
-                pit = pit.rename(columns=rename)
-                for col in ["hr_fb_pct","gb_pct","fb_pct","hard_hit_pct","barrel_pct_allowed"]:
-                    if col in pit.columns:
-                        pit[col] = pd.to_numeric(pit[col], errors="coerce").fillna(0)
-                        if pit[col].median() < 1.0: pit[col] = pit[col] * 100
-                _cache[kp] = pit
-                print(f"{season} pitching fallback qual=5: {len(pit)} pitchers")
-            except Exception as e2:
-                print(f"{season} pitching fallback error: {e2}")
+                if isinstance(qual_try, str):
+                    pit = pitching_stats(season, qual=qual_try)
+                else:
+                    pit = pitching_stats(season, qual=qual_try)
+                if pit is not None and len(pit) > 0:
+                    print(f"{season} pitching loaded with qual={qual_try}: {len(pit)} pitchers")
+                    print(f"{season} pitching cols: {list(pit.columns[:20])}")
+                    rename = {k:v for k,v in PIT_COL_MAP.items() if k in pit.columns}
+                    pit = pit.rename(columns=rename)
+                    for col in ["hr_fb_pct","gb_pct","fb_pct","hard_hit_pct","barrel_pct_allowed"]:
+                        if col in pit.columns:
+                            pit[col] = pd.to_numeric(pit[col], errors="coerce").fillna(0)
+                            if pit[col].median() < 1.0: pit[col] = pit[col] * 100
+                    _cache[kp] = pit
+                    pit_loaded = True
+                    break
+                else:
+                    print(f"{season} pitching qual={qual_try} returned empty")
+            except Exception as e:
+                print(f"{season} pitching qual={qual_try} error: {e}")
+        if not pit_loaded:
+            print(f"{season} pitching FAILED all attempts")
 
     # Batter arsenal — barrel rate vs pitch type 2026
     try:
@@ -240,8 +237,9 @@ def calc_weather_multiplier(home_team, wind_speed, wind_direction, temperature, 
     elif wind_speed < 10: speed_factor = 0.3
     elif wind_speed < 16: speed_factor = 0.7
     else: speed_factor = 1.0
-    wind_mult = 1.0 + (alignment * speed_factor * 0.08 * open_factor)
-    temp_mult = 1.05 if temperature >= 80 else 1.02 if temperature >= 70 else 0.93 if temperature < 50 else 0.97 if temperature < 60 else 1.0
+    # More aggressive wind effect — blowing in/out matters more for HR
+    wind_mult = 1.0 + (alignment * speed_factor * 0.12 * open_factor)
+    temp_mult = 1.06 if temperature >= 80 else 1.02 if temperature >= 70 else 0.91 if temperature < 50 else 0.96 if temperature < 60 else 1.0
     # Crosswind handedness
     direction_label = "Calm"
     if abs(alignment) <= 0.5 and wind_speed >= 10:
