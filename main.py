@@ -138,12 +138,9 @@ def load_savant_data():
         except Exception as e:
             print(f"{season} batting error: {e}")
         pit_loaded = False
-        for qual_try in ["0", "n", 10, 20]:
+        for qual_try in [1, 5, 10, 20, 30]:
             try:
-                if isinstance(qual_try, str):
-                    pit = pitching_stats(season, qual=qual_try)
-                else:
-                    pit = pitching_stats(season, qual=qual_try)
+                pit = pitching_stats(season, qual=qual_try)
                 if pit is not None and len(pit) > 0:
                     print(f"{season} pitching loaded with qual={qual_try}: {len(pit)} pitchers")
                     print(f"{season} pitching cols: {list(pit.columns[:20])}")
@@ -157,11 +154,11 @@ def load_savant_data():
                     pit_loaded = True
                     break
                 else:
-                    print(f"{season} pitching qual={qual_try} returned empty")
+                    print(f"{season} pitching qual={qual_try} returned empty, trying next")
             except Exception as e:
-                print(f"{season} pitching qual={qual_try} error: {e}")
+                print(f"{season} pitching qual={qual_try} error: {e}, trying next")
         if not pit_loaded:
-            print(f"{season} pitching FAILED all attempts")
+            print(f"WARNING: {season} pitching FAILED all qual attempts")
 
     # Batter arsenal — barrel rate vs pitch type 2026
     try:
