@@ -139,6 +139,7 @@ def load_savant_data():
             print(f"{season} batting error: {e}")
         try:
             pit = pitching_stats(season, qual=1)
+            print(f"{season} pitching raw cols: {list(pit.columns[:20])}")
             rename = {k:v for k,v in PIT_COL_MAP.items() if k in pit.columns}
             pit = pit.rename(columns=rename)
             for col in ["hr_fb_pct","gb_pct","fb_pct","hard_hit_pct","barrel_pct_allowed"]:
@@ -148,7 +149,22 @@ def load_savant_data():
             _cache[kp] = pit
             print(f"{season} pitching: {len(pit)} pitchers")
         except Exception as e:
+            import traceback
             print(f"{season} pitching error: {e}")
+            print(traceback.format_exc())
+            # Try with higher qual as fallback
+            try:
+                pit = pitching_stats(season, qual=5)
+                rename = {k:v for k,v in PIT_COL_MAP.items() if k in pit.columns}
+                pit = pit.rename(columns=rename)
+                for col in ["hr_fb_pct","gb_pct","fb_pct","hard_hit_pct","barrel_pct_allowed"]:
+                    if col in pit.columns:
+                        pit[col] = pd.to_numeric(pit[col], errors="coerce").fillna(0)
+                        if pit[col].median() < 1.0: pit[col] = pit[col] * 100
+                _cache[kp] = pit
+                print(f"{season} pitching fallback qual=5: {len(pit)} pitchers")
+            except Exception as e2:
+                print(f"{season} pitching fallback error: {e2}")
 
     # Batter arsenal — barrel rate vs pitch type 2026
     try:
