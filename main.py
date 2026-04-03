@@ -150,17 +150,38 @@ def load_savant_data():
             bat = batting_stats(season, qual=10)
             if bat is None or len(bat) == 0:
                 raise Exception("Empty dataframe returned")
+            # Rename columns
             rename = {k:v for k,v in BAT_COL_MAP.items() if k in bat.columns}
             bat = bat.rename(columns=rename)
+            # Safe pct conversion — check each column individually
             for col in ["barrel_pct","hard_hit_pct","hr_fb_pct","pull_pct","fb_pct","k_pct"]:
-                if col in bat.columns:
-                    try:
-                        vals = pd.to_numeric(bat[col], errors="coerce").fillna(0)
-                        med = vals.median()
-                        bat[col] = vals * 100 if (med > 0 and med < 1.0) else vals
-                    except: pass
+                if col not in bat.columns:
+                    continue
+                try:
+                    series = bat[col].copy()
+                    # Convert to numeric safely
+                    numeric = []
+                    for val in series:
+                        try:
+                            numeric.append(float(val) if val is not None and str(val) != 'nan' else 0.0)
+                        except:
+                            numeric.append(0.0)
+                    import numpy as np
+                    arr = np.array(numeric)
+                    # Check median to determine scale
+                    nonzero = arr[arr > 0]
+                    if len(nonzero) > 0 and np.median(nonzero) < 1.0:
+                        arr = arr * 100
+                    bat[col] = arr
+                except Exception as ce:
+                    print(f"  {season} {col} conversion error: {ce}")
             _cache[kb] = bat
-            print(f"{season} batting: {len(bat)} players, cols: {list(bat.columns[:10])}")
+            print(f"{season} batting: {len(bat)} players")
+            for col in ["barrel_pct","exit_velo","iso","hr_fb_pct"]:
+                if col in bat.columns:
+                    vals = [v for v in bat[col] if v and v > 0]
+                    if vals:
+                        print(f"  {col} median: {sorted(vals)[len(vals)//2]:.2f}")
         except Exception as e:
             import traceback
             print(f"{season} batting error: {e}")
