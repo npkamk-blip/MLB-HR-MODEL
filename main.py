@@ -522,7 +522,7 @@ async def fetch_batter_season_stats(player_id, season=2026):
         fb_raw = int(s.get("flyBalls",0)) if "flyBalls" in s else 0
         ab  = int(s.get("atBats",1))
         return {
-            "iso": round(slg - avg, 3),
+            "iso": round(max(slg - avg, 0), 3),
             "slg": slg,
             "avg": avg,
             "obp": obp,
