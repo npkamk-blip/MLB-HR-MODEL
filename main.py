@@ -138,7 +138,7 @@ def load_savant_data():
         except Exception as e:
             print(f"{season} batting error: {e}")
         try:
-            pit = pitching_stats(season, qual=5)
+            pit = pitching_stats(season, qual=1)
             rename = {k:v for k,v in PIT_COL_MAP.items() if k in pit.columns}
             pit = pit.rename(columns=rename)
             for col in ["hr_fb_pct","gb_pct","fb_pct","hard_hit_pct","barrel_pct_allowed"]:
@@ -850,10 +850,23 @@ async def get_games(form_days: int = 14):
             )
             ip_current = float(opp_p_cur.get("ip",0) or 0)
 
+            # If FanGraphs pitching data missing, build fallback from MLB API stats
+            pit_c_use = dict(pit_c) if pit_c else {}
+            pit_p_use = dict(pit_p) if pit_p else {}
+
+            # Fallback: inject MLB API stats when FanGraphs returns zeros
+            if ip_current > 0 and pit_c_use.get("hr_per9",0) == 0:
+                pit_c_use["hr_per9"] = opp_p_cur.get("hr9", 0)
+                pit_c_use["era"] = opp_p_cur.get("era", 0)
+                pit_c_use["ip"] = ip_current
+            if pit_p_use.get("hr_per9",0) == 0:
+                pit_p_use["hr_per9"] = opp_p_pri.get("hr9", 0)
+                pit_p_use["era"] = opp_p_pri.get("era", 0)
+
             hr_prob, breakdown, archetype, trend_label, reasons = compute_hr_probability(
                 bc_dict, bp_dict, recent, bat_hand, opp_p_hand,
                 bat_splits, barrel_vs_pitches, opp_p_pitches,
-                park_factor, weather_mult, pit_c, pit_p,
+                park_factor, weather_mult, pit_c_use, pit_p_use,
                 opp_p_splits, ip_current, pa_current
             )
 
