@@ -73,13 +73,13 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
 .wx-calm .w-temp,.wx-calm .w-wind,.wx-dome .w-temp,.wx-dome .w-wind,.wx-neutral .w-temp,.wx-neutral .w-wind{color:var(--muted)}
 .wx-calm .w-badge,.wx-dome .w-badge,.wx-neutral .w-badge{color:var(--muted2)}
 /* Column headers */
-.col-hdrs{display:grid;grid-template-columns:26px 1fr 90px 110px 80px 64px 80px;gap:8px;padding:6px 18px;border-bottom:1px solid var(--border);background:var(--bg)}
+.col-hdrs{display:grid;grid-template-columns:26px 1fr 90px 80px 96px 64px 80px;gap:8px;padding:6px 18px;border-bottom:1px solid var(--border);background:var(--bg)}
 .ch{font-size:10px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em}
 .ch.r{text-align:right}
 /* Batter rows */
 .batter{border-bottom:1px solid var(--border2)}
 .batter:last-child{border-bottom:none}
-.batter-row{display:grid;grid-template-columns:26px 1fr 90px 110px 80px 64px 80px;gap:8px;padding:11px 18px;align-items:start;cursor:pointer;transition:background .1s}
+.batter-row{display:grid;grid-template-columns:26px 1fr 90px 80px 96px 64px 80px;gap:8px;padding:11px 18px;align-items:start;cursor:pointer;transition:background .1s}
 .batter-row:hover{background:rgba(255,255,255,.02)}
 .rank{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--muted);text-align:center;line-height:1;padding-top:2px}
 .rank.r1{color:var(--accent)}
@@ -266,20 +266,28 @@ function tagsHTML(reasons, projected, bat_hand, opp_hand, platoon_tag, archetype
   return tags?`<div class="tags">${tags}</div>`:'';
 }
 
-function pitchMatchCell(pitchMatchup, overallBarrel){
+function pitchMatchCell(pitchMatchup){
   if(!pitchMatchup||!pitchMatchup.length) return `<div class="stat-na">—</div>`;
   let html=`<div class="pitch-match-cell">`;
   pitchMatchup.forEach(pm=>{
-    if(pm.barrel_vs!=null){
-      const diff=pm.barrel_vs-overallBarrel;
-      const cls=diff>2?'pm-high':diff<-2?'pm-low':'pm-neutral';
-      html+=`<div class="pm-row"><span class="pm-pitch">${pm.name} ${pm.pct}%</span><span class="pm-barrel ${cls}">${pm.barrel_vs.toFixed(1)}%</span></div>`;
+    if(pm.woba_vs!=null){
+      // League avg wOBA ~.320, good is .380+, bad is .260-
+      const cls=pm.woba_vs>=.370?'pm-high':pm.woba_vs<=.270?'pm-low':'pm-neutral';
+      html+=`<div class="pm-row"><span class="pm-pitch">${pm.name} ${pm.pct}%</span><span class="pm-barrel ${cls}">.${String(Math.round(pm.woba_vs*1000)).padStart(3,'0')} wOBA</span></div>`;
     } else {
       html+=`<div class="pm-row"><span class="pm-pitch">${pm.name} ${pm.pct}%</span><span class="pm-none">—</span></div>`;
     }
   });
   html+=`</div>`;
   return html;
+}
+
+function formCell(hr,pa,slg){
+  if(!pa) return `<div class="form-cell"><div class="form-hr fcold">No data</div></div>`;
+  const cls=hr>=2?'fhot':hr>=1?'fwarm':'fcold';
+  const slgNum=parseFloat(slg)||0;
+  const slgStr=slgNum>0?'.'+String(Math.round(slgNum*1000)).padStart(3,'0'):'—';
+  return `<div class="form-cell"><div class="form-hr ${cls}">${hr} HR · ${pa} PA</div><div class="form-slg">${slgStr} SLG</div></div>`;
 }
 
 function dkCell(odds){
@@ -319,11 +327,12 @@ function breakdownHTML(bd, hr_prob){
 
     <div class="bd-section">
       <div class="bd-section-title">Step 2 — Pitcher HR Modifier (${bd.pit_blend_note})</div>
-      <div class="bd-row"><span class="bd-label">HR/9: ${bd.pit_hr9} (35% weight)</span>${bdBar(Math.abs(bd.pit_modifier-1)*35,10,bd.pit_modifier<1)}${bdPts(bd.pit_modifier.toFixed(3))}</div>
-      <div class="bd-row"><span class="bd-label">HR/FB%: ${bd.pit_hrfb}% (30% weight)</span>${bdBar(0,10)}<span class="bd-pts neutral">—</span></div>
-      <div class="bd-row"><span class="bd-label">Hard contact allowed: ${bd.pit_hard}% (20% weight)</span>${bdBar(0,10)}<span class="bd-pts neutral">—</span></div>
-      <div class="bd-row"><span class="bd-label">Fly ball% allowed: ${bd.pit_fb}% (15% weight)</span>${bdBar(0,10)}<span class="bd-pts neutral">—</span></div>
-      <div class="bd-subtotal"><span class="bd-subtotal-label">Pitcher modifier</span><span class="bd-subtotal-val">${bd.pit_modifier}x</span></div>
+      <div class="bd-row"><span class="bd-label">HR/9: ${bd.pit_hr9} — league avg 1.15 (40% weight, MLB API)</span>${bdBar(Math.abs(bd.pit_modifier-1)*35,10,bd.pit_modifier<1)}${bdPts(bd.pit_modifier.toFixed(3))}</div>
+      <div class="bd-row"><span class="bd-label">Hard contact allowed: ${bd.pit_hard}% — league avg 32% (25% weight, Savant)</span>${bdBar(Math.abs(bd.pit_hard-32),15,bd.pit_hard<32)}<span class="bd-pts ${bd.pit_hard>32?'':'neg'}">${bd.pit_hard||'—'}%</span></div>
+      <div class="bd-row"><span class="bd-label">Barrel% allowed: ${bd.pit_brl}% — league avg 7.5% (20% weight, Savant)</span>${bdBar(Math.abs(bd.pit_brl-7.5),8,bd.pit_brl<7.5)}<span class="bd-pts ${bd.pit_brl>7.5?'':'neg'}">${bd.pit_brl||'—'}%</span></div>
+      <div class="bd-row"><span class="bd-label">Fly ball% allowed: ${bd.pit_fb}% — league avg 36% (15% weight, Savant)</span>${bdBar(Math.abs(bd.pit_fb-36),15,bd.pit_fb<36)}<span class="bd-pts ${bd.pit_fb>36?'':'neg'}">${bd.pit_fb||'—'}%</span></div>
+      <div class="bd-row"><span class="bd-label">Data sources: ${bd.n_pit_components||0} of 4 components loaded</span>${bdBar(bd.n_pit_components||0,4,false,true)}<span class="bd-pts blue">${bd.n_pit_components||0}/4</span></div>
+      <div class="bd-subtotal"><span class="bd-subtotal-label">Combined pitcher modifier</span><span class="bd-subtotal-val">${bd.pit_modifier}x</span></div>
     </div>
 
     <div class="bd-section">
@@ -334,9 +343,10 @@ function breakdownHTML(bd, hr_prob){
 
     <div class="bd-section">
       <div class="bd-section-title">Step 4 — Context Multipliers</div>
-      <div class="bd-row"><span class="bd-label">Park HR factor (${bd.park_factor}x)</span>${bdBar(Math.abs(bd.park_factor-1)*100,15,bd.park_factor<1)}${bdPts(bd.park_factor.toFixed(2))}</div>
-      <div class="bd-row"><span class="bd-label">Weather (${bd.weather_mult}x)</span>${bdBar(Math.abs(bd.weather_mult-1)*100,8,bd.weather_mult<1)}${bdPts(bd.weather_mult.toFixed(3))}</div>
-      <div class="bd-subtotal"><span class="bd-subtotal-label">Final raw score</span><span class="bd-subtotal-val">${bd.after_context}</span></div>
+      <div class="bd-row"><span class="bd-label">Park HR factor</span>${bdBar(Math.abs(bd.park_factor-1)*100,15,bd.park_factor<1)}<span class="bd-pts ${bd.park_factor>=1?'':'neg'}">${bd.park_factor}x</span></div>
+      <div class="bd-row"><span class="bd-label">Weather</span>${bdBar(Math.abs(bd.weather_mult-1)*100,8,bd.weather_mult<1)}<span class="bd-pts ${bd.weather_mult>=1?'':'neg'}">${bd.weather_mult}x</span></div>
+      <div class="bd-row"><span class="bd-label">Pitcher modifier</span>${bdBar(Math.abs(bd.pit_modifier-1)*100,30,bd.pit_modifier<1)}<span class="bd-pts ${bd.pit_modifier>=1?'':'neg'}">${bd.pit_modifier}x</span></div>
+      <div class="bd-subtotal"><span class="bd-subtotal-label">${bd.after_k} × ${bd.park_factor} × ${bd.weather_mult} × ${bd.pit_modifier} = ${bd.after_context} (final raw score)</span><span class="bd-subtotal-val">${bd.after_context}</span></div>
     </div>
 
     <div class="bd-section">
@@ -409,9 +419,9 @@ async function load(){
           <div class="ch">#</div>
           <div class="ch">Batter</div>
           <div class="ch r hide-sm">Barrel / EV</div>
-          <div class="ch r">Barrel vs Pitches</div>
+          <div class="ch r hide-sm">ISO / HR·FB</div>
+          <div class="ch r">Last 14 Days</div>
           <div class="ch r hide-sm">DK HR</div>
-          <div class="ch r hide-sm">Odds</div>
           <div class="ch r">HR Prob</div>
         </div>`;
 
@@ -423,9 +433,11 @@ async function load(){
           const pc=probCls(b.hr_prob);
           const pt=probTier(b.hr_prob);
           const sl=b.statline||{};
-          const barrel=sl.barrel||0,ev=sl.ev||0;
+          const barrel=sl.barrel||0,ev=sl.ev||0,iso=sl.iso||0,hrfb=sl.hr_fb||0;
           const barrelStr=barrel>0?barrel.toFixed(1)+'%':'—';
           const evStr=ev>0?ev.toFixed(1)+' mph':'—';
+          const isoStr='.'+String(Math.round(iso*1000)).padStart(3,'0');
+          const hrfbStr=hrfb>0?hrfb.toFixed(1)+'%':'—';
 
           html+=`<div class="batter">
             <div class="batter-row" onclick="toggleBreakdown(this)">
@@ -437,9 +449,9 @@ async function load(){
                 <div class="expand-hint">Click to see probability breakdown</div>
               </div>
               <div class="hide-sm">${barrel>0?`<div class="stat-cell"><div class="stat-main">${barrelStr}</div><div class="stat-sub">${evStr} EV</div></div>`:`<div class="stat-na">—</div>`}</div>
-              ${pitchMatchCell(b.pitch_matchup, barrel)}
+              <div class="hide-sm">${iso>0?`<div class="stat-cell"><div class="stat-main">${isoStr}</div><div class="stat-sub">${hrfbStr} HR·FB</div></div>`:`<div class="stat-na">—</div>`}</div>
+              ${formCell(b.recent_hr, b.recent_pa, b.recent_slg)}
               <div class="hide-sm">${dkCell(b.dk_odds)}</div>
-              <div class="hide-sm"><div class="stat-na" style="text-align:right;font-size:11px;color:var(--muted2);">${b.dk_odds||'—'}</div></div>
               <div class="prob-cell">
                 <div class="prob-num ${pc}">${b.hr_prob}%</div>
                 <div class="prob-lbl ${pc}">${pt}</div>
