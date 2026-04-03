@@ -25,9 +25,9 @@ _cache = {
     "batting_prior": pd.DataFrame(),
     "pit_savant_current": pd.DataFrame(),   # pitcher batted ball stats from Savant
     "pit_savant_prior": pd.DataFrame(),
-    "pit_arsenal_current": pd.DataFrame(),  # pitcher pitch mix from Savant
+    "pit_arsenal_current": pd.DataFrame(),
     "pit_arsenal_prior": pd.DataFrame(),
-    "bat_arsenal_current": pd.DataFrame(),  # batter vs pitch type from Savant
+    "bat_arsenal_current": pd.DataFrame(),
     "player_hands": {},
     "ready": False
 }
@@ -148,16 +148,23 @@ def load_savant_data():
     for season, kb in [(SEASON_CURRENT,"batting_current"),(SEASON_PRIOR,"batting_prior")]:
         try:
             bat = batting_stats(season, qual=10)
+            if bat is None or len(bat) == 0:
+                raise Exception("Empty dataframe returned")
             rename = {k:v for k,v in BAT_COL_MAP.items() if k in bat.columns}
             bat = bat.rename(columns=rename)
             for col in ["barrel_pct","hard_hit_pct","hr_fb_pct","pull_pct","fb_pct","k_pct"]:
                 if col in bat.columns:
-                    vals = pd.to_numeric(bat[col], errors="coerce").fillna(0)
-                    bat[col] = vals * 100 if (vals.median() > 0 and vals.median() < 1.0) else vals
+                    try:
+                        vals = pd.to_numeric(bat[col], errors="coerce").fillna(0)
+                        med = vals.median()
+                        bat[col] = vals * 100 if (med > 0 and med < 1.0) else vals
+                    except: pass
             _cache[kb] = bat
-            print(f"{season} batting: {len(bat)} players")
+            print(f"{season} batting: {len(bat)} players, cols: {list(bat.columns[:10])}")
         except Exception as e:
+            import traceback
             print(f"{season} batting error: {e}")
+            print(traceback.format_exc())
 
     # ── Pitcher batted ball stats from Baseball Savant ──
     for season, kp in [(SEASON_CURRENT,"pit_savant_current"),(SEASON_PRIOR,"pit_savant_prior")]:
@@ -171,24 +178,8 @@ def load_savant_data():
             _cache[kp] = df
             print(f"{season} pitcher Savant: {len(df)} rows, cols: {list(df.columns[:12])}")
 
-    # ── Pitcher pitch arsenal (pitch mix) from Baseball Savant ──
-    for season, ka in [(SEASON_CURRENT,"pit_arsenal_current"),(SEASON_PRIOR,"pit_arsenal_prior")]:
-        url = (f"{SAVANT_BASE}/leaderboard/pitch-arsenal-stats"
-               f"?type=pitcher&pitchType=&year={season}&team=&min=1&csv=true")
-        df = fetch_savant_csv_sync(url)
-        if not df.empty:
-            df.columns = [c.lower().strip() for c in df.columns]
-            _cache[ka] = df
-            print(f"{season} pitcher arsenal: {len(df)} rows, cols: {list(df.columns[:12])}")
-
-    # ── Batter vs pitch type from Baseball Savant ──
-    url = (f"{SAVANT_BASE}/leaderboard/pitch-arsenal-stats"
-           f"?type=batter&pitchType=&year={SEASON_CURRENT}&team=&min=1&csv=true")
-    df = fetch_savant_csv_sync(url)
-    if not df.empty:
-        df.columns = [c.lower().strip() for c in df.columns]
-        _cache["bat_arsenal_current"] = df
-        print(f"Batter arsenal: {len(df)} rows, cols: {list(df.columns[:12])}")
+    # Pitch mix coming soon — placeholder
+    print("Pitch mix disabled for now — coming soon")
 
     _cache["ready"] = True
     print("All data ready.")
@@ -253,36 +244,7 @@ def get_pitcher_savant_stats(pitcher_name, season="current"):
     return result
 
 def get_pitcher_top_pitches(pitcher_name):
-    """Get pitcher's top 2 pitches from Savant arsenal"""
-    for df_key in ["pit_arsenal_current","pit_arsenal_prior"]:
-        df = _cache[df_key]
-        if df.empty:
-            continue
-        row = fuzzy_match_name(pitcher_name, df, "player_name")
-        if row is None:
-            continue
-        # Find pitch type and run value columns
-        # Arsenal stats have pitch_type and pitch_usage_percent columns
-        pitch_col = next((c for c in df.columns if "pitch_type" in c), None)
-        usage_col = next((c for c in df.columns if "percent" in c and "usage" in c), None)
-        if not pitch_col:
-            # Try to find all rows for this pitcher
-            name_col = "player_name"
-            if name_col in df.columns:
-                pitcher_rows = df[df[name_col].str.lower().str.strip() == pitcher_name.lower().strip()]
-                if pitcher_rows.empty:
-                    continue
-                # Each row is a pitch type
-                pitches = []
-                for _, pr in pitcher_rows.iterrows():
-                    pt = str(pr.get(pitch_col or "pitch_type","")).upper() if pitch_col else ""
-                    pct = float(pr.get(usage_col or "pitch_percent", 0) or 0)
-                    if pt and pct > 5:
-                        pitches.append({"code":pt,"name":PITCH_NAMES.get(pt,pt),"pct":round(pct,1)})
-                if pitches:
-                    pitches.sort(key=lambda x: x["pct"], reverse=True)
-                    return pitches[:2]
-        break
+    """Pitch mix coming soon"""
     return []
 
 def get_batter_barrel_vs_pitches(player_name, pitch_codes):
@@ -654,18 +616,20 @@ def compute_hr_probability(bc, bp, recent, bat_hand, opp_hand,
     # Pitch matchup bonus
     pitch_bonus = 0.0
     pitch_breakdown = []
-    if barrel_vs_pitches and pitcher_top_pitches and barrel_s > 0:
+    # League avg wOBA ~.320, strong batter vs pitch ~.400+, weak ~.240
+    if barrel_vs_pitches and pitcher_top_pitches:
         for pitch in pitcher_top_pitches:
             code = pitch["code"]
             usage = pitch["pct"] / 100.0
-            brl_vs = barrel_vs_pitches.get(code)
-            if brl_vs is not None:
-                diff = brl_vs - barrel_s
-                pts = diff * usage * 2
+            vs_data = barrel_vs_pitches.get(code)
+            if vs_data and vs_data.get("woba") is not None:
+                woba = vs_data["woba"]
+                diff = woba - 0.320  # vs league avg
+                pts = diff * usage * 25  # scale to meaningful points
                 pitch_bonus += pts
                 pitch_breakdown.append({
                     "name":pitch["name"],"pct":pitch["pct"],
-                    "barrel_vs":brl_vs,"diff":round(diff,1),"bonus":round(pts,1)
+                    "woba_vs":woba,"diff":round(diff,3),"bonus":round(pts,1)
                 })
         pitch_bonus = max(min(pitch_bonus, 8), -8)
 
@@ -905,7 +869,7 @@ async def get_games(form_days: int = 14):
             barrel_vs_pitches = {}
             if opp_p_pitches:
                 pitch_codes = [p["code"] for p in opp_p_pitches]
-                barrel_vs_pitches = get_batter_barrel_vs_pitches(name, pitch_codes)
+                barrel_vs_pitches = get_batter_vs_pitches(name, pitch_codes)
 
             park_factor = get_park_hr_factor(home_team, bat_hand)
             weather_mult, weather_label = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
@@ -932,8 +896,13 @@ async def get_games(form_days: int = 14):
             pitch_matchup = []
             for pitch in opp_p_pitches:
                 code = pitch["code"]
-                brl = barrel_vs_pitches.get(code)
-                pitch_matchup.append({"name":pitch["name"],"pct":pitch["pct"],"barrel_vs":brl})
+                vs_data = barrel_vs_pitches.get(code)
+                pitch_matchup.append({
+                    "name":pitch["name"],"pct":pitch["pct"],
+                    "woba_vs": vs_data.get("woba") if vs_data else None,
+                    "whiff_vs": vs_data.get("whiff") if vs_data else None,
+                    "pa_vs": vs_data.get("pa") if vs_data else None,
+                })
 
             all_batters.append({
                 "name":name,"team":team,"hr_prob":hr_prob,
@@ -947,9 +916,12 @@ async def get_games(form_days: int = 14):
                     "iso":round(breakdown["iso_use"],3),
                     "hr_fb":round(float(bc_dict.get("hr_fb_pct",0) or 0),1),
                 },
+                "recent_hr":recent.get("hr",0) if recent else 0,
+                "recent_pa":recent.get("pa",0) if recent else 0,
+                "recent_slg":round(recent.get("slg",0),3) if recent else 0,
                 "dk_odds":fmt_odds(match_dk_odds(name, dk_props)),
                 "projected":is_proj,"platoon_tag":platoon_tag,
-                "pitch_matchup":pitch_matchup,"breakdown":breakdown,
+                "pitch_matchup":[],"breakdown":breakdown,
             })
 
         away_proj = lineup_away_status == "projected"
