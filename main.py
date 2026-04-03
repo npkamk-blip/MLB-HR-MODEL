@@ -146,7 +146,7 @@ def load_savant_data():
     # ── Batter season stats from Baseball Savant (FanGraphs blocks Railway) ──
     for season, kb in [(SEASON_CURRENT,"batting_current"),(SEASON_PRIOR,"batting_prior")]:
         # Savant custom leaderboard — batter power/contact stats
-        url = (f"{SAVANT_BASE}/leaderboard/custom?year={season}&type=batter&filter=&min=25"
+        url = (f"{SAVANT_BASE}/leaderboard/custom?year={season}&type=batter&filter=&min=5"
                f"&selections=player_id,player_name,pa,barrel_batted_rate,hard_hit_percent,"
                f"exit_velocity_avg,launch_angle_avg,sweet_spot_percent&csv=true")
         bat = fetch_savant_csv_sync(url)
@@ -155,7 +155,7 @@ def load_savant_data():
             continue
         bat.columns = [c.lower().strip() for c in bat.columns]
         # Also fetch ISO/pull/FB from Savant sprint speed + batted ball leaderboard
-        url2 = (f"{SAVANT_BASE}/leaderboard/custom?year={season}&type=batter&filter=&min=25"
+        url2 = (f"{SAVANT_BASE}/leaderboard/custom?year={season}&type=batter&filter=&min=5"
                 f"&selections=player_id,player_name,pa,iz_contact_percent,"
                 f"oz_swing_percent,whiff_percent&csv=true")
         bat2 = fetch_savant_csv_sync(url2)
