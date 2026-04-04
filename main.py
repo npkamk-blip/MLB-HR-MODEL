@@ -915,11 +915,36 @@ async def get_games():
                 "vs_L_hr9":None,"vs_R_hr9":None,"top_pitches":[],
             }
 
+        # Split batters back into away/home lineups in order
+        away_batters_ordered = [b for b in all_batters if b["team"] == away_team]
+        home_batters_ordered = [b for b in all_batters if b["team"] == home_team]
+        # Re-sort by batting order (use original lineup order)
+        away_names = [b.get("person",{}).get("fullName","") if "person" in b else b.get("name","") for b in lineup_away]
+        home_names = [b.get("person",{}).get("fullName","") if "person" in b else b.get("name","") for b in lineup_home]
+        
+        def sort_by_lineup(batters, names):
+            ordered = []
+            for name in names:
+                for b in batters:
+                    if b["name"] == name:
+                        ordered.append(b)
+                        break
+            # Add any remaining not in lineup order
+            for b in batters:
+                if b not in ordered:
+                    ordered.append(b)
+            return ordered
+
+        away_lineup_ordered = sort_by_lineup(away_batters_ordered, away_names)
+        home_lineup_ordered = sort_by_lineup(home_batters_ordered, home_names)
+
         games_out.append({
             "game_id":gid,"away":away_team,"home":home_team,"time":gtime,
             "away_pitcher":pit_display(away_p.get("fullName","TBD"), away_p_hand),
             "home_pitcher":pit_display(home_p.get("fullName","TBD"), home_p_hand),
             "top_hr_candidates":all_batters[:3],
+            "away_lineup":away_lineup_ordered,
+            "home_lineup":home_lineup_ordered,
             "lineups_posted":lineup_away_status=="confirmed" or lineup_home_status=="confirmed",
             "lineup_away_status":lineup_away_status,
             "lineup_home_status":lineup_home_status,
