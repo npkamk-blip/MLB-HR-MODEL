@@ -711,6 +711,19 @@ def root():
     return {"status":"Sharp MLB HR Model","data_ready":_cache["ready"],
             "sheets_loaded":{k:len(v) for k,v in _cache.items() if isinstance(v, pd.DataFrame)}}
 
+@app.get("/debug-odds")
+async def debug_odds():
+    if not ODDS_API_KEY:
+        return {"error": "No ODDS_API_KEY set"}
+    try:
+        url = f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events?apiKey={ODDS_API_KEY}&dateFormat=iso"
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(url)
+            return {"status": r.status_code, "events": len(r.json()) if r.is_success else 0, 
+                    "raw": r.text[:500]}
+    except Exception as e:
+        return {"error": str(e)}
+
 @app.get("/status")
 def status():
     return {
