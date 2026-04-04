@@ -663,7 +663,7 @@ async def fetch_projected_lineup(team_id, team_name):
 async def fetch_dk_hr_props():
     if not ODDS_API_KEY: return {}
     try:
-        for market in ["batter_home_runs","player_home_runs"]:
+        for market in ["batter_home_runs"]:
             url = f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events?apiKey={ODDS_API_KEY}&dateFormat=iso"
             async with httpx.AsyncClient(timeout=15) as client:
                 r = await client.get(url)
