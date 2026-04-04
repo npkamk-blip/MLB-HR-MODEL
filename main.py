@@ -491,12 +491,33 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand,
     p_split = get_pitcher_split(opp_p_name, bat_hand)
     split_ip = p_split.get("ip", 0)
 
-    # HR/9 — use split if enough IP
-    hr9_split  = p_split.get("hr9", 0) if split_ip >= 5 else 0
+    # Season HR/9 blended
     hr9_season = blend(pc.get("hr9",0), pp.get("hr9",0), pwc, pwp)
-    pit_hr9 = hr9_split if hr9_split > 0 else hr9_season
 
-    pit_hrfb = blend(pc.get("hr_fb_pct",0), pp.get("hr_fb_pct",0), pwc, pwp)
+    # Platoon split — weight proportionally by split IP and magnitude
+    hr9_split  = p_split.get("hr9", 0) if split_ip >= 5 else 0
+    hrfb_split = p_split.get("hr_fb_pct", 0) if split_ip >= 5 else 0
+
+    if hr9_split > 0 and hr9_season > 0:
+        # How extreme is this platoon split?
+        split_ratio = hr9_split / hr9_season
+        # Weight split more as IP grows — max 80% split weight at 30+ IP
+        split_weight = min(split_ip / 30.0, 0.80)
+        pit_hr9 = hr9_season * (1 - split_weight) + hr9_split * split_weight
+        # Log the platoon magnitude for breakdown display
+        platoon_magnitude = round((split_ratio - 1.0) * 100, 1)  # % above/below average
+    else:
+        pit_hr9 = hr9_season
+        platoon_magnitude = 0.0
+
+    # HR/FB — use split if available
+    hrfb_season = blend(pc.get("hr_fb_pct",0), pp.get("hr_fb_pct",0), pwc, pwp)
+    if hrfb_split > 0 and hrfb_season > 0:
+        split_weight_fb = min(split_ip / 30.0, 0.80)
+        pit_hrfb = hrfb_season * (1 - split_weight_fb) + hrfb_split * split_weight_fb
+    else:
+        pit_hrfb = hrfb_season
+
     pit_hard = blend(pc.get("hard_hit_pct",0), pp.get("hard_hit_pct",0), pwc, pwp)
     pit_brl  = blend(pc.get("barrel_pct_allowed",0), pp.get("barrel_pct_allowed",0), pwc, pwp)
     pit_fb   = blend(pc.get("fb_pct",0), pp.get("fb_pct",0), pwc, pwp)
@@ -543,10 +564,15 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand,
     if park_factor >= 1.15: reasons.append("HR-friendly park")
     elif park_factor <= 0.90: reasons.append("Pitcher-friendly park")
 
-    # Platoon tag
+    # Platoon tag — show magnitude of split
     platoon_tag = None
-    if split_ip >= 10 and hr9_split > 1.3:
-        platoon_tag = f"SP weak vs {'LHB' if bat_hand=='L' else 'RHB'} ({hr9_split:.1f} HR/9)"
+    if split_ip >= 5 and hr9_split > 0 and hr9_season > 0:
+        split_ratio = hr9_split / hr9_season if hr9_season > 0 else 1.0
+        hand_label = 'LHB' if bat_hand == 'L' else 'RHB'
+        if split_ratio >= 1.3:  # 30%+ more vulnerable vs this hand
+            platoon_tag = f"SP weak vs {hand_label} ({hr9_split:.1f} HR/9 · {int((split_ratio-1)*100)}% above avg)"
+        elif split_ratio <= 0.7:  # 30%+ less vulnerable
+            platoon_tag = f"SP strong vs {hand_label} ({hr9_split:.1f} HR/9 · {int((1-split_ratio)*100)}% below avg)"
 
     # Confidence
     data_count = sum([barrel_s>0, iso_use>0, pit_hr9>0, pit_hrfb>0 or pit_hard>0])
@@ -568,7 +594,7 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand,
         "k_s":round(k_s,1),"k_cap":k_cap,
         "pit_hr9":round(pit_hr9,2),"pit_hrfb":round(pit_hrfb,1),
         "pit_hard":round(pit_hard,1),"pit_brl":round(pit_brl,1),
-        "pit_modifier":pit_modifier,"n_pit_components":n_components,
+        "pit_modifier":pit_modifier,"n_pit_components":n_components,"platoon_magnitude":platoon_magnitude,"hr9_split":round(hr9_split,2),"hr9_season":round(hr9_season,2),"split_ip":round(split_ip,1),
         "pitch_bonus":0,"pitch_breakdown":[],
         "after_pitch":round(batter_score,1),
         "after_k":round(after_k,1),
