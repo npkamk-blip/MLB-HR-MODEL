@@ -191,7 +191,28 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
   .col-hdrs,.batter-row{grid-template-columns:22px 1fr 80px 80px 70px}
   .hide-sm{display:none}
   .container{padding:16px}
+  .main-layout{flex-direction:column}
+  .parlay-sidebar{width:100%!important;position:static!important}
 }
+.main-layout{display:flex;gap:20px;align-items:flex-start}
+.games-panel{flex:1;min-width:0}
+.parlay-sidebar{width:260px;flex-shrink:0;position:sticky;top:16px}
+.parlay-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.parlay-header{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--s2)}
+.parlay-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.parlay-title.gold{color:#f5c518}
+.parlay-title.blue{color:var(--blue)}
+.parlay-title.green{color:var(--accent)}
+.parlay-subtitle{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
+.parlay-leg{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border2)}
+.parlay-leg:last-of-type{border-bottom:none}
+.parlay-leg-name{font-size:12px;font-weight:500;color:var(--text)}
+.parlay-leg-team{font-size:10px;color:var(--muted);margin-top:1px}
+.parlay-leg-prob{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700}
+.parlay-footer{padding:10px 14px;background:var(--s3);display:flex;justify-content:space-between;align-items:center}
+.parlay-odds-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.parlay-odds-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:#4dff88}
+.parlay-sidebar-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -210,8 +231,18 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
   <button class="tab" id="tab-lineups" onclick="switchTab('lineups')">Full Lineups</button>
 </div>
 <div class="container">
-  <div id="main"></div>
-  <div id="lineups-main" style="display:none"></div>
+  <div class="main-layout">
+    <div class="parlay-sidebar" id="parlay-sidebar" style="display:none">
+      <div class="parlay-sidebar-title">Sharp Parlays</div>
+      <div id="parlay-a"></div>
+      <div id="parlay-b"></div>
+      <div id="parlay-c"></div>
+    </div>
+    <div class="games-panel">
+      <div id="main"></div>
+      <div id="lineups-main" style="display:none"></div>
+    </div>
+  </div>
   <div class="updated" id="upd"></div>
 </div>
 <script>
@@ -363,7 +394,13 @@ function breakdownHTML(bd, hr_prob){
 
     <div class="bd-section">
       <div class="bd-section-title">Step 2 — Pitcher HR Modifier (${bd.pit_blend_note})</div>
-      <div class="bd-row"><span class="bd-label">HR/9: ${bd.pit_hr9} — league avg 1.15 (40% weight, MLB API)</span>${bdBar(Math.abs(bd.pit_modifier-1)*35,10,bd.pit_modifier<1)}${bdPts(bd.pit_modifier.toFixed(3))}</div>
+      <div class="bd-row">
+        <span class="bd-label">
+          HR/9: ${bd.pit_hr9} (season ${bd.hr9_season} · split ${bd.hr9_split>0?bd.hr9_split:'no data'} · ${bd.split_ip} IP vs hand)
+          ${bd.platoon_magnitude>15?'⚠️ Big platoon edge':bd.platoon_magnitude<-15?'✅ Pitcher strong vs this hand':''}
+        </span>
+        ${bdBar(Math.abs(bd.pit_modifier-1)*35,10,bd.pit_modifier<1)}${bdPts(bd.pit_modifier.toFixed(3))}
+      </div>
       <div class="bd-row"><span class="bd-label">Hard contact allowed: ${bd.pit_hard}% — league avg 32% (25% weight, Savant)</span>${bdBar(Math.abs(bd.pit_hard-32),15,bd.pit_hard<32)}<span class="bd-pts ${bd.pit_hard>32?'':'neg'}">${bd.pit_hard||'—'}%</span></div>
       <div class="bd-row"><span class="bd-label">Barrel% allowed: ${bd.pit_brl}% — league avg 7.5% (20% weight, Savant)</span>${bdBar(Math.abs(bd.pit_brl-7.5),8,bd.pit_brl<7.5)}<span class="bd-pts ${bd.pit_brl>7.5?'':'neg'}">${bd.pit_brl||'—'}%</span></div>
       <div class="bd-row"><span class="bd-label">Fly ball% allowed: ${bd.pit_fb>0?bd.pit_fb+'%':'No data'} — league avg 36% (15% weight)</span>${bdBar(Math.abs((bd.pit_fb||0)-36),15,(bd.pit_fb||0)<36)}<span class="bd-pts ${(bd.pit_fb||0)>36?'':'neg'}">${bd.pit_fb>0?bd.pit_fb+'%':'—'}</span></div>
@@ -515,6 +552,8 @@ function switchTab(tab) {
   document.getElementById('tab-lineups').classList.toggle('active', tab==='lineups');
   document.getElementById('main').style.display = tab==='top' ? '' : 'none';
   document.getElementById('lineups-main').style.display = tab==='lineups' ? '' : 'none';
+  const sidebar = document.getElementById('parlay-sidebar');
+  if(sidebar) sidebar.style.display = tab==='top' ? '' : 'none';
 }
 
 function renderLineups(games) {
@@ -680,6 +719,21 @@ async function load() {
     
     // Render lineups tab
     renderLineups(games);
+
+    // Collect all batters across all games for parlays
+    const allBatters = [];
+    for(const g of games) {
+      const away = g.away_lineup || g.top_hr_candidates || [];
+      const home = g.home_lineup || [];
+      allBatters.push(...away, ...home);
+    }
+    // Deduplicate by name
+    const seen = new Set();
+    const uniqueBatters = allBatters.filter(b => {
+      if(seen.has(b.name)) return false;
+      seen.add(b.name); return true;
+    });
+    renderParlays(uniqueBatters);
     
     upd.textContent='Updated '+new Date().toLocaleTimeString()+' · '+data.date;
   } catch(e){
