@@ -751,14 +751,18 @@ async def debug_odds():
         event_id = events[0]["id"]
         results = {"events":len(events),"event_id":event_id,"markets":{}}
 
-        for market in ["batter_home_runs","player_home_runs","batter_props"]:
+        for market in ["batter_home_runs"]:
+            # Remove bookmakers filter to see ALL available bookmakers
             prop_url = (f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events/{event_id}/odds?"
-                       f"apiKey={ODDS_API_KEY}&regions=us&markets={market}&oddsFormat=american&bookmakers=draftkings")
+                       f"apiKey={ODDS_API_KEY}&regions=us&markets={market}&oddsFormat=american")
             async with httpx.AsyncClient(timeout=10) as client:
                 pr = await client.get(prop_url)
+                data = pr.json() if pr.is_success else {}
+                bookmakers = [b.get("key") for b in data.get("bookmakers",[])]
                 results["markets"][market] = {
                     "status": pr.status_code,
-                    "sample": str(pr.text[:300])
+                    "bookmakers_available": bookmakers,
+                    "sample": str(pr.text[:500])
                 }
 
         return results
