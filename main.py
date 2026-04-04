@@ -263,11 +263,12 @@ def get_batter_14d(name):
         return {}
     pa = get_stat(row, "pa")
     hr = get_stat(row, "hr")
+    slg = get_stat(row, "slg")
     return {
         "pa":          pa,
         "barrel_pct":  get_stat(row, "barrel%", "barrel_pct"),
-        "hard_hit_pct": get_stat(row, "hardhit%", "hard_hit_pct"),
         "iso":         get_stat(row, "iso"),
+        "slg":         slg,
         "fb_pct":      get_stat(row, "fb%", "fb_pct"),
         "hr_fb_pct":   get_stat(row, "hr/fb", "hr_fb_pct"),
         "pull_pct":    get_stat(row, "pull%", "pull_pct"),
@@ -425,47 +426,59 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand,
     pa_25 = bp.get("pa", 0)
     bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
 
-    # Core batter stats — blend 2026/2025
-    barrel_s = blend(bc.get("barrel_pct",0), bp.get("barrel_pct",0), bwc, bwp)
-    hard_s   = blend(bc.get("hard_hit_pct",0), bp.get("hard_hit_pct",0), bwc, bwp)
-    fb_s     = blend(bc.get("fb_pct",0), bp.get("fb_pct",0), bwc, bwp)
-    pull_s   = blend(bc.get("pull_pct",0), bp.get("pull_pct",0), bwc, bwp)
-    la_s     = blend(bc.get("launch_angle",0), bp.get("launch_angle",0), bwc, bwp)
-    k_s      = blend(bc.get("k_pct",0), bp.get("k_pct",0), bwc, bwp)
-    hr_fb_s  = blend(bc.get("hr_fb_pct",0), bp.get("hr_fb_pct",0), bwc, bwp)
+    # 14d weights — use if enough PA, otherwise season only
+    has_14d = b14.get("pa", 0) >= 5
+    w_season = 0.70
+    w_14d    = 0.30 if has_14d else 0.0
+    # Renormalize if no 14d data
+    if not has_14d:
+        w_season = 1.0
 
-    # ISO — use split if available and meaningful
-    iso_split = b_split.get("iso", 0) if b_split.get("pa",0) >= 20 else 0
+    def blend3(season_26, season_25, stat_14d):
+        """Blend: 70% season (itself blended 2026/2025) + 30% 14d"""
+        season = blend(season_26, season_25, bwc, bwp)
+        if has_14d and stat_14d > 0:
+            return round(season * w_season + stat_14d * w_14d, 2)
+        return round(season, 2)
+
+    # Core stats blended: season (2026/2025) + 14d
+    barrel_s = blend3(bc.get("barrel_pct",0), bp.get("barrel_pct",0), b14.get("barrel_pct",0))
+    fb_s     = blend3(bc.get("fb_pct",0),     bp.get("fb_pct",0),     b14.get("fb_pct",0))
+    pull_s   = blend3(bc.get("pull_pct",0),   bp.get("pull_pct",0),   b14.get("pull_pct",0))
+    la_s     = blend3(bc.get("launch_angle",0),bp.get("launch_angle",0),b14.get("la",0))
+    k_s      = blend3(bc.get("k_pct",0),      bp.get("k_pct",0),      0)  # no 14d K%
+    hr_fb_s  = blend3(bc.get("hr_fb_pct",0),  bp.get("hr_fb_pct",0),  b14.get("hr_fb_pct",0))
+
+    # ISO — use split if available, then blend with 14d
+    iso_split  = b_split.get("iso", 0) if b_split.get("pa",0) >= 20 else 0
     iso_season = blend(bc.get("iso",0), bp.get("iso",0), bwc, bwp)
-    iso_use = iso_split if iso_split > 0 else iso_season
+    iso_base   = iso_split if iso_split > 0 else iso_season
+    iso_14d    = b14.get("iso", 0) if has_14d else 0
+    iso_use    = round(iso_base * w_season + iso_14d * w_14d, 3) if iso_14d > 0 else iso_base
 
-    # ── STEP 1: Batter score ──
+    # 14d HR rate as direct power signal
+    hr_rate_14d = b14.get("hr_rate", 0)
+    hr_rate_season = blend(bc.get("hr_fb_pct",0) * bc.get("fb_pct",0) / 10000,
+                           bp.get("hr_fb_pct",0) * bp.get("fb_pct",0) / 10000, bwc, bwp)
+
+    # Season barrel for archetype/trend reference
+    barrel_season = blend(bc.get("barrel_pct",0), bp.get("barrel_pct",0), bwc, bwp)
+    barrel_14d_raw = b14.get("barrel_pct", 0)
+    trend = get_trend(b14, bc)
+
+    # ── STEP 1: Batter score — all stats already blended with 14d ──
     s1_barrel = round(min(barrel_s/15.0,1.0)*25, 2)
-    s1_hard   = round(min(hard_s/45.0,1.0)*15, 2)
     s1_iso    = round(min(iso_use/0.280,1.0)*10, 2)
     s1_fb     = round(min(fb_s/45.0,1.0)*6, 2)
     s1_pull   = round(min(pull_s/50.0,1.0)*5, 2)
     s1_la     = round(min(max(la_s-10,0)/20.0,1.0)*4, 2) if la_s > 0 else 0
     s1_hrfb   = round(min(hr_fb_s/25.0,1.0)*5, 2)
+    # 14d HR rate bonus — direct HR signal
+    s1_hr14d  = round(min(hr_rate_14d/40.0,1.0)*5, 2) if has_14d else 0
 
-    batter_score = s1_barrel + s1_hard + s1_iso + s1_fb + s1_pull + s1_la + s1_hrfb
+    batter_score = s1_barrel + s1_iso + s1_fb + s1_pull + s1_la + s1_hrfb + s1_hr14d
 
-    # Recent form adjustment from 14d data
-    hr_rate_14d = b14.get("hr_rate", 0)
-    brl_14 = b14.get("barrel_pct", 0)
-    trend = get_trend(b14, bc)
-
-    if b14.get("pa",0) >= 5:
-        if hr_rate_14d > 30: batter_score = min(batter_score * 1.15, 70)
-        elif hr_rate_14d > 15: batter_score = min(batter_score * 1.07, 70)
-        elif hr_rate_14d < 3 and b14.get("pa",0) >= 15: batter_score *= 0.95
-        # Barrel trend bonus
-        if brl_14 > 0 and barrel_s > 0:
-            brl_diff = brl_14 - barrel_s
-            if brl_diff > 5: batter_score = min(batter_score * 1.08, 70)
-            elif brl_diff < -5: batter_score *= 0.95
-
-    archetype = get_archetype(barrel_s, k_s, fb_s, iso_season)
+    archetype = get_archetype(barrel_season, k_s, fb_s, iso_season)
 
     # ── STEP 2: Pitcher modifier ──
     pc = get_pitcher_stats(opp_p_name, "2026")
@@ -539,14 +552,18 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand,
     data_count = sum([barrel_s>0, hard_s>0, pit_hr9>0, pit_hrfb>0 or pit_hard>0])
     conf = "High" if data_count >= 4 and pa_26 >= 50 else "Medium" if data_count >= 2 else "Low"
 
+    blend_note = f"{int(bwc*100)}% 2026/{int(bwp*100)}% 2025 + 30% 14d" if has_14d else f"{int(bwc*100)}% 2026/{int(bwp*100)}% 2025"
     breakdown = {
         "barrel_s":round(barrel_s,1),"s1_barrel":s1_barrel,
-        "hard_s":round(hard_s,1),"s1_hard":s1_hard,
+        "barrel_season":round(barrel_season,1),"barrel_14d":round(barrel_14d_raw,1),
         "iso_use":round(iso_use,3),"s1_iso":s1_iso,
+        "iso_14d":round(iso_14d,3),
         "fb_s":round(fb_s,1),"s1_fb":s1_fb,
         "pull_s":round(pull_s,1),"s1_pull":s1_pull,
         "la_s":round(la_s,1),"s1_la":s1_la,
         "hr_fb_s":round(hr_fb_s,1),"s1_hrfb":s1_hrfb,
+        "hr_rate_14d":round(hr_rate_14d,1),"s1_hr14d":s1_hr14d,
+        "has_14d":has_14d,"pa_14d":int(b14.get("pa",0)),
         "batter_score":round(batter_score,1),
         "k_s":round(k_s,1),"k_cap":k_cap,
         "pit_hr9":round(pit_hr9,2),"pit_hrfb":round(pit_hrfb,1),
@@ -557,7 +574,7 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand,
         "after_k":round(after_k,1),
         "park_factor":park_factor,"weather_mult":weather_mult,
         "after_context":after_context,"hr_prob":hr_prob,
-        "blend_note":f"{int(bwc*100)}% 2026 / {int(bwp*100)}% 2025 ({int(pa_26)} PA)",
+        "blend_note":blend_note,
         "pit_blend_note":f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025 ({ip_26:.0f} IP)",
     }
 
@@ -828,7 +845,7 @@ async def get_games():
                 },
                 "recent_hr":int(b14.get("hr",0)),
                 "recent_pa":int(b14.get("pa",0)),
-                "recent_slg":0,
+                "recent_slg":round(b14.get("slg",0),3),
                 "dk_odds":fmt_odds(match_dk_odds(name, dk_props)),
                 "projected":is_proj,"platoon_tag":platoon_tag,
                 "pitch_matchup":[],"breakdown":breakdown,
