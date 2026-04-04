@@ -549,7 +549,7 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand,
         platoon_tag = f"SP weak vs {'LHB' if bat_hand=='L' else 'RHB'} ({hr9_split:.1f} HR/9)"
 
     # Confidence
-    data_count = sum([barrel_s>0, hard_s>0, pit_hr9>0, pit_hrfb>0 or pit_hard>0])
+    data_count = sum([barrel_s>0, iso_use>0, pit_hr9>0, pit_hrfb>0 or pit_hard>0])
     conf = "High" if data_count >= 4 and pa_26 >= 50 else "Medium" if data_count >= 2 else "Low"
 
     blend_note = f"{int(bwc*100)}% 2026/{int(bwp*100)}% 2025 + 30% 14d" if has_14d else f"{int(bwc*100)}% 2026/{int(bwp*100)}% 2025"
