@@ -293,7 +293,7 @@ function formCell(hr,pa,slg){
 function dkCell(odds){
   if(!odds) return `<div class="dk-none">—</div>`;
   const pos=odds.startsWith('+');
-  return `<div class="dk-cell"><div class="dk-val ${pos?'dk-pos':''}">${odds}</div><div class="dk-lbl">DraftKings</div></div>`;
+  return `<div class="dk-cell"><div class="dk-val ${pos?'dk-pos':''}">${odds}</div><div class="dk-lbl">BetRivers</div></div>`;
 }
 
 function bdBar(val, max, neg=false, blue=false){
@@ -371,7 +371,7 @@ function toggleBreakdown(el){
 async function load(){
   const main=document.getElementById('main'),upd=document.getElementById('upd'),btn=document.getElementById('refreshBtn');
   btn.disabled=true; upd.textContent='';
-  main.innerHTML=`<div class="loading">Loading Statcast · Splits · Pitch Data · DraftKings<div class="dots"><span></span><span></span><span></span></div></div>`;
+  main.innerHTML=`<div class="loading">Loading Statcast · Splits · Pitch Data · BetRivers<div class="dots"><span></span><span></span><span></span></div></div>`;
   try {
     const resp=await fetch(API+'/games');
     if(!resp.ok) throw new Error('Backend error '+resp.status);
@@ -420,7 +420,7 @@ async function load(){
           <div class="ch r hide-sm">Barrel / EV</div>
           <div class="ch r hide-sm">ISO / HR·FB</div>
           <div class="ch r">Last 14 Days</div>
-          <div class="ch r hide-sm">DK HR</div>
+          <div class="ch r hide-sm">BR HR</div>
           <div class="ch r">HR Prob</div>
         </div>`;
 
