@@ -741,6 +741,77 @@ async function load() {
   }
   btn.disabled=false;
 }
+
+function americanOdds(prob) {
+  if(prob <= 0) return null;
+  const p = prob / 100;
+  if(p >= 0.5) return Math.round(-p / (1-p) * 100);
+  else return Math.round((1-p) / p * 100);
+}
+
+function parlayOdds(probs) {
+  const decimal = probs.reduce((acc, p) => acc * (100 / p), 1);
+  const american = (decimal - 1) * 100;
+  return american >= 0 ? '+' + Math.round(american) : Math.round(american);
+}
+
+function impliedProb(americanStr) {
+  if(!americanStr) return null;
+  const o = parseInt(americanStr);
+  if(o > 0) return 100 / (o + 100);
+  else return Math.abs(o) / (Math.abs(o) + 100);
+}
+
+function valueScore(b) {
+  if(!b.dk_odds) return 0;
+  const implied = impliedProb(b.dk_odds) * 100;
+  return b.hr_prob - implied;
+}
+
+function confidenceScore(b) {
+  const conf = b.confidence === 'High' ? 3 : b.confidence === 'Medium' ? 2 : 1;
+  const dataBonus = (b.breakdown && b.breakdown.n_pit_components >= 3) ? 1 : 0;
+  return conf + dataBonus + (b.hr_prob / 10);
+}
+
+function buildParlayCard(id, title, subtitle, colorClass, picks) {
+  if(!picks || picks.length < 3) { document.getElementById(id).innerHTML=''; return; }
+  const legs = picks.slice(0,3);
+  const odds = parlayOdds(legs.map(b => b.hr_prob));
+  let html = `<div class="parlay-card">
+    <div class="parlay-header">
+      <div class="parlay-title ${colorClass}">${title}</div>
+      <div class="parlay-subtitle">${subtitle}</div>
+    </div>`;
+  legs.forEach(b => {
+    const pc = probCls(b.hr_prob);
+    html += `<div class="parlay-leg">
+      <div>
+        <div class="parlay-leg-name">${b.name}</div>
+        <div class="parlay-leg-team">${b.team}</div>
+      </div>
+      <div class="parlay-leg-prob ${pc}">${b.hr_prob}%</div>
+    </div>`;
+  });
+  html += `<div class="parlay-footer">
+    <div class="parlay-odds-label">Combined Odds</div>
+    <div class="parlay-odds-val">${odds}</div>
+  </div></div>`;
+  document.getElementById(id).innerHTML = html;
+}
+
+function renderParlays(allBatters) {
+  if(!allBatters || allBatters.length < 3) return;
+  const byProb = [...allBatters].sort((a,b) => b.hr_prob - a.hr_prob);
+  buildParlayCard('parlay-a', '🎯 Best Probability', 'Top 3 by model HR%', 'gold', byProb);
+  const withOdds = allBatters.filter(b => b.dk_odds);
+  const byValue = [...withOdds].sort((a,b) => valueScore(b) - valueScore(a));
+  buildParlayCard('parlay-b', '💰 Best Value', byValue.length>=3?'Model edge vs BetRivers':'Odds not yet posted', 'blue', byValue.length>=3?byValue:byProb.slice(3,6));
+  const byConf = [...allBatters].sort((a,b) => confidenceScore(b) - confidenceScore(a));
+  buildParlayCard('parlay-c', '🔒 High Confidence', 'Best data quality picks', 'green', byConf);
+  document.getElementById('parlay-sidebar').style.display = '';
+}
+
 </script>
 </body>
 </html>
