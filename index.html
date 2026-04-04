@@ -191,28 +191,21 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
   .col-hdrs,.batter-row{grid-template-columns:22px 1fr 80px 80px 70px}
   .hide-sm{display:none}
   .container{padding:16px}
-  .main-layout{flex-direction:column}
-  .parlay-sidebar{width:100%!important;position:static!important}
+
 }
-.main-layout{display:flex;gap:20px;align-items:flex-start}
-.games-panel{flex:1;min-width:0}
-.parlay-sidebar{width:260px;flex-shrink:0;position:sticky;top:16px}
-.parlay-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
-.parlay-header{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--s2)}
-.parlay-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
-.parlay-title.gold{color:#f5c518}
-.parlay-title.blue{color:var(--blue)}
-.parlay-title.green{color:var(--accent)}
-.parlay-subtitle{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
-.parlay-leg{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border2)}
-.parlay-leg:last-of-type{border-bottom:none}
-.parlay-leg-name{font-size:12px;font-weight:500;color:var(--text)}
-.parlay-leg-team{font-size:10px;color:var(--muted);margin-top:1px}
-.parlay-leg-prob{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700}
-.parlay-footer{padding:10px 14px;background:var(--s3);display:flex;justify-content:space-between;align-items:center}
-.parlay-odds-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.parlay-odds-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:#4dff88}
-.parlay-sidebar-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px}
+
+
+
+
+
+
+
+
+
+
+
+
+
 </style>
 </head>
 <body>
@@ -231,18 +224,8 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
   <button class="tab" id="tab-lineups" onclick="switchTab('lineups')">Full Lineups</button>
 </div>
 <div class="container">
-  <div class="main-layout">
-    <div class="parlay-sidebar" id="parlay-sidebar" style="display:none">
-      <div class="parlay-sidebar-title">Sharp Parlays</div>
-      <div id="parlay-a"></div>
-      <div id="parlay-b"></div>
-      <div id="parlay-c"></div>
-    </div>
-    <div class="games-panel">
-      <div id="main"></div>
-      <div id="lineups-main" style="display:none"></div>
-    </div>
-  </div>
+  <div id="main"></div>
+  <div id="lineups-main" style="display:none"></div>
   <div class="updated" id="upd"></div>
 </div>
 <script>
@@ -432,9 +415,7 @@ function breakdownHTML(bd, hr_prob){
         <div class="bd-final-label">HR Probability</div>
         <div style="font-size:11px;color:var(--muted2);margin-top:2px">League avg ~3% · Elite spot ~20-25%</div>
       </div>
-      <div class="bd-final-prob ${pc}">${hr_prob}%</div>
-    </div>
-  </div>`;
+      <div class="bd-final-prob ${pc}">${hr_prob}%</div>`;
 }
 
 function toggleBreakdown(el){
@@ -552,8 +533,7 @@ function switchTab(tab) {
   document.getElementById('tab-lineups').classList.toggle('active', tab==='lineups');
   document.getElementById('main').style.display = tab==='top' ? '' : 'none';
   document.getElementById('lineups-main').style.display = tab==='lineups' ? '' : 'none';
-  const sidebar = document.getElementById('parlay-sidebar');
-  if(sidebar) sidebar.style.display = tab==='top' ? '' : 'none';
+
 }
 
 function renderLineups(games) {
@@ -720,20 +700,6 @@ async function load() {
     // Render lineups tab
     renderLineups(games);
 
-    // Collect all batters across all games for parlays
-    const allBatters = [];
-    for(const g of games) {
-      const away = g.away_lineup || g.top_hr_candidates || [];
-      const home = g.home_lineup || [];
-      allBatters.push(...away, ...home);
-    }
-    // Deduplicate by name
-    const seen = new Set();
-    const uniqueBatters = allBatters.filter(b => {
-      if(seen.has(b.name)) return false;
-      seen.add(b.name); return true;
-    });
-    renderParlays(uniqueBatters);
     
     upd.textContent='Updated '+new Date().toLocaleTimeString()+' · '+data.date;
   } catch(e){
@@ -742,75 +708,7 @@ async function load() {
   btn.disabled=false;
 }
 
-function americanOdds(prob) {
-  if(prob <= 0) return null;
-  const p = prob / 100;
-  if(p >= 0.5) return Math.round(-p / (1-p) * 100);
-  else return Math.round((1-p) / p * 100);
-}
 
-function parlayOdds(probs) {
-  const decimal = probs.reduce((acc, p) => acc * (100 / p), 1);
-  const american = (decimal - 1) * 100;
-  return american >= 0 ? '+' + Math.round(american) : Math.round(american);
-}
-
-function impliedProb(americanStr) {
-  if(!americanStr) return null;
-  const o = parseInt(americanStr);
-  if(o > 0) return 100 / (o + 100);
-  else return Math.abs(o) / (Math.abs(o) + 100);
-}
-
-function valueScore(b) {
-  if(!b.dk_odds) return 0;
-  const implied = impliedProb(b.dk_odds) * 100;
-  return b.hr_prob - implied;
-}
-
-function confidenceScore(b) {
-  const conf = b.confidence === 'High' ? 3 : b.confidence === 'Medium' ? 2 : 1;
-  const dataBonus = (b.breakdown && b.breakdown.n_pit_components >= 3) ? 1 : 0;
-  return conf + dataBonus + (b.hr_prob / 10);
-}
-
-function buildParlayCard(id, title, subtitle, colorClass, picks) {
-  if(!picks || picks.length < 3) { document.getElementById(id).innerHTML=''; return; }
-  const legs = picks.slice(0,3);
-  const odds = parlayOdds(legs.map(b => b.hr_prob));
-  let html = `<div class="parlay-card">
-    <div class="parlay-header">
-      <div class="parlay-title ${colorClass}">${title}</div>
-      <div class="parlay-subtitle">${subtitle}</div>
-    </div>`;
-  legs.forEach(b => {
-    const pc = probCls(b.hr_prob);
-    html += `<div class="parlay-leg">
-      <div>
-        <div class="parlay-leg-name">${b.name}</div>
-        <div class="parlay-leg-team">${b.team}</div>
-      </div>
-      <div class="parlay-leg-prob ${pc}">${b.hr_prob}%</div>
-    </div>`;
-  });
-  html += `<div class="parlay-footer">
-    <div class="parlay-odds-label">Combined Odds</div>
-    <div class="parlay-odds-val">${odds}</div>
-  </div></div>`;
-  document.getElementById(id).innerHTML = html;
-}
-
-function renderParlays(allBatters) {
-  if(!allBatters || allBatters.length < 3) return;
-  const byProb = [...allBatters].sort((a,b) => b.hr_prob - a.hr_prob);
-  buildParlayCard('parlay-a', '🎯 Best Probability', 'Top 3 by model HR%', 'gold', byProb);
-  const withOdds = allBatters.filter(b => b.dk_odds);
-  const byValue = [...withOdds].sort((a,b) => valueScore(b) - valueScore(a));
-  buildParlayCard('parlay-b', '💰 Best Value', byValue.length>=3?'Model edge vs BetRivers':'Odds not yet posted', 'blue', byValue.length>=3?byValue:byProb.slice(3,6));
-  const byConf = [...allBatters].sort((a,b) => confidenceScore(b) - confidenceScore(a));
-  buildParlayCard('parlay-c', '🔒 High Confidence', 'Best data quality picks', 'green', byConf);
-  document.getElementById('parlay-sidebar').style.display = '';
-}
 
 </script>
 </body>
