@@ -674,13 +674,13 @@ async def fetch_dk_hr_props():
                 event_id = event.get("id","")
                 try:
                     prop_url = (f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events/{event_id}/odds?"
-                               f"apiKey={ODDS_API_KEY}&regions=us&markets={market}&oddsFormat=american&bookmakers=draftkings")
+                               f"apiKey={ODDS_API_KEY}&regions=us&markets={market}&oddsFormat=american&bookmakers=betrivers")
                     async with httpx.AsyncClient(timeout=10) as client:
                         pr = await client.get(prop_url)
                         if not pr.is_success: continue
                         pd_data = pr.json()
                     for bk in pd_data.get("bookmakers",[]):
-                        if bk.get("key") != "draftkings": continue
+                        if bk.get("key") != "betrivers": continue
                         for mkt in bk.get("markets",[]):
                             for outcome in mkt.get("outcomes",[]):
                                 name = outcome.get("description") or outcome.get("name","")
@@ -754,7 +754,7 @@ async def debug_odds():
         for market in ["batter_home_runs"]:
             # Remove bookmakers filter to see ALL available bookmakers
             prop_url = (f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events/{event_id}/odds?"
-                       f"apiKey={ODDS_API_KEY}&regions=us&markets={market}&oddsFormat=american")
+                       f"apiKey={ODDS_API_KEY}&regions=us&markets={market}&oddsFormat=american&bookmakers=betrivers")
             async with httpx.AsyncClient(timeout=10) as client:
                 pr = await client.get(prop_url)
                 data = pr.json() if pr.is_success else {}
