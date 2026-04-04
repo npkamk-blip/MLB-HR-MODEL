@@ -745,6 +745,39 @@ def reload_data():
     threading.Thread(target=load_excel_data, daemon=True).start()
     return {"status":"Reloading Excel data"}
 
+@app.get("/debug-odds")
+async def debug_odds():
+    """Debug DK odds API"""
+    if not ODDS_API_KEY:
+        return {"error":"No ODDS_API_KEY set"}
+    try:
+        # First get events
+        url = f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events?apiKey={ODDS_API_KEY}&dateFormat=iso"
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(url)
+            events = r.json()
+
+        if not events:
+            return {"error":"No events returned", "status":r.status_code}
+
+        # Try first event with different market keys
+        event_id = events[0]["id"]
+        results = {"events":len(events),"event_id":event_id,"markets":{}}
+
+        for market in ["batter_home_runs","player_home_runs","batter_props"]:
+            prop_url = (f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events/{event_id}/odds?"
+                       f"apiKey={ODDS_API_KEY}&regions=us&markets={market}&oddsFormat=american&bookmakers=draftkings")
+            async with httpx.AsyncClient(timeout=10) as client:
+                pr = await client.get(prop_url)
+                results["markets"][market] = {
+                    "status": pr.status_code,
+                    "sample": str(pr.text[:300])
+                }
+
+        return results
+    except Exception as e:
+        return {"error":str(e)}
+
 @app.get("/games")
 async def get_games():
     if not _cache["ready"]:
