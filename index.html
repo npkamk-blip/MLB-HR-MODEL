@@ -153,6 +153,38 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
 .err{background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);border-radius:8px;color:var(--danger);font-size:13px;padding:14px 18px;margin-bottom:16px}
 .warn-box{background:rgba(255,170,51,.08);border:1px solid rgba(255,170,51,.2);border-radius:8px;color:var(--warn);font-size:13px;padding:12px 16px;margin-bottom:16px}
 .updated{font-size:11px;color:var(--muted);text-align:center;margin-top:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--surface);padding:0 24px}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:12px 20px;cursor:pointer;transition:all .15s;margin-bottom:-1px}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+/* Lineup tab styles */
+.lineup-game{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.lineup-game-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:10px 18px;background:var(--s2);border-bottom:1px solid var(--border)}
+.lineup-teams{display:flex;gap:16px}
+.lineup-team{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em}
+.lineup-time{font-size:11px;color:var(--muted);text-align:center}
+.lineup-grid{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border)}
+.lineup-side{border-right:1px solid var(--border)}
+.lineup-side:last-child{border-right:none}
+.lineup-side-header{padding:8px 14px;background:var(--s3);border-bottom:1px solid var(--border)}
+.lineup-side-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.lineup-side-pitcher{font-size:11px;color:var(--muted2);margin-top:2px}
+.lineup-row{display:grid;grid-template-columns:22px 1fr 60px 70px;gap:6px;padding:7px 14px;border-bottom:1px solid var(--border2);align-items:center}
+.lineup-row:last-child{border-bottom:none}
+.lineup-row:hover{background:rgba(255,255,255,.02)}
+.lu-order{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--muted2);text-align:center}
+.lu-name{font-size:12px;font-weight:500;color:var(--text)}
+.lu-hand{font-size:10px;color:var(--muted2)}
+.lu-odds{font-size:12px;font-weight:600;color:#4dff88;text-align:right}
+.lu-odds.none{color:var(--muted2)}
+.lu-prob{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;text-align:right}
+.lu-prob.p-high{color:var(--blue)}
+.lu-prob.p-med{color:#7bb8ff}
+.lu-prob.p-low{color:var(--muted)}
+.lu-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:2px}
+.lu-tag{font-size:9px;padding:1px 5px;border-radius:8px;background:#1c1c1c;color:var(--muted);border:1px solid var(--border)}
+.lu-tag.g{background:rgba(200,241,53,.1);color:var(--accent);border-color:rgba(200,241,53,.25)}
+.lu-tag.r{background:rgba(255,77,77,.1);color:var(--danger);border-color:rgba(255,77,77,.25)}
 .no-games{text-align:center;padding:60px 20px;font-size:14px;color:var(--muted)}
 .pending{font-size:13px;color:var(--muted);padding:16px 18px;font-style:italic}
 @media(max-width:760px){
@@ -173,8 +205,13 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
     <button class="refresh-btn" id="refreshBtn" onclick="load()">Refresh</button>
   </div>
 </header>
+<div class="tabs">
+  <button class="tab active" id="tab-top" onclick="switchTab('top')">Top Picks</button>
+  <button class="tab" id="tab-lineups" onclick="switchTab('lineups')">Full Lineups</button>
+</div>
 <div class="container">
   <div id="main"></div>
+  <div id="lineups-main" style="display:none"></div>
   <div class="updated" id="upd"></div>
 </div>
 <script>
@@ -472,7 +509,184 @@ async function load(){
   btn.disabled=false;
 }
 
-load();
+
+function switchTab(tab) {
+  document.getElementById('tab-top').classList.toggle('active', tab==='top');
+  document.getElementById('tab-lineups').classList.toggle('active', tab==='lineups');
+  document.getElementById('main').style.display = tab==='top' ? '' : 'none';
+  document.getElementById('lineups-main').style.display = tab==='lineups' ? '' : 'none';
+}
+
+function renderLineups(games) {
+  const el = document.getElementById('lineups-main');
+  if(!games||!games.length){ el.innerHTML='<div class="no-games">No games today.</div>'; return; }
+  
+  let html = '';
+  for(const g of games) {
+    const awayP = g.away_pitcher||{};
+    const homeP = g.home_pitcher||{};
+    const awayL = g.away_lineup||[];
+    const homeL = g.home_lineup||[];
+    if(!awayL.length && !homeL.length) continue;
+
+    html += `<div class="lineup-game">
+      <div class="lineup-game-header">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em">${g.away}</div>
+        <div class="lineup-time">@ ${fmtTime(g.time)} ET</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;text-align:right">${g.home}</div>
+      </div>
+      <div class="lineup-grid">
+        <div class="lineup-side">
+          <div class="lineup-side-header">
+            <div class="lineup-side-title">${g.away}</div>
+            <div class="lineup-side-pitcher">vs ${homeP.name||'TBD'} ${homeP.hand||'R'}HP · ${homeP.hr9!=null?homeP.hr9+' HR/9':'—'}</div>
+          </div>
+          ${awayL.map((b,i) => lineupRow(b,i+1)).join('')}
+        </div>
+        <div class="lineup-side">
+          <div class="lineup-side-header">
+            <div class="lineup-side-title">${g.home}</div>
+            <div class="lineup-side-pitcher">vs ${awayP.name||'TBD'} ${awayP.hand||'R'}HP · ${awayP.hr9!=null?awayP.hr9+' HR/9':'—'}</div>
+          </div>
+          ${homeL.map((b,i) => lineupRow(b,i+1)).join('')}
+        </div>
+      </div>
+    </div>`;
+  }
+  el.innerHTML = html || '<div class="no-games">No lineup data available.</div>';
+}
+
+function lineupRow(b, order) {
+  const pc = probCls(b.hr_prob);
+  const odds = b.dk_odds;
+  const tags = [];
+  if(b.trend==='Heating Up') tags.push('<span class="lu-tag g">🔥 Hot</span>');
+  if(b.trend==='Cooling Off') tags.push('<span class="lu-tag r">❄️ Cold</span>');
+  if(b.platoon_tag) tags.push('<span class="lu-tag g">Platoon Edge</span>');
+  
+  return `<div class="lineup-row">
+    <div class="lu-order">${order}</div>
+    <div>
+      <div class="lu-name">${b.name}</div>
+      <div class="lu-hand">${b.bat_hand} vs ${b.opp_p_hand}HP</div>
+      ${tags.length ? `<div class="lu-tags">${tags.join('')}</div>` : ''}
+    </div>
+    <div class="lu-odds ${odds?'':'none'}">${odds||'—'}</div>
+    <div class="lu-prob ${pc}">${b.hr_prob}%</div>
+  </div>`;
+}
+
+// Override load to also render lineups
+const _origLoad = load;
+async function load() {
+  const main=document.getElementById('main'),upd=document.getElementById('upd'),btn=document.getElementById('refreshBtn');
+  btn.disabled=true; upd.textContent='';
+  main.innerHTML=`<div class="loading">Loading Sharp Data<div class="dots"><span></span><span></span><span></span></div></div>`;
+  document.getElementById('lineups-main').innerHTML='';
+  try {
+    const resp=await fetch(API+'/games');
+    if(!resp.ok) throw new Error('Backend error '+resp.status);
+    const data=await resp.json();
+    if(data.loading){
+      main.innerHTML=`<div class="warn-box">${data.message||'Data loading — try Refresh in 30 seconds.'}</div>`;
+      btn.disabled=false; return;
+    }
+    const games=data.games||[];
+    if(!games.length){ main.innerHTML='<div class="no-games">No MLB games today.</div>'; btn.disabled=false; return; }
+
+    // Render top picks tab (original logic)
+    let html='';
+    for(const g of games){
+      const wx=g.weather||{};
+      const wc=wxCls(wx.label);
+      const awayP=g.away_pitcher||{};
+      const homeP=g.home_pitcher||{};
+      const awayS=g.lineup_away_status||'projected';
+      const homeS=g.lineup_home_status||'projected';
+
+      html+=`<div class="game-card">
+        <div class="game-bar">
+          <div class="team-block">
+            <div class="team-name">${g.away}</div>
+            <div class="lineup-badge ${awayS==='confirmed'?'confirmed':'proj-badge'}">${awayS}</div>
+          </div>
+          <div class="game-time">@ ${fmtTime(g.time)} ET</div>
+          <div class="team-block right">
+            <div class="team-name">${g.home}</div>
+            <div class="lineup-badge ${homeS==='confirmed'?'confirmed':'proj-badge'}">${homeS}</div>
+          </div>
+        </div>
+        <div class="pit-bar">
+          ${pitBarHTML(awayP,'left')}
+          <div class="pit-vs-label">SP<br>vs<br>SP</div>
+          ${pitBarHTML(homeP,'right')}
+        </div>
+        <div class="weather ${wc}">
+          <div class="w-temp">${wx.temp||'—'}°F</div>
+          <div class="w-wind">${wx.wind_speed||0} mph wind</div>
+          <div class="w-badge">${wx.label||'—'}</div>
+        </div>
+        <div class="col-hdrs">
+          <div class="ch">#</div>
+          <div class="ch">Batter</div>
+          <div class="ch r hide-sm">Barrel / EV</div>
+          <div class="ch r hide-sm">ISO / HR-FB</div>
+          <div class="ch r">Last 14 Days</div>
+          <div class="ch r hide-sm">BR HR</div>
+          <div class="ch r">HR Prob</div>
+        </div>`;
+
+      const candidates=g.top_hr_candidates||[];
+      if(!candidates.length){
+        html+=`<div class="pending">No lineup data available yet.</div>`;
+      } else {
+        candidates.slice(0,3).forEach((b,i)=>{
+          const pc=probCls(b.hr_prob);
+          const pt=probTier(b.hr_prob);
+          const sl=b.statline||{};
+          const barrel=sl.barrel||0,ev=sl.ev||0,iso=sl.iso||0,hrfb=sl.hr_fb||0;
+          const barrelStr=barrel>0?barrel.toFixed(1)+'%':'—';
+          const evStr=ev>0?ev.toFixed(1)+' mph':'—';
+          const isoStr='.'+String(Math.round(iso*1000)).padStart(3,'0');
+          const hrfbStr=hrfb>0?hrfb.toFixed(1)+'%':'—';
+
+          html+=`<div class="batter">
+            <div class="batter-row" onclick="toggleBreakdown(this)">
+              <div class="rank ${i===0?'r1':''}">${i+1}</div>
+              <div>
+                <div class="bname">${b.name}</div>
+                <div class="bsub">${b.team} · vs ${typeof b.opp_pitcher==='object'?b.opp_pitcher.name||'TBD':b.opp_pitcher||'TBD'}</div>
+                ${tagsHTML(b.reasons,b.projected,b.bat_hand,b.opp_p_hand,b.platoon_tag,b.archetype,b.trend)}
+                <div class="expand-hint">Click to see probability breakdown</div>
+              </div>
+              <div class="hide-sm">${barrel>0?`<div class="stat-cell"><div class="stat-main">${barrelStr}</div><div class="stat-sub">${evStr} EV</div></div>`:`<div class="stat-na">—</div>`}</div>
+              <div class="hide-sm">${iso>0?`<div class="stat-cell"><div class="stat-main">${isoStr}</div><div class="stat-sub">${hrfbStr} HR·FB</div></div>`:`<div class="stat-na">—</div>`}</div>
+              ${formCell(b.recent_hr, b.recent_pa, b.recent_slg)}
+              <div class="hide-sm">${dkCell(b.dk_odds)}</div>
+              <div class="prob-cell">
+                <div class="prob-num ${pc}">${b.hr_prob}%</div>
+                <div class="prob-lbl ${pc}">${pt}</div>
+                <div class="prob-conf">${b.confidence} conf</div>
+              </div>
+            </div>
+            ${breakdownHTML(b.breakdown, b.hr_prob)}
+          </div>`;
+        });
+      }
+      html+=`</div>`;
+    }
+
+    main.innerHTML=html;
+    
+    // Render lineups tab
+    renderLineups(games);
+    
+    upd.textContent='Updated '+new Date().toLocaleTimeString()+' · '+data.date;
+  } catch(e){
+    main.innerHTML=`<div class="err"><strong>Error:</strong> ${e.message}</div>`;
+  }
+  btn.disabled=false;
+}
 </script>
 </body>
 </html>
