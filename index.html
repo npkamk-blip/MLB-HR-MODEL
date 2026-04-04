@@ -316,7 +316,6 @@ function breakdownHTML(bd, hr_prob){
     <div class="bd-section">
       <div class="bd-section-title">Step 1 — Batter HR Score (0-60)</div>
       <div class="bd-row"><span class="bd-label">Barrel rate ${bd.barrel_s}% (season blend: ${bd.blend_note})</span>${bdBar(bd.s1_barrel,20)}${bdPts(bd.s1_barrel)}</div>
-      <div class="bd-row"><span class="bd-label">Hard hit % ${bd.hard_s}%</span>${bdBar(bd.s1_hard,10)}${bdPts(bd.s1_hard)}</div>
       <div class="bd-row"><span class="bd-label">ISO .${String(Math.round(bd.iso_use*1000)).padStart(3,'0')} vs ${bd.iso_use>0?'split':'overall'}</span>${bdBar(bd.s1_iso,10)}${bdPts(bd.s1_iso)}</div>
       <div class="bd-row"><span class="bd-label">Fly ball % ${bd.fb_s}%</span>${bdBar(bd.s1_fb,8)}${bdPts(bd.s1_fb)}</div>
       <div class="bd-row"><span class="bd-label">Pull rate ${bd.pull_s}%</span>${bdBar(bd.s1_pull,7)}${bdPts(bd.s1_pull)}</div>
@@ -330,7 +329,7 @@ function breakdownHTML(bd, hr_prob){
       <div class="bd-row"><span class="bd-label">HR/9: ${bd.pit_hr9} — league avg 1.15 (40% weight, MLB API)</span>${bdBar(Math.abs(bd.pit_modifier-1)*35,10,bd.pit_modifier<1)}${bdPts(bd.pit_modifier.toFixed(3))}</div>
       <div class="bd-row"><span class="bd-label">Hard contact allowed: ${bd.pit_hard}% — league avg 32% (25% weight, Savant)</span>${bdBar(Math.abs(bd.pit_hard-32),15,bd.pit_hard<32)}<span class="bd-pts ${bd.pit_hard>32?'':'neg'}">${bd.pit_hard||'—'}%</span></div>
       <div class="bd-row"><span class="bd-label">Barrel% allowed: ${bd.pit_brl}% — league avg 7.5% (20% weight, Savant)</span>${bdBar(Math.abs(bd.pit_brl-7.5),8,bd.pit_brl<7.5)}<span class="bd-pts ${bd.pit_brl>7.5?'':'neg'}">${bd.pit_brl||'—'}%</span></div>
-      <div class="bd-row"><span class="bd-label">Fly ball% allowed: ${bd.pit_fb}% — league avg 36% (15% weight, Savant)</span>${bdBar(Math.abs(bd.pit_fb-36),15,bd.pit_fb<36)}<span class="bd-pts ${bd.pit_fb>36?'':'neg'}">${bd.pit_fb||'—'}%</span></div>
+      <div class="bd-row"><span class="bd-label">Fly ball% allowed: ${bd.pit_fb>0?bd.pit_fb+'%':'No data'} — league avg 36% (15% weight)</span>${bdBar(Math.abs((bd.pit_fb||0)-36),15,(bd.pit_fb||0)<36)}<span class="bd-pts ${(bd.pit_fb||0)>36?'':'neg'}">${bd.pit_fb>0?bd.pit_fb+'%':'—'}</span></div>
       <div class="bd-row"><span class="bd-label">Data sources: ${bd.n_pit_components||0} of 4 components loaded</span>${bdBar(bd.n_pit_components||0,4,false,true)}<span class="bd-pts blue">${bd.n_pit_components||0}/4</span></div>
       <div class="bd-subtotal"><span class="bd-subtotal-label">Combined pitcher modifier</span><span class="bd-subtotal-val">${bd.pit_modifier}x</span></div>
     </div>
