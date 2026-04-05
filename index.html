@@ -12,10 +12,10 @@
   --border:#252525;--border2:#1a1a1a;
   --accent:#c8f135;--blue:#4da6ff;--text:#f0f0f0;
   --muted:#888;--muted2:#555;--danger:#ff4d4d;--warn:#ffaa33;
-  --purple:#c084fc;
 }
-body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:15px}
-header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px}
+header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between}
 .logo{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
 .logo-sub{font-size:11px;color:var(--muted);border-left:1px solid var(--border);padding-left:12px;text-transform:uppercase;letter-spacing:.1em}
 .hdr-r{display:flex;align-items:center;gap:12px}
@@ -23,114 +23,152 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
 .refresh-btn{background:var(--accent);color:#0a0a0a;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:7px 16px;cursor:pointer;transition:opacity .15s}
 .refresh-btn:hover{opacity:.85}
 .refresh-btn:disabled{opacity:.4;cursor:not-allowed}
-.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--surface);padding:0 24px}
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 24px}
 .tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:12px 20px;cursor:pointer;transition:all .15s;margin-bottom:-1px}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.container{max-width:1020px;margin:0 auto;padding:24px 16px}
-.game-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
-.game-bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:11px 18px;border-bottom:1px solid var(--border);background:var(--s2)}
-.team-block{display:flex;flex-direction:column;gap:3px}
-.team-block.right{align-items:flex-end}
-.team-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em}
-.lineup-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px;text-transform:uppercase;letter-spacing:.06em;width:fit-content}
+.container{max-width:960px;margin:0 auto;padding:20px 16px}
+
+/* ── GAME CARD ── */
+.game-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px}
+.game-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:12px 20px;background:var(--s2);border-bottom:1px solid var(--border)}
+.team-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.team-name.right{text-align:right}
+.game-meta{text-align:center;font-size:11px;color:var(--muted);line-height:1.8}
+.badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
 .confirmed{background:rgba(200,241,53,.1);color:var(--accent);border:1px solid rgba(200,241,53,.25)}
 .proj-badge{background:rgba(255,170,51,.1);color:var(--warn);border:1px solid rgba(255,170,51,.25)}
-.game-time{font-size:11px;color:var(--muted);text-align:center;padding:0 10px;white-space:nowrap}
-.pit-bar{display:grid;grid-template-columns:1fr auto 1fr;border-bottom:1px solid var(--border);background:var(--s3)}
-.pit-side{padding:8px 18px}
-.pit-side.right{text-align:right}
-.pit-name-row{display:flex;align-items:center;gap:6px;margin-bottom:3px}
-.pit-name-row.right{justify-content:flex-end}
-.pit-name{font-size:12px;font-weight:500;color:var(--text)}
-.pit-hand-badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:6px;text-transform:uppercase}
-.lhp{background:rgba(77,166,255,.12);color:var(--blue);border:1px solid rgba(77,166,255,.25)}
+
+/* Weather */
+.weather-strip{display:flex;align-items:center;gap:20px;padding:7px 20px;border-bottom:1px solid var(--border);background:var(--s3)}
+.wx-item{display:flex;align-items:center;gap:5px;font-size:12px}
+.wx-val{font-weight:600}
+.wx-lbl{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em}
+.wx-badge{margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em}
+.wx-out{background:rgba(200,241,53,.12);color:var(--accent);border:1px solid rgba(200,241,53,.3)}
+.wx-in{background:rgba(255,77,77,.1);color:var(--danger);border:1px solid rgba(255,77,77,.25)}
+.wx-left{background:rgba(77,166,255,.1);color:var(--blue);border:1px solid rgba(77,166,255,.25)}
+.wx-right{background:rgba(255,170,51,.1);color:var(--warn);border:1px solid rgba(255,170,51,.25)}
+.wx-neutral,.wx-calm,.wx-dome{color:var(--muted2);border:1px solid var(--border)}
+
+/* Pitcher split tables */
+.pitchers{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
+.pit-block{padding:12px 20px}
+.pit-block:first-child{border-right:1px solid var(--border)}
+.pit-block-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.pit-name{font-size:13px;font-weight:600}
+.pit-team{font-size:10px;color:var(--muted);margin-top:2px}
+.pit-hand{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;text-transform:uppercase}
 .rhp{background:rgba(200,241,53,.08);color:var(--accent);border:1px solid rgba(200,241,53,.2)}
-.pit-stats-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px}
-.pit-stats-row.right{justify-content:flex-end}
-.pit-stat{font-size:11px;color:var(--muted)}
-.pit-stat span{color:var(--text);font-weight:500}
-.pit-stat.hi span{color:var(--danger)}
-.pit-stat.mw span{color:var(--warn)}
-.pit-blend{font-size:10px;color:var(--muted2);margin-top:3px}
-.pit-blend.right{text-align:right}
-.pit-vs-label{font-size:10px;color:var(--muted2);text-align:center;padding:8px 4px;text-transform:uppercase;letter-spacing:.06em}
-.weather{display:flex;align-items:center;gap:14px;padding:8px 18px;border-bottom:1px solid var(--border)}
-.w-temp{font-size:14px;font-weight:600}
-.w-wind{font-size:13px}
-.w-badge{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-left:auto;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
-.wx-out{background:rgba(200,241,53,.12);border:1px solid rgba(200,241,53,.3)}
-.wx-out .w-temp,.wx-out .w-wind{color:#b8e030}.wx-out .w-badge{color:var(--accent)}
-.wx-in{background:rgba(255,77,77,.1);border:1px solid rgba(255,77,77,.25)}
-.wx-in .w-temp,.wx-in .w-wind{color:#ff8080}.wx-in .w-badge{color:var(--danger)}
-.wx-left{background:rgba(77,166,255,.1);border:1px solid rgba(77,166,255,.25)}
-.wx-left .w-temp,.wx-left .w-wind{color:#80c0ff}.wx-left .w-badge{color:var(--blue)}
-.wx-right{background:rgba(255,170,51,.1);border:1px solid rgba(255,170,51,.25)}
-.wx-right .w-temp,.wx-right .w-wind{color:#ffc060}.wx-right .w-badge{color:var(--warn)}
-.wx-calm,.wx-dome,.wx-neutral{border:1px solid var(--border)}
-.wx-calm .w-temp,.wx-calm .w-wind,.wx-dome .w-temp,.wx-dome .w-wind,.wx-neutral .w-temp,.wx-neutral .w-wind{color:var(--muted)}
-.wx-calm .w-badge,.wx-dome .w-badge,.wx-neutral .w-badge{color:var(--muted2)}
-.col-hdrs{display:grid;grid-template-columns:26px 1fr 90px 80px 96px 64px 80px;gap:8px;padding:6px 18px;border-bottom:1px solid var(--border);background:var(--bg)}
-.ch{font-size:10px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em}
-.ch.r{text-align:right}
-.batter{border-bottom:1px solid var(--border2)}
-.batter:last-child{border-bottom:none}
-.batter-row{display:grid;grid-template-columns:26px 1fr 90px 80px 96px 64px 80px;gap:8px;padding:11px 18px;align-items:start;cursor:pointer;transition:background .1s}
-.batter-row:hover{background:rgba(255,255,255,.02)}
-.rank{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:var(--muted);text-align:center;line-height:1;padding-top:2px}
-.rank.r1{color:var(--accent)}
-.bname{font-size:13px;font-weight:500;color:var(--text);margin-bottom:1px}
-.bsub{font-size:11px;color:var(--muted);margin-bottom:4px}
-.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px}
-.tag{font-size:10px;padding:2px 7px;border-radius:10px;background:#1c1c1c;color:var(--muted);border:1px solid var(--border)}
-.tag.g{background:rgba(200,241,53,.1);color:var(--accent);border-color:rgba(200,241,53,.25)}
-.tag.b{background:rgba(77,166,255,.1);color:var(--blue);border-color:rgba(77,166,255,.25)}
-.tag.w{background:rgba(255,170,51,.1);color:var(--warn);border-color:rgba(255,170,51,.25)}
-.tag.r{background:rgba(255,77,77,.1);color:var(--danger);border-color:rgba(255,77,77,.25)}
-.stat-cell{text-align:right;line-height:1.5}
-.stat-main{font-size:12px;font-weight:600;color:var(--accent)}
-.stat-sub{font-size:10px;color:var(--muted);margin-top:1px}
-.stat-na{font-size:12px;color:var(--muted2);text-align:right}
-.form-cell{text-align:right;line-height:1.5}
+.lhp{background:rgba(77,166,255,.12);color:var(--blue);border:1px solid rgba(77,166,255,.25)}
+.split-table{width:100%;border-collapse:collapse}
+.split-table th{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;padding:3px 5px;text-align:right;border-bottom:1px solid var(--border2)}
+.split-table th:first-child{text-align:left}
+.split-table td{font-size:11px;padding:4px 5px;text-align:right;border-bottom:1px solid var(--border2)}
+.split-table td:first-child{text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.split-table tr:last-child td{border-bottom:none}
+.pit-blend{font-size:10px;color:var(--muted2);margin-top:6px}
+/* Heat coloring */
+.s-hot{color:var(--danger);font-weight:600}
+.s-warm{color:var(--warn);font-weight:500}
+.s-cool{color:var(--accent);font-weight:500}
+.s-cold{color:#6ec86e;font-weight:500}
+.s-neutral{color:var(--text)}
+
+/* Batter section */
+.batter-section-header{display:grid;grid-template-columns:24px 1fr 58px 52px 72px 62px 80px;gap:6px;padding:5px 20px;background:var(--bg);border-bottom:1px solid var(--border)}
+.bh{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;text-align:right}
+.bh.left{text-align:left}
+.batter-row{display:grid;grid-template-columns:24px 1fr 58px 52px 72px 62px 80px;gap:6px;padding:8px 20px;border-bottom:1px solid var(--border2);align-items:center;cursor:pointer;transition:background .1s}
+.batter-row:last-child{border-bottom:none}
+.batter-row:hover{background:rgba(255,255,255,.025)}
+.bat-order{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--muted2);text-align:center}
+.bat-name{font-size:12px;font-weight:500;color:var(--text)}
+.bat-sub{font-size:10px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.hand-tag{font-size:9px;padding:1px 5px;border-radius:5px;font-weight:600}
+.lhb{background:rgba(77,166,255,.1);color:var(--blue);border:1px solid rgba(77,166,255,.2)}
+.rhb{background:rgba(200,241,53,.08);color:var(--accent);border:1px solid rgba(200,241,53,.15)}
+.trend-pip{display:inline-block;width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.pip-hot{background:var(--accent)}
+.pip-cold{background:var(--danger)}
+.pip-steady{background:var(--muted2)}
+.trend-txt{font-size:10px}
+/* Stat cells */
+.sc{text-align:right;font-size:12px;font-weight:600}
+.sc.s-hot{color:var(--accent)}
+.sc.s-warm{color:#a8d429}
+.sc.s-neutral{color:var(--text)}
+.sc.s-cold{color:var(--muted)}
+.sc.s-danger{color:var(--danger)}
+/* 14d cell */
+.form-cell{text-align:right}
 .form-hr{font-size:12px;font-weight:600}
 .fhot{color:var(--accent)}
 .fwarm{color:var(--warn)}
 .fcold{color:var(--muted)}
-.form-slg{font-size:10px;color:var(--muted);margin-top:1px}
-.dk-cell{text-align:right}
-.dk-val{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:#4dff88}
-.dk-lbl{font-size:10px;color:var(--muted2);margin-top:1px}
-.dk-none{font-size:12px;color:var(--muted2);text-align:right}
+.form-pa{font-size:10px;color:var(--muted2);margin-top:1px}
+/* Odds */
+.odds-val{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:#4dff88;text-align:right}
+.odds-none{font-size:11px;color:var(--muted2);text-align:right}
+/* HR Prob */
 .prob-cell{text-align:right}
-.prob-num{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;line-height:1}
-.prob-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
-.prob-conf{font-size:10px;color:var(--muted2);margin-top:1px}
+.prob-num{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;line-height:1}
+.prob-tier{font-size:9px;text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
 .p-high{color:var(--blue)}
 .p-med{color:#7bb8ff}
 .p-low{color:var(--muted)}
-.expand-hint{font-size:10px;color:var(--muted2);margin-top:3px}
-.breakdown{display:none;background:#0d0d0d;border-top:1px solid var(--border);padding:16px 18px}
+/* Breakdown */
+.breakdown{display:none;background:#0d0d0d;border-top:1px solid var(--border);padding:16px 20px}
 .breakdown.open{display:block}
-.bd-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:12px}
-.bd-section{margin-bottom:16px}
-.bd-section-title{font-size:11px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;padding-bottom:4px;border-bottom:1px solid var(--border2)}
-.bd-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:4px 0;border-bottom:1px solid #141414}
+.bd-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:12px}
+.bd-section{margin-bottom:14px}
+.bd-section-title{font-size:10px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;padding-bottom:4px;border-bottom:1px solid var(--border2)}
+.bd-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:3px 0;border-bottom:1px solid #141414}
 .bd-row:last-child{border-bottom:none}
 .bd-label{color:var(--muted);flex:1}
-.bd-bar-wrap{width:80px;height:4px;background:#1a1a1a;border-radius:2px;margin:0 10px;flex-shrink:0}
+.bd-bar-wrap{width:70px;height:3px;background:#1a1a1a;border-radius:2px;margin:0 10px;flex-shrink:0}
 .bd-bar{height:100%;border-radius:2px;background:var(--accent)}
 .bd-bar.neg{background:var(--danger)}
 .bd-bar.blue{background:var(--blue)}
-.bd-pts{font-weight:600;color:var(--accent);min-width:36px;text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px}
+.bd-pts{font-weight:600;color:var(--accent);min-width:34px;text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:12px}
 .bd-pts.neg{color:var(--danger)}
 .bd-pts.neutral{color:var(--muted)}
 .bd-pts.blue{color:var(--blue)}
-.bd-subtotal{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;margin-top:4px;border-top:1px solid var(--border)}
+.bd-subtotal{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;margin-top:3px;border-top:1px solid var(--border)}
 .bd-subtotal-label{color:var(--muted);font-weight:500}
-.bd-subtotal-val{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
-.bd-final{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:2px solid var(--border)}
-.bd-final-label{font-size:14px;font-weight:600;color:var(--muted)}
-.bd-final-prob{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;color:var(--blue)}
+.bd-subtotal-val{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text)}
+.bd-final{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:2px solid var(--border)}
+.bd-final-label{font-size:13px;font-weight:600;color:var(--muted)}
+.bd-final-prob{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:var(--blue)}
+
+/* Lineup tab */
+.lineup-game{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:24px;overflow:hidden}
+.lineup-game-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:10px 20px;background:var(--s2);border-bottom:1px solid var(--border)}
+.lineup-time{font-size:11px;color:var(--muted);text-align:center}
+.lineup-grid{display:grid;grid-template-columns:1fr 1fr}
+.lineup-side{border-right:1px solid var(--border)}
+.lineup-side:last-child{border-right:none}
+.lineup-side-header{padding:8px 14px;background:var(--s3);border-bottom:1px solid var(--border)}
+.lineup-side-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.lineup-side-pitcher{font-size:11px;color:var(--muted2);margin-top:2px}
+.lineup-row{display:grid;grid-template-columns:20px 1fr 58px 68px;gap:6px;padding:7px 14px;border-bottom:1px solid var(--border2);align-items:center}
+.lineup-row:last-child{border-bottom:none}
+.lineup-row:hover{background:rgba(255,255,255,.02)}
+.lu-order{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--muted2);text-align:center}
+.lu-name{font-size:12px;font-weight:500}
+.lu-hand{font-size:10px;color:var(--muted2);margin-top:1px;display:flex;align-items:center;gap:4px}
+.lu-odds{font-size:12px;font-weight:600;color:#4dff88;text-align:right}
+.lu-odds.none{color:var(--muted2)}
+.lu-prob{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;text-align:right}
+.lu-prob.p-high{color:var(--blue)}
+.lu-prob.p-med{color:#7bb8ff}
+.lu-prob.p-low{color:var(--muted)}
+.lu-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:2px}
+.lu-tag{font-size:9px;padding:1px 5px;border-radius:8px;background:#1c1c1c;color:var(--muted);border:1px solid var(--border)}
+.lu-tag.g{background:rgba(200,241,53,.1);color:var(--accent);border-color:rgba(200,241,53,.25)}
+.lu-tag.r{background:rgba(255,77,77,.1);color:var(--danger);border-color:rgba(255,77,77,.25)}
+
+/* Misc */
 .loading{text-align:center;padding:50px 0;font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .dots{display:inline-flex;gap:5px;margin-top:14px}
 .dots span{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:dp 1.2s ease-in-out infinite}
@@ -141,37 +179,14 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
 .warn-box{background:rgba(255,170,51,.08);border:1px solid rgba(255,170,51,.2);border-radius:8px;color:var(--warn);font-size:13px;padding:12px 16px;margin-bottom:16px}
 .updated{font-size:11px;color:var(--muted);text-align:center;margin-top:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase}
 .no-games{text-align:center;padding:60px 20px;font-size:14px;color:var(--muted)}
-.pending{font-size:13px;color:var(--muted);padding:16px 18px;font-style:italic}
-/* Lineup tab */
-.lineup-game{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
-.lineup-game-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:10px 18px;background:var(--s2);border-bottom:1px solid var(--border)}
-.lineup-time{font-size:11px;color:var(--muted);text-align:center}
-.lineup-grid{display:grid;grid-template-columns:1fr 1fr}
-.lineup-side{border-right:1px solid var(--border)}
-.lineup-side:last-child{border-right:none}
-.lineup-side-header{padding:8px 14px;background:var(--s3);border-bottom:1px solid var(--border)}
-.lineup-side-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.lineup-side-pitcher{font-size:11px;color:var(--muted2);margin-top:2px}
-.lineup-row{display:grid;grid-template-columns:22px 1fr 60px 70px;gap:6px;padding:7px 14px;border-bottom:1px solid var(--border2);align-items:center}
-.lineup-row:last-child{border-bottom:none}
-.lineup-row:hover{background:rgba(255,255,255,.02)}
-.lu-order{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--muted2);text-align:center}
-.lu-name{font-size:12px;font-weight:500;color:var(--text)}
-.lu-hand{font-size:10px;color:var(--muted2)}
-.lu-odds{font-size:12px;font-weight:600;color:#4dff88;text-align:right}
-.lu-odds.none{color:var(--muted2)}
-.lu-prob{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;text-align:right}
-.lu-prob.p-high{color:var(--blue)}
-.lu-prob.p-med{color:#7bb8ff}
-.lu-prob.p-low{color:var(--muted)}
-.lu-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:2px}
-.lu-tag{font-size:9px;padding:1px 5px;border-radius:8px;background:#1c1c1c;color:var(--muted);border:1px solid var(--border)}
-.lu-tag.g{background:rgba(200,241,53,.1);color:var(--accent);border-color:rgba(200,241,53,.25)}
-.lu-tag.r{background:rgba(255,77,77,.1);color:var(--danger);border-color:rgba(255,77,77,.25)}
-@media(max-width:760px){
-  .col-hdrs,.batter-row{grid-template-columns:22px 1fr 80px 80px 70px}
+.pending{font-size:13px;color:var(--muted);padding:14px 20px;font-style:italic}
+@media(max-width:700px){
+  .pitchers{grid-template-columns:1fr}
+  .pit-block:first-child{border-right:none;border-bottom:1px solid var(--border)}
+  .batter-section-header,.batter-row{grid-template-columns:20px 1fr 52px 60px 70px}
   .hide-sm{display:none}
-  .container{padding:16px}
+  .lineup-grid{grid-template-columns:1fr}
+  .lineup-side{border-right:none;border-bottom:1px solid var(--border)}
 }
 </style>
 </head>
@@ -199,11 +214,11 @@ header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;alig
 const API = 'https://web-production-c0e4.up.railway.app';
 document.getElementById('dateLbl').textContent = new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
 
-function switchTab(tab) {
-  document.getElementById('tab-top').classList.toggle('active', tab==='top');
-  document.getElementById('tab-lineups').classList.toggle('active', tab==='lineups');
-  document.getElementById('main').style.display = tab==='top' ? '' : 'none';
-  document.getElementById('lineups-main').style.display = tab==='lineups' ? '' : 'none';
+function switchTab(tab){
+  document.getElementById('tab-top').classList.toggle('active',tab==='top');
+  document.getElementById('tab-lineups').classList.toggle('active',tab==='lineups');
+  document.getElementById('main').style.display=tab==='top'?'':'none';
+  document.getElementById('lineups-main').style.display=tab==='lineups'?'':'none';
 }
 
 function probCls(p){ return p>=15?'p-high':p>=9?'p-med':'p-low'; }
@@ -221,83 +236,97 @@ function wxCls(label){
   if(l.includes('blowing in')) return 'wx-in';
   if(l.includes('favors left')) return 'wx-left';
   if(l.includes('favors right')) return 'wx-right';
-  if(l.includes('dome')||l.includes('indoor')) return 'wx-dome';
-  if(l.includes('calm')) return 'wx-calm';
+  if(l.includes('dome')) return 'wx-neutral';
+  if(l.includes('calm')) return 'wx-neutral';
   return 'wx-neutral';
 }
 
-function archetypeTag(a){
-  const map={'Pure Power':'g','Boom/Bust':'r','Power':'g','Balanced':'b','High K':'r','Contact':''};
-  return `<span class="tag ${map[a]||''}">${a}</span>`;
+// Heat color a stat value based on thresholds
+function heatCls(val, low, mid, high){
+  if(!val||val===0) return 's-cold';
+  if(val>=high) return 's-hot';
+  if(val>=mid) return 's-warm';
+  if(val>=low) return 's-neutral';
+  return 's-cold';
 }
 
-function trendTag(t){
-  if(t==='Heating Up') return `<span class="tag g">🔥 Heating Up</span>`;
-  if(t==='Cooling Off') return `<span class="tag r">❄️ Cooling Off</span>`;
-  return `<span class="tag">Steady</span>`;
-}
-
-function pitBarHTML(pit, side){
-  if(!pit) return `<div class="pit-side ${side==='right'?'right':''}"></div>`;
-  const hand=pit.hand||'R';
-  const handCls=hand==='L'?'lhp':'rhp';
-  const era=pit.era!=null?pit.era.toFixed(2):'—';
-  const hr9=pit.hr9!=null?pit.hr9.toFixed(2):'—';
-  const hr9Cls=parseFloat(hr9)>1.5?'hi':parseFloat(hr9)>1.1?'mw':'';
-  const isRight=side==='right';
-  const nameRow=isRight
-    ?`<div class="pit-name-row right"><span class="pit-hand-badge ${handCls}">${hand}HP</span><span class="pit-name">${pit.name||'TBD'}</span></div>`
-    :`<div class="pit-name-row"><span class="pit-name">${pit.name||'TBD'}</span><span class="pit-hand-badge ${handCls}">${hand}HP</span></div>`;
-  let stats=`<div class="pit-stats-row ${isRight?'right':''}">
-    <span class="pit-stat">ERA <span>${era}</span></span>
-    <span class="pit-stat ${hr9Cls}">HR/9 <span>${hr9}</span></span>`;
-  if(pit.hard_hit_pct) stats+=`<span class="pit-stat ${pit.hard_hit_pct>38?'hi':pit.hard_hit_pct>33?'mw':''}">HH% <span>${pit.hard_hit_pct}</span></span>`;
-  if(pit.barrel_pct) stats+=`<span class="pit-stat ${pit.barrel_pct>9?'hi':''}">Brl% <span>${pit.barrel_pct}</span></span>`;
-  stats+=`</div>`;
-  const blend=pit.blend_note?`<div class="pit-blend ${isRight?'right':''}">${pit.ip_2026} IP 2026 · ${pit.blend_note}</div>`:'';
-  return `<div class="pit-side ${isRight?'right':''}">${nameRow}${stats}${blend}</div>`;
-}
-
-function tagsHTML(reasons, projected, bat_hand, opp_hand, platoon_tag, archetype, trend){
-  let tags='';
-  if(projected) tags+=`<span class="tag w">Projected</span>`;
-  const platoon=bat_hand&&opp_hand&&bat_hand!==opp_hand;
-  tags+=`<span class="tag ${platoon?'b':''}">${bat_hand||'?'} vs ${opp_hand||'?'}HP</span>`;
-  tags+=archetypeTag(archetype||'');
-  tags+=trendTag(trend||'Steady');
-  if(platoon_tag) tags+=`<span class="tag g">${platoon_tag}</span>`;
-  if(reasons&&reasons.length){
-    tags+=reasons.slice(0,2).map(r=>{
-      const g=r.includes('Barrel')||r.includes('HR/9')||r.includes('HR/FB');
-      const b=r.includes('ISO');
-      const w=r.includes('park')||r.includes('Fly ball');
-      return `<span class="tag ${g?'g':b?'b':w?'w':''}">${r}</span>`;
-    }).join('');
+// Pitcher stat heat — higher = worse (more vulnerable)
+function pitHeat(val, avg, type){
+  if(!val||val===0) return 's-neutral';
+  const diff = (val - avg) / avg;
+  if(type==='bad'){ // higher = more vulnerable
+    if(diff>=0.3) return 's-hot';
+    if(diff>=0.1) return 's-warm';
+    if(diff<=-0.15) return 's-cold';
+    return 's-neutral';
+  } else { // higher = better (K%)
+    if(diff>=0.2) return 's-cold';
+    if(diff<=-0.2) return 's-hot';
+    return 's-neutral';
   }
-  return tags?`<div class="tags">${tags}</div>`:'';
 }
 
-function formCell(hr,pa,slg){
-  if(!pa) return `<div class="form-cell"><div class="form-hr fcold">—</div></div>`;
-  const cls=hr>=2?'fhot':hr>=1?'fwarm':'fcold';
-  const slgNum=parseFloat(slg)||0;
-  const slgStr=slgNum>0?'.'+String(Math.round(slgNum*1000)).padStart(3,'0'):'—';
-  return `<div class="form-cell"><div class="form-hr ${cls}">${hr} HR · ${pa} PA</div><div class="form-slg">${slgStr} SLG</div></div>`;
+function pitSplitTable(pit){
+  if(!pit||!pit.name||pit.name==='TBD') return '';
+  const hand = pit.hand||'R';
+  const era = pit.era!=null ? pit.era.toFixed(2) : '—';
+  const hr9 = pit.hr9!=null ? pit.hr9.toFixed(2) : '—';
+  const hh = pit.hard_hit_pct!=null ? pit.hard_hit_pct.toFixed(1)+'%' : '—';
+  const brl = pit.barrel_pct!=null ? pit.barrel_pct.toFixed(1)+'%' : '—';
+  const vsLhr9 = pit.vs_L_hr9!=null ? pit.vs_L_hr9.toFixed(2) : '—';
+  const vsRhr9 = pit.vs_R_hr9!=null ? pit.vs_R_hr9.toFixed(2) : '—';
+
+  const hr9cls = pitHeat(parseFloat(hr9), 1.15, 'bad');
+  const hhcls = pitHeat(parseFloat(pit.hard_hit_pct), 32, 'bad');
+  const brlcls = pitHeat(parseFloat(pit.barrel_pct), 7.5, 'bad');
+
+  return `<table class="split-table">
+    <thead><tr>
+      <th>Split</th><th>HR/9</th><th>HH%</th><th>Brl%</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>Season</td>
+        <td class="${hr9cls}">${hr9}</td>
+        <td class="${hhcls}">${hh}</td>
+        <td class="${brlcls}">${brl}</td>
+      </tr>
+      ${vsLhr9!=='—'?`<tr><td>vs LHB</td><td class="${pitHeat(parseFloat(vsLhr9),1.15,'bad')}">${vsLhr9}</td><td>—</td><td>—</td></tr>`:''}
+      ${vsRhr9!=='—'?`<tr><td>vs RHB</td><td class="${pitHeat(parseFloat(vsRhr9),1.15,'bad')}">${vsRhr9}</td><td>—</td><td>—</td></tr>`:''}
+    </tbody>
+  </table>`;
 }
 
-function dkCell(odds){
-  if(!odds) return `<div class="dk-none">—</div>`;
-  const pos=odds.startsWith('+');
-  return `<div class="dk-cell"><div class="dk-val">${odds}</div><div class="dk-lbl">BetRivers</div></div>`;
+function pitBlockHTML(pit, side){
+  if(!pit) return '';
+  const hand = pit.hand||'R';
+  const handCls = hand==='L'?'lhp':'rhp';
+  const isRight = side==='right';
+  return `<div class="pit-block">
+    <div class="pit-block-header">
+      <div>
+        <div class="pit-name">${pit.name||'TBD'}</div>
+        <div class="pit-team">${isRight?'Home':'Away'} · ERA ${pit.era!=null?pit.era.toFixed(2):'—'}</div>
+      </div>
+      <span class="pit-hand ${handCls}">${hand}HP</span>
+    </div>
+    ${pitSplitTable(pit)}
+    <div class="pit-blend">${pit.ip_2026} IP 2026 · ${pit.blend_note||''}</div>
+  </div>`;
 }
 
-function bdBar(val, max, neg=false, blue=false){
+function trendHTML(trend){
+  const pip = trend==='Heating Up'?'pip-hot':trend==='Cooling Off'?'pip-cold':'pip-steady';
+  const txt = trend==='Heating Up'?'Hot':trend==='Cooling Off'?'Cold':'Steady';
+  return `<span class="trend-pip ${pip}"></span><span class="trend-txt">${txt}</span>`;
+}
+
+function bdBar(val,max,neg=false,blue=false){
   const pct=max>0?Math.min(Math.abs(val)/max*100,100):0;
   return `<div class="bd-bar-wrap"><div class="bd-bar ${neg?'neg':blue?'blue':''}" style="width:${pct}%"></div></div>`;
 }
-
-function bdPts(val, blue=false){
-  const v = typeof val === 'number' ? val : parseFloat(val) || 0;
+function bdPts(val,blue=false){
+  const v=typeof val==='number'?val:parseFloat(val)||0;
   const neg=v<0;
   const cls=neg?'neg':blue?'blue':v===0?'neutral':'';
   return `<span class="bd-pts ${cls}">${v>0?'+':''}${val}</span>`;
@@ -307,48 +336,44 @@ function breakdownHTML(bd, hr_prob){
   if(!bd) return '';
   const pc=probCls(hr_prob);
   return `<div class="breakdown">
-    <div class="bd-title">HR Probability Breakdown — click row to close</div>
+    <div class="bd-title">HR Probability Breakdown — click to close</div>
     <div class="bd-section">
-      <div class="bd-section-title">Step 1 — Batter HR Score · ${bd.blend_note||''}</div>
-      <div class="bd-row"><span class="bd-label">Barrel rate ${bd.barrel_s}%${bd.barrel_14d>0?' (season '+bd.barrel_season+'% + 14d '+bd.barrel_14d+'%)':''}</span>${bdBar(bd.s1_barrel,25)}${bdPts(bd.s1_barrel)}</div>
-      <div class="bd-row"><span class="bd-label">ISO .${String(Math.round((bd.iso_use||0)*1000)).padStart(3,'0')}${bd.iso_14d>0?' (blended with 14d)':' (split/season)'}</span>${bdBar(bd.s1_iso,10)}${bdPts(bd.s1_iso)}</div>
-      <div class="bd-row"><span class="bd-label">Fly ball % ${bd.fb_s}%</span>${bdBar(bd.s1_fb,6)}${bdPts(bd.s1_fb)}</div>
-      <div class="bd-row"><span class="bd-label">Pull rate ${bd.pull_s}%</span>${bdBar(bd.s1_pull,5)}${bdPts(bd.s1_pull)}</div>
+      <div class="bd-section-title">Step 1 — Batter Score · ${bd.blend_note||''}</div>
+      <div class="bd-row"><span class="bd-label">Barrel ${bd.barrel_s}%${bd.barrel_14d>0?' (season '+bd.barrel_season+'% + 14d '+bd.barrel_14d+'%)':''}</span>${bdBar(bd.s1_barrel,25)}${bdPts(bd.s1_barrel)}</div>
+      <div class="bd-row"><span class="bd-label">ISO .${String(Math.round((bd.iso_use||0)*1000)).padStart(3,'0')}${bd.iso_14d>0?' (blended 14d)':''}</span>${bdBar(bd.s1_iso,10)}${bdPts(bd.s1_iso)}</div>
+      <div class="bd-row"><span class="bd-label">FB% ${bd.fb_s}%</span>${bdBar(bd.s1_fb,6)}${bdPts(bd.s1_fb)}</div>
+      <div class="bd-row"><span class="bd-label">Pull% ${bd.pull_s}%</span>${bdBar(bd.s1_pull,5)}${bdPts(bd.s1_pull)}</div>
       <div class="bd-row"><span class="bd-label">Launch angle ${bd.la_s}°</span>${bdBar(bd.s1_la,4)}${bdPts(bd.s1_la)}</div>
-      <div class="bd-row"><span class="bd-label">HR/FB rate ${bd.hr_fb_s}%</span>${bdBar(bd.s1_hrfb,5)}${bdPts(bd.s1_hrfb)}</div>
-      <div class="bd-row"><span class="bd-label">14-day HR rate ${bd.hr_rate_14d}/600 PA (${bd.pa_14d} PA)</span>${bdBar(bd.s1_hr14d,5)}${bdPts(bd.s1_hr14d)}</div>
+      <div class="bd-row"><span class="bd-label">HR/FB ${bd.hr_fb_s}%</span>${bdBar(bd.s1_hrfb,5)}${bdPts(bd.s1_hrfb)}</div>
+      <div class="bd-row"><span class="bd-label">14d HR rate ${bd.hr_rate_14d}/600 PA</span>${bdBar(bd.s1_hr14d,5)}${bdPts(bd.s1_hr14d)}</div>
       <div class="bd-subtotal"><span class="bd-subtotal-label">Batter score</span><span class="bd-subtotal-val">${bd.batter_score}</span></div>
     </div>
     <div class="bd-section">
-      <div class="bd-section-title">Step 2 — Pitcher HR Modifier · ${bd.pit_blend_note||''}</div>
-      <div class="bd-row"><span class="bd-label">HR/9: ${bd.pit_hr9} (season ${bd.hr9_season} · split ${bd.hr9_split>0?bd.hr9_split:'no data'} in ${bd.split_ip} IP) ${bd.platoon_magnitude>15?'⚠️ Big platoon edge':bd.platoon_magnitude<-15?'✅ Strong vs this hand':''}</span>${bdBar(Math.abs(bd.pit_modifier-1)*35,10,bd.pit_modifier<1)}${bdPts(bd.pit_modifier)}</div>
-      <div class="bd-row"><span class="bd-label">Hard contact allowed: ${bd.pit_hard>0?bd.pit_hard+'%':'—'} (league avg 32%)</span>${bdBar(Math.abs((bd.pit_hard||0)-32),15,(bd.pit_hard||0)<32)}<span class="bd-pts ${(bd.pit_hard||0)>32?'':'neg'}">${bd.pit_hard>0?bd.pit_hard+'%':'—'}</span></div>
-      <div class="bd-row"><span class="bd-label">Barrel% allowed: ${bd.pit_brl>0?bd.pit_brl+'%':'—'} (league avg 7.5%)</span>${bdBar(Math.abs((bd.pit_brl||0)-7.5),8,(bd.pit_brl||0)<7.5)}<span class="bd-pts ${(bd.pit_brl||0)>7.5?'':'neg'}">${bd.pit_brl>0?bd.pit_brl+'%':'—'}</span></div>
-      <div class="bd-row"><span class="bd-label">Fly ball% allowed: ${bd.pit_fb>0?bd.pit_fb+'%':'—'} (league avg 36%)</span>${bdBar(Math.abs((bd.pit_fb||0)-36),15,(bd.pit_fb||0)<36)}<span class="bd-pts ${(bd.pit_fb||0)>36?'':'neg'}">${bd.pit_fb>0?bd.pit_fb+'%':'—'}</span></div>
+      <div class="bd-section-title">Step 2 — Pitcher Modifier · ${bd.pit_blend_note||''}</div>
+      <div class="bd-row"><span class="bd-label">HR/9 ${bd.pit_hr9} (season ${bd.hr9_season} · split ${bd.hr9_split>0?bd.hr9_split:'—'} in ${bd.split_ip} IP) ${bd.platoon_magnitude>15?'⚠️ Big platoon edge':bd.platoon_magnitude<-15?'✅ Strong vs this hand':''}</span>${bdBar(Math.abs(bd.pit_modifier-1)*35,10,bd.pit_modifier<1)}${bdPts(bd.pit_modifier)}</div>
+      <div class="bd-row"><span class="bd-label">Hard contact ${bd.pit_hard>0?bd.pit_hard+'%':'—'} (avg 32%)</span>${bdBar(Math.abs((bd.pit_hard||0)-32),15,(bd.pit_hard||0)<32)}<span class="bd-pts ${(bd.pit_hard||0)>32?'':'neg'}">${bd.pit_hard>0?bd.pit_hard+'%':'—'}</span></div>
+      <div class="bd-row"><span class="bd-label">Barrel% allowed ${bd.pit_brl>0?bd.pit_brl+'%':'—'} (avg 7.5%)</span>${bdBar(Math.abs((bd.pit_brl||0)-7.5),8,(bd.pit_brl||0)<7.5)}<span class="bd-pts ${(bd.pit_brl||0)>7.5?'':'neg'}">${bd.pit_brl>0?bd.pit_brl+'%':'—'}</span></div>
       <div class="bd-row"><span class="bd-label">Components loaded</span>${bdBar(bd.n_pit_components||0,4,false,true)}<span class="bd-pts blue">${bd.n_pit_components||0}/4</span></div>
       <div class="bd-subtotal"><span class="bd-subtotal-label">Pitcher modifier</span><span class="bd-subtotal-val">${bd.pit_modifier}x</span></div>
     </div>
     <div class="bd-section">
-      <div class="bd-section-title">Step 3 — Contact Gate (K% cap)</div>
-      <div class="bd-row"><span class="bd-label">K rate ${bd.k_s}% → cap multiplier</span>${bdBar(1-(bd.k_cap||1),0.3,(bd.k_cap||1)<1)}${bdPts((bd.k_cap||1).toFixed(2))}</div>
+      <div class="bd-section-title">Step 3 — K% Gate</div>
+      <div class="bd-row"><span class="bd-label">K rate ${bd.k_s}%</span>${bdBar(1-(bd.k_cap||1),0.3,(bd.k_cap||1)<1)}${bdPts((bd.k_cap||1).toFixed(2))}</div>
       <div class="bd-subtotal"><span class="bd-subtotal-label">After K cap</span><span class="bd-subtotal-val">${bd.after_k}</span></div>
     </div>
     <div class="bd-section">
-      <div class="bd-section-title">Step 4 — Context Multipliers</div>
-      <div class="bd-row"><span class="bd-label">Park HR factor</span>${bdBar(Math.abs((bd.park_factor||1)-1)*100,15,(bd.park_factor||1)<1)}<span class="bd-pts ${(bd.park_factor||1)>=1?'':'neg'}">${bd.park_factor}x</span></div>
+      <div class="bd-section-title">Step 4 — Context</div>
+      <div class="bd-row"><span class="bd-label">Park factor</span>${bdBar(Math.abs((bd.park_factor||1)-1)*100,15,(bd.park_factor||1)<1)}<span class="bd-pts ${(bd.park_factor||1)>=1?'':'neg'}">${bd.park_factor}x</span></div>
       <div class="bd-row"><span class="bd-label">Weather</span>${bdBar(Math.abs((bd.weather_mult||1)-1)*100,8,(bd.weather_mult||1)<1)}<span class="bd-pts ${(bd.weather_mult||1)>=1?'':'neg'}">${bd.weather_mult}x</span></div>
       <div class="bd-row"><span class="bd-label">Pitcher modifier</span>${bdBar(Math.abs((bd.pit_modifier||1)-1)*100,30,(bd.pit_modifier||1)<1)}<span class="bd-pts ${(bd.pit_modifier||1)>=1?'':'neg'}">${bd.pit_modifier}x</span></div>
       <div class="bd-subtotal"><span class="bd-subtotal-label">${bd.after_k} × ${bd.park_factor} × ${bd.weather_mult} × ${bd.pit_modifier} = ${bd.after_context}</span><span class="bd-subtotal-val">${bd.after_context}</span></div>
     </div>
     <div class="bd-section">
-      <div class="bd-section-title">Step 5 — Sigmoid → HR Probability</div>
-      <div class="bd-row"><span class="bd-label">Raw score ${bd.after_context} → sigmoid → HR%</span>${bdBar(hr_prob,25,false,true)}${bdPts(hr_prob+'%',true)}</div>
+      <div class="bd-section-title">Step 5 — Sigmoid</div>
+      <div class="bd-row"><span class="bd-label">Raw ${bd.after_context} → sigmoid → HR%</span>${bdBar(hr_prob,25,false,true)}${bdPts(hr_prob+'%',true)}</div>
     </div>
     <div class="bd-final">
-      <div>
-        <div class="bd-final-label">HR Probability</div>
-        <div style="font-size:11px;color:var(--muted2);margin-top:2px">League avg ~3% · Elite spot ~20-25%</div>
-      </div>
+      <div><div class="bd-final-label">HR Probability</div><div style="font-size:10px;color:var(--muted2);margin-top:2px">League avg ~3% · Elite ~20-25%</div></div>
       <div class="bd-final-prob ${pc}">${hr_prob}%</div>
     </div>
   </div>`;
@@ -359,18 +384,56 @@ function toggleBreakdown(el){
   if(bd&&bd.classList.contains('breakdown')) bd.classList.toggle('open');
 }
 
-function lineupRow(b, order) {
+function batterRowHTML(b, order){
+  const pc = probCls(b.hr_prob);
+  const pt = probTier(b.hr_prob);
+  const sl = b.statline||{};
+  const barrel = sl.barrel||0, iso = sl.iso||0, hrfb = sl.hr_fb||0;
+
+  const brlCls = heatCls(barrel, 5, 8, 12);
+  const isoCls = heatCls(iso*1000, 100, 160, 220); // iso in millipoints
+  const hand = b.bat_hand||'R';
+  const handCls = hand==='L'?'lhb':'rhb';
+  const odds = b.dk_odds;
+
+  return `<div class="batter-row" onclick="toggleBreakdown(this)">
+    <div class="bat-order">${order}</div>
+    <div>
+      <div class="bat-name">${b.name}</div>
+      <div class="bat-sub">
+        <span class="hand-tag ${handCls}">${hand}</span>
+        vs ${b.opp_p_hand||'R'}HP
+        ${trendHTML(b.trend||'Steady')}
+      </div>
+    </div>
+    <div class="sc ${brlCls}">${barrel>0?barrel.toFixed(1)+'%':'—'}</div>
+    <div class="sc ${isoCls}">${iso>0?'.'+String(Math.round(iso*1000)).padStart(3,'0'):'—'}</div>
+    <div class="form-cell">
+      <div class="form-hr ${b.recent_hr>=2?'fhot':b.recent_hr>=1?'fwarm':'fcold'}">${b.recent_hr||0} HR</div>
+      <div class="form-pa">${b.recent_pa||0} PA</div>
+    </div>
+    <div class="${odds?'odds-val':'odds-none'}">${odds||'—'}</div>
+    <div class="prob-cell">
+      <div class="prob-num ${pc}">${b.hr_prob}%</div>
+      <div class="prob-tier ${pc}">${pt}</div>
+    </div>
+  </div>
+  ${breakdownHTML(b.breakdown, b.hr_prob)}`;
+}
+
+function lineupRow(b, order){
   const pc = probCls(b.hr_prob);
   const odds = b.dk_odds;
   const tags = [];
   if(b.trend==='Heating Up') tags.push('<span class="lu-tag g">🔥 Hot</span>');
   if(b.trend==='Cooling Off') tags.push('<span class="lu-tag r">❄️ Cold</span>');
   if(b.platoon_tag) tags.push('<span class="lu-tag g">Platoon Edge</span>');
+  const hand = b.bat_hand||'R';
   return `<div class="lineup-row">
     <div class="lu-order">${order}</div>
     <div>
       <div class="lu-name">${b.name}</div>
-      <div class="lu-hand">${b.bat_hand} vs ${b.opp_p_hand}HP</div>
+      <div class="lu-hand"><span class="hand-tag ${hand==='L'?'lhb':'rhb'}" style="font-size:8px">${hand}</span> vs ${b.opp_p_hand||'R'}HP ${trendHTML(b.trend)}</div>
       ${tags.length?`<div class="lu-tags">${tags.join('')}</div>`:''}
     </div>
     <div class="lu-odds ${odds?'':'none'}">${odds||'—'}</div>
@@ -378,41 +441,39 @@ function lineupRow(b, order) {
   </div>`;
 }
 
-function renderLineups(games) {
-  const el = document.getElementById('lineups-main');
-  if(!games||!games.length){ el.innerHTML='<div class="no-games">No games today.</div>'; return; }
-  let html = '';
-  for(const g of games) {
-    const awayP = g.away_pitcher||{};
-    const homeP = g.home_pitcher||{};
-    const awayL = g.away_lineup||[];
-    const homeL = g.home_lineup||[];
-    if(!awayL.length && !homeL.length) continue;
-    html += `<div class="lineup-game">
+function renderLineups(games){
+  const el=document.getElementById('lineups-main');
+  if(!games||!games.length){el.innerHTML='<div class="no-games">No games today.</div>';return;}
+  let html='';
+  for(const g of games){
+    const awayP=g.away_pitcher||{},homeP=g.home_pitcher||{};
+    const awayL=g.away_lineup||[],homeL=g.home_lineup||[];
+    if(!awayL.length&&!homeL.length) continue;
+    html+=`<div class="lineup-game">
       <div class="lineup-game-header">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em">${g.away}</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.04em">${g.away}</div>
         <div class="lineup-time">@ ${fmtTime(g.time)} ET</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;text-align:right">${g.home}</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;text-align:right">${g.home}</div>
       </div>
       <div class="lineup-grid">
         <div class="lineup-side">
           <div class="lineup-side-header">
             <div class="lineup-side-title">${g.away}</div>
-            <div class="lineup-side-pitcher">vs ${homeP.name||'TBD'} ${homeP.hand||'R'}HP · ${homeP.hr9!=null?homeP.hr9+' HR/9':'—'}</div>
+            <div class="lineup-side-pitcher">vs ${homeP.name||'TBD'} ${homeP.hand||'R'}HP · HR/9 ${homeP.hr9!=null?homeP.hr9:'—'}</div>
           </div>
           ${awayL.map((b,i)=>lineupRow(b,i+1)).join('')}
         </div>
         <div class="lineup-side">
           <div class="lineup-side-header">
             <div class="lineup-side-title">${g.home}</div>
-            <div class="lineup-side-pitcher">vs ${awayP.name||'TBD'} ${awayP.hand||'R'}HP · ${awayP.hr9!=null?awayP.hr9+' HR/9':'—'}</div>
+            <div class="lineup-side-pitcher">vs ${awayP.name||'TBD'} ${awayP.hand||'R'}HP · HR/9 ${awayP.hr9!=null?awayP.hr9:'—'}</div>
           </div>
           ${homeL.map((b,i)=>lineupRow(b,i+1)).join('')}
         </div>
       </div>
     </div>`;
   }
-  el.innerHTML = html||'<div class="no-games">No lineup data available.</div>';
+  el.innerHTML=html||'<div class="no-games">No lineup data available.</div>';
 }
 
 async function load(){
@@ -420,7 +481,7 @@ async function load(){
   btn.disabled=true; upd.textContent='';
   main.innerHTML=`<div class="loading">Loading Sharp Data<div class="dots"><span></span><span></span><span></span></div></div>`;
   document.getElementById('lineups-main').innerHTML='';
-  try {
+  try{
     const resp=await fetch(API+'/games');
     if(!resp.ok) throw new Error('Backend error '+resp.status);
     const data=await resp.json();
@@ -429,81 +490,52 @@ async function load(){
       btn.disabled=false; return;
     }
     const games=data.games||[];
-    if(!games.length){ main.innerHTML='<div class="no-games">No MLB games today.</div>'; btn.disabled=false; return; }
+    if(!games.length){main.innerHTML='<div class="no-games">No MLB games today.</div>';btn.disabled=false;return;}
 
     let html='';
     for(const g of games){
       const wx=g.weather||{};
       const wc=wxCls(wx.label);
-      const awayP=g.away_pitcher||{};
-      const homeP=g.home_pitcher||{};
-      const awayS=g.lineup_away_status||'projected';
-      const homeS=g.lineup_home_status||'projected';
-      html+=`<div class="game-card">
-        <div class="game-bar">
-          <div class="team-block">
-            <div class="team-name">${g.away}</div>
-            <div class="lineup-badge ${awayS==='confirmed'?'confirmed':'proj-badge'}">${awayS}</div>
-          </div>
-          <div class="game-time">@ ${fmtTime(g.time)} ET</div>
-          <div class="team-block right">
-            <div class="team-name">${g.home}</div>
-            <div class="lineup-badge ${homeS==='confirmed'?'confirmed':'proj-badge'}">${homeS}</div>
-          </div>
-        </div>
-        <div class="pit-bar">
-          ${pitBarHTML(awayP,'left')}
-          <div class="pit-vs-label">SP<br>vs<br>SP</div>
-          ${pitBarHTML(homeP,'right')}
-        </div>
-        <div class="weather ${wc}">
-          <div class="w-temp">${wx.temp||'—'}°F</div>
-          <div class="w-wind">${wx.wind_speed||0} mph wind</div>
-          <div class="w-badge">${wx.label||'—'}</div>
-        </div>
-        <div class="col-hdrs">
-          <div class="ch">#</div>
-          <div class="ch">Batter</div>
-          <div class="ch r hide-sm">Barrel / EV</div>
-          <div class="ch r hide-sm">ISO / HR·FB</div>
-          <div class="ch r">Last 14 Days</div>
-          <div class="ch r hide-sm">BR HR</div>
-          <div class="ch r">HR Prob</div>
-        </div>`;
+      const awayP=g.away_pitcher||{},homeP=g.home_pitcher||{};
+      const awayS=g.lineup_away_status||'projected',homeS=g.lineup_home_status||'projected';
       const candidates=g.top_hr_candidates||[];
+
+      html+=`<div class="game-card">
+        <div class="game-header">
+          <div>
+            <div class="team-name">${g.away}</div>
+            <div><span class="badge ${awayS==='confirmed'?'confirmed':'proj-badge'}">${awayS}</span></div>
+          </div>
+          <div class="game-meta">@ ${fmtTime(g.time)} ET</div>
+          <div>
+            <div class="team-name right">${g.home}</div>
+            <div style="display:flex;justify-content:flex-end"><span class="badge ${homeS==='confirmed'?'confirmed':'proj-badge'}">${homeS}</span></div>
+          </div>
+        </div>
+        <div class="weather-strip">
+          <div class="wx-item"><span class="wx-val">${wx.temp||'—'}°F</span><span class="wx-lbl">Temp</span></div>
+          <div class="wx-item"><span class="wx-val">${wx.wind_speed||0} mph</span><span class="wx-lbl">Wind</span></div>
+          <div class="wx-badge ${wc}">${wx.label||'—'}</div>
+        </div>
+        <div class="pitchers">
+          ${pitBlockHTML(awayP,'left')}
+          ${pitBlockHTML(homeP,'right')}
+        </div>
+        <div class="batter-section-header">
+          <div class="bh">#</div>
+          <div class="bh left">Batter</div>
+          <div class="bh">Brl%</div>
+          <div class="bh">ISO</div>
+          <div class="bh">14d HR</div>
+          <div class="bh hide-sm">BR HR</div>
+          <div class="bh">HR Prob</div>
+        </div>`;
+
       if(!candidates.length){
         html+=`<div class="pending">No lineup data available yet.</div>`;
       } else {
         candidates.slice(0,3).forEach((b,i)=>{
-          const pc=probCls(b.hr_prob);
-          const pt=probTier(b.hr_prob);
-          const sl=b.statline||{};
-          const barrel=sl.barrel||0,ev=sl.ev||0,iso=sl.iso||0,hrfb=sl.hr_fb||0;
-          const barrelStr=barrel>0?barrel.toFixed(1)+'%':'—';
-          const evStr=ev>0?ev.toFixed(1)+' mph':'—';
-          const isoStr='.'+String(Math.round(iso*1000)).padStart(3,'0');
-          const hrfbStr=hrfb>0?hrfb.toFixed(1)+'%':'—';
-          html+=`<div class="batter">
-            <div class="batter-row" onclick="toggleBreakdown(this)">
-              <div class="rank ${i===0?'r1':''}">${i+1}</div>
-              <div>
-                <div class="bname">${b.name}</div>
-                <div class="bsub">${b.team} · vs ${b.opp_pitcher||'TBD'}</div>
-                ${tagsHTML(b.reasons,b.projected,b.bat_hand,b.opp_p_hand,b.platoon_tag,b.archetype,b.trend)}
-                <div class="expand-hint">Click to see probability breakdown</div>
-              </div>
-              <div class="hide-sm">${barrel>0?`<div class="stat-cell"><div class="stat-main">${barrelStr}</div><div class="stat-sub">${evStr} EV</div></div>`:`<div class="stat-na">—</div>`}</div>
-              <div class="hide-sm">${iso>0?`<div class="stat-cell"><div class="stat-main">${isoStr}</div><div class="stat-sub">${hrfbStr} HR·FB</div></div>`:`<div class="stat-na">—</div>`}</div>
-              ${formCell(b.recent_hr,b.recent_pa,b.recent_slg)}
-              <div class="hide-sm">${dkCell(b.dk_odds)}</div>
-              <div class="prob-cell">
-                <div class="prob-num ${pc}">${b.hr_prob}%</div>
-                <div class="prob-lbl ${pc}">${pt}</div>
-                <div class="prob-conf">${b.confidence} conf</div>
-              </div>
-            </div>
-            ${breakdownHTML(b.breakdown,b.hr_prob)}
-          </div>`;
+          html+=`<div class="batter">${batterRowHTML(b,i+1)}</div>`;
         });
       }
       html+=`</div>`;
