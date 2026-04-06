@@ -235,30 +235,47 @@ def calc_pitcher_stats(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 async def fetch_pitcher_ip(season=2026):
-    """Fetch pitcher IP and HR/9 from MLB Stats API"""
+    """Fetch pitcher IP and HR/9 from MLB Stats API — uses full /stats endpoint to capture all pitchers including early-season starters"""
     try:
-        # Use the correct paginated endpoint
-        url = (f"{MLB_API}/stats/leaders?leaderCategories=inningsPitched"
-               f"&season={season}&sportId=1&limit=500&statGroup=pitching&gameType=R")
-        async with httpx.AsyncClient(timeout=20) as client:
+        ip_map = {}
+
+        # Primary: full stats endpoint — captures ALL pitchers with any IP (no leaders threshold)
+        print("Fetching pitcher stats from MLB Stats API /stats endpoint...")
+        url = f"{MLB_API}/stats?stats=season&group=pitching&gameType=R&season={season}&playerPool=All&limit=2000"
+        async with httpx.AsyncClient(timeout=30) as client:
             r = await client.get(url)
             data = r.json()
-        
-        ip_map = {}
-        leaders = data.get("leagueLeaders", [])
-        for cat in leaders:
-            for leader in cat.get("leaders", []):
-                person = leader.get("person", {})
+        for stat_group in data.get("stats", []):
+            for split in stat_group.get("splits", []):
+                person = split.get("player", {})
                 name = person.get("fullName", "")
-                ip = float(leader.get("value", 0) or 0)
-                if name and ip > 0:
+                stat = split.get("stat", {})
+                ip_str = stat.get("inningsPitched", "0") or "0"
+                try:
+                    ip = float(ip_str)
+                except:
+                    ip = 0
+                hr9_str = stat.get("homeRunsPer9", "0") or "0"
+                try:
+                    hr9 = float(hr9_str)
+                except:
+                    hr9 = 0
+                era_str = stat.get("era", "0") or "0"
+                try:
+                    era = float(era_str)
+                except:
+                    era = 0
+                if name:
                     ip_map[name.lower()] = {
-                        "ip": ip, "hr9": 0, "era": 0, "name": name
+                        "ip": ip, "hr9": hr9, "era": era, "name": name
                     }
-        
-        # Now fetch ERA and HR/9 separately
-        for stat_cat in ["earnedRunAverage", "homeRunsPer9Inning"]:
-            url2 = (f"{MLB_API}/stats/leaders?leaderCategories={stat_cat}"
+
+        print(f"Fetched IP data for {len(ip_map)} pitchers from MLB Stats API")
+
+        # Supplemental: leaders endpoint to fill any gaps (e.g. ERA/HR9 for high-IP pitchers)
+        if len(ip_map) < 5:
+            print("Stats endpoint sparse, supplementing with leaders endpoint...")
+            url2 = (f"{MLB_API}/stats/leaders?leaderCategories=inningsPitched"
                     f"&season={season}&sportId=1&limit=500&statGroup=pitching&gameType=R")
             async with httpx.AsyncClient(timeout=20) as client:
                 r2 = await client.get(url2)
@@ -267,47 +284,11 @@ async def fetch_pitcher_ip(season=2026):
                 for leader in cat.get("leaders", []):
                     person = leader.get("person", {})
                     name = person.get("fullName", "")
-                    val = float(leader.get("value", 0) or 0)
+                    ip = float(leader.get("value", 0) or 0)
                     nl = name.lower()
-                    if nl in ip_map:
-                        if stat_cat == "earnedRunAverage":
-                            ip_map[nl]["era"] = val
-                        else:
-                            ip_map[nl]["hr9"] = val
+                    if name and nl not in ip_map:
+                        ip_map[nl] = {"ip": ip, "hr9": 0, "era": 0, "name": name}
 
-        # Also try the schedule-based approach as fallback
-        if len(ip_map) < 10:
-            print("Leaders endpoint sparse, trying stats endpoint...")
-            url3 = f"{MLB_API}/stats?stats=season&group=pitching&gameType=R&season={season}&playerPool=All&limit=2000"
-            async with httpx.AsyncClient(timeout=30) as client:
-                r3 = await client.get(url3)
-                data3 = r3.json()
-            for stat_group in data3.get("stats", []):
-                for split in stat_group.get("splits", []):
-                    person = split.get("player", {})
-                    name = person.get("fullName", "")
-                    stat = split.get("stat", {})
-                    ip_str = stat.get("inningsPitched", "0") or "0"
-                    try:
-                        ip = float(ip_str)
-                    except:
-                        ip = 0
-                    hr9_str = stat.get("homeRunsPer9", "0") or "0"
-                    try:
-                        hr9 = float(hr9_str)
-                    except:
-                        hr9 = 0
-                    era_str = stat.get("era", "0") or "0"
-                    try:
-                        era = float(era_str)
-                    except:
-                        era = 0
-                    if name and ip > 0:
-                        ip_map[name.lower()] = {
-                            "ip": ip, "hr9": hr9, "era": era, "name": name
-                        }
-
-        print(f"Fetched IP data for {len(ip_map)} pitchers from MLB Stats API")
         return ip_map
     except Exception as e:
         print(f"MLB Stats IP fetch error: {e}")
@@ -575,6 +556,7 @@ def get_pitcher_split(name, vs_hand):
         "hr": hr,
         "hard_hit_pct": gs(row, "hard_hit_pct"),
         "barrel_pct": gs(row, "barrel_pct_allowed"),
+        "k_pct": gs(row, "k_pct"),
         "hr9": (hr / max(ip, 0.1)) * 9 if ip > 0 else 0,
     }
 
@@ -1042,10 +1024,14 @@ def pit_display(p_name, p_hand):
         "barrel_pct": round(blend(pc.get("barrel_pct_allowed", 0), pp.get("barrel_pct_allowed", 0), pwc, pwp), 1) or None,
         "ip_2026": round(ip_26, 1),
         "blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025",
-        "vs_L_hr9": round(vs_L.get("hr9", 0), 2) if vs_L.get("pa", 0) >= 5 else None,
-        "vs_R_hr9": round(vs_R.get("hr9", 0), 2) if vs_R.get("pa", 0) >= 5 else None,
-        "vs_L_hh": round(vs_L.get("hard_hit_pct", 0), 1) if vs_L.get("pa", 0) >= 5 else None,
-        "vs_R_hh": round(vs_R.get("hard_hit_pct", 0), 1) if vs_R.get("pa", 0) >= 5 else None,
+        "vs_L_hr9": round(vs_L.get("hr9", 0), 2) if vs_L.get("pa", 0) >= 1 else None,
+        "vs_R_hr9": round(vs_R.get("hr9", 0), 2) if vs_R.get("pa", 0) >= 1 else None,
+        "vs_L_hh": round(vs_L.get("hard_hit_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
+        "vs_R_hh": round(vs_R.get("hard_hit_pct", 0), 1) if vs_R.get("pa", 0) >= 1 else None,
+        "vs_L_brl": round(vs_L.get("barrel_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
+        "vs_R_brl": round(vs_R.get("barrel_pct", 0), 1) if vs_R.get("pa", 0) >= 1 else None,
+        "vs_L_k": round(vs_L.get("k_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
+        "vs_R_k": round(vs_R.get("k_pct", 0), 1) if vs_R.get("pa", 0) >= 1 else None,
         "top_pitches": [{"name": p["name"], "usage": p["usage"]} for p in top_pitches],
     }
 
