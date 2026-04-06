@@ -811,12 +811,13 @@ async def debug_odds():
         return {"error":str(e)}
 
 @app.get("/games")
-async def get_games():
+async def get_games(date: str = None):
     if not _cache["ready"]:
-        return {"games":[],"date":date.today().isoformat(),"loading":True,
+        return {"games":[],"date":date or date.today().isoformat(),"loading":True,
                 "message":"Data loading — try again in 30 seconds."}
 
-    today = date.today().isoformat()
+    from datetime import date as date_cls
+    today = date if date else date_cls.today().isoformat()
     async with httpx.AsyncClient(timeout=30) as client:
         r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
         data = r.json()
