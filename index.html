@@ -895,7 +895,7 @@ function buildResearchHTML(data){
     var ps = m.pitcher_stats||{};
     html += '<div class="research-card">'+
       '<div class="research-card-header">'+
-        '<div class="research-card-title">Today's Matchup</div>'+
+        '<div class="research-card-title">Today&#39;s Matchup</div>'+
         '<div class="research-card-badge">'+fmtTime(m.game_time)+' ET · '+m.away_team+' @ '+m.home_team+'</div>'+
       '</div>'+
       '<div class="research-card-body">'+
@@ -915,7 +915,7 @@ function buildResearchHTML(data){
 
     // Pitch matchup chips
     if(m.pitch_matchup&&m.pitch_matchup.length){
-      html += '<div class="research-section-title">Pitch matchup — batter vs pitcher's arsenal</div>'+
+      html += '<div class="research-section-title">Pitch matchup — batter vs pitcher&#39;s arsenal</div>'+
         '<div class="pitch-chip-grid">';
       m.pitch_matchup.forEach(function(d){
         var batCls=pcvCls(d.bat_rv), pitCls=pcvCls(d.pit_rv), combCls=pcvCls(d.combined);
@@ -941,7 +941,7 @@ function buildResearchHTML(data){
       });
       if(otherPitches.length){
         html += '<div style="margin-top:10px;padding:10px 12px;background:#0e0e0e;border:1px solid var(--border2);border-radius:8px">'+
-          '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Batter run values vs other pitches</div>'+
+          '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Batter run values vs other pitch types</div>'+
           '<div style="display:flex;gap:12px;flex-wrap:wrap">';
         otherPitches.forEach(function(k){
           var v=bvals[k];
@@ -974,7 +974,7 @@ function buildResearchHTML(data){
     html += '</div></div>';
   } else {
     html += '<div class="research-card">'+
-      '<div class="research-card-header"><div class="research-card-title">Today's Matchup</div></div>'+
+      '<div class="research-card-header"><div class="research-card-title">Today&#39;s Matchup</div></div>'+
       '<div class="research-card-body" style="color:var(--muted2);font-size:13px">'+
         'No game found for '+p.name+' on '+data.date+'. Try a different date using the arrows at the top.'+
       '</div></div>';
