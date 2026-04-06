@@ -12,37 +12,33 @@
   --border:#252525;--border2:#1a1a1a;
   --accent:#c8f135;--blue:#4da6ff;--text:#f0f0f0;
   --muted:#888;--muted2:#555;--danger:#ff4d4d;--warn:#ffaa33;
+  --purple:#c084fc;
 }
-*{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px}
 header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between}
 .logo{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
 .logo-sub{font-size:11px;color:var(--muted);border-left:1px solid var(--border);padding-left:12px;text-transform:uppercase;letter-spacing:.1em}
-.hdr-r{display:flex;align-items:center;gap:12px}
-.date-lbl{font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
-.refresh-btn{background:var(--accent);color:#0a0a0a;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:7px 16px;cursor:pointer;transition:opacity .15s}
+.hdr-r{display:flex;align-items:center;gap:10px}
+.date-nav{display:flex;align-items:center;gap:6px}
+.date-btn{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:18px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1;padding:0}
+.date-btn:hover{border-color:var(--accent);color:var(--accent)}
+.date-lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.refresh-btn{background:var(--accent);color:#0a0a0a;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:7px 16px;cursor:pointer}
 .refresh-btn:hover{opacity:.85}
 .refresh-btn:disabled{opacity:.4;cursor:not-allowed}
-.date-nav{display:flex;align-items:center;gap:6px}
-.date-btn{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:18px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;line-height:1}
-.date-btn:hover{border-color:var(--accent);color:var(--accent)}
 .tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 24px}
 .tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:12px 20px;cursor:pointer;transition:all .15s;margin-bottom:-1px}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 .container{max-width:960px;margin:0 auto;padding:20px 16px}
-
-/* ── GAME CARD ── */
 .game-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px}
 .game-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:12px 20px;background:var(--s2);border-bottom:1px solid var(--border)}
 .team-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
 .team-name.right{text-align:right}
-.game-meta{text-align:center;font-size:11px;color:var(--muted);line-height:1.8}
+.game-meta{text-align:center;font-size:11px;color:var(--muted)}
 .badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
 .confirmed{background:rgba(200,241,53,.1);color:var(--accent);border:1px solid rgba(200,241,53,.25)}
 .proj-badge{background:rgba(255,170,51,.1);color:var(--warn);border:1px solid rgba(255,170,51,.25)}
-
-/* Weather */
 .weather-strip{display:flex;align-items:center;gap:20px;padding:7px 20px;border-bottom:1px solid var(--border);background:var(--s3)}
 .wx-item{display:flex;align-items:center;gap:5px;font-size:12px}
 .wx-val{font-weight:600}
@@ -53,8 +49,6 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 .wx-left{background:rgba(77,166,255,.1);color:var(--blue);border:1px solid rgba(77,166,255,.25)}
 .wx-right{background:rgba(255,170,51,.1);color:var(--warn);border:1px solid rgba(255,170,51,.25)}
 .wx-neutral,.wx-calm,.wx-dome{color:var(--muted2);border:1px solid var(--border)}
-
-/* Pitcher split tables */
 .pitchers{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
 .pit-block{padding:12px 20px}
 .pit-block:first-child{border-right:1px solid var(--border)}
@@ -71,14 +65,10 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 .split-table td:first-child{text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
 .split-table tr:last-child td{border-bottom:none}
 .pit-blend{font-size:10px;color:var(--muted2);margin-top:6px}
-/* Heat coloring */
 .s-hot{color:var(--danger);font-weight:600}
 .s-warm{color:var(--warn);font-weight:500}
 .s-cool{color:var(--accent);font-weight:500}
-.s-cold{color:#6ec86e;font-weight:500}
 .s-neutral{color:var(--text)}
-
-/* Batter section */
 .batter-section-header{display:grid;grid-template-columns:24px 1fr 58px 52px 72px 62px 80px;gap:6px;padding:5px 20px;background:var(--bg);border-bottom:1px solid var(--border)}
 .bh{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;text-align:right}
 .bh.left{text-align:left}
@@ -95,32 +85,25 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 .pip-hot{background:var(--accent)}
 .pip-cold{background:var(--danger)}
 .pip-steady{background:var(--muted2)}
-.trend-txt{font-size:10px}
-/* Stat cells */
 .sc{text-align:right;font-size:12px;font-weight:600}
 .sc.s-hot{color:var(--accent)}
 .sc.s-warm{color:#a8d429}
 .sc.s-neutral{color:var(--text)}
 .sc.s-cold{color:var(--muted)}
-.sc.s-danger{color:var(--danger)}
-/* 14d cell */
 .form-cell{text-align:right}
 .form-hr{font-size:12px;font-weight:600}
 .fhot{color:var(--accent)}
 .fwarm{color:var(--warn)}
 .fcold{color:var(--muted)}
 .form-pa{font-size:10px;color:var(--muted2);margin-top:1px}
-/* Odds */
 .odds-val{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:#4dff88;text-align:right}
 .odds-none{font-size:11px;color:var(--muted2);text-align:right}
-/* HR Prob */
 .prob-cell{text-align:right}
 .prob-num{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;line-height:1}
 .prob-tier{font-size:9px;text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
 .p-high{color:var(--blue)}
 .p-med{color:#7bb8ff}
 .p-low{color:var(--muted)}
-/* Breakdown */
 .breakdown{display:none;background:#0d0d0d;border-top:1px solid var(--border);padding:16px 20px}
 .breakdown.open{display:block}
 .bd-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:12px}
@@ -143,7 +126,6 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 .bd-final{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:2px solid var(--border)}
 .bd-final-label{font-size:13px;font-weight:600;color:var(--muted)}
 .bd-final-prob{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:var(--blue)}
-
 /* Lineup tab */
 .lineup-game{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:24px;overflow:hidden}
 .lineup-game-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:10px 20px;background:var(--s2);border-bottom:1px solid var(--border)}
@@ -166,11 +148,34 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 .lu-prob.p-high{color:var(--blue)}
 .lu-prob.p-med{color:#7bb8ff}
 .lu-prob.p-low{color:var(--muted)}
-.lu-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:2px}
-.lu-tag{font-size:9px;padding:1px 5px;border-radius:8px;background:#1c1c1c;color:var(--muted);border:1px solid var(--border)}
-.lu-tag.g{background:rgba(200,241,53,.1);color:var(--accent);border-color:rgba(200,241,53,.25)}
-.lu-tag.r{background:rgba(255,77,77,.1);color:var(--danger);border-color:rgba(255,77,77,.25)}
-
+/* Parlay tab */
+.parlay-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.parlay-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.parlay-card-header{padding:14px 18px;border-bottom:1px solid var(--border)}
+.parlay-theme{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.parlay-theme-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.parlay-leg{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border2)}
+.parlay-leg:last-of-type{border-bottom:none}
+.parlay-leg-name{font-size:13px;font-weight:500}
+.parlay-leg-detail{font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px}
+.parlay-leg-right{text-align:right;flex-shrink:0;margin-left:12px}
+.parlay-leg-prob{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800}
+.parlay-leg-odds{font-size:11px;color:#4dff88;margin-top:1px}
+.parlay-leg-odds.none{color:var(--muted2)}
+.parlay-footer{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:var(--s2);border-top:1px solid var(--border)}
+.parlay-footer-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.parlay-combined-odds{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#4dff88}
+.parlay-combined-prob{font-size:11px;color:var(--muted);margin-top:2px}
+.parlay-note{font-size:11px;color:var(--muted2);padding:10px 18px;font-style:italic;border-top:1px solid var(--border2)}
+.theme-fire .parlay-theme{color:#ff6b35}
+.theme-fire .parlay-card-header{background:rgba(255,107,53,.06)}
+.theme-platoon .parlay-theme{color:var(--blue)}
+.theme-platoon .parlay-card-header{background:rgba(77,166,255,.06)}
+.theme-conf .parlay-theme{color:var(--accent)}
+.theme-conf .parlay-card-header{background:rgba(200,241,53,.06)}
+.theme-power .parlay-theme{color:var(--purple)}
+.theme-power .parlay-card-header{background:rgba(192,132,252,.06)}
+.parlay-disclaimer{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--muted);line-height:1.6}
 /* Misc */
 .loading{text-align:center;padding:50px 0;font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .dots{display:inline-flex;gap:5px;margin-top:14px}
@@ -183,46 +188,11 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 .updated{font-size:11px;color:var(--muted);text-align:center;margin-top:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase}
 .no-games{text-align:center;padding:60px 20px;font-size:14px;color:var(--muted)}
 .pending{font-size:13px;color:var(--muted);padding:14px 20px;font-style:italic}
-/* ── PARLAY TAB ── */
-.parlay-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
-@media(max-width:700px){.parlay-grid{grid-template-columns:1fr}}
-.parlay-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.parlay-card-header{padding:14px 18px;border-bottom:1px solid var(--border)}
-.parlay-theme{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
-.parlay-theme-sub{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4}
-.parlay-leg{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border2)}
-.parlay-leg:last-of-type{border-bottom:none}
-.parlay-leg-left{}
-.parlay-leg-name{font-size:13px;font-weight:500;color:var(--text)}
-.parlay-leg-detail{font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px}
-.parlay-leg-right{text-align:right;flex-shrink:0;margin-left:12px}
-.parlay-leg-prob{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800}
-.parlay-leg-odds{font-size:11px;color:#4dff88;margin-top:1px}
-.parlay-leg-odds.none{color:var(--muted2)}
-.parlay-footer{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:var(--s2);border-top:1px solid var(--border)}
-.parlay-footer-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.parlay-combined-odds{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#4dff88}
-.parlay-combined-prob{font-size:11px;color:var(--muted);margin-top:2px}
-.parlay-note{font-size:11px;color:var(--muted2);padding:12px 18px;font-style:italic;border-top:1px solid var(--border2)}
-.theme-fire .parlay-theme{color:#ff6b35}
-.theme-fire .parlay-card-header{background:rgba(255,107,53,.06);border-bottom-color:rgba(255,107,53,.2)}
-.theme-platoon .parlay-theme{color:var(--blue)}
-.theme-platoon .parlay-card-header{background:rgba(77,166,255,.06);border-bottom-color:rgba(77,166,255,.2)}
-.theme-conf .parlay-theme{color:var(--accent)}
-.theme-conf .parlay-card-header{background:rgba(200,241,53,.06);border-bottom-color:rgba(200,241,53,.2)}
-.theme-power .parlay-theme{color:var(--purple)}
-.theme-power .parlay-card-header{background:rgba(192,132,252,.06);border-bottom-color:rgba(192,132,252,.2)}
-.parlay-disclaimer{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--muted);line-height:1.6}
-
-/* mobile handled in main @media block below */
-
-  .pitchers{grid-template-columns:1fr}
-  .pit-block:first-child{border-right:none;border-bottom:1px solid var(--border)}
+@media(max-width:700px){
+  .pitchers,.lineup-grid,.parlay-grid{grid-template-columns:1fr}
+  .pit-block:first-child,.lineup-side{border-right:none;border-bottom:1px solid var(--border)}
   .batter-section-header,.batter-row{grid-template-columns:20px 1fr 52px 60px 70px}
   .hide-sm{display:none}
-  .lineup-grid{grid-template-columns:1fr}
-  .lineup-side{border-right:none;border-bottom:1px solid var(--border)}
-  .parlay-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -255,7 +225,7 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 <script>
 const API = 'https://web-production-c0e4.up.railway.app';
 
-// Date management
+// ── Date management ──
 let selectedDate = new Date();
 selectedDate.setHours(0,0,0,0);
 
@@ -263,14 +233,14 @@ function formatDateForAPI(d){
   const y=d.getFullYear();
   const m=String(d.getMonth()+1).padStart(2,'0');
   const day=String(d.getDate()).padStart(2,'0');
-  return `${y}-${m}-${day}`;
+  return y+'-'+m+'-'+day;
 }
 
 function updateDateLabel(){
   const today=new Date(); today.setHours(0,0,0,0);
   const diff=Math.round((selectedDate-today)/(1000*60*60*24));
   const label=selectedDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
-  const suffix=diff===0?' (Today)':diff===1?' (Tomorrow)':diff===-1?' (Yesterday)':'';
+  const suffix=diff===0?' · Today':diff===1?' · Tomorrow':diff===-1?' · Yesterday':'';
   document.getElementById('dateLbl').textContent=label+suffix;
 }
 
@@ -283,159 +253,15 @@ function changeDate(delta){
 
 updateDateLabel();
 
+// ── Tab switching ──
 function switchTab(tab){
-  document.getElementById('tab-top').classList.toggle('active',tab==='top');
-  document.getElementById('tab-lineups').classList.toggle('active',tab==='lineups');
-  document.getElementById('tab-parlays').classList.toggle('active',tab==='parlays');
-  document.getElementById('main').style.display=tab==='top'?'':'none';
-  document.getElementById('lineups-main').style.display=tab==='lineups'?'':'none';
-  document.getElementById('parlays-main').style.display=tab==='parlays'?'':'none';
-}
-
-function parlayOdds(probs){
-  const decimal=probs.reduce((acc,p)=>acc*(100/p),1);
-  const american=(decimal-1)*100;
-  return american>=0?'+'+Math.round(american):Math.round(american);
-}
-
-function parlayImplied(probs){
-  const decimal=probs.reduce((acc,p)=>acc*(p/100),1);
-  return (decimal*100).toFixed(1);
-}
-
-function impliedOdds(americanStr){
-  if(!americanStr) return 0;
-  const o=parseInt(americanStr);
-  if(o>0) return 100/(o+100)*100;
-  return Math.abs(o)/(Math.abs(o)+100)*100;
-}
-
-function valueGap(b){
-  if(!b.dk_odds) return 0;
-  return b.hr_prob - impliedOdds(b.dk_odds);
-}
-
-function platoonScore(b){
-  if(!b.platoon_tag) return 0;
-  const bd=b.breakdown||{};
-  const mag=bd.platoon_magnitude||0;
-  return mag>0?mag:0;
-}
-
-function powerScore(b){
-  const bd=b.breakdown||{};
-  return (bd.barrel_s||0)*2 + (bd.s1_hrfb||0)*3;
-}
-
-function confScore(b){
-  const c=b.confidence==='High'?3:b.confidence==='Medium'?2:1;
-  const comp=(b.breakdown&&b.breakdown.n_pit_components||0);
-  return c*3+comp+b.hr_prob/5;
-}
-
-function buildParlayCard(id, themeClass, emoji, title, subtitle, note, picks){
-  const el=document.getElementById(id);
-  if(!picks||picks.length<3){el.innerHTML='<div class="parlay-note">Not enough data for this parlay today.</div>';return;}
-  const legs=picks.slice(0,3);
-  const odds=parlayOdds(legs.map(b=>b.hr_prob));
-  const imp=parlayImplied(legs.map(b=>b.hr_prob));
-  let html=`<div class="parlay-card ${themeClass}">
-    <div class="parlay-card-header">
-      <div class="parlay-theme">${emoji} ${title}</div>
-      <div class="parlay-theme-sub">${subtitle}</div>
-    </div>`;
-  legs.forEach(b=>{
-    const pc=probCls(b.hr_prob);
-    const bd=b.breakdown||{};
-    html+=`<div class="parlay-leg">
-      <div class="parlay-leg-left">
-        <div class="parlay-leg-name">${b.name}</div>
-        <div class="parlay-leg-detail">
-          <span class="hand-tag ${b.bat_hand==='L'?'lhb':'rhb'}" style="font-size:9px">${b.bat_hand}</span>
-          ${b.team} · vs ${b.opp_pitcher||'TBD'}
-          ${b.trend==='Heating Up'?'· 🔥':b.trend==='Cooling Off'?'· ❄️':''}
-        </div>
-      </div>
-      <div class="parlay-leg-right">
-        <div class="parlay-leg-prob ${pc}">${b.hr_prob}%</div>
-        <div class="parlay-leg-odds ${b.dk_odds?'':'none'}">${b.dk_odds||'No odds'}</div>
-      </div>
-    </div>`;
+  ['top','lineups','parlays'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+    document.getElementById(t==='top'?'main':t+'-main').style.display=t===tab?'':'none';
   });
-  html+=`<div class="parlay-footer">
-    <div>
-      <div class="parlay-footer-label">Combined Odds</div>
-      <div class="parlay-combined-prob">~${imp}% combined probability</div>
-    </div>
-    <div class="parlay-combined-odds">${odds}</div>
-  </div>
-  <div class="parlay-note">${note}</div>
-  </div>`;
-  el.innerHTML=html;
 }
 
-function renderParlays(allBatters){
-  const el=document.getElementById('parlays-main');
-  if(!allBatters||allBatters.length<3){
-    el.innerHTML='<div class="no-games">Not enough data to build parlays.</div>';
-    return;
-  }
-
-  // Deduplicate
-  const seen=new Set();
-  const batters=allBatters.filter(b=>{
-    if(seen.has(b.name)) return false;
-    seen.add(b.name); return true;
-  });
-
-  // Theme 1 — On Fire: Heating Up trend + high HR rate last 14d
-  const onFire=[...batters]
-    .filter(b=>b.trend==='Heating Up'||b.hr_prob>=12)
-    .sort((a,b)=>{
-      const aFire=a.trend==='Heating Up'?5:0;
-      const bFire=b.trend==='Heating Up'?5:0;
-      return (b.hr_prob+bFire)-(a.hr_prob+aFire);
-    });
-
-  // Theme 2 — Platoon Edge: biggest platoon advantage
-  const platoon=[...batters]
-    .filter(b=>b.platoon_tag||b.hr_prob>=10)
-    .sort((a,b)=>{
-      const as=platoonScore(a)+(a.platoon_tag?10:0);
-      const bs=platoonScore(b)+(b.platoon_tag?10:0);
-      return bs-as||b.hr_prob-a.hr_prob;
-    });
-
-  // Theme 3 — High Confidence: best data quality
-  const highConf=[...batters]
-    .sort((a,b)=>confScore(b)-confScore(a));
-
-  // Theme 4 — Power Surge: highest barrel% in good matchups
-  const power=[...batters]
-    .sort((a,b)=>powerScore(b)-powerScore(a)||b.hr_prob-a.hr_prob);
-
-  el.innerHTML=`
-    <div class="parlay-disclaimer">
-      ⚠️ Parlays are for entertainment. All 3 legs must hit. Individual bets on strong picks offer better long-term value.
-      Odds shown are model-implied — check BetRivers for actual posted lines.
-    </div>
-    <div class="parlay-grid">
-      <div id="p-fire"></div>
-      <div id="p-platoon"></div>
-      <div id="p-conf"></div>
-      <div id="p-power"></div>
-    </div>`;
-
-  buildParlayCard('p-fire','theme-fire','🔥','On Fire','Hottest recent form picks',
-    'These batters are heating up — elevated HR rate and positive trend over last 14 days.',onFire);
-  buildParlayCard('p-platoon','theme-platoon','⚔️','Platoon Edge','Pitcher weak vs this hand',
-    'Pitchers with significant splits against the batter's handedness — model weights these heavily.',platoon);
-  buildParlayCard('p-conf','theme-conf','🔒','High Confidence','Best data quality picks',
-    'High confidence rating means full stat profile + confirmed lineup + strong pitcher data.',highConf);
-  buildParlayCard('p-power','theme-power','💣','Power Surge','Elite barrel rate matchups',
-    'Highest barrel rate batters facing pitchers that allow hard contact — pure power plays.',power);
-}
-
+// ── Helpers ──
 function probCls(p){ return p>=15?'p-high':p>=9?'p-med':'p-low'; }
 function probTier(p){ return p>=15?'Strong':p>=9?'Moderate':'Lean'; }
 
@@ -451,13 +277,10 @@ function wxCls(label){
   if(l.includes('blowing in')) return 'wx-in';
   if(l.includes('favors left')) return 'wx-left';
   if(l.includes('favors right')) return 'wx-right';
-  if(l.includes('dome')) return 'wx-neutral';
-  if(l.includes('calm')) return 'wx-neutral';
   return 'wx-neutral';
 }
 
-// Heat color a stat value based on thresholds
-function heatCls(val, low, mid, high){
+function heatCls(val,low,mid,high){
   if(!val||val===0) return 's-cold';
   if(val>=high) return 's-hot';
   if(val>=mid) return 's-warm';
@@ -465,133 +288,101 @@ function heatCls(val, low, mid, high){
   return 's-cold';
 }
 
-// Pitcher stat heat — higher = worse (more vulnerable)
-function pitHeat(val, avg, type){
+function pitHeat(val,avg){
   if(!val||val===0) return 's-neutral';
-  const diff = (val - avg) / avg;
-  if(type==='bad'){ // higher = more vulnerable
-    if(diff>=0.3) return 's-hot';
-    if(diff>=0.1) return 's-warm';
-    if(diff<=-0.15) return 's-cold';
-    return 's-neutral';
-  } else { // higher = better (K%)
-    if(diff>=0.2) return 's-cold';
-    if(diff<=-0.2) return 's-hot';
-    return 's-neutral';
-  }
-}
-
-function pitSplitTable(pit){
-  if(!pit||!pit.name||pit.name==='TBD') return '';
-  const hand = pit.hand||'R';
-  const era = pit.era!=null ? pit.era.toFixed(2) : '—';
-  const hr9 = pit.hr9!=null ? pit.hr9.toFixed(2) : '—';
-  const hh = pit.hard_hit_pct!=null ? pit.hard_hit_pct.toFixed(1)+'%' : '—';
-  const brl = pit.barrel_pct!=null ? pit.barrel_pct.toFixed(1)+'%' : '—';
-  const vsLhr9 = pit.vs_L_hr9!=null ? pit.vs_L_hr9.toFixed(2) : '—';
-  const vsRhr9 = pit.vs_R_hr9!=null ? pit.vs_R_hr9.toFixed(2) : '—';
-
-  const hr9cls = pitHeat(parseFloat(hr9), 1.15, 'bad');
-  const hhcls = pitHeat(parseFloat(pit.hard_hit_pct), 32, 'bad');
-  const brlcls = pitHeat(parseFloat(pit.barrel_pct), 7.5, 'bad');
-
-  return `<table class="split-table">
-    <thead><tr>
-      <th>Split</th><th>HR/9</th><th>HH%</th><th>Brl%</th>
-    </tr></thead>
-    <tbody>
-      <tr>
-        <td>Season</td>
-        <td class="${hr9cls}">${hr9}</td>
-        <td class="${hhcls}">${hh}</td>
-        <td class="${brlcls}">${brl}</td>
-      </tr>
-      ${vsLhr9!=='—'?`<tr><td>vs LHB</td><td class="${pitHeat(parseFloat(vsLhr9),1.15,'bad')}">${vsLhr9}</td><td>—</td><td>—</td></tr>`:''}
-      ${vsRhr9!=='—'?`<tr><td>vs RHB</td><td class="${pitHeat(parseFloat(vsRhr9),1.15,'bad')}">${vsRhr9}</td><td>—</td><td>—</td></tr>`:''}
-    </tbody>
-  </table>`;
-}
-
-function pitBlockHTML(pit, side){
-  if(!pit) return '';
-  const hand = pit.hand||'R';
-  const handCls = hand==='L'?'lhp':'rhp';
-  const isRight = side==='right';
-  return `<div class="pit-block">
-    <div class="pit-block-header">
-      <div>
-        <div class="pit-name">${pit.name||'TBD'}</div>
-        <div class="pit-team">${isRight?'Home':'Away'} · ERA ${pit.era!=null?pit.era.toFixed(2):'—'}</div>
-      </div>
-      <span class="pit-hand ${handCls}">${hand}HP</span>
-    </div>
-    ${pitSplitTable(pit)}
-    <div class="pit-blend">${pit.ip_2026} IP 2026 · ${pit.blend_note||''}</div>
-  </div>`;
+  const diff=(val-avg)/avg;
+  if(diff>=0.3) return 's-hot';
+  if(diff>=0.1) return 's-warm';
+  if(diff<=-0.15) return 's-cool';
+  return 's-neutral';
 }
 
 function trendHTML(trend){
-  const pip = trend==='Heating Up'?'pip-hot':trend==='Cooling Off'?'pip-cold':'pip-steady';
-  const txt = trend==='Heating Up'?'Hot':trend==='Cooling Off'?'Cold':'Steady';
-  return `<span class="trend-pip ${pip}"></span><span class="trend-txt">${txt}</span>`;
+  const pip=trend==='Heating Up'?'pip-hot':trend==='Cooling Off'?'pip-cold':'pip-steady';
+  const txt=trend==='Heating Up'?'Hot':trend==='Cooling Off'?'Cold':'Steady';
+  return '<span class="trend-pip '+pip+'"></span><span> '+txt+'</span>';
 }
 
-function bdBar(val,max,neg=false,blue=false){
+// ── Pitcher block ──
+function pitBlockHTML(pit, isRight){
+  if(!pit||!pit.name||pit.name==='TBD') return '<div class="pit-block"><div style="color:var(--muted2);font-size:12px;padding:8px 0">TBD</div></div>';
+  const hand=pit.hand||'R';
+  const handCls=hand==='L'?'lhp':'rhp';
+  const era=pit.era!=null?pit.era.toFixed(2):'—';
+  const hr9=pit.hr9!=null?parseFloat(pit.hr9).toFixed(2):'—';
+  const hh=pit.hard_hit_pct!=null?pit.hard_hit_pct.toFixed(1)+'%':'—';
+  const brl=pit.barrel_pct!=null?pit.barrel_pct.toFixed(1)+'%':'—';
+  const vsLhr9=pit.vs_L_hr9!=null?parseFloat(pit.vs_L_hr9).toFixed(2):'—';
+  const vsRhr9=pit.vs_R_hr9!=null?parseFloat(pit.vs_R_hr9).toFixed(2):'—';
+  return '<div class="pit-block">' +
+    '<div class="pit-block-header">' +
+      '<div><div class="pit-name">'+pit.name+'</div><div class="pit-team">ERA '+era+' · '+pit.ip_2026+' IP 2026</div></div>' +
+      '<span class="pit-hand '+handCls+'">'+hand+'HP</span>' +
+    '</div>' +
+    '<table class="split-table"><thead><tr><th>Split</th><th>HR/9</th><th>HH%</th><th>Brl%</th></tr></thead><tbody>' +
+      '<tr><td>Season</td><td class="'+pitHeat(parseFloat(hr9),1.15)+'">'+hr9+'</td><td class="'+pitHeat(parseFloat(pit.hard_hit_pct),32)+'">'+hh+'</td><td class="'+pitHeat(parseFloat(pit.barrel_pct),7.5)+'">'+brl+'</td></tr>' +
+      (vsLhr9!=='—'?'<tr><td>vs LHB</td><td class="'+pitHeat(parseFloat(vsLhr9),1.15)+'">'+vsLhr9+'</td><td>—</td><td>—</td></tr>':'') +
+      (vsRhr9!=='—'?'<tr><td>vs RHB</td><td class="'+pitHeat(parseFloat(vsRhr9),1.15)+'">'+vsRhr9+'</td><td>—</td><td>—</td></tr>':'') +
+    '</tbody></table>' +
+    '<div class="pit-blend">'+pit.blend_note+'</div>' +
+  '</div>';
+}
+
+// ── Breakdown ──
+function bdBar(val,max,neg,blue){
   const pct=max>0?Math.min(Math.abs(val)/max*100,100):0;
-  return `<div class="bd-bar-wrap"><div class="bd-bar ${neg?'neg':blue?'blue':''}" style="width:${pct}%"></div></div>`;
+  return '<div class="bd-bar-wrap"><div class="bd-bar'+(neg?' neg':blue?' blue':'')+'" style="width:'+pct+'%"></div></div>';
 }
-function bdPts(val,blue=false){
-  const v=typeof val==='number'?val:parseFloat(val)||0;
-  const neg=v<0;
-  const cls=neg?'neg':blue?'blue':v===0?'neutral':'';
-  return `<span class="bd-pts ${cls}">${v>0?'+':''}${val}</span>`;
+function bdPts(val,blue){
+  const v=parseFloat(val)||0;
+  const cls=v<0?'neg':blue?'blue':v===0?'neutral':'';
+  return '<span class="bd-pts '+cls+'">'+(v>0?'+':'')+val+'</span>';
 }
-
-function breakdownHTML(bd, hr_prob){
+function breakdownHTML(bd,hr_prob){
   if(!bd) return '';
   const pc=probCls(hr_prob);
-  return `<div class="breakdown">
-    <div class="bd-title">HR Probability Breakdown — click to close</div>
-    <div class="bd-section">
-      <div class="bd-section-title">Step 1 — Batter Score · ${bd.blend_note||''}</div>
-      <div class="bd-row"><span class="bd-label">Barrel ${bd.barrel_s}%${bd.barrel_14d>0?' (season '+bd.barrel_season+'% + 14d '+bd.barrel_14d+'%)':''}</span>${bdBar(bd.s1_barrel,25)}${bdPts(bd.s1_barrel)}</div>
-      <div class="bd-row"><span class="bd-label">ISO .${String(Math.round((bd.iso_use||0)*1000)).padStart(3,'0')}${bd.iso_14d>0?' (blended 14d)':''}</span>${bdBar(bd.s1_iso,10)}${bdPts(bd.s1_iso)}</div>
-      <div class="bd-row"><span class="bd-label">FB% ${bd.fb_s}%</span>${bdBar(bd.s1_fb,6)}${bdPts(bd.s1_fb)}</div>
-      <div class="bd-row"><span class="bd-label">Pull% ${bd.pull_s}%</span>${bdBar(bd.s1_pull,5)}${bdPts(bd.s1_pull)}</div>
-      <div class="bd-row"><span class="bd-label">Launch angle ${bd.la_s}°</span>${bdBar(bd.s1_la,4)}${bdPts(bd.s1_la)}</div>
-      <div class="bd-row"><span class="bd-label">HR/FB ${bd.hr_fb_s}%</span>${bdBar(bd.s1_hrfb,5)}${bdPts(bd.s1_hrfb)}</div>
-      <div class="bd-row"><span class="bd-label">14d HR rate ${bd.hr_rate_14d}/600 PA</span>${bdBar(bd.s1_hr14d,5)}${bdPts(bd.s1_hr14d)}</div>
-      <div class="bd-subtotal"><span class="bd-subtotal-label">Batter score</span><span class="bd-subtotal-val">${bd.batter_score}</span></div>
-    </div>
-    <div class="bd-section">
-      <div class="bd-section-title">Step 2 — Pitcher Modifier · ${bd.pit_blend_note||''}</div>
-      <div class="bd-row"><span class="bd-label">HR/9 ${bd.pit_hr9} (season ${bd.hr9_season} · split ${bd.hr9_split>0?bd.hr9_split:'—'} in ${bd.split_ip} IP) ${bd.platoon_magnitude>15?'⚠️ Big platoon edge':bd.platoon_magnitude<-15?'✅ Strong vs this hand':''}</span>${bdBar(Math.abs(bd.pit_modifier-1)*35,10,bd.pit_modifier<1)}${bdPts(bd.pit_modifier)}</div>
-      <div class="bd-row"><span class="bd-label">Hard contact ${bd.pit_hard>0?bd.pit_hard+'%':'—'} (avg 32%)</span>${bdBar(Math.abs((bd.pit_hard||0)-32),15,(bd.pit_hard||0)<32)}<span class="bd-pts ${(bd.pit_hard||0)>32?'':'neg'}">${bd.pit_hard>0?bd.pit_hard+'%':'—'}</span></div>
-      <div class="bd-row"><span class="bd-label">Barrel% allowed ${bd.pit_brl>0?bd.pit_brl+'%':'—'} (avg 7.5%)</span>${bdBar(Math.abs((bd.pit_brl||0)-7.5),8,(bd.pit_brl||0)<7.5)}<span class="bd-pts ${(bd.pit_brl||0)>7.5?'':'neg'}">${bd.pit_brl>0?bd.pit_brl+'%':'—'}</span></div>
-      <div class="bd-row"><span class="bd-label">Components loaded</span>${bdBar(bd.n_pit_components||0,4,false,true)}<span class="bd-pts blue">${bd.n_pit_components||0}/4</span></div>
-      <div class="bd-subtotal"><span class="bd-subtotal-label">Pitcher modifier</span><span class="bd-subtotal-val">${bd.pit_modifier}x</span></div>
-    </div>
-    <div class="bd-section">
-      <div class="bd-section-title">Step 3 — K% Gate</div>
-      <div class="bd-row"><span class="bd-label">K rate ${bd.k_s}%</span>${bdBar(1-(bd.k_cap||1),0.3,(bd.k_cap||1)<1)}${bdPts((bd.k_cap||1).toFixed(2))}</div>
-      <div class="bd-subtotal"><span class="bd-subtotal-label">After K cap</span><span class="bd-subtotal-val">${bd.after_k}</span></div>
-    </div>
-    <div class="bd-section">
-      <div class="bd-section-title">Step 4 — Context</div>
-      <div class="bd-row"><span class="bd-label">Park factor</span>${bdBar(Math.abs((bd.park_factor||1)-1)*100,15,(bd.park_factor||1)<1)}<span class="bd-pts ${(bd.park_factor||1)>=1?'':'neg'}">${bd.park_factor}x</span></div>
-      <div class="bd-row"><span class="bd-label">Weather</span>${bdBar(Math.abs((bd.weather_mult||1)-1)*100,8,(bd.weather_mult||1)<1)}<span class="bd-pts ${(bd.weather_mult||1)>=1?'':'neg'}">${bd.weather_mult}x</span></div>
-      <div class="bd-row"><span class="bd-label">Pitcher modifier</span>${bdBar(Math.abs((bd.pit_modifier||1)-1)*100,30,(bd.pit_modifier||1)<1)}<span class="bd-pts ${(bd.pit_modifier||1)>=1?'':'neg'}">${bd.pit_modifier}x</span></div>
-      <div class="bd-subtotal"><span class="bd-subtotal-label">${bd.after_k} × ${bd.park_factor} × ${bd.weather_mult} × ${bd.pit_modifier} = ${bd.after_context}</span><span class="bd-subtotal-val">${bd.after_context}</span></div>
-    </div>
-    <div class="bd-section">
-      <div class="bd-section-title">Step 5 — Sigmoid</div>
-      <div class="bd-row"><span class="bd-label">Raw ${bd.after_context} → sigmoid → HR%</span>${bdBar(hr_prob,25,false,true)}${bdPts(hr_prob+'%',true)}</div>
-    </div>
-    <div class="bd-final">
-      <div><div class="bd-final-label">HR Probability</div><div style="font-size:10px;color:var(--muted2);margin-top:2px">League avg ~3% · Elite ~20-25%</div></div>
-      <div class="bd-final-prob ${pc}">${hr_prob}%</div>
-    </div>
-  </div>`;
+  return '<div class="breakdown">' +
+    '<div class="bd-title">HR Probability Breakdown — click to close</div>' +
+    '<div class="bd-section">' +
+      '<div class="bd-section-title">Step 1 — Batter Score · '+(bd.blend_note||'')+'</div>' +
+      '<div class="bd-row"><span class="bd-label">Barrel '+(bd.barrel_s||0)+'%'+(bd.barrel_14d>0?' (season '+(bd.barrel_season||0)+'% + 14d '+(bd.barrel_14d||0)+'%)':'')+'</span>'+bdBar(bd.s1_barrel,25)+bdPts(bd.s1_barrel)+'</div>' +
+      '<div class="bd-row"><span class="bd-label">ISO .'+(String(Math.round((bd.iso_use||0)*1000)).padStart(3,'0'))+(bd.iso_14d>0?' (blended 14d)':'')+'</span>'+bdBar(bd.s1_iso,10)+bdPts(bd.s1_iso)+'</div>' +
+      '<div class="bd-row"><span class="bd-label">FB% '+(bd.fb_s||0)+'%</span>'+bdBar(bd.s1_fb,6)+bdPts(bd.s1_fb)+'</div>' +
+      '<div class="bd-row"><span class="bd-label">Pull% '+(bd.pull_s||0)+'%</span>'+bdBar(bd.s1_pull,5)+bdPts(bd.s1_pull)+'</div>' +
+      '<div class="bd-row"><span class="bd-label">Launch angle '+(bd.la_s||0)+'°</span>'+bdBar(bd.s1_la,4)+bdPts(bd.s1_la)+'</div>' +
+      '<div class="bd-row"><span class="bd-label">HR/FB '+(bd.hr_fb_s||0)+'%</span>'+bdBar(bd.s1_hrfb,5)+bdPts(bd.s1_hrfb)+'</div>' +
+      '<div class="bd-row"><span class="bd-label">14d HR rate '+(bd.hr_rate_14d||0)+'/600 PA</span>'+bdBar(bd.s1_hr14d,5)+bdPts(bd.s1_hr14d)+'</div>' +
+      '<div class="bd-subtotal"><span class="bd-subtotal-label">Batter score</span><span class="bd-subtotal-val">'+(bd.batter_score||0)+'</span></div>' +
+    '</div>' +
+    '<div class="bd-section">' +
+      '<div class="bd-section-title">Step 2 — Pitcher Modifier · '+(bd.pit_blend_note||'')+'</div>' +
+      '<div class="bd-row"><span class="bd-label">HR/9 '+(bd.pit_hr9||0)+' (season '+(bd.hr9_season||0)+' · split '+(bd.hr9_split>0?bd.hr9_split:'—')+' in '+(bd.split_ip||0)+' IP) '+(bd.platoon_magnitude>15?'⚠️ Big platoon edge':bd.platoon_magnitude<-15?'✅ Strong vs this hand':'')+'</span>'+bdBar(Math.abs((bd.pit_modifier||1)-1)*35,10,(bd.pit_modifier||1)<1)+bdPts(bd.pit_modifier||1)+'</div>' +
+      '<div class="bd-row"><span class="bd-label">Hard contact '+(bd.pit_hard>0?bd.pit_hard+'%':'—')+' (avg 32%)</span>'+bdBar(Math.abs((bd.pit_hard||0)-32),15,(bd.pit_hard||0)<32)+'<span class="bd-pts '+((bd.pit_hard||0)>32?'':'neg')+'">'+((bd.pit_hard||0)>0?bd.pit_hard+'%':'—')+'</span></div>' +
+      '<div class="bd-row"><span class="bd-label">Barrel% allowed '+(bd.pit_brl>0?bd.pit_brl+'%':'—')+' (avg 7.5%)</span>'+bdBar(Math.abs((bd.pit_brl||0)-7.5),8,(bd.pit_brl||0)<7.5)+'<span class="bd-pts '+((bd.pit_brl||0)>7.5?'':'neg')+'">'+((bd.pit_brl||0)>0?bd.pit_brl+'%':'—')+'</span></div>' +
+      '<div class="bd-row"><span class="bd-label">Components</span>'+bdBar(bd.n_pit_components||0,4,false,true)+'<span class="bd-pts blue">'+(bd.n_pit_components||0)+'/4</span></div>' +
+      '<div class="bd-subtotal"><span class="bd-subtotal-label">Pitcher modifier</span><span class="bd-subtotal-val">'+(bd.pit_modifier||1)+'x</span></div>' +
+    '</div>' +
+    '<div class="bd-section">' +
+      '<div class="bd-section-title">Step 3 — K% Gate</div>' +
+      '<div class="bd-row"><span class="bd-label">K rate '+(bd.k_s||0)+'%</span>'+bdBar(1-(bd.k_cap||1),0.3,(bd.k_cap||1)<1)+bdPts((bd.k_cap||1).toFixed(2))+'</div>' +
+      '<div class="bd-subtotal"><span class="bd-subtotal-label">After K cap</span><span class="bd-subtotal-val">'+(bd.after_k||0)+'</span></div>' +
+    '</div>' +
+    '<div class="bd-section">' +
+      '<div class="bd-section-title">Step 4 — Context</div>' +
+      '<div class="bd-row"><span class="bd-label">Park factor</span>'+bdBar(Math.abs((bd.park_factor||1)-1)*100,15,(bd.park_factor||1)<1)+'<span class="bd-pts '+((bd.park_factor||1)>=1?'':'neg')+'">'+(bd.park_factor||1)+'x</span></div>' +
+      '<div class="bd-row"><span class="bd-label">Weather</span>'+bdBar(Math.abs((bd.weather_mult||1)-1)*100,8,(bd.weather_mult||1)<1)+'<span class="bd-pts '+((bd.weather_mult||1)>=1?'':'neg')+'">'+(bd.weather_mult||1)+'x</span></div>' +
+      '<div class="bd-row"><span class="bd-label">Pitcher modifier</span>'+bdBar(Math.abs((bd.pit_modifier||1)-1)*100,30,(bd.pit_modifier||1)<1)+'<span class="bd-pts '+((bd.pit_modifier||1)>=1?'':'neg')+'">'+(bd.pit_modifier||1)+'x</span></div>' +
+      '<div class="bd-subtotal"><span class="bd-subtotal-label">'+(bd.after_k||0)+' × '+(bd.park_factor||1)+' × '+(bd.weather_mult||1)+' × '+(bd.pit_modifier||1)+' = '+(bd.after_context||0)+'</span><span class="bd-subtotal-val">'+(bd.after_context||0)+'</span></div>' +
+    '</div>' +
+    '<div class="bd-section">' +
+      '<div class="bd-section-title">Step 5 — Sigmoid</div>' +
+      '<div class="bd-row"><span class="bd-label">Raw '+(bd.after_context||0)+' → HR%</span>'+bdBar(hr_prob,25,false,true)+bdPts(hr_prob+'%',true)+'</div>' +
+    '</div>' +
+    '<div class="bd-final">' +
+      '<div><div class="bd-final-label">HR Probability</div><div style="font-size:10px;color:var(--muted2);margin-top:2px">League avg ~3% · Elite ~20-25%</div></div>' +
+      '<div class="bd-final-prob '+pc+'">'+hr_prob+'%</div>' +
+    '</div>' +
+  '</div>';
 }
 
 function toggleBreakdown(el){
@@ -599,61 +390,51 @@ function toggleBreakdown(el){
   if(bd&&bd.classList.contains('breakdown')) bd.classList.toggle('open');
 }
 
-function batterRowHTML(b, order){
-  const pc = probCls(b.hr_prob);
-  const pt = probTier(b.hr_prob);
-  const sl = b.statline||{};
-  const barrel = sl.barrel||0, iso = sl.iso||0, hrfb = sl.hr_fb||0;
-
-  const brlCls = heatCls(barrel, 5, 8, 12);
-  const isoCls = heatCls(iso*1000, 100, 160, 220); // iso in millipoints
-  const hand = b.bat_hand||'R';
-  const handCls = hand==='L'?'lhb':'rhb';
-  const odds = b.dk_odds;
-
-  return `<div class="batter-row" onclick="toggleBreakdown(this)">
-    <div class="bat-order">${order}</div>
-    <div>
-      <div class="bat-name">${b.name}</div>
-      <div class="bat-sub">
-        <span class="hand-tag ${handCls}">${hand}</span>
-        vs ${b.opp_p_hand||'R'}HP
-        ${trendHTML(b.trend||'Steady')}
-      </div>
-    </div>
-    <div class="sc ${brlCls}">${barrel>0?barrel.toFixed(1)+'%':'—'}</div>
-    <div class="sc ${isoCls}">${iso>0?'.'+String(Math.round(iso*1000)).padStart(3,'0'):'—'}</div>
-    <div class="form-cell">
-      <div class="form-hr ${b.recent_hr>=2?'fhot':b.recent_hr>=1?'fwarm':'fcold'}">${b.recent_hr||0} HR</div>
-      <div class="form-pa">${b.recent_pa||0} PA</div>
-    </div>
-    <div class="${odds?'odds-val':'odds-none'}">${odds||'—'}</div>
-    <div class="prob-cell">
-      <div class="prob-num ${pc}">${b.hr_prob}%</div>
-      <div class="prob-tier ${pc}">${pt}</div>
-    </div>
-  </div>
-  ${breakdownHTML(b.breakdown, b.hr_prob)}`;
+// ── Batter row ──
+function batterRowHTML(b,order){
+  const pc=probCls(b.hr_prob);
+  const pt=probTier(b.hr_prob);
+  const sl=b.statline||{};
+  const barrel=sl.barrel||0, iso=sl.iso||0;
+  const brlCls=heatCls(barrel,5,8,12);
+  const isoCls=heatCls(iso*1000,100,160,220);
+  const hand=b.bat_hand||'R';
+  const odds=b.dk_odds;
+  return '<div class="batter-row" onclick="toggleBreakdown(this)">' +
+    '<div class="bat-order">'+order+'</div>' +
+    '<div>' +
+      '<div class="bat-name">'+b.name+'</div>' +
+      '<div class="bat-sub"><span class="hand-tag '+(hand==='L'?'lhb':'rhb')+'">'+hand+'</span> vs '+(b.opp_p_hand||'R')+'HP '+trendHTML(b.trend||'Steady')+'</div>' +
+    '</div>' +
+    '<div class="sc '+brlCls+'">'+(barrel>0?barrel.toFixed(1)+'%':'—')+'</div>' +
+    '<div class="sc '+isoCls+'">'+(iso>0?'.'+String(Math.round(iso*1000)).padStart(3,'0'):'—')+'</div>' +
+    '<div class="form-cell">' +
+      '<div class="form-hr '+(b.recent_hr>=2?'fhot':b.recent_hr>=1?'fwarm':'fcold')+'">'+(b.recent_hr||0)+' HR</div>' +
+      '<div class="form-pa">'+(b.recent_pa||0)+' PA</div>' +
+    '</div>' +
+    '<div class="'+(odds?'odds-val':'odds-none')+'">'+(odds||'—')+'</div>' +
+    '<div class="prob-cell">' +
+      '<div class="prob-num '+pc+'">'+b.hr_prob+'%</div>' +
+      '<div class="prob-tier '+pc+'">'+pt+'</div>' +
+    '</div>' +
+  '</div>' +
+  breakdownHTML(b.breakdown,b.hr_prob);
 }
 
-function lineupRow(b, order){
-  const pc = probCls(b.hr_prob);
-  const odds = b.dk_odds;
-  const tags = [];
-  if(b.trend==='Heating Up') tags.push('<span class="lu-tag g">🔥 Hot</span>');
-  if(b.trend==='Cooling Off') tags.push('<span class="lu-tag r">❄️ Cold</span>');
-  if(b.platoon_tag) tags.push('<span class="lu-tag g">Platoon Edge</span>');
-  const hand = b.bat_hand||'R';
-  return `<div class="lineup-row">
-    <div class="lu-order">${order}</div>
-    <div>
-      <div class="lu-name">${b.name}</div>
-      <div class="lu-hand"><span class="hand-tag ${hand==='L'?'lhb':'rhb'}" style="font-size:8px">${hand}</span> vs ${b.opp_p_hand||'R'}HP ${trendHTML(b.trend)}</div>
-      ${tags.length?`<div class="lu-tags">${tags.join('')}</div>`:''}
-    </div>
-    <div class="lu-odds ${odds?'':'none'}">${odds||'—'}</div>
-    <div class="lu-prob ${pc}">${b.hr_prob}%</div>
-  </div>`;
+// ── Lineup tab ──
+function lineupRow(b,order){
+  const pc=probCls(b.hr_prob);
+  const hand=b.bat_hand||'R';
+  const odds=b.dk_odds;
+  return '<div class="lineup-row">' +
+    '<div class="lu-order">'+order+'</div>' +
+    '<div>' +
+      '<div class="lu-name">'+b.name+'</div>' +
+      '<div class="lu-hand"><span class="hand-tag '+(hand==='L'?'lhb':'rhb')+'" style="font-size:8px">'+hand+'</span> vs '+(b.opp_p_hand||'R')+'HP '+trendHTML(b.trend)+'</div>' +
+    '</div>' +
+    '<div class="lu-odds '+(odds?'':'none')+'">'+(odds||'—')+'</div>' +
+    '<div class="lu-prob '+pc+'">'+b.hr_prob+'%</div>' +
+  '</div>';
 }
 
 function renderLineups(games){
@@ -661,115 +442,202 @@ function renderLineups(games){
   if(!games||!games.length){el.innerHTML='<div class="no-games">No games today.</div>';return;}
   let html='';
   for(const g of games){
-    const awayP=g.away_pitcher||{},homeP=g.home_pitcher||{};
-    const awayL=g.away_lineup||[],homeL=g.home_lineup||[];
+    const awayP=g.away_pitcher||{}, homeP=g.home_pitcher||{};
+    const awayL=g.away_lineup||[], homeL=g.home_lineup||[];
     if(!awayL.length&&!homeL.length) continue;
-    html+=`<div class="lineup-game">
-      <div class="lineup-game-header">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.04em">${g.away}</div>
-        <div class="lineup-time">@ ${fmtTime(g.time)} ET</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;text-align:right">${g.home}</div>
-      </div>
-      <div class="lineup-grid">
-        <div class="lineup-side">
-          <div class="lineup-side-header">
-            <div class="lineup-side-title">${g.away}</div>
-            <div class="lineup-side-pitcher">vs ${homeP.name||'TBD'} ${homeP.hand||'R'}HP · HR/9 ${homeP.hr9!=null?homeP.hr9:'—'}</div>
-          </div>
-          ${awayL.map((b,i)=>lineupRow(b,i+1)).join('')}
-        </div>
-        <div class="lineup-side">
-          <div class="lineup-side-header">
-            <div class="lineup-side-title">${g.home}</div>
-            <div class="lineup-side-pitcher">vs ${awayP.name||'TBD'} ${awayP.hand||'R'}HP · HR/9 ${awayP.hr9!=null?awayP.hr9:'—'}</div>
-          </div>
-          ${homeL.map((b,i)=>lineupRow(b,i+1)).join('')}
-        </div>
-      </div>
-    </div>`;
+    html+='<div class="lineup-game">' +
+      '<div class="lineup-game-header">' +
+        '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.04em">'+g.away+'</div>' +
+        '<div class="lineup-time">@ '+fmtTime(g.time)+' ET</div>' +
+        '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;text-align:right">'+g.home+'</div>' +
+      '</div>' +
+      '<div class="lineup-grid">' +
+        '<div class="lineup-side">' +
+          '<div class="lineup-side-header"><div class="lineup-side-title">'+g.away+'</div><div class="lineup-side-pitcher">vs '+( homeP.name||'TBD')+' '+(homeP.hand||'R')+'HP · HR/9 '+(homeP.hr9||'—')+'</div></div>' +
+          awayL.map((b,i)=>lineupRow(b,i+1)).join('') +
+        '</div>' +
+        '<div class="lineup-side">' +
+          '<div class="lineup-side-header"><div class="lineup-side-title">'+g.home+'</div><div class="lineup-side-pitcher">vs '+(awayP.name||'TBD')+' '+(awayP.hand||'R')+'HP · HR/9 '+(awayP.hr9||'—')+'</div></div>' +
+          homeL.map((b,i)=>lineupRow(b,i+1)).join('') +
+        '</div>' +
+      '</div>' +
+    '</div>';
   }
   el.innerHTML=html||'<div class="no-games">No lineup data available.</div>';
 }
 
+// ── Parlay tab ──
+function parlayOdds(probs){
+  const decimal=probs.reduce(function(acc,p){return acc*(100/p);},1);
+  const american=(decimal-1)*100;
+  return american>=0?'+'+Math.round(american):String(Math.round(american));
+}
+
+function parlayImplied(probs){
+  return (probs.reduce(function(acc,p){return acc*(p/100);},1)*100).toFixed(1);
+}
+
+function impliedOdds(americanStr){
+  if(!americanStr) return 0;
+  const o=parseInt(americanStr);
+  if(o>0) return 100/(o+100)*100;
+  return Math.abs(o)/(Math.abs(o)+100)*100;
+}
+
+function platoonScore(b){ return b.platoon_tag?((b.breakdown&&b.breakdown.platoon_magnitude)||0)+10:0; }
+function powerScore(b){ return ((b.breakdown&&b.breakdown.barrel_s)||0)*2+((b.breakdown&&b.breakdown.s1_hrfb)||0)*3; }
+function confScore(b){ return (b.confidence==='High'?3:b.confidence==='Medium'?2:1)*3+((b.breakdown&&b.breakdown.n_pit_components)||0)+b.hr_prob/5; }
+
+function buildParlayCard(elId,themeClass,emoji,title,subtitle,note,picks){
+  const el=document.getElementById(elId);
+  if(!el) return;
+  if(!picks||picks.length<3){el.innerHTML='<div class="parlay-card"><div class="parlay-note">Not enough qualifying picks for this parlay today.</div></div>';return;}
+  const legs=picks.slice(0,3);
+  const odds=parlayOdds(legs.map(function(b){return b.hr_prob;}));
+  const imp=parlayImplied(legs.map(function(b){return b.hr_prob;}));
+  let html='<div class="parlay-card '+themeClass+'">' +
+    '<div class="parlay-card-header">' +
+      '<div class="parlay-theme">'+emoji+' '+title+'</div>' +
+      '<div class="parlay-theme-sub">'+subtitle+'</div>' +
+    '</div>';
+  legs.forEach(function(b){
+    const pc=probCls(b.hr_prob);
+    const hand=b.bat_hand||'R';
+    html+='<div class="parlay-leg">' +
+      '<div>' +
+        '<div class="parlay-leg-name">'+b.name+'</div>' +
+        '<div class="parlay-leg-detail"><span class="hand-tag '+(hand==='L'?'lhb':'rhb')+'" style="font-size:9px">'+hand+'</span> '+b.team+' · vs '+(b.opp_pitcher||'TBD')+(b.trend==='Heating Up'?' · 🔥':b.trend==='Cooling Off'?' · ❄️':'')+'</div>' +
+      '</div>' +
+      '<div class="parlay-leg-right">' +
+        '<div class="parlay-leg-prob '+pc+'">'+b.hr_prob+'%</div>' +
+        '<div class="parlay-leg-odds '+(b.dk_odds?'':'none')+'">'+(b.dk_odds||'No odds')+'</div>' +
+      '</div>' +
+    '</div>';
+  });
+  html+='<div class="parlay-footer">' +
+    '<div><div class="parlay-footer-label">Combined Odds</div><div class="parlay-combined-prob">~'+imp+'% combined probability</div></div>' +
+    '<div class="parlay-combined-odds">'+odds+'</div>' +
+  '</div>' +
+  '<div class="parlay-note">'+note+'</div>' +
+  '</div>';
+  el.innerHTML=html;
+}
+
+function renderParlays(allBatters){
+  const el=document.getElementById('parlays-main');
+  if(!allBatters||allBatters.length<3){
+    el.innerHTML='<div class="no-games">Not enough data to build parlays.</div>';return;
+  }
+  const seen=new Set();
+  const batters=allBatters.filter(function(b){
+    if(seen.has(b.name)) return false;
+    seen.add(b.name); return true;
+  });
+
+  const onFire=[].concat(batters).filter(function(b){return b.trend==='Heating Up'||b.hr_prob>=12;})
+    .sort(function(a,b){return (b.hr_prob+(b.trend==='Heating Up'?5:0))-(a.hr_prob+(a.trend==='Heating Up'?5:0));});
+
+  const platoon=[].concat(batters).filter(function(b){return b.platoon_tag||b.hr_prob>=10;})
+    .sort(function(a,b){return platoonScore(b)-platoonScore(a)||b.hr_prob-a.hr_prob;});
+
+  const highConf=[].concat(batters).sort(function(a,b){return confScore(b)-confScore(a);});
+
+  const power=[].concat(batters).sort(function(a,b){return powerScore(b)-powerScore(a)||b.hr_prob-a.hr_prob;});
+
+  el.innerHTML='<div class="parlay-disclaimer">⚠️ Parlays are for entertainment. All 3 legs must hit. Individual bets on strong picks offer better long-term value. Odds are model-implied — check BetRivers for posted lines.</div>' +
+    '<div class="parlay-grid">' +
+      '<div id="p-fire"></div>' +
+      '<div id="p-platoon"></div>' +
+      '<div id="p-conf"></div>' +
+      '<div id="p-power"></div>' +
+    '</div>';
+
+  buildParlayCard('p-fire','theme-fire','🔥','On Fire','Hottest recent form','These batters show elevated HR rate and positive trend over the last 14 days.',onFire);
+  buildParlayCard('p-platoon','theme-platoon','⚔️','Platoon Edge','Pitcher weak vs this hand','Pitchers with significant splits against the batter\'s handedness.',platoon);
+  buildParlayCard('p-conf','theme-conf','🔒','High Confidence','Best data quality picks','High confidence rating with full pitcher stat profile and confirmed lineup.',highConf);
+  buildParlayCard('p-power','theme-power','💣','Power Surge','Elite barrel rate matchups','Highest barrel rate batters facing pitchers that allow hard contact.',power);
+}
+
+// ── Main load ──
 async function load(){
-  const main=document.getElementById('main'),upd=document.getElementById('upd'),btn=document.getElementById('refreshBtn');
-  btn.disabled=true; upd.textContent='';
-  main.innerHTML=`<div class="loading">Loading Sharp Data<div class="dots"><span></span><span></span><span></span></div></div>`;
+  const main=document.getElementById('main');
+  const upd=document.getElementById('upd');
+  const btn=document.getElementById('refreshBtn');
+  btn.disabled=true;
+  upd.textContent='';
+  main.innerHTML='<div class="loading">Loading Sharp Data<div class="dots"><span></span><span></span><span></span></div></div>';
   document.getElementById('lineups-main').innerHTML='';
+  document.getElementById('parlays-main').innerHTML='';
+
   try{
     const dateStr=formatDateForAPI(selectedDate);
     const resp=await fetch(API+'/games?date='+dateStr);
     if(!resp.ok) throw new Error('Backend error '+resp.status);
     const data=await resp.json();
+
     if(data.loading){
-      main.innerHTML=`<div class="warn-box">${data.message||'Data loading — try again in 30 seconds.'}</div>`;
+      main.innerHTML='<div class="warn-box">'+(data.message||'Data loading — try again in 30 seconds.')+'</div>';
       btn.disabled=false; return;
     }
+
     const games=data.games||[];
-    if(!games.length){main.innerHTML='<div class="no-games">No MLB games today.</div>';btn.disabled=false;return;}
+    if(!games.length){
+      main.innerHTML='<div class="no-games">No MLB games on '+dateStr+'.</div>';
+      btn.disabled=false; return;
+    }
 
     let html='';
     for(const g of games){
       const wx=g.weather||{};
       const wc=wxCls(wx.label);
-      const awayP=g.away_pitcher||{},homeP=g.home_pitcher||{};
-      const awayS=g.lineup_away_status||'projected',homeS=g.lineup_home_status||'projected';
+      const awayP=g.away_pitcher||{}, homeP=g.home_pitcher||{};
+      const awayS=g.lineup_away_status||'projected', homeS=g.lineup_home_status||'projected';
       const candidates=g.top_hr_candidates||[];
 
-      html+=`<div class="game-card">
-        <div class="game-header">
-          <div>
-            <div class="team-name">${g.away}</div>
-            <div><span class="badge ${awayS==='confirmed'?'confirmed':'proj-badge'}">${awayS}</span></div>
-          </div>
-          <div class="game-meta">@ ${fmtTime(g.time)} ET</div>
-          <div>
-            <div class="team-name right">${g.home}</div>
-            <div style="display:flex;justify-content:flex-end"><span class="badge ${homeS==='confirmed'?'confirmed':'proj-badge'}">${homeS}</span></div>
-          </div>
-        </div>
-        <div class="weather-strip">
-          <div class="wx-item"><span class="wx-val">${wx.temp||'—'}°F</span><span class="wx-lbl">Temp</span></div>
-          <div class="wx-item"><span class="wx-val">${wx.wind_speed||0} mph</span><span class="wx-lbl">Wind</span></div>
-          <div class="wx-badge ${wc}">${wx.label||'—'}</div>
-        </div>
-        <div class="pitchers">
-          ${pitBlockHTML(awayP,'left')}
-          ${pitBlockHTML(homeP,'right')}
-        </div>
-        <div class="batter-section-header">
-          <div class="bh">#</div>
-          <div class="bh left">Batter</div>
-          <div class="bh">Brl%</div>
-          <div class="bh">ISO</div>
-          <div class="bh">14d HR</div>
-          <div class="bh hide-sm">BR HR</div>
-          <div class="bh">HR Prob</div>
-        </div>`;
+      html+='<div class="game-card">' +
+        '<div class="game-header">' +
+          '<div><div class="team-name">'+g.away+'</div><div><span class="badge '+(awayS==='confirmed'?'confirmed':'proj-badge')+'">'+awayS+'</span></div></div>' +
+          '<div class="game-meta">@ '+fmtTime(g.time)+' ET</div>' +
+          '<div><div class="team-name right">'+g.home+'</div><div style="display:flex;justify-content:flex-end"><span class="badge '+(homeS==='confirmed'?'confirmed':'proj-badge')+'">'+homeS+'</span></div></div>' +
+        '</div>' +
+        '<div class="weather-strip">' +
+          '<div class="wx-item"><span class="wx-val">'+(wx.temp||'—')+'°F</span><span class="wx-lbl">Temp</span></div>' +
+          '<div class="wx-item"><span class="wx-val">'+(wx.wind_speed||0)+' mph</span><span class="wx-lbl">Wind</span></div>' +
+          '<div class="wx-badge '+wc+'">'+(wx.label||'—')+'</div>' +
+        '</div>' +
+        '<div class="pitchers">'+pitBlockHTML(awayP,false)+pitBlockHTML(homeP,true)+'</div>' +
+        '<div class="batter-section-header">' +
+          '<div class="bh">#</div><div class="bh left">Batter</div>' +
+          '<div class="bh">Brl%</div><div class="bh">ISO</div>' +
+          '<div class="bh">14d HR</div><div class="bh hide-sm">BR HR</div><div class="bh">HR Prob</div>' +
+        '</div>';
 
       if(!candidates.length){
-        html+=`<div class="pending">No lineup data available yet.</div>`;
+        html+='<div class="pending">No lineup data available yet.</div>';
       } else {
-        candidates.slice(0,3).forEach((b,i)=>{
-          html+=`<div class="batter">${batterRowHTML(b,i+1)}</div>`;
+        candidates.slice(0,3).forEach(function(b,i){
+          html+='<div>'+batterRowHTML(b,i+1)+'</div>';
         });
       }
-      html+=`</div>`;
+      html+='</div>';
     }
     main.innerHTML=html;
+
     renderLineups(games);
 
-    // Build parlay pool from all batters across all games
     const allBatters=[];
-    for(const g of games){
-      const all=[...(g.away_lineup||[]),...(g.home_lineup||[]),...(g.top_hr_candidates||[])];
-      allBatters.push(...all);
-    }
+    games.forEach(function(g){
+      (g.away_lineup||[]).forEach(function(b){allBatters.push(b);});
+      (g.home_lineup||[]).forEach(function(b){allBatters.push(b);});
+      if(!g.away_lineup||!g.away_lineup.length){
+        (g.top_hr_candidates||[]).forEach(function(b){allBatters.push(b);});
+      }
+    });
     renderParlays(allBatters);
 
-    upd.textContent='Updated '+new Date().toLocaleTimeString()+' · '+data.date;
+    upd.textContent='Updated '+new Date().toLocaleTimeString()+' · '+dateStr;
   } catch(e){
-    main.innerHTML=`<div class="err"><strong>Error:</strong> ${e.message}</div>`;
+    main.innerHTML='<div class="err"><strong>Error:</strong> '+e.message+'</div>';
   }
   btn.disabled=false;
 }
