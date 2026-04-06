@@ -21,6 +21,7 @@ ODDS_API_KEY = os.environ.get("ODDS_API_KEY", "")
 # URL to your Excel file — set via Railway environment variable
 # or hardcode once you have a public URL
 EXCEL_URL = os.environ.get("EXCEL_URL", "")
+PITCH_URL = os.environ.get("PITCH_URL", "")
 
 _cache = {
     "bat_2026": pd.DataFrame(),
@@ -32,6 +33,9 @@ _cache = {
     "pit_2025": pd.DataFrame(),
     "pit_vs_rhh": pd.DataFrame(),
     "pit_vs_lhh": pd.DataFrame(),
+    "pit_pitch_value": pd.DataFrame(),
+    "pit_pitch_usage": pd.DataFrame(),
+    "bat_pitch_value": pd.DataFrame(),
     "player_hands": {},
     "ready": False
 }
@@ -176,6 +180,9 @@ def load_excel_data():
             "Pitcher-2025": "pit_2025",
             "Pitcher vs RHH": "pit_vs_rhh",
             "Pitcher vs LHH": "pit_vs_lhh",
+            "Pitcher Value": "pit_pitch_value",
+            "Pitcher-Usage": "pit_pitch_usage",
+            "Batter-Value": "bat_pitch_value",
         }
 
         for sheet_name, cache_key in sheet_map.items():
@@ -192,6 +199,35 @@ def load_excel_data():
         import traceback
         print(f"Excel load error: {e}")
         print(traceback.format_exc())
+
+    # Load pitch matchup file separately
+    if PITCH_URL:
+        try:
+            if PITCH_URL.startswith("http"):
+                r = requests.get(PITCH_URL, timeout=30)
+                pitch_xl = pd.read_excel(io.BytesIO(r.content), sheet_name=None)
+            else:
+                pitch_xl = pd.read_excel(PITCH_URL, sheet_name=None)
+
+            pitch_sheet_map = {
+                "Pitcher Value":   "pit_pitch_value",
+                "Pitcher-Usage":   "pit_pitch_usage",
+                "Batter-Value":    "bat_pitch_value",
+            }
+            for sheet_name, cache_key in pitch_sheet_map.items():
+                if sheet_name in pitch_xl:
+                    df = pitch_xl[sheet_name].copy()
+                    _cache[cache_key] = df
+                    print(f"Pitch loaded {sheet_name}: {len(df)} rows")
+                else:
+                    print(f"Pitch sheet not found: {sheet_name} (available: {list(pitch_xl.keys())})")
+            print("Pitch matchup data loaded successfully")
+        except Exception as e:
+            import traceback
+            print(f"Pitch Excel load error: {e}")
+            print(traceback.format_exc())
+    else:
+        print("No PITCH_URL set — pitch matchup data not loaded")
 
 def load_all_data():
     load_excel_data()
@@ -311,6 +347,127 @@ def get_pitcher_stats(name, season="2026"):
         "barrel_pct_allowed": get_stat(row, "barrel%", "barrel_pct_allowed"),
         "hard_hit_pct":       get_stat(row, "hardhit%", "hard_hit_pct"),
     }
+
+# Pitch type code mapping
+PITCH_CODE_MAP = {
+    'fa%': 'wfa', 'fb%': 'wfa',  # fastball
+    'sl%': 'wsl',                  # slider
+    'fc%': 'wfc',                  # cutter
+    'fs%': 'wfs',                  # splitter
+    'si%': 'wsi',                  # sinker
+    'cu%': 'wcu',                  # curveball
+    'ch%': 'wch',                  # changeup
+}
+
+PITCH_NAMES_DISPLAY = {
+    'wfa': 'Fastball', 'wsl': 'Slider', 'wfc': 'Cutter',
+    'wfs': 'Splitter', 'wsi': 'Sinker', 'wcu': 'Curveball', 'wch': 'Changeup'
+}
+
+def clean_pitch_col(col):
+    """Extract short pitch code from FanGraphs verbose column name"""
+    return str(col).split(' ')[0].split('(')[0].strip().lower()
+
+def get_pitcher_top_pitches(pitcher_name):
+    """Get pitcher top 2 pitches by usage from Excel"""
+    df = _cache["pit_pitch_usage"]
+    if df.empty: return []
+    row = fuzzy_match_df(pitcher_name, df)
+    if row is None: return []
+    pitches = []
+    for col in df.columns[1:]:
+        short = clean_pitch_col(col)
+        val = row.get(col, None)
+        if val is not None and str(val) != 'nan':
+            pct = float(val)
+            if pct > 0.05:  # at least 5% usage
+                value_key = PITCH_CODE_MAP.get(short)
+                if value_key:
+                    pitches.append({
+                        "code": value_key,
+                        "name": PITCH_NAMES_DISPLAY.get(value_key, value_key),
+                        "usage": round(pct * 100, 1)
+                    })
+    pitches.sort(key=lambda x: x["usage"], reverse=True)
+    return pitches[:3]
+
+def get_pitcher_pitch_values(pitcher_name):
+    """Get pitcher run values per pitch type"""
+    df = _cache["pit_pitch_value"]
+    if df.empty: return {}
+    row = fuzzy_match_df(pitcher_name, df)
+    if row is None: return {}
+    result = {}
+    for col in df.columns[1:]:
+        short = clean_pitch_col(col)
+        val = row.get(col, None)
+        if val is not None and str(val) != 'nan':
+            result[short] = float(val)
+    return result
+
+def get_batter_pitch_values(batter_name):
+    """Get batter run values vs each pitch type"""
+    df = _cache["bat_pitch_value"]
+    if df.empty: return {}
+    row = fuzzy_match_df(batter_name, df)
+    if row is None: return {}
+    result = {}
+    for col in df.columns[1:]:
+        short = clean_pitch_col(col)
+        val = row.get(col, None)
+        if val is not None and str(val) != 'nan':
+            result[short] = float(val)
+    return result
+
+def compute_pitch_matchup(pitcher_name, batter_name):
+    """
+    Compute pitch matchup score and details.
+    Returns (bonus_pts, matchup_details)
+    Logic: for each of pitcher's top pitches:
+      - pitcher_rv: how hittable this pitch is overall (positive = hittable)
+      - batter_rv: how well this batter hits this pitch type (positive = good for batter)
+      - combined: if both positive = very good for batter
+      - weighted by usage %
+    """
+    top_pitches = get_pitcher_top_pitches(pitcher_name)
+    pit_values = get_pitcher_pitch_values(pitcher_name)
+    bat_values = get_batter_pitch_values(batter_name)
+
+    if not top_pitches or not bat_values:
+        return 0.0, []
+
+    details = []
+    total_bonus = 0.0
+
+    for pitch in top_pitches:
+        code = pitch["code"]
+        usage = pitch["usage"] / 100.0
+        pit_rv = pit_values.get(code, 0.0)  # positive = hittable pitch
+        bat_rv = bat_values.get(code, None)
+
+        if bat_rv is None:
+            continue
+
+        # Combined signal: batter value vs pitch + pitcher weakness on that pitch
+        # Scale: league avg is 0, +2 is good, +5 is excellent
+        combined = (bat_rv * 0.6) + (pit_rv * 0.4)
+
+        # Convert to bonus points (max ±6 pts per pitch, weighted by usage)
+        bonus = combined * usage * 1.5
+        bonus = max(min(bonus, 4), -4)  # cap per pitch
+        total_bonus += bonus
+
+        details.append({
+            "name": pitch["name"],
+            "usage": pitch["usage"],
+            "pit_rv": round(pit_rv, 2),
+            "bat_rv": round(bat_rv, 2),
+            "combined": round(combined, 2),
+            "bonus": round(bonus, 2)
+        })
+
+    total_bonus = max(min(total_bonus, 8), -8)
+    return round(total_bonus, 2), details
 
 def get_pitcher_split(name, vs_hand):
     """Get pitcher stats vs LHH or RHH"""
@@ -481,6 +638,9 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand,
     barrel_14d_raw = b14.get("barrel_pct", 0)
     trend = get_trend(b14, bc)
 
+    # ── PITCH MATCHUP (computed before step 1 for use in score) ──
+    pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
+
     # ── STEP 1: Batter score — all stats already blended with 14d ──
     s1_barrel = round(min(barrel_s/15.0,1.0)*25, 2)
     s1_iso    = round(min(iso_use/0.280,1.0)*10, 2)
@@ -491,7 +651,7 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand,
     # 14d HR rate bonus — direct HR signal
     s1_hr14d  = round(min(hr_rate_14d/40.0,1.0)*5, 2) if has_14d else 0
 
-    batter_score = s1_barrel + s1_iso + s1_fb + s1_pull + s1_la + s1_hrfb + s1_hr14d
+    batter_score = s1_barrel + s1_iso + s1_fb + s1_pull + s1_la + s1_hrfb + s1_hr14d + pitch_bonus
 
     archetype = get_archetype(barrel_season, k_s, fb_s, iso_season)
 
@@ -633,7 +793,7 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand,
         "pit_hr9":round(pit_hr9,2),"pit_hrfb":round(pit_hrfb,1),
         "pit_hard":round(pit_hard,1),"pit_brl":round(pit_brl,1),
         "pit_modifier":pit_modifier,"n_pit_components":n_components,"platoon_magnitude":platoon_magnitude,"hr9_split":round(hr9_split,2),"hr9_season":round(hr9_season,2),"split_ip":round(split_ip,1),
-        "pitch_bonus":0,"pitch_breakdown":[],
+        "pitch_bonus":pitch_bonus,"pitch_breakdown":pitch_details,
         "after_pitch":round(batter_score,1),
         "after_k":round(after_k,1),
         "park_factor":park_factor,"weather_mult":weather_mult,
@@ -788,6 +948,9 @@ def status():
         "pit_2025": len(_cache["pit_2025"]),
         "pit_vs_rhh": len(_cache["pit_vs_rhh"]),
         "pit_vs_lhh": len(_cache["pit_vs_lhh"]),
+        "pit_pitch_value": len(_cache["pit_pitch_value"]),
+        "pit_pitch_usage": len(_cache["pit_pitch_usage"]),
+        "bat_pitch_value": len(_cache["bat_pitch_value"]),
     }
 
 @app.post("/reload")
