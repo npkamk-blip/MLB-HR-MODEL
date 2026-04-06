@@ -20,27 +20,37 @@ ODDS_API_KEY = os.environ.get("ODDS_API_KEY", "")
 # ── Baseball Savant URLs ──
 SAVANT_BASE = "https://baseballsavant.mlb.com"
 
-def savant_batter_url(year=2026, min_pa=10, extra=""):
-    return (f"{SAVANT_BASE}/leaderboard/custom?year={year}&type=batter&filter=&sort=4"
+def savant_batter_url(year=None, min_pa=10, extra=""):
+    yr = year or current_season()
+    return (f"{SAVANT_BASE}/leaderboard/custom?year={yr}&type=batter&filter=&sort=4"
             f"&sortDir=desc&min={min_pa}&selections=pa,ab,hit,home_run,strikeout,"
             f"k_percent,slg_percent,batting_avg,barrel_batted_rate,exit_velocity_avg,"
-            f"launch_angle_avg,hard_hit_percent,pull_percent,n_fb_percent&csv=true{extra}")
+            f"launch_angle_avg,hard_hit_percent,pull_percent&csv=true{extra}")
 
-def savant_pitcher_url(year=2026, min_pa=5, extra=""):
-    return (f"{SAVANT_BASE}/leaderboard/custom?year={year}&type=pitcher&filter=&sort=4"
+def savant_pitcher_url(year=None, min_pa=5, extra=""):
+    yr = year or current_season()
+    return (f"{SAVANT_BASE}/leaderboard/custom?year={yr}&type=pitcher&filter=&sort=4"
             f"&sortDir=desc&min={min_pa}&selections=pa,home_run,barrel_batted_rate,"
-            f"exit_velocity_avg,hard_hit_percent,n_fb_percent,k_percent,p_era&csv=true{extra}")
+            f"exit_velocity_avg,hard_hit_percent,k_percent,p_era&csv=true{extra}")
 
-def savant_pitch_arsenal_url(ptype="pitcher", year=2026, min_pa=1):
+def savant_pitch_arsenal_url(ptype="pitcher", year=None, min_pa=1):
+    yr = year or current_season()
     return (f"{SAVANT_BASE}/leaderboard/pitch-arsenal-stats?type={ptype}"
-            f"&pitchType=&year={year}&team=&min={min_pa}&csv=true")
+            f"&pitchType=&year={yr}&team=&min={min_pa}&csv=true")
+
+def current_season():
+    """Return current MLB season year"""
+    today = date.today()
+    # MLB season runs roughly March-November
+    return today.year if today.month >= 3 else today.year - 1
 
 def savant_14d_url():
     cutoff = (date.today() - timedelta(days=14)).isoformat()
-    return (f"{SAVANT_BASE}/leaderboard/custom?year=2026&type=batter&filter=&sort=4"
-            f"&sortDir=desc&min=5&selections=pa,home_run,barrel_batted_rate,"
+    yr = current_season()
+    return (f"{SAVANT_BASE}/leaderboard/custom?year={yr}&type=batter&filter=&sort=4"
+            f"&sortDir=desc&min=5&selections=pa,ab,home_run,barrel_batted_rate,"
             f"exit_velocity_avg,launch_angle_avg,hard_hit_percent,pull_percent,"
-            f"slg_percent,batting_avg,n_fb_percent,strikeout,k_percent&csv=true"
+            f"slg_percent,batting_avg,strikeout,k_percent&csv=true"
             f"&game_date_gt={cutoff}")
 
 _cache = {
@@ -227,24 +237,81 @@ def calc_pitcher_stats(df: pd.DataFrame) -> pd.DataFrame:
 async def fetch_pitcher_ip(season=2026):
     """Fetch pitcher IP and HR/9 from MLB Stats API"""
     try:
-        url = f"{MLB_API}/stats?stats=season&group=pitching&gameType=R&season={season}&limit=1000"
+        # Use the correct paginated endpoint
+        url = (f"{MLB_API}/stats/leaders?leaderCategories=inningsPitched"
+               f"&season={season}&sportId=1&limit=500&statGroup=pitching&gameType=R")
         async with httpx.AsyncClient(timeout=20) as client:
             r = await client.get(url)
             data = r.json()
+        
         ip_map = {}
-        for split in data.get("stats", [{}])[0].get("splits", []):
-            person = split.get("player", {})
-            name = person.get("fullName", "")
-            stat = split.get("stat", {})
-            ip = float(stat.get("inningsPitched", 0) or 0)
-            hr = float(stat.get("homeRunsPer9", 0) or 0)
-            era = float(stat.get("era", 0) or 0)
-            if name:
-                ip_map[name.lower()] = {"ip": ip, "hr9": hr, "era": era, "name": name}
+        leaders = data.get("leagueLeaders", [])
+        for cat in leaders:
+            for leader in cat.get("leaders", []):
+                person = leader.get("person", {})
+                name = person.get("fullName", "")
+                ip = float(leader.get("value", 0) or 0)
+                if name and ip > 0:
+                    ip_map[name.lower()] = {
+                        "ip": ip, "hr9": 0, "era": 0, "name": name
+                    }
+        
+        # Now fetch ERA and HR/9 separately
+        for stat_cat in ["earnedRunAverage", "homeRunsPer9Inning"]:
+            url2 = (f"{MLB_API}/stats/leaders?leaderCategories={stat_cat}"
+                    f"&season={season}&sportId=1&limit=500&statGroup=pitching&gameType=R")
+            async with httpx.AsyncClient(timeout=20) as client:
+                r2 = await client.get(url2)
+                data2 = r2.json()
+            for cat in data2.get("leagueLeaders", []):
+                for leader in cat.get("leaders", []):
+                    person = leader.get("person", {})
+                    name = person.get("fullName", "")
+                    val = float(leader.get("value", 0) or 0)
+                    nl = name.lower()
+                    if nl in ip_map:
+                        if stat_cat == "earnedRunAverage":
+                            ip_map[nl]["era"] = val
+                        else:
+                            ip_map[nl]["hr9"] = val
+
+        # Also try the schedule-based approach as fallback
+        if len(ip_map) < 10:
+            print("Leaders endpoint sparse, trying stats endpoint...")
+            url3 = f"{MLB_API}/stats?stats=season&group=pitching&gameType=R&season={season}&playerPool=All&limit=2000"
+            async with httpx.AsyncClient(timeout=30) as client:
+                r3 = await client.get(url3)
+                data3 = r3.json()
+            for stat_group in data3.get("stats", []):
+                for split in stat_group.get("splits", []):
+                    person = split.get("player", {})
+                    name = person.get("fullName", "")
+                    stat = split.get("stat", {})
+                    ip_str = stat.get("inningsPitched", "0") or "0"
+                    try:
+                        ip = float(ip_str)
+                    except:
+                        ip = 0
+                    hr9_str = stat.get("homeRunsPer9", "0") or "0"
+                    try:
+                        hr9 = float(hr9_str)
+                    except:
+                        hr9 = 0
+                    era_str = stat.get("era", "0") or "0"
+                    try:
+                        era = float(era_str)
+                    except:
+                        era = 0
+                    if name and ip > 0:
+                        ip_map[name.lower()] = {
+                            "ip": ip, "hr9": hr9, "era": era, "name": name
+                        }
+
         print(f"Fetched IP data for {len(ip_map)} pitchers from MLB Stats API")
         return ip_map
     except Exception as e:
         print(f"MLB Stats IP fetch error: {e}")
+        import traceback; traceback.print_exc()
         return {}
 
 async def load_all_savant_data():
@@ -252,13 +319,13 @@ async def load_all_savant_data():
     print("Loading data from Baseball Savant...")
     async with httpx.AsyncClient(timeout=30) as client:
         # Batter 2026
-        df = await fetch_savant_csv(savant_batter_url(2026, 10), client)
+        df = await fetch_savant_csv(savant_batter_url(min_pa=10), client)
         if not df.empty:
             _cache["bat_2026"] = calc_batter_stats(df)
             print(f"bat_2026: {len(_cache['bat_2026'])} rows")
 
         # Batter 2025
-        df = await fetch_savant_csv(savant_batter_url(2025, 50), client)
+        df = await fetch_savant_csv(savant_batter_url(year=current_season()-1, min_pa=50), client)
         if not df.empty:
             _cache["bat_2025"] = calc_batter_stats(df)
             print(f"bat_2025: {len(_cache['bat_2025'])} rows")
@@ -270,55 +337,55 @@ async def load_all_savant_data():
             print(f"bat_14d: {len(_cache['bat_14d'])} rows")
 
         # Batter vs LHP
-        df = await fetch_savant_csv(savant_batter_url(2026, 5, "&pitchHand=L"), client)
+        df = await fetch_savant_csv(savant_batter_url(min_pa=5, extra="&pitchHand=L"), client)
         if not df.empty:
             _cache["bat_vs_lhp"] = calc_batter_stats(df)
             print(f"bat_vs_lhp: {len(_cache['bat_vs_lhp'])} rows")
 
         # Batter vs RHP
-        df = await fetch_savant_csv(savant_batter_url(2026, 5, "&pitchHand=R"), client)
+        df = await fetch_savant_csv(savant_batter_url(min_pa=5, extra="&pitchHand=R"), client)
         if not df.empty:
             _cache["bat_vs_rhp"] = calc_batter_stats(df)
             print(f"bat_vs_rhp: {len(_cache['bat_vs_rhp'])} rows")
 
         # Pitcher 2026
-        df = await fetch_savant_csv(savant_pitcher_url(2026, 5), client)
+        df = await fetch_savant_csv(savant_pitcher_url(min_pa=5), client)
         if not df.empty:
             _cache["pit_2026"] = calc_pitcher_stats(df)
             print(f"pit_2026: {len(_cache['pit_2026'])} rows")
 
         # Pitcher 2025
-        df = await fetch_savant_csv(savant_pitcher_url(2025, 50), client)
+        df = await fetch_savant_csv(savant_pitcher_url(year=current_season()-1, min_pa=50), client)
         if not df.empty:
             _cache["pit_2025"] = calc_pitcher_stats(df)
             print(f"pit_2025: {len(_cache['pit_2025'])} rows")
 
         # Pitcher vs LHH
-        df = await fetch_savant_csv(savant_pitcher_url(2026, 1, "&batSide=L"), client)
+        df = await fetch_savant_csv(savant_pitcher_url(min_pa=1, extra="&batSide=L"), client)
         if not df.empty:
             _cache["pit_vs_lhh"] = calc_pitcher_stats(df)
             print(f"pit_vs_lhh: {len(_cache['pit_vs_lhh'])} rows")
 
         # Pitcher vs RHH
-        df = await fetch_savant_csv(savant_pitcher_url(2026, 1, "&batSide=R"), client)
+        df = await fetch_savant_csv(savant_pitcher_url(min_pa=1, extra="&batSide=R"), client)
         if not df.empty:
             _cache["pit_vs_rhh"] = calc_pitcher_stats(df)
             print(f"pit_vs_rhh: {len(_cache['pit_vs_rhh'])} rows")
 
         # Pitch arsenal - pitcher
-        df = await fetch_savant_csv(savant_pitch_arsenal_url("pitcher", 2026, 1), client)
+        df = await fetch_savant_csv(savant_pitch_arsenal_url("pitcher", min_pa=1), client)
         if not df.empty:
             _cache["pit_arsenal"] = parse_player_name(df)
             print(f"pit_arsenal: {len(_cache['pit_arsenal'])} rows")
 
         # Pitch arsenal - batter
-        df = await fetch_savant_csv(savant_pitch_arsenal_url("batter", 2026, 1), client)
+        df = await fetch_savant_csv(savant_pitch_arsenal_url("batter", min_pa=1), client)
         if not df.empty:
             _cache["bat_arsenal"] = parse_player_name(df)
             print(f"bat_arsenal: {len(_cache['bat_arsenal'])} rows")
 
     # Pitcher IP from MLB Stats API
-    ip_data = await fetch_pitcher_ip(2026)
+    ip_data = await fetch_pitcher_ip(current_season())
     _cache["player_ip"] = ip_data
 
     _cache["last_updated"] = datetime.now().isoformat()
