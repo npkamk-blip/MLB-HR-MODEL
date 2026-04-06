@@ -401,11 +401,6 @@ async def load_all_savant_data():
     """Fetch all data from Baseball Savant + FanGraphs via pybaseball"""
     print("Loading data from Baseball Savant...")
 
-    # Initialize FanGraphs cache keys
-    for key in ['fg_bat_season', 'fg_bat_prev', 'fg_bat_14d', 'fg_pit_season']:
-        if key not in _cache:
-            _cache[key] = {}
-
     # Start pybaseball load in background thread (non-blocking)
     threading.Thread(target=load_pybaseball_data, daemon=True).start()
 
@@ -602,7 +597,7 @@ def get_batter_stats(name, year=2026):
         stats['fb_pct'] = fg['fb_pct']
     if fg.get('hr_fb_pct', 0) > 0:
         stats['hr_fb_pct'] = fg['hr_fb_pct']
-    if fg.get('pull_pct', 0) > 0 and stats['pull_pct'] == 0:
+    if (fg.get('pull_pct') or 0) > 0 and stats['pull_pct'] == 0:
         stats['pull_pct'] = fg['pull_pct']
     return stats
 def get_batter_14d(name):
@@ -1228,6 +1223,7 @@ async def get_games(date: str = None):
 
     from datetime import date as date_cls
     today = date if date else date_cls.today().isoformat()
+    date = None  # clear to avoid shadowing
 
     async with httpx.AsyncClient(timeout=30) as client:
         r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
@@ -1357,6 +1353,7 @@ async def get_games(date: str = None):
 async def research(player: str, date: str = None):
     from datetime import date as date_cls
     today = date if date else date_cls.today().isoformat()
+    date = None  # clear to avoid shadowing
     if not _cache["ready"]:
         return {"error": "Data loading — try again in 30 seconds"}
 
