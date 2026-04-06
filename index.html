@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Sharp — MLB HR Model</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -11,162 +14,199 @@
   --bg:#0a0a0a;--surface:#111;--s2:#161616;--s3:#0e0e0e;
   --border:#252525;--border2:#1a1a1a;
   --accent:#c8f135;--blue:#4da6ff;--text:#f0f0f0;
-  --muted:#888;--muted2:#555;--danger:#ff4d4d;--warn:#ffaa33;
-  --purple:#c084fc;
+  --muted:#888;--muted2:#555;--danger:#ff4d4d;--warn:#ffaa33;--purple:#c084fc;
 }
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px}
-header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between}
+header{border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between}
 .logo{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
-.logo-sub{font-size:11px;color:var(--muted);border-left:1px solid var(--border);padding-left:12px;text-transform:uppercase;letter-spacing:.1em}
+.logo-sub{font-size:11px;color:var(--muted);border-left:1px solid var(--border);padding-left:10px;text-transform:uppercase;letter-spacing:.1em}
 .hdr-r{display:flex;align-items:center;gap:10px}
 .date-nav{display:flex;align-items:center;gap:6px}
-.date-btn{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:18px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1;padding:0}
+.date-btn{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:18px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
 .date-btn:hover{border-color:var(--accent);color:var(--accent)}
 .date-lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
-.refresh-btn{background:var(--accent);color:#0a0a0a;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:7px 16px;cursor:pointer}
+.refresh-btn{background:var(--accent);color:#0a0a0a;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;cursor:pointer}
 .refresh-btn:hover{opacity:.85}
 .refresh-btn:disabled{opacity:.4;cursor:not-allowed}
-.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 24px}
-.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:12px 20px;cursor:pointer;transition:all .15s;margin-bottom:-1px}
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 20px}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:10px 18px;cursor:pointer;transition:all .15s;margin-bottom:-1px}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.container{max-width:960px;margin:0 auto;padding:20px 16px}
-.game-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px}
-.game-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:12px 20px;background:var(--s2);border-bottom:1px solid var(--border)}
-.team-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.container{max-width:1100px;margin:0 auto;padding:16px}
+
+/* Game card */
+.game-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.game-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:10px 16px;background:var(--s2);border-bottom:1px solid var(--border)}
+.team-name{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
 .team-name.right{text-align:right}
 .game-meta{text-align:center;font-size:11px;color:var(--muted)}
-.badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+.badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:6px;text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
 .confirmed{background:rgba(200,241,53,.1);color:var(--accent);border:1px solid rgba(200,241,53,.25)}
 .proj-badge{background:rgba(255,170,51,.1);color:var(--warn);border:1px solid rgba(255,170,51,.25)}
-.weather-strip{display:flex;align-items:center;gap:20px;padding:7px 20px;border-bottom:1px solid var(--border);background:var(--s3)}
-.wx-item{display:flex;align-items:center;gap:5px;font-size:12px}
+
+/* Weather strip — clickable */
+.weather-strip{display:flex;align-items:center;gap:16px;padding:6px 16px;border-bottom:1px solid var(--border);background:var(--s3);cursor:pointer;user-select:none}
+.weather-strip:hover{background:#121212}
+.wx-item{display:flex;align-items:center;gap:4px;font-size:12px}
 .wx-val{font-weight:600}
 .wx-lbl{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em}
-.wx-badge{margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em}
+.wx-badge{margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;padding:3px 10px;border-radius:16px;text-transform:uppercase;letter-spacing:.06em}
 .wx-out{background:rgba(200,241,53,.12);color:var(--accent);border:1px solid rgba(200,241,53,.3)}
 .wx-in{background:rgba(255,77,77,.1);color:var(--danger);border:1px solid rgba(255,77,77,.25)}
 .wx-left{background:rgba(77,166,255,.1);color:var(--blue);border:1px solid rgba(77,166,255,.25)}
 .wx-right{background:rgba(255,170,51,.1);color:var(--warn);border:1px solid rgba(255,170,51,.25)}
 .wx-neutral,.wx-calm,.wx-dome{color:var(--muted2);border:1px solid var(--border)}
+.wx-expand{font-size:10px;color:var(--muted2);margin-left:6px}
+.wx-detail{display:none;padding:10px 16px;background:#0c0c0c;border-bottom:1px solid var(--border);font-size:12px}
+.wx-detail.open{display:block}
+.wx-detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.wx-detail-block{background:var(--s2);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;text-align:center}
+.wx-detail-lbl{font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.wx-detail-val{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700}
+
+/* Pitchers — now collapsible per pitcher */
 .pitchers{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
-.pit-block{padding:12px 20px}
+.pit-block{padding:10px 16px}
 .pit-block:first-child{border-right:1px solid var(--border)}
-.pit-block-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
-.pit-name{font-size:13px;font-weight:600}
-.pit-team{font-size:10px;color:var(--muted);margin-top:2px}
-.pit-hand{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;text-transform:uppercase}
+.pit-header-row{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:4px 0}
+.pit-header-row:hover .pit-name{color:var(--accent)}
+.pit-name{font-size:13px;font-weight:600;transition:color .15s}
+.pit-team{font-size:10px;color:var(--muted);margin-top:1px}
+.pit-hand{font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;text-transform:uppercase}
 .rhp{background:rgba(200,241,53,.08);color:var(--accent);border:1px solid rgba(200,241,53,.2)}
 .lhp{background:rgba(77,166,255,.12);color:var(--blue);border:1px solid rgba(77,166,255,.25)}
-.split-table{width:100%;border-collapse:collapse}
-.split-table th{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;padding:3px 5px;text-align:right;border-bottom:1px solid var(--border2)}
-.split-table th:first-child{text-align:left}
-.split-table td{font-size:11px;padding:4px 5px;text-align:right;border-bottom:1px solid var(--border2)}
-.split-table td:first-child{text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
-.split-table tr:last-child td{border-bottom:none}
-.pit-blend{font-size:10px;color:var(--muted2);margin-top:6px}
+.pit-expand{font-size:10px;color:var(--muted2);margin-left:6px}
+.pit-detail{display:none;margin-top:10px}
+.pit-detail.open{display:block}
+.pit-splits-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pit-split-block{background:#0e0e0e;border:1px solid var(--border2);border-radius:6px;padding:8px 10px}
+.pit-split-title{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.spl-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid #141414}
+.spl-row:last-child{border-bottom:none}
+.spl-lbl{color:var(--muted)}
+.spl-val{font-weight:600}
 .s-hot{color:var(--danger);font-weight:600}
 .s-warm{color:var(--warn);font-weight:500}
 .s-cool{color:var(--accent);font-weight:500}
 .s-neutral{color:var(--text)}
-.batter-section-header{display:grid;grid-template-columns:24px 1fr 58px 52px 72px 62px 80px;gap:6px;padding:5px 20px;background:var(--bg);border-bottom:1px solid var(--border)}
-.bh{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;text-align:right}
-.bh.left{text-align:left}
-.batter-row{display:grid;grid-template-columns:24px 1fr 58px 52px 72px 62px 80px;gap:6px;padding:8px 20px;border-bottom:1px solid var(--border2);align-items:center;cursor:pointer;transition:background .1s}
+.pit-blend-note{font-size:10px;color:var(--muted2);margin-top:8px}
+
+/* Side-by-side lineup */
+.lineup-split{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border)}
+.lineup-side{border-right:1px solid var(--border)}
+.lineup-side:last-child{border-right:none}
+.lineup-side-header{display:grid;grid-template-columns:20px 1fr 52px 46px 62px 52px 72px;gap:4px;padding:4px 12px;background:var(--bg);border-bottom:1px solid var(--border)}
+.lsh{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;text-align:right}
+.lsh.left{text-align:left}
+.batter-row{display:grid;grid-template-columns:20px 1fr 52px 46px 62px 52px 72px;gap:4px;padding:7px 12px;border-bottom:1px solid var(--border2);align-items:center;cursor:pointer;transition:background .1s}
 .batter-row:last-child{border-bottom:none}
-.batter-row:hover{background:rgba(255,255,255,.025)}
-.bat-order{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--muted2);text-align:center}
-.bat-name{font-size:12px;font-weight:500;color:var(--text)}
-.bat-sub{font-size:10px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.hand-tag{font-size:9px;padding:1px 5px;border-radius:5px;font-weight:600}
+.batter-row:hover{background:rgba(255,255,255,.02)}
+.bat-order{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--muted2);text-align:center}
+.bat-name{font-size:12px;font-weight:500}
+.bat-sub{font-size:10px;color:var(--muted);margin-top:1px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.hand-tag{font-size:9px;padding:1px 4px;border-radius:4px;font-weight:600}
 .lhb{background:rgba(77,166,255,.1);color:var(--blue);border:1px solid rgba(77,166,255,.2)}
 .rhb{background:rgba(200,241,53,.08);color:var(--accent);border:1px solid rgba(200,241,53,.15)}
 .trend-pip{display:inline-block;width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .pip-hot{background:var(--accent)}
 .pip-cold{background:var(--danger)}
 .pip-steady{background:var(--muted2)}
-.sc{text-align:right;font-size:12px;font-weight:600}
-.sc.s-hot{color:var(--accent)}
-.sc.s-warm{color:#a8d429}
-.sc.s-neutral{color:var(--text)}
-.sc.s-cold{color:var(--muted)}
-.form-cell{text-align:right}
-.form-hr{font-size:12px;font-weight:600}
-.fhot{color:var(--accent)}
-.fwarm{color:var(--warn)}
-.fcold{color:var(--muted)}
-.form-pa{font-size:10px;color:var(--muted2);margin-top:1px}
-.odds-val{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:#4dff88;text-align:right}
+.sc{text-align:right;font-size:11px;font-weight:600}
+.sc.sv-hot{color:var(--accent)}
+.sc.sv-warm{color:#a8d429}
+.sc.sv-neutral{color:var(--text)}
+.sc.sv-cold{color:var(--muted)}
+.pe-cell{text-align:right}
+.pe-row{font-size:10px;line-height:1.5}
+.pe-name{color:var(--muted)}
+.pe-val{font-weight:700}
+.pe-val.pv-hot{color:var(--accent)}
+.pe-val.pv-warn{color:var(--warn)}
+.pe-val.pv-cold{color:var(--danger)}
+.pe-val.pv-neutral{color:var(--muted2)}
+.odds-val{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#4dff88;text-align:right}
 .odds-none{font-size:11px;color:var(--muted2);text-align:right}
 .prob-cell{text-align:right}
-.prob-num{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;line-height:1}
+.prob-num{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;line-height:1}
 .prob-tier{font-size:9px;text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
 .p-high{color:var(--blue)}
 .p-med{color:#7bb8ff}
 .p-low{color:var(--muted)}
-.breakdown{display:none;background:#0d0d0d;border-top:1px solid var(--border);padding:16px 20px}
+.pending{font-size:12px;color:var(--muted);padding:12px 16px;font-style:italic}
+
+/* Breakdown */
+.breakdown{display:none;background:#0d0d0d;border-top:1px solid var(--border);padding:14px 16px}
 .breakdown.open{display:block}
-.bd-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:12px}
-.bd-section{margin-bottom:14px}
-.bd-section-title{font-size:10px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;padding-bottom:4px;border-bottom:1px solid var(--border2)}
+.bd-title{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px}
+.bd-section-title{font-size:10px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;padding-bottom:4px;border-bottom:1px solid var(--border2)}
+.stat-chip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.stat-chip{background:#111;border:1px solid var(--border2);border-radius:7px;padding:8px 10px}
+.stat-chip-name{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-bottom:6px}
+.stat-chip-values{display:flex;gap:4px;align-items:flex-end}
+.stat-val-block{display:flex;flex-direction:column;align-items:center;flex:1}
+.stat-val-lbl{font-size:9px;color:var(--muted2);margin-bottom:2px}
+.stat-val-num{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;line-height:1}
+.svn-hot{color:var(--accent)}
+.svn-warm{color:#a8d429}
+.svn-neutral{color:var(--text)}
+.svn-cold{color:var(--muted)}
+.stat-chip-divider{width:1px;background:var(--border2);align-self:stretch;margin:0 2px;flex-shrink:0}
+.stat-chip-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:6px;border-top:1px solid var(--border2)}
+.stat-chip-score{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--accent)}
+.stat-chip-trend{font-size:9px;font-weight:700;padding:1px 5px;border-radius:6px}
+.tr-up{background:rgba(200,241,53,.1);color:var(--accent);border:1px solid rgba(200,241,53,.2)}
+.tr-dn{background:rgba(255,77,77,.1);color:var(--danger);border:1px solid rgba(255,77,77,.2)}
+.tr-flat{background:#1a1a1a;color:var(--muted2);border:1px solid var(--border)}
+/* Pitch pills in breakdown */
+.pitch-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.pitch-pill{background:#111;border:1px solid var(--border2);border-radius:20px;padding:5px 10px;font-size:11px;display:flex;align-items:center;gap:6px}
+.pp-name{color:var(--muted);font-size:10px}
+.pp-usage{font-size:10px;color:var(--muted2)}
+.pp-bval{font-weight:700;font-size:12px}
+.pp-sep{color:var(--border);font-size:10px}
+.pp-pval{font-size:10px;font-weight:600}
+.pp-hot{color:var(--accent)}
+.pp-warn{color:var(--warn)}
+.pp-cold{color:var(--danger)}
+.pp-neutral{color:var(--muted)}
+/* BD rows */
 .bd-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:3px 0;border-bottom:1px solid #141414}
 .bd-row:last-child{border-bottom:none}
 .bd-label{color:var(--muted);flex:1}
-.bd-bar-wrap{width:70px;height:3px;background:#1a1a1a;border-radius:2px;margin:0 10px;flex-shrink:0}
+.bd-bar-wrap{width:60px;height:3px;background:#1a1a1a;border-radius:2px;margin:0 8px;flex-shrink:0}
 .bd-bar{height:100%;border-radius:2px;background:var(--accent)}
 .bd-bar.neg{background:var(--danger)}
 .bd-bar.blue{background:var(--blue)}
-.bd-pts{font-weight:600;color:var(--accent);min-width:34px;text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:12px}
+.bd-pts{font-weight:600;color:var(--accent);min-width:32px;text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:12px}
 .bd-pts.neg{color:var(--danger)}
 .bd-pts.neutral{color:var(--muted)}
 .bd-pts.blue{color:var(--blue)}
-.bd-subtotal{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;margin-top:3px;border-top:1px solid var(--border)}
+.bd-subtotal{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;margin-top:3px;border-top:1px solid var(--border)}
 .bd-subtotal-label{color:var(--muted);font-weight:500}
-.bd-subtotal-val{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text)}
+.bd-subtotal-val{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700}
 .bd-final{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:2px solid var(--border)}
-.bd-final-label{font-size:13px;font-weight:600;color:var(--muted)}
-.bd-final-prob{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:var(--blue)}
-/* Lineup tab */
-.lineup-game{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:24px;overflow:hidden}
-.lineup-game-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:10px 20px;background:var(--s2);border-bottom:1px solid var(--border)}
-.lineup-time{font-size:11px;color:var(--muted);text-align:center}
-.lineup-grid{display:grid;grid-template-columns:1fr 1fr}
-.lineup-side{border-right:1px solid var(--border)}
-.lineup-side:last-child{border-right:none}
-.lineup-side-header{padding:8px 14px;background:var(--s3);border-bottom:1px solid var(--border)}
-.lineup-side-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.lineup-side-pitcher{font-size:11px;color:var(--muted2);margin-top:2px}
-.lineup-row{display:grid;grid-template-columns:20px 1fr 58px 68px;gap:6px;padding:7px 14px;border-bottom:1px solid var(--border2);align-items:center}
-.lineup-row:last-child{border-bottom:none}
-.lineup-row:hover{background:rgba(255,255,255,.02)}
-.lu-order{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--muted2);text-align:center}
-.lu-name{font-size:12px;font-weight:500}
-.lu-hand{font-size:10px;color:var(--muted2);margin-top:1px;display:flex;align-items:center;gap:4px}
-.lu-odds{font-size:12px;font-weight:600;color:#4dff88;text-align:right}
-.lu-odds.none{color:var(--muted2)}
-.lu-prob{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;text-align:right}
-.lu-prob.p-high{color:var(--blue)}
-.lu-prob.p-med{color:#7bb8ff}
-.lu-prob.p-low{color:var(--muted)}
-/* Parlay tab */
-.parlay-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
-.parlay-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.parlay-card-header{padding:14px 18px;border-bottom:1px solid var(--border)}
-.parlay-theme{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
-.parlay-theme-sub{font-size:11px;color:var(--muted);margin-top:3px}
-.parlay-leg{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border2)}
-.parlay-leg:last-of-type{border-bottom:none}
-.parlay-leg-name{font-size:13px;font-weight:500}
-.parlay-leg-detail{font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px}
-.parlay-leg-right{text-align:right;flex-shrink:0;margin-left:12px}
-.parlay-leg-prob{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800}
-.parlay-leg-odds{font-size:11px;color:#4dff88;margin-top:1px}
+.bd-final-label{font-size:12px;font-weight:600;color:var(--muted)}
+.bd-final-prob{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800}
+.bd-section{margin-bottom:12px}
+
+/* Parlay */
+.parlay-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.parlay-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.parlay-card-header{padding:12px 16px;border-bottom:1px solid var(--border)}
+.parlay-theme{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.parlay-theme-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.parlay-leg{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--border2)}
+.parlay-leg-name{font-size:12px;font-weight:500}
+.parlay-leg-detail{font-size:10px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px}
+.parlay-leg-right{text-align:right;flex-shrink:0;margin-left:10px}
+.parlay-leg-prob{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800}
+.parlay-leg-odds{font-size:10px;color:#4dff88;margin-top:1px}
 .parlay-leg-odds.none{color:var(--muted2)}
-.parlay-footer{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:var(--s2);border-top:1px solid var(--border)}
-.parlay-footer-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.parlay-combined-odds{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#4dff88}
-.parlay-combined-prob{font-size:11px;color:var(--muted);margin-top:2px}
-.parlay-note{font-size:11px;color:var(--muted2);padding:10px 18px;font-style:italic;border-top:1px solid var(--border2)}
+.parlay-footer{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--s2);border-top:1px solid var(--border)}
+.parlay-footer-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.parlay-combined-odds{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:#4dff88}
+.parlay-combined-prob{font-size:10px;color:var(--muted);margin-top:2px}
+.parlay-note{font-size:11px;color:var(--muted2);padding:8px 16px;font-style:italic;border-top:1px solid var(--border2)}
 .theme-fire .parlay-theme{color:#ff6b35}
 .theme-fire .parlay-card-header{background:rgba(255,107,53,.06)}
 .theme-platoon .parlay-theme{color:var(--blue)}
@@ -175,103 +215,67 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 .theme-conf .parlay-card-header{background:rgba(200,241,53,.06)}
 .theme-power .parlay-theme{color:var(--purple)}
 .theme-power .parlay-card-header{background:rgba(192,132,252,.06)}
-.parlay-disclaimer{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--muted);line-height:1.6}
-/* Pitch edge display */
-.pitch-edge{line-height:1.5}
-.pe-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:10px}
-.pe-pitch{color:var(--muted)}
-.pe-val{font-weight:700;font-size:11px}
-.pe-hot{color:var(--accent)}
-.pe-warm{color:#a8d429}
-.pe-neutral{color:var(--muted)}
-.pe-cold{color:var(--danger)}
-.pitch-edge-none{font-size:11px;color:var(--muted2);text-align:center}
+.parlay-disclaimer{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--muted);line-height:1.6}
 
-/* Research tab */
-.research-search{display:flex;gap:10px;margin-bottom:20px}
-.research-input{flex:1;background:#161616;border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;padding:10px 14px;outline:none}
+/* Research */
+.research-search{display:flex;gap:8px;margin-bottom:16px}
+.research-input{flex:1;background:#161616;border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;padding:9px 12px;outline:none}
 .research-input:focus{border-color:var(--accent)}
 .research-input::placeholder{color:var(--muted2)}
-.research-btn{background:var(--accent);color:#0a0a0a;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:10px 20px;cursor:pointer}
-.research-btn:hover{opacity:.85}
-.research-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
-.research-card-header{padding:12px 18px;background:var(--s2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.research-btn{background:var(--accent);color:#0a0a0a;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:9px 18px;cursor:pointer}
+.research-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.research-card-header{padding:10px 16px;background:var(--s2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .research-card-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.research-card-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:#1a1a1a;color:var(--muted2);border:1px solid var(--border)}
-.research-card-body{padding:14px 18px}
-.stat-chip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat-chip{background:#0e0e0e;border:1px solid var(--border2);border-radius:8px;padding:10px 12px}
-.stat-chip-name{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-bottom:8px}
-.stat-chip-values{display:flex;gap:4px;align-items:flex-end}
-.stat-val-block{display:flex;flex-direction:column;align-items:center;flex:1}
-.stat-val-lbl{font-size:9px;color:var(--muted2);margin-bottom:3px}
-.stat-val-num{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;line-height:1}
-.svn-hot{color:var(--accent)}
-.svn-warm{color:#a8d429}
-.svn-neutral{color:var(--text)}
-.svn-cold{color:var(--muted)}
-.svn-danger{color:var(--danger)}
-.stat-chip-divider{width:1px;background:var(--border2);align-self:stretch;margin:0 2px;flex-shrink:0}
-.stat-chip-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid var(--border2)}
-.stat-chip-score{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--accent)}
-.stat-chip-trend{font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px}
-.tr-up{background:rgba(200,241,53,.1);color:var(--accent);border:1px solid rgba(200,241,53,.2)}
-.tr-dn{background:rgba(255,77,77,.1);color:var(--danger);border:1px solid rgba(255,77,77,.2)}
-.tr-flat{background:#1a1a1a;color:var(--muted2);border:1px solid var(--border)}
-.pitch-chip-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.pitch-chip{background:#0e0e0e;border:1px solid var(--border2);border-radius:8px;padding:10px 12px}
-.pitch-chip-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
-.pitch-chip-usage{font-size:10px;color:var(--muted2);margin-bottom:8px}
-.pitch-chip-vals{display:flex;gap:6px}
-.pcv{display:flex;flex-direction:column;flex:1}
-.pcv-lbl{font-size:9px;color:var(--muted2);margin-bottom:3px}
-.pcv-num{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700}
-.pcv-hot{color:var(--accent)}
-.pcv-warn{color:var(--warn)}
-.pcv-neutral{color:var(--text)}
-.pcv-cold{color:var(--danger)}
-.pitch-chip-footer{margin-top:8px;padding-top:8px;border-top:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--muted2)}
-.pitch-chip-bonus{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700}
-.split-row{display:flex;gap:16px;margin-top:4px}
-.split-block{flex:1;background:#0e0e0e;border:1px solid var(--border2);border-radius:8px;padding:10px 12px}
-.split-block-title{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
-.split-stat-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid #141414}
-.split-stat-row:last-child{border-bottom:none}
-.split-stat-label{color:var(--muted)}
-.split-stat-val{font-weight:600;color:var(--text)}
-.research-empty{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px}
-.research-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border2)}
-.pit-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
-.pit-stat-block{background:#0e0e0e;border:1px solid var(--border2);border-radius:8px;padding:8px 10px;text-align:center}
-.pit-stat-lbl{font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-.pit-stat-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700}
-.research-matchup-header{display:flex;align-items:center;justify-content:space-between}
-.matchup-pitcher-name{font-size:15px;font-weight:600}
-.matchup-pitcher-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.research-card-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:7px;background:#1a1a1a;color:var(--muted2);border:1px solid var(--border)}
+.research-card-body{padding:12px 16px}
+.research-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border2)}
+.r-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.r-split-row{display:flex;gap:12px;margin-top:4px}
+.r-split-block{flex:1;background:#0e0e0e;border:1px solid var(--border2);border-radius:7px;padding:8px 10px}
+.r-split-title{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.r-spl-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid #141414}
+.r-spl-row:last-child{border-bottom:none}
+.r-pit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.r-pit-block{background:#0e0e0e;border:1px solid var(--border2);border-radius:7px;padding:7px 9px;text-align:center}
+.r-pit-lbl{font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.r-pit-val{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700}
+.r-pitch-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.r-pitch-chip{background:#0e0e0e;border:1px solid var(--border2);border-radius:7px;padding:8px 10px}
+.r-pitch-name{font-size:12px;font-weight:600;margin-bottom:2px}
+.r-pitch-usage{font-size:10px;color:var(--muted2);margin-bottom:6px}
+.r-pitch-vals{display:flex;gap:6px}
+.rpcv{display:flex;flex-direction:column;flex:1}
+.rpcv-lbl{font-size:9px;color:var(--muted2);margin-bottom:2px}
+.rpcv-num{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700}
+.rpcv-hot{color:var(--accent)}
+.rpcv-warn{color:var(--warn)}
+.rpcv-neutral{color:var(--text)}
+.rpcv-cold{color:var(--danger)}
+.r-pitch-footer{margin-top:6px;padding-top:6px;border-top:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--muted2)}
+.r-pitch-bonus{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700}
 
 /* Misc */
-.loading{text-align:center;padding:50px 0;font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.dots{display:inline-flex;gap:5px;margin-top:14px}
+.loading{text-align:center;padding:40px 0;font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.dots{display:inline-flex;gap:5px;margin-top:12px}
 .dots span{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:dp 1.2s ease-in-out infinite}
 .dots span:nth-child(2){animation-delay:.2s}
 .dots span:nth-child(3){animation-delay:.4s}
 @keyframes dp{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
-.err{background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);border-radius:8px;color:var(--danger);font-size:13px;padding:14px 18px;margin-bottom:16px}
-.warn-box{background:rgba(255,170,51,.08);border:1px solid rgba(255,170,51,.2);border-radius:8px;color:var(--warn);font-size:13px;padding:12px 16px;margin-bottom:16px}
-.updated{font-size:11px;color:var(--muted);text-align:center;margin-top:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase}
-.no-games{text-align:center;padding:60px 20px;font-size:14px;color:var(--muted)}
-.pending{font-size:13px;color:var(--muted);padding:14px 20px;font-style:italic}
+.err{background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);border-radius:8px;color:var(--danger);font-size:12px;padding:12px 16px;margin-bottom:14px}
+.warn-box{background:rgba(255,170,51,.08);border:1px solid rgba(255,170,51,.2);border-radius:8px;color:var(--warn);font-size:12px;padding:10px 14px;margin-bottom:14px}
+.updated{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase}
+.no-games{text-align:center;padding:50px 20px;font-size:13px;color:var(--muted)}
+.research-empty{text-align:center;padding:50px 20px;color:var(--muted);font-size:13px}
 @media(max-width:700px){
-  .pitchers,.lineup-grid,.parlay-grid{grid-template-columns:1fr}
+  .pitchers,.lineup-split,.parlay-grid,.r-stat-grid,.r-pitch-grid{grid-template-columns:1fr}
   .pit-block:first-child,.lineup-side{border-right:none;border-bottom:1px solid var(--border)}
-  .batter-section-header,.batter-row{grid-template-columns:20px 1fr 52px 60px 70px}
   .hide-sm{display:none}
 }
 </style>
 </head>
 <body>
 <header>
-  <div style="display:flex;align-items:center;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px">
     <div class="logo">Sharp</div>
     <div class="logo-sub">MLB HR Model</div>
   </div>
@@ -291,744 +295,576 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 </div>
 <div class="container">
   <div id="main"></div>
-  <div id="lineups-main" style="display:none"></div>
   <div id="parlays-main" style="display:none"></div>
   <div id="research-main" style="display:none"></div>
   <div class="updated" id="upd"></div>
 </div>
 <script>
-const API = 'https://web-production-c0e4.up.railway.app';
-
-// ── Date management ──
-let selectedDate = new Date();
+var API='https://web-production-c0e4.up.railway.app';
+var selectedDate=new Date();
 selectedDate.setHours(0,0,0,0);
 
 function formatDateForAPI(d){
-  const y=d.getFullYear();
-  const m=String(d.getMonth()+1).padStart(2,'0');
-  const day=String(d.getDate()).padStart(2,'0');
+  var y=d.getFullYear();
+  var m=String(d.getMonth()+1).padStart(2,'0');
+  var day=String(d.getDate()).padStart(2,'0');
   return y+'-'+m+'-'+day;
 }
-
 function updateDateLabel(){
-  const today=new Date(); today.setHours(0,0,0,0);
-  const diff=Math.round((selectedDate-today)/(1000*60*60*24));
-  const label=selectedDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
-  const suffix=diff===0?' · Today':diff===1?' · Tomorrow':diff===-1?' · Yesterday':'';
+  var today=new Date(); today.setHours(0,0,0,0);
+  var diff=Math.round((selectedDate-today)/(1000*60*60*24));
+  var label=selectedDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+  var suffix=diff===0?' · Today':diff===1?' · Tomorrow':diff===-1?' · Yesterday':'';
   document.getElementById('dateLbl').textContent=label+suffix;
 }
-
 function changeDate(delta){
   selectedDate=new Date(selectedDate);
   selectedDate.setDate(selectedDate.getDate()+delta);
   updateDateLabel();
   load();
 }
-
 updateDateLabel();
 
-// ── Tab switching ──
 function switchTab(tab){
   ['top','parlays','research'].forEach(function(t){
-    var tabEl=document.getElementById('tab-'+t);
-    var panEl=document.getElementById(t==='top'?'main':t+'-main');
-    if(tabEl) tabEl.classList.toggle('active',t===tab);
-    if(panEl) panEl.style.display=t===tab?'':'none';
+    var te=document.getElementById('tab-'+t);
+    var pe=document.getElementById(t==='top'?'main':t+'-main');
+    if(te) te.classList.toggle('active',t===tab);
+    if(pe) pe.style.display=t===tab?'':'none';
   });
   if(tab==='research'){
-    var resEl=document.getElementById('research-main');
-    if(resEl&&!resEl.querySelector('.research-search')){
-      renderResearchShell();
-    }
+    var re=document.getElementById('research-main');
+    if(re&&!re.querySelector('.research-search')) renderResearchShell();
   }
 }
 
-// ── Helpers ──
-function probCls(p){ return p>=15?'p-high':p>=9?'p-med':'p-low'; }
-function probTier(p){ return p>=15?'Strong':p>=9?'Moderate':'Lean'; }
-
-function fmtTime(iso){
-  if(!iso) return 'TBD';
-  try{ return new Date(iso).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
-  catch(e){ return 'TBD'; }
-}
-
-function wxCls(label){
-  const l=(label||'').toLowerCase();
-  if(l.includes('blowing out')) return 'wx-out';
-  if(l.includes('blowing in')) return 'wx-in';
-  if(l.includes('favors left')) return 'wx-left';
-  if(l.includes('favors right')) return 'wx-right';
-  return 'wx-neutral';
-}
-
-function heatCls(val,low,mid,high){
-  if(!val||val===0) return 's-cold';
-  if(val>=high) return 's-hot';
-  if(val>=mid) return 's-warm';
-  if(val>=low) return 's-neutral';
-  return 's-cold';
-}
-
-function pitHeat(val,avg){
-  if(!val||val===0) return 's-neutral';
-  const diff=(val-avg)/avg;
-  if(diff>=0.3) return 's-hot';
-  if(diff>=0.1) return 's-warm';
-  if(diff<=-0.15) return 's-cool';
-  return 's-neutral';
-}
+function probCls(p){return p>=15?'p-high':p>=9?'p-med':'p-low';}
+function probTier(p){return p>=15?'Strong':p>=9?'Moderate':'Lean';}
+function svCls(v,lo,mid,hi){if(!v||v===0) return 'sv-cold'; if(v>=hi) return 'sv-hot'; if(v>=mid) return 'sv-warm'; if(v>=lo) return 'sv-neutral'; return 'sv-cold';}
+function svnCls(v,lo,mid,hi){if(!v||v===0) return 'svn-cold'; if(v>=hi) return 'svn-hot'; if(v>=mid) return 'svn-warm'; if(v>=lo) return 'svn-neutral'; return 'svn-cold';}
+function pcvCls(v){return v>=2?'rpcv-hot':v>=0.5?'rpcv-warn':v<=-1?'rpcv-cold':'rpcv-neutral';}
+function ppCls(v){return v>=2?'pp-hot':v>=0.5?'pp-warn':v<=-1?'pp-cold':'pp-neutral';}
+function pitHeat(v,avg){if(!v||v===0) return 's-neutral'; var d=(v-avg)/avg; if(d>=0.3) return 's-hot'; if(d>=0.1) return 's-warm'; if(d<=-0.15) return 's-cool'; return 's-neutral';}
+function fmtTime(iso){if(!iso) return 'TBD'; try{return new Date(iso).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}catch(e){return 'TBD';}}
+function wxCls(label){var l=(label||'').toLowerCase(); if(l.includes('blowing out')) return 'wx-out'; if(l.includes('blowing in')) return 'wx-in'; if(l.includes('favors left')) return 'wx-left'; if(l.includes('favors right')) return 'wx-right'; return 'wx-neutral';}
 
 function trendHTML(trend){
-  const pip=trend==='Heating Up'?'pip-hot':trend==='Cooling Off'?'pip-cold':'pip-steady';
-  const txt=trend==='Heating Up'?'Hot':trend==='Cooling Off'?'Cold':'Steady';
+  var pip=trend==='Heating Up'?'pip-hot':trend==='Cooling Off'?'pip-cold':'pip-steady';
+  var txt=trend==='Heating Up'?'Hot':trend==='Cooling Off'?'Cold':'Steady';
   return '<span class="trend-pip '+pip+'"></span><span> '+txt+'</span>';
 }
 
-// ── Pitcher block ──
-function pitBlockHTML(pit, isRight){
-  if(!pit||!pit.name||pit.name==='TBD') return '<div class="pit-block"><div style="color:var(--muted2);font-size:12px;padding:8px 0">TBD</div></div>';
-  const hand=pit.hand||'R';
-  const handCls=hand==='L'?'lhp':'rhp';
-  const era=pit.era!=null?pit.era.toFixed(2):'—';
-  const hr9=pit.hr9!=null?parseFloat(pit.hr9).toFixed(2):'—';
-  const hh=pit.hard_hit_pct!=null?pit.hard_hit_pct.toFixed(1)+'%':'—';
-  const brl=pit.barrel_pct!=null?pit.barrel_pct.toFixed(1)+'%':'—';
-  const vsLhr9=pit.vs_L_hr9!=null?parseFloat(pit.vs_L_hr9).toFixed(2):'—';
-  const vsRhr9=pit.vs_R_hr9!=null?parseFloat(pit.vs_R_hr9).toFixed(2):'—';
-  return '<div class="pit-block">' +
-    '<div class="pit-block-header">' +
-      '<div><div class="pit-name">'+pit.name+'</div><div class="pit-team">ERA '+era+' · '+pit.ip_2026+' IP 2026</div></div>' +
-      '<span class="pit-hand '+handCls+'">'+hand+'HP</span>' +
-    '</div>' +
-    '<table class="split-table"><thead><tr><th>Split</th><th>HR/9</th><th>HH%</th><th>Brl%</th></tr></thead><tbody>' +
-      '<tr><td>Season</td><td class="'+pitHeat(parseFloat(hr9),1.15)+'">'+hr9+'</td><td class="'+pitHeat(parseFloat(pit.hard_hit_pct),32)+'">'+hh+'</td><td class="'+pitHeat(parseFloat(pit.barrel_pct),7.5)+'">'+brl+'</td></tr>' +
-      (vsLhr9!=='—'?'<tr><td>vs LHB</td><td class="'+pitHeat(parseFloat(vsLhr9),1.15)+'">'+vsLhr9+'</td><td>—</td><td>—</td></tr>':'') +
-      (vsRhr9!=='—'?'<tr><td>vs RHB</td><td class="'+pitHeat(parseFloat(vsRhr9),1.15)+'">'+vsRhr9+'</td><td>—</td><td>—</td></tr>':'') +
-    '</tbody></table>' +
-    '<div class="pit-blend">'+pit.blend_note+'</div>' +
-  '</div>';
+// Weather dropdown
+function toggleWx(el){
+  var detail=el.nextElementSibling;
+  if(detail&&detail.classList.contains('wx-detail')) detail.classList.toggle('open');
+  var exp=el.querySelector('.wx-expand');
+  if(exp) exp.textContent=detail.classList.contains('open')?'▲':'▼';
 }
 
-// ── Breakdown ──
-function bdBar(val,max,neg,blue){
-  const pct=max>0?Math.min(Math.abs(val)/max*100,100):0;
-  return '<div class="bd-bar-wrap"><div class="bd-bar'+(neg?' neg':blue?' blue':'')+'" style="width:'+pct+'%"></div></div>';
+// Pitcher dropdown
+function togglePit(el){
+  var detail=el.nextElementSibling;
+  if(detail&&detail.classList.contains('pit-detail')) detail.classList.toggle('open');
+  var exp=el.querySelector('.pit-expand');
+  if(exp) exp.textContent=detail.classList.contains('open')?'▲':'▼';
 }
-function bdPts(val,blue){
-  const v=parseFloat(val)||0;
-  const cls=v<0?'neg':blue?'blue':v===0?'neutral':'';
-  return '<span class="bd-pts '+cls+'">'+(v>0?'+':'')+val+'</span>';
+
+function pitDetailHTML(pit){
+  if(!pit||!pit.name||pit.name==='TBD') return '';
+  var vs_L=pit.vs_L_hr9!=null?pit.vs_L_hr9:'—';
+  var vs_R=pit.vs_R_hr9!=null?pit.vs_R_hr9:'—';
+  var era=pit.era!=null?pit.era.toFixed(2):'—';
+  var hr9=pit.hr9!=null?parseFloat(pit.hr9).toFixed(2):'—';
+  var hh=pit.hard_hit_pct!=null?pit.hard_hit_pct.toFixed(1)+'%':'—';
+  var brl=pit.barrel_pct!=null?pit.barrel_pct.toFixed(1)+'%':'—';
+  var fb=pit.fb_pct!=null?pit.fb_pct.toFixed(1)+'%':'—';
+  var k=pit.k_pct!=null?pit.k_pct.toFixed(1)+'%':'—';
+  var h='<div class="pit-detail">';
+  h+='<div class="pit-splits-grid">';
+  h+='<div class="pit-split-block"><div class="pit-split-title">vs LHB (Season)</div>';
+  h+='<div class="spl-row"><span class="spl-lbl">HR/9</span><span class="spl-val '+pitHeat(parseFloat(vs_L_hr9_num(pit)),1.15)+'">'+vs_L+'</span></div>';
+  h+='<div class="spl-row"><span class="spl-lbl">Hard Hit%</span><span class="spl-val '+pitHeat(parseFloat(pit.hard_hit_pct),32)+'">'+hh+'</span></div>';
+  h+='<div class="spl-row"><span class="spl-lbl">Brl%</span><span class="spl-val '+pitHeat(parseFloat(pit.barrel_pct),7.5)+'">'+brl+'</span></div>';
+  h+='</div>';
+  h+='<div class="pit-split-block"><div class="pit-split-title">vs RHB (Season)</div>';
+  h+='<div class="spl-row"><span class="spl-lbl">HR/9</span><span class="spl-val '+pitHeat(parseFloat(vs_R_hr9_num(pit)),1.15)+'">'+vs_R+'</span></div>';
+  h+='<div class="spl-row"><span class="spl-lbl">FB%</span><span class="spl-val">'+fb+'</span></div>';
+  h+='<div class="spl-row"><span class="spl-lbl">K%</span><span class="spl-val">'+k+'</span></div>';
+  h+='</div>';
+  h+='</div>';
+  h+='<div class="pit-blend-note">ERA '+era+' · '+pit.ip_2026+' IP 2026 · '+(pit.blend_note||'')+'</div>';
+  h+='</div>';
+  return h;
 }
+function vs_L_hr9_num(pit){return pit.vs_L_hr9!=null?pit.vs_L_hr9:0;}
+function vs_R_hr9_num(pit){return pit.vs_R_hr9!=null?pit.vs_R_hr9:0;}
+
+function pitBlockHTML(pit){
+  if(!pit||!pit.name||pit.name==='TBD') return '<div class="pit-block"><div style="color:var(--muted2);font-size:12px;padding:6px 0">Pitcher TBD</div></div>';
+  var hand=pit.hand||'R';
+  var handCls=hand==='L'?'lhp':'rhp';
+  var h='<div class="pit-block">';
+  h+='<div class="pit-header-row" onclick="togglePit(this)">';
+  h+='<div><div class="pit-name">'+pit.name+'</div><div class="pit-team">'+(pit.era!=null?'ERA '+pit.era.toFixed(2)+' · ':'')+(pit.ip_2026||0)+' IP 2026</div></div>';
+  h+='<div style="display:flex;align-items:center;gap:6px"><span class="pit-hand '+handCls+'">'+hand+'HP</span><span class="pit-expand">▼</span></div>';
+  h+='</div>';
+  h+=pitDetailHTML(pit);
+  h+='</div>';
+  return h;
+}
+
+// Pitch pills for batter breakdown
+function pitchPillsHTML(bd){
+  if(!bd||!bd.pitch_breakdown||!bd.pitch_breakdown.length) return '';
+  var h='<div class="bd-section-title" style="margin-top:8px">Pitch matchup</div><div class="pitch-pills">';
+  bd.pitch_breakdown.forEach(function(p){
+    var bvcls=ppCls(p.bat_rv);
+    var pvcls=ppCls(p.pit_rv);
+    var combcls=ppCls(p.combined);
+    h+='<div class="pitch-pill">';
+    h+='<span class="pp-name">'+p.name+'</span>';
+    h+='<span class="pp-usage">'+p.usage+'%</span>';
+    h+='<span class="pp-sep">|</span>';
+    h+='<span class="pp-bval '+bvcls+'">'+(p.bat_rv>0?'+':'')+p.bat_rv+'</span>';
+    h+='<span style="font-size:9px;color:var(--muted2)">batter</span>';
+    h+='<span class="pp-sep">/</span>';
+    h+='<span class="pp-pval '+pvcls+'">'+(p.pit_rv>0?'+':'')+p.pit_rv+'</span>';
+    h+='<span style="font-size:9px;color:var(--muted2)">pitcher</span>';
+    h+='</div>';
+  });
+  h+='</div>';
+  return h;
+}
+
+// Breakdown chips
 function bdChip(name, season, d14, blended, score, type){
   function fmt(v){
-    if(!v||v===0) return "—";
-    if(type==="pct") return v.toFixed(1)+"%";
-    if(type==="iso") return "."+String(Math.round(v*1000)).padStart(3,"0");
-    if(type==="ang") return v.toFixed(1)+"°";
+    if(!v||v===0) return '—';
+    if(type==='pct') return v.toFixed(1)+'%';
+    if(type==='iso') return '.'+String(Math.round(v*1000)).padStart(3,'0');
+    if(type==='ang') return v.toFixed(1)+'°';
     return v;
   }
   function hcls(v){
-    if(!v||v===0) return "svn-cold";
+    if(!v||v===0) return 'svn-cold';
     var lo,mid,hi;
-    if(type==="iso"){lo=0.08;mid=0.15;hi=0.22;}
-    else if(type==="ang"){lo=10;mid=15;hi=20;}
-    else if(name==="Barrel"){lo=5;mid=8;hi=12;}
+    if(type==='iso'){lo=0.08;mid=0.15;hi=0.22;}
+    else if(type==='ang'){lo=10;mid=15;hi=20;}
+    else if(name==='Barrel'){lo=5;mid=8;hi=12;}
     else{lo=20;mid=35;hi=45;}
-    if(v>=hi) return "svn-hot";
-    if(v>=mid) return "svn-warm";
-    if(v>=lo) return "svn-neutral";
-    return "svn-cold";
+    if(v>=hi) return 'svn-hot';
+    if(v>=mid) return 'svn-warm';
+    if(v>=lo) return 'svn-neutral';
+    return 'svn-cold';
   }
-  var diff=(d14&&season)?d14-season:0;
+  var diff=(d14&&season&&d14>0)?d14-season:0;
   var pct=season>0?diff/season:0;
-  var trendCls=pct>=0.1?"tr-up":pct<=-0.1?"tr-dn":"tr-flat";
-  var trendTxt=pct>=0.1?"&#8593; Rising":pct<=-0.1?"&#8595; Falling":"Steady";
-  var scoreStr=score>0?"+"+score.toFixed(1):score.toFixed(1);
-  return "<div class=\"stat-chip\">"+
-    "<div class=\"stat-chip-name\">"+name+"</div>"+
-    "<div class=\"stat-chip-values\">"+
-      "<div class=\"stat-val-block\"><div class=\"stat-val-lbl\">Season</div><div class=\"stat-val-num "+hcls(season)+"\">"+fmt(season)+"</div></div>"+
-      "<div class=\"stat-chip-divider\"></div>"+
-      "<div class=\"stat-val-block\"><div class=\"stat-val-lbl\">14 Day</div><div class=\"stat-val-num "+(d14>0?hcls(d14):"svn-cold")+"\">"+fmt(d14)+"</div></div>"+
-      "<div class=\"stat-chip-divider\"></div>"+
-      "<div class=\"stat-val-block\"><div class=\"stat-val-lbl\">Blended</div><div class=\"stat-val-num "+hcls(blended)+"\">"+fmt(blended)+"</div></div>"+
-    "</div>"+
-    "<div class=\"stat-chip-footer\"><span class=\"stat-chip-score\">"+scoreStr+" pts</span><span class=\"stat-chip-trend "+trendCls+"\">"+trendTxt+"</span></div>"+
-  "</div>";
+  var trendCls=pct>=0.1?'tr-up':pct<=-0.1?'tr-dn':'tr-flat';
+  var trendTxt=pct>=0.1?'&#8593; Rising':pct<=-0.1?'&#8595; Falling':'Steady';
+  var scoreStr=score>0?'+'+score.toFixed(1):score.toFixed(1);
+  var h='<div class="stat-chip">';
+  h+='<div class="stat-chip-name">'+name+'</div>';
+  h+='<div class="stat-chip-values">';
+  h+='<div class="stat-val-block"><div class="stat-val-lbl">Season</div><div class="stat-val-num '+hcls(season)+'">'+fmt(season)+'</div></div>';
+  h+='<div class="stat-chip-divider"></div>';
+  h+='<div class="stat-val-block"><div class="stat-val-lbl">14 Day</div><div class="stat-val-num '+(d14>0?hcls(d14):'svn-cold')+'">'+fmt(d14)+'</div></div>';
+  h+='<div class="stat-chip-divider"></div>';
+  h+='<div class="stat-val-block"><div class="stat-val-lbl">Blended</div><div class="stat-val-num '+hcls(blended)+'">'+fmt(blended)+'</div></div>';
+  h+='</div>';
+  h+='<div class="stat-chip-footer"><span class="stat-chip-score">'+scoreStr+' pts</span><span class="stat-chip-trend '+trendCls+'">'+trendTxt+'</span></div>';
+  h+='</div>';
+  return h;
+}
+
+function bdBar(val,max,neg,blue){
+  var pct=max>0?Math.min(Math.abs(val)/max*100,100):0;
+  return '<div class="bd-bar-wrap"><div class="bd-bar'+(neg?' neg':blue?' blue':'')+'" style="width:'+pct+'%"></div></div>';
+}
+function bdPts(val,blue){
+  var v=parseFloat(val)||0;
+  var cls=v<0?'neg':blue?'blue':v===0?'neutral':'';
+  return '<span class="bd-pts '+cls+'">'+(v>0?'+':'')+val+'</span>';
 }
 
 function breakdownHTML(bd,hr_prob){
-  if(!bd) return "";
+  if(!bd) return '';
   var pc=probCls(hr_prob);
-  var h="";
-  h+="<div class=\"breakdown\">";
-  h+="<div class=\"bd-title\">HR Probability Breakdown — click to close</div>";
-  h+="<div class=\"bd-section\">";
-  h+="<div class=\"bd-section-title\">Step 1 — Batter Score · "+(bd.blend_note||"")+"</div>";
-  h+="<div class=\"stat-chip-grid\">";
-  h+=bdChip("Barrel",(bd.barrel_season||bd.barrel_s||0),(bd.barrel_14d||0),(bd.barrel_s||0),(bd.s1_barrel||0),"pct");
-  h+=bdChip("ISO",(bd.iso_use||0),(bd.iso_14d||0),(bd.iso_use||0),(bd.s1_iso||0),"iso");
-  h+=bdChip("FB%",(bd.fb_s||0),0,(bd.fb_s||0),(bd.s1_fb||0),"pct");
-  h+=bdChip("Pull%",(bd.pull_s||0),0,(bd.pull_s||0),(bd.s1_pull||0),"pct");
-  h+=bdChip("Launch Angle",(bd.la_s||0),0,(bd.la_s||0),(bd.s1_la||0),"ang");
-  h+=bdChip("HR/FB",(bd.hr_fb_s||0),0,(bd.hr_fb_s||0),(bd.s1_hrfb||0),"pct");
-  h+="</div>";
+  var h='<div class="breakdown">';
+  h+='<div class="bd-title">HR Probability Breakdown — click to close</div>';
+  h+='<div class="bd-section">';
+  h+='<div class="bd-section-title">Step 1 — Batter Score · '+(bd.blend_note||'')+'</div>';
+  h+='<div class="stat-chip-grid">';
+  h+=bdChip('Barrel',(bd.barrel_season||bd.barrel_s||0),(bd.barrel_14d||0),(bd.barrel_s||0),(bd.s1_barrel||0),'pct');
+  h+=bdChip('ISO',(bd.iso_use||0),(bd.iso_14d||0),(bd.iso_use||0),(bd.s1_iso||0),'iso');
+  h+=bdChip('FB%',(bd.fb_s||0),0,(bd.fb_s||0),(bd.s1_fb||0),'pct');
+  h+=bdChip('Pull%',(bd.pull_s||0),(bd.pull_14d||0),(bd.pull_s||0),(bd.s1_pull||0),'pct');
+  h+=bdChip('Launch Angle',(bd.la_s||0),(bd.la_14d||0),(bd.la_s||0),(bd.s1_la||0),'ang');
+  h+=bdChip('HR/FB',(bd.hr_fb_s||0),(bd.hr_fb_14d||0),(bd.hr_fb_s||0),(bd.s1_hrfb||0),'pct');
+  h+='</div>';
   if(bd.s1_hr14d>0){
-    h+="<div class=\"bd-row\" style=\"margin-top:8px\"><span class=\"bd-label\">14d HR rate "+(bd.hr_rate_14d||0)+"/600 PA ("+(bd.pa_14d||0)+" PA)</span>"+bdBar(bd.s1_hr14d,5)+bdPts(bd.s1_hr14d)+"</div>";
+    h+='<div class="bd-row" style="margin-top:6px"><span class="bd-label">14d HR rate '+(bd.hr_rate_14d||0)+'/600 PA ('+(bd.pa_14d||0)+' PA)</span>'+bdBar(bd.s1_hr14d,5)+bdPts(bd.s1_hr14d)+'</div>';
   }
-  if(bd.pitch_breakdown&&bd.pitch_breakdown.length){
-    h+="<div class=\"bd-section-title\" style=\"margin-top:10px\">Pitch edge</div>";
-    bd.pitch_breakdown.forEach(function(p){
-      var cls=p.combined>=2?"svn-hot":p.combined>=0.5?"svn-warm":p.combined<=-1?"svn-danger":"svn-neutral";
-      h+="<div class=\"bd-row\"><span class=\"bd-label\">"+p.name+" "+p.usage+"% — batter "+(p.bat_rv>0?"+":"")+p.bat_rv+" / pitcher "+(p.pit_rv>0?"+":"")+p.pit_rv+"</span>"+bdBar(Math.abs(p.bonus),4,p.bonus<0)+"<span class=\"bd-pts "+cls+"\">"+( p.bonus>0?"+":"")+p.bonus.toFixed(1)+"</span></div>";
-    });
-  }
-  h+="<div class=\"bd-subtotal\"><span class=\"bd-subtotal-label\">Batter score</span><span class=\"bd-subtotal-val\">"+(bd.batter_score||0)+"</span></div>";
-  h+="</div>";
-  h+="<div class=\"bd-section\">";
-  h+="<div class=\"bd-section-title\">Step 2 — Pitcher Modifier · "+(bd.pit_blend_note||"")+"</div>";
-  h+="<div class=\"bd-row\"><span class=\"bd-label\">HR/9 "+(bd.pit_hr9||0)+" (season "+(bd.hr9_season||0)+" split "+(bd.hr9_split>0?bd.hr9_split:"—")+" in "+(bd.split_ip||0)+" IP) "+(bd.platoon_magnitude>15?"⚠️ Big platoon edge":bd.platoon_magnitude<-15?"✅ Strong vs this hand":"")+"</span>"+bdBar(Math.abs((bd.pit_modifier||1)-1)*35,10,(bd.pit_modifier||1)<1)+bdPts(bd.pit_modifier||1)+"</div>";
-  h+="<div class=\"bd-row\"><span class=\"bd-label\">Hard contact "+( bd.pit_hard>0?bd.pit_hard+"%":"—")+" (avg 32%)</span>"+bdBar(Math.abs((bd.pit_hard||0)-32),15,(bd.pit_hard||0)<32)+"<span class=\"bd-pts "+((bd.pit_hard||0)>32?"":"neg")+"\">"+(bd.pit_hard>0?bd.pit_hard+"%":"—")+"</span></div>";
-  h+="<div class=\"bd-row\"><span class=\"bd-label\">Barrel% allowed "+(bd.pit_brl>0?bd.pit_brl+"%":"—")+" (avg 7.5%)</span>"+bdBar(Math.abs((bd.pit_brl||0)-7.5),8,(bd.pit_brl||0)<7.5)+"<span class=\"bd-pts "+((bd.pit_brl||0)>7.5?"":"neg")+"\">"+(bd.pit_brl>0?bd.pit_brl+"%":"—")+"</span></div>";
-  h+="<div class=\"bd-row\"><span class=\"bd-label\">Components</span>"+bdBar(bd.n_pit_components||0,4,false,true)+"<span class=\"bd-pts blue\">"+(bd.n_pit_components||0)+"/4</span></div>";
-  h+="<div class=\"bd-subtotal\"><span class=\"bd-subtotal-label\">Pitcher modifier</span><span class=\"bd-subtotal-val\">"+(bd.pit_modifier||1)+"x</span></div>";
-  h+="</div>";
-  h+="<div class=\"bd-section\">";
-  h+="<div class=\"bd-section-title\">Step 3 — K% Gate</div>";
-  h+="<div class=\"bd-row\"><span class=\"bd-label\">K rate "+(bd.k_s||0)+"%</span>"+bdBar(1-(bd.k_cap||1),0.3,(bd.k_cap||1)<1)+bdPts((bd.k_cap||1).toFixed(2))+"</div>";
-  h+="<div class=\"bd-subtotal\"><span class=\"bd-subtotal-label\">After K cap</span><span class=\"bd-subtotal-val\">"+(bd.after_k||0)+"</span></div>";
-  h+="</div>";
-  h+="<div class=\"bd-section\">";
-  h+="<div class=\"bd-section-title\">Step 4 — Context</div>";
-  h+="<div class=\"bd-row\"><span class=\"bd-label\">Park factor</span>"+bdBar(Math.abs((bd.park_factor||1)-1)*100,15,(bd.park_factor||1)<1)+"<span class=\"bd-pts "+((bd.park_factor||1)>=1?"":"neg")+"\">"+(bd.park_factor||1)+"x</span></div>";
-  h+="<div class=\"bd-row\"><span class=\"bd-label\">Weather</span>"+bdBar(Math.abs((bd.weather_mult||1)-1)*100,8,(bd.weather_mult||1)<1)+"<span class=\"bd-pts "+((bd.weather_mult||1)>=1?"":"neg")+"\">"+(bd.weather_mult||1)+"x</span></div>";
-  h+="<div class=\"bd-row\"><span class=\"bd-label\">Pitcher modifier</span>"+bdBar(Math.abs((bd.pit_modifier||1)-1)*100,30,(bd.pit_modifier||1)<1)+"<span class=\"bd-pts "+((bd.pit_modifier||1)>=1?"":"neg")+"\">"+(bd.pit_modifier||1)+"x</span></div>";
-  h+="<div class=\"bd-subtotal\"><span class=\"bd-subtotal-label\">"+(bd.after_k||0)+" x "+(bd.park_factor||1)+" x "+(bd.weather_mult||1)+" x "+(bd.pit_modifier||1)+" = "+(bd.after_context||0)+"</span><span class=\"bd-subtotal-val\">"+(bd.after_context||0)+"</span></div>";
-  h+="</div>";
-  h+="<div class=\"bd-section\">";
-  h+="<div class=\"bd-section-title\">Step 5 — Sigmoid</div>";
-  h+="<div class=\"bd-row\"><span class=\"bd-label\">Raw "+(bd.after_context||0)+" to HR%</span>"+bdBar(hr_prob,25,false,true)+bdPts(hr_prob+"%",true)+"</div>";
-  h+="</div>";
-  h+="<div class=\"bd-final\">";
-  h+="<div><div class=\"bd-final-label\">HR Probability</div><div style=\"font-size:10px;color:var(--muted2);margin-top:2px\">League avg ~3% · Elite ~20-25%</div></div>";
-  h+="<div class=\"bd-final-prob "+pc+"\">"+hr_prob+"%</div>";
-  h+="</div>";
-  h+="</div>";
+  h+=pitchPillsHTML(bd);
+  h+='<div class="bd-subtotal"><span class="bd-subtotal-label">Batter score</span><span class="bd-subtotal-val">'+(bd.batter_score||0)+'</span></div>';
+  h+='</div>';
+  h+='<div class="bd-section">';
+  h+='<div class="bd-section-title">Step 2 — Pitcher Modifier · '+(bd.pit_blend_note||'')+'</div>';
+  h+='<div class="bd-row"><span class="bd-label">HR/9 '+(bd.pit_hr9||0)+' (season '+(bd.hr9_season||0)+' / split '+(bd.hr9_split>0?bd.hr9_split:'—')+' in '+(bd.split_ip||0)+' IP)</span>'+bdBar(Math.abs((bd.pit_modifier||1)-1)*35,10,(bd.pit_modifier||1)<1)+bdPts(bd.pit_modifier||1)+'</div>';
+  h+='<div class="bd-row"><span class="bd-label">Hard contact '+(bd.pit_hard>0?bd.pit_hard+'%':'—')+' (avg 32%)</span>'+bdBar(Math.abs((bd.pit_hard||0)-32),15,(bd.pit_hard||0)<32)+'<span class="bd-pts '+((bd.pit_hard||0)>32?"":"neg")+'">'+(bd.pit_hard>0?bd.pit_hard+'%':'—')+'</span></div>';
+  h+='<div class="bd-row"><span class="bd-label">Barrel% allowed '+(bd.pit_brl>0?bd.pit_brl+'%':'—')+' (avg 7.5%)</span>'+bdBar(Math.abs((bd.pit_brl||0)-7.5),8,(bd.pit_brl||0)<7.5)+'<span class="bd-pts '+((bd.pit_brl||0)>7.5?"":"neg")+'">'+(bd.pit_brl>0?bd.pit_brl+'%':'—')+'</span></div>';
+  h+='<div class="bd-row"><span class="bd-label">Components</span>'+bdBar(bd.n_pit_components||0,4,false,true)+'<span class="bd-pts blue">'+(bd.n_pit_components||0)+'/4</span></div>';
+  h+='<div class="bd-subtotal"><span class="bd-subtotal-label">Pitcher modifier</span><span class="bd-subtotal-val">'+(bd.pit_modifier||1)+'x</span></div>';
+  h+='</div>';
+  h+='<div class="bd-section">';
+  h+='<div class="bd-section-title">Step 3 — K% Gate</div>';
+  h+='<div class="bd-row"><span class="bd-label">K rate '+(bd.k_s||0)+'%</span>'+bdBar(1-(bd.k_cap||1),0.3,(bd.k_cap||1)<1)+bdPts((bd.k_cap||1).toFixed(2))+'</div>';
+  h+='<div class="bd-subtotal"><span class="bd-subtotal-label">After K cap</span><span class="bd-subtotal-val">'+(bd.after_k||0)+'</span></div>';
+  h+='</div>';
+  h+='<div class="bd-section">';
+  h+='<div class="bd-section-title">Step 4 — Context</div>';
+  h+='<div class="bd-row"><span class="bd-label">Park factor</span>'+bdBar(Math.abs((bd.park_factor||1)-1)*100,15,(bd.park_factor||1)<1)+'<span class="bd-pts '+((bd.park_factor||1)>=1?"":"neg")+'">'+(bd.park_factor||1)+'x</span></div>';
+  h+='<div class="bd-row"><span class="bd-label">Weather</span>'+bdBar(Math.abs((bd.weather_mult||1)-1)*100,8,(bd.weather_mult||1)<1)+'<span class="bd-pts '+((bd.weather_mult||1)>=1?"":"neg")+'">'+(bd.weather_mult||1)+'x</span></div>';
+  h+='<div class="bd-row"><span class="bd-label">Pitcher modifier</span>'+bdBar(Math.abs((bd.pit_modifier||1)-1)*100,30,(bd.pit_modifier||1)<1)+'<span class="bd-pts '+((bd.pit_modifier||1)>=1?"":"neg")+'">'+(bd.pit_modifier||1)+'x</span></div>';
+  h+='<div class="bd-subtotal"><span class="bd-subtotal-label">'+(bd.after_k||0)+' x '+(bd.park_factor||1)+' x '+(bd.weather_mult||1)+' x '+(bd.pit_modifier||1)+' = '+(bd.after_context||0)+'</span><span class="bd-subtotal-val">'+(bd.after_context||0)+'</span></div>';
+  h+='</div>';
+  h+='<div class="bd-section">';
+  h+='<div class="bd-section-title">Step 5 — Sigmoid</div>';
+  h+='<div class="bd-row"><span class="bd-label">Raw '+(bd.after_context||0)+' to HR%</span>'+bdBar(hr_prob,25,false,true)+bdPts(hr_prob+'%',true)+'</div>';
+  h+='</div>';
+  h+='<div class="bd-final"><div><div class="bd-final-label">HR Probability</div><div style="font-size:10px;color:var(--muted2);margin-top:2px">League avg ~3% · Elite ~20-25%</div></div><div class="bd-final-prob '+pc+'">'+hr_prob+'%</div></div>';
+  h+='</div>';
   return h;
 }
 
 function toggleBreakdown(el){
-  const bd=el.nextElementSibling;
+  var bd=el.nextElementSibling;
   if(bd&&bd.classList.contains('breakdown')) bd.classList.toggle('open');
 }
 
-// ── Batter row ──
-function pitchEdgeHTML(breakdown){
-  if(!breakdown||!breakdown.pitch_breakdown||!breakdown.pitch_breakdown.length) return '<div class="pitch-edge-none">—</div>';
-  const details = breakdown.pitch_breakdown;
-  const totalBonus = breakdown.pitch_bonus||0;
-  const bonusCls = totalBonus>=2?'pe-hot':totalBonus>=0.5?'pe-warm':totalBonus<=-1?'pe-cold':'pe-neutral';
-  let html = '<div class="pitch-edge">';
+// Batter row — pitch edge inline
+function peHTML(bd){
+  if(!bd||!bd.pitch_breakdown||!bd.pitch_breakdown.length) return '<div class="odds-none">—</div>';
+  var details=bd.pitch_breakdown;
+  var h='<div class="pe-cell">';
   details.slice(0,2).forEach(function(d){
-    const cls = d.combined>=2?'pe-hot':d.combined>=0.5?'pe-warm':d.combined<=-1?'pe-cold':'pe-neutral';
-    html += '<div class="pe-row"><span class="pe-pitch">'+d.name+' '+d.usage+'%</span><span class="pe-val '+cls+'">'+(d.combined>0?'+':'')+d.combined+'</span></div>';
+    var cls=d.combined>=2?'pv-hot':d.combined>=0.5?'pv-warn':d.combined<=-1?'pv-cold':'pv-neutral';
+    h+='<div class="pe-row"><span class="pe-name">'+d.name.substring(0,4)+' '+d.usage+'%</span> <span class="pe-val '+cls+'">'+(d.combined>0?'+':'')+d.combined+'</span></div>';
   });
-  html += '</div>';
-  return html;
+  h+='</div>';
+  return h;
 }
 
 function batterRowHTML(b,order){
-  const pc=probCls(b.hr_prob);
-  const pt=probTier(b.hr_prob);
-  const sl=b.statline||{};
-  const barrel=sl.barrel||0, iso=sl.iso||0;
-  const brlCls=heatCls(barrel,5,8,12);
-  const isoCls=heatCls(iso*1000,100,160,220);
-  const hand=b.bat_hand||'R';
-  const odds=b.dk_odds;
-  return '<div class="batter-row" onclick="toggleBreakdown(this)">' +
-    '<div class="bat-order">'+order+'</div>' +
-    '<div>' +
-      '<div class="bat-name">'+b.name+'</div>' +
-      '<div class="bat-sub"><span class="hand-tag '+(hand==='L'?'lhb':'rhb')+'">'+hand+'</span> vs '+(b.opp_p_hand||'R')+'HP '+trendHTML(b.trend||'Steady')+'</div>' +
-    '</div>' +
-    '<div class="sc '+brlCls+'">'+(barrel>0?barrel.toFixed(1)+'%':'—')+'</div>' +
-    '<div class="sc '+isoCls+'">'+(iso>0?'.'+String(Math.round(iso*1000)).padStart(3,'0'):'—')+'</div>' +
-    pitchEdgeHTML(b.breakdown) +
-    '<div class="'+(odds?'odds-val':'odds-none')+'">'+(odds||'—')+'</div>' +
-    '<div class="prob-cell">' +
-      '<div class="prob-num '+pc+'">'+b.hr_prob+'%</div>' +
-      '<div class="prob-tier '+pc+'">'+pt+'</div>' +
-    '</div>' +
-  '</div>' +
-  breakdownHTML(b.breakdown,b.hr_prob);
+  var pc=probCls(b.hr_prob);
+  var pt=probTier(b.hr_prob);
+  var sl=b.statline||{};
+  var barrel=sl.barrel||0, iso=sl.iso||0;
+  var brlCls=svCls(barrel,5,8,12);
+  var isoCls=svCls(iso*1000,100,160,220);
+  var hand=b.bat_hand||'R';
+  var odds=b.dk_odds;
+  var h='<div class="batter-row" onclick="toggleBreakdown(this)">';
+  h+='<div class="bat-order">'+order+'</div>';
+  h+='<div><div class="bat-name">'+b.name+'</div>';
+  h+='<div class="bat-sub"><span class="hand-tag '+(hand==='L'?'lhb':'rhb')+'">'+hand+'</span> vs '+(b.opp_p_hand||'R')+'HP '+trendHTML(b.trend||'Steady')+'</div></div>';
+  h+='<div class="sc '+brlCls+'">'+(barrel>0?barrel.toFixed(1)+'%':'—')+'</div>';
+  h+='<div class="sc '+isoCls+'">'+(iso>0?'.'+String(Math.round(iso*1000)).padStart(3,'0'):'—')+'</div>';
+  h+=peHTML(b.breakdown);
+  h+='<div class="'+(odds?'odds-val':'odds-none')+'">'+(odds||'—')+'</div>';
+  h+='<div class="prob-cell"><div class="prob-num '+pc+'">'+b.hr_prob+'%</div><div class="prob-tier '+pc+'">'+pt+'</div></div>';
+  h+='</div>';
+  h+=breakdownHTML(b.breakdown,b.hr_prob);
+  return h;
 }
 
-// ── Lineup tab ──
-function lineupRow(b,order){
-  const pc=probCls(b.hr_prob);
-  const hand=b.bat_hand||'R';
-  const odds=b.dk_odds;
-  return '<div class="lineup-row">' +
-    '<div class="lu-order">'+order+'</div>' +
-    '<div>' +
-      '<div class="lu-name">'+b.name+'</div>' +
-      '<div class="lu-hand"><span class="hand-tag '+(hand==='L'?'lhb':'rhb')+'" style="font-size:8px">'+hand+'</span> vs '+(b.opp_p_hand||'R')+'HP '+trendHTML(b.trend)+'</div>' +
-    '</div>' +
-    '<div class="lu-odds '+(odds?'':'none')+'">'+(odds||'—')+'</div>' +
-    '<div class="lu-prob '+pc+'">'+b.hr_prob+'%</div>' +
-  '</div>';
-}
-
-function renderLineups(games){
-  const el=document.getElementById('lineups-main');
-  if(!games||!games.length){el.innerHTML='<div class="no-games">No games today.</div>';return;}
-  let html='';
-  for(const g of games){
-    const awayP=g.away_pitcher||{}, homeP=g.home_pitcher||{};
-    const awayL=g.away_lineup||[], homeL=g.home_lineup||[];
-    if(!awayL.length&&!homeL.length) continue;
-    html+='<div class="lineup-game">' +
-      '<div class="lineup-game-header">' +
-        '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.04em">'+g.away+'</div>' +
-        '<div class="lineup-time">@ '+fmtTime(g.time)+' ET</div>' +
-        '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;text-align:right">'+g.home+'</div>' +
-      '</div>' +
-      '<div class="lineup-grid">' +
-        '<div class="lineup-side">' +
-          '<div class="lineup-side-header"><div class="lineup-side-title">'+g.away+'</div><div class="lineup-side-pitcher">vs '+( homeP.name||'TBD')+' '+(homeP.hand||'R')+'HP · HR/9 '+(homeP.hr9||'—')+'</div></div>' +
-          awayL.map((b,i)=>lineupRow(b,i+1)).join('') +
-        '</div>' +
-        '<div class="lineup-side">' +
-          '<div class="lineup-side-header"><div class="lineup-side-title">'+g.home+'</div><div class="lineup-side-pitcher">vs '+(awayP.name||'TBD')+' '+(awayP.hand||'R')+'HP · HR/9 '+(awayP.hr9||'—')+'</div></div>' +
-          homeL.map((b,i)=>lineupRow(b,i+1)).join('') +
-        '</div>' +
-      '</div>' +
-    '</div>';
-  }
-  el.innerHTML=html||'<div class="no-games">No lineup data available.</div>';
-}
-
-// ── Parlay tab ──
+// Parlay helpers
 function parlayOdds(probs){
-  const decimal=probs.reduce(function(acc,p){return acc*(100/p);},1);
-  const american=(decimal-1)*100;
+  var decimal=probs.reduce(function(acc,p){return acc*(100/p);},1);
+  var american=(decimal-1)*100;
   return american>=0?'+'+Math.round(american):String(Math.round(american));
 }
-
 function parlayImplied(probs){
   return (probs.reduce(function(acc,p){return acc*(p/100);},1)*100).toFixed(1);
 }
-
-function impliedOdds(americanStr){
-  if(!americanStr) return 0;
-  const o=parseInt(americanStr);
-  if(o>0) return 100/(o+100)*100;
-  return Math.abs(o)/(Math.abs(o)+100)*100;
-}
-
-function platoonScore(b){ return b.platoon_tag?((b.breakdown&&b.breakdown.platoon_magnitude)||0)+10:0; }
-function powerScore(b){ return ((b.breakdown&&b.breakdown.barrel_s)||0)*2+((b.breakdown&&b.breakdown.s1_hrfb)||0)*3; }
-function confScore(b){ return (b.confidence==='High'?3:b.confidence==='Medium'?2:1)*3+((b.breakdown&&b.breakdown.n_pit_components)||0)+b.hr_prob/5; }
+function platoonScore(b){return b.platoon_tag?((b.breakdown&&b.breakdown.platoon_magnitude)||0)+10:0;}
+function powerScore(b){return ((b.breakdown&&b.breakdown.barrel_s)||0)*2+((b.breakdown&&b.breakdown.s1_hrfb)||0)*3;}
+function confScore(b){return (b.confidence==='High'?3:b.confidence==='Medium'?2:1)*3+((b.breakdown&&b.breakdown.n_pit_components)||0)+b.hr_prob/5;}
 
 function buildParlayCard(elId,themeClass,emoji,title,subtitle,note,picks){
-  const el=document.getElementById(elId);
+  var el=document.getElementById(elId);
   if(!el) return;
   if(!picks||picks.length<3){el.innerHTML='<div class="parlay-card"><div class="parlay-note">Not enough qualifying picks for this parlay today.</div></div>';return;}
-  const legs=picks.slice(0,3);
-  const odds=parlayOdds(legs.map(function(b){return b.hr_prob;}));
-  const imp=parlayImplied(legs.map(function(b){return b.hr_prob;}));
-  let html='<div class="parlay-card '+themeClass+'">' +
-    '<div class="parlay-card-header">' +
-      '<div class="parlay-theme">'+emoji+' '+title+'</div>' +
-      '<div class="parlay-theme-sub">'+subtitle+'</div>' +
-    '</div>';
+  var legs=picks.slice(0,3);
+  var odds=parlayOdds(legs.map(function(b){return b.hr_prob;}));
+  var imp=parlayImplied(legs.map(function(b){return b.hr_prob;}));
+  var h='<div class="parlay-card '+themeClass+'">';
+  h+='<div class="parlay-card-header"><div class="parlay-theme">'+emoji+' '+title+'</div><div class="parlay-theme-sub">'+subtitle+'</div></div>';
   legs.forEach(function(b){
-    const pc=probCls(b.hr_prob);
-    const hand=b.bat_hand||'R';
-    html+='<div class="parlay-leg">' +
-      '<div>' +
-        '<div class="parlay-leg-name">'+b.name+'</div>' +
-        '<div class="parlay-leg-detail"><span class="hand-tag '+(hand==='L'?'lhb':'rhb')+'" style="font-size:9px">'+hand+'</span> '+b.team+' · vs '+(b.opp_pitcher||'TBD')+(b.trend==='Heating Up'?' · 🔥':b.trend==='Cooling Off'?' · ❄️':'')+'</div>' +
-      '</div>' +
-      '<div class="parlay-leg-right">' +
-        '<div class="parlay-leg-prob '+pc+'">'+b.hr_prob+'%</div>' +
-        '<div class="parlay-leg-odds '+(b.dk_odds?'':'none')+'">'+(b.dk_odds||'No odds')+'</div>' +
-      '</div>' +
-    '</div>';
+    var pc=probCls(b.hr_prob);
+    var hand=b.bat_hand||'R';
+    h+='<div class="parlay-leg">';
+    h+='<div><div class="parlay-leg-name">'+b.name+'</div>';
+    h+='<div class="parlay-leg-detail"><span class="hand-tag '+(hand==='L'?'lhb':'rhb')+'" style="font-size:9px">'+hand+'</span> '+b.team+' vs '+(b.opp_pitcher||'TBD')+(b.trend==='Heating Up'?' · &#128293;':b.trend==='Cooling Off'?' · &#10052;':'')+'</div></div>';
+    h+='<div class="parlay-leg-right"><div class="parlay-leg-prob '+pc+'">'+b.hr_prob+'%</div><div class="parlay-leg-odds '+(b.dk_odds?'':'none')+'">'+(b.dk_odds||'No odds')+'</div></div>';
+    h+='</div>';
   });
-  html+='<div class="parlay-footer">' +
-    '<div><div class="parlay-footer-label">Combined Odds</div><div class="parlay-combined-prob">~'+imp+'% combined probability</div></div>' +
-    '<div class="parlay-combined-odds">'+odds+'</div>' +
-  '</div>' +
-  '<div class="parlay-note">'+note+'</div>' +
-  '</div>';
-  el.innerHTML=html;
+  h+='<div class="parlay-footer"><div><div class="parlay-footer-label">Combined Odds</div><div class="parlay-combined-prob">~'+imp+'% combined probability</div></div><div class="parlay-combined-odds">'+odds+'</div></div>';
+  h+='<div class="parlay-note">'+note+'</div></div>';
+  el.innerHTML=h;
 }
 
 function renderParlays(allBatters){
-  const el=document.getElementById('parlays-main');
-  if(!allBatters||allBatters.length<3){
-    el.innerHTML='<div class="no-games">Not enough data to build parlays.</div>';return;
-  }
-  const seen=new Set();
-  const batters=allBatters.filter(function(b){
-    if(seen.has(b.name)) return false;
-    seen.add(b.name); return true;
-  });
-
-  const onFire=[].concat(batters).filter(function(b){return b.trend==='Heating Up'||b.hr_prob>=12;})
-    .sort(function(a,b){return (b.hr_prob+(b.trend==='Heating Up'?5:0))-(a.hr_prob+(a.trend==='Heating Up'?5:0));});
-
-  const platoon=[].concat(batters).filter(function(b){return b.platoon_tag||b.hr_prob>=10;})
-    .sort(function(a,b){return platoonScore(b)-platoonScore(a)||b.hr_prob-a.hr_prob;});
-
-  const highConf=[].concat(batters).sort(function(a,b){return confScore(b)-confScore(a);});
-
-  const power=[].concat(batters).sort(function(a,b){return powerScore(b)-powerScore(a)||b.hr_prob-a.hr_prob;});
-
-  el.innerHTML='<div class="parlay-disclaimer">⚠️ Parlays are for entertainment. All 3 legs must hit. Individual bets on strong picks offer better long-term value. Odds are model-implied — check BetRivers for posted lines.</div>' +
-    '<div class="parlay-grid">' +
-      '<div id="p-fire"></div>' +
-      '<div id="p-platoon"></div>' +
-      '<div id="p-conf"></div>' +
-      '<div id="p-power"></div>' +
-    '</div>';
-
-  buildParlayCard('p-fire','theme-fire','🔥','On Fire','Hottest recent form','These batters show elevated HR rate and positive trend over the last 14 days.',onFire);
-  buildParlayCard('p-platoon','theme-platoon','⚔️','Platoon Edge','Pitcher weak vs this hand','Pitchers with significant splits against the batter\'s handedness.',platoon);
-  buildParlayCard('p-conf','theme-conf','🔒','High Confidence','Best data quality picks','High confidence rating with full pitcher stat profile and confirmed lineup.',highConf);
-  buildParlayCard('p-power','theme-power','💣','Power Surge','Elite barrel rate matchups','Highest barrel rate batters facing pitchers that allow hard contact.',power);
+  var el=document.getElementById('parlays-main');
+  if(!allBatters||allBatters.length<3){el.innerHTML='<div class="no-games">Not enough data to build parlays.</div>';return;}
+  var seen=new Set();
+  var batters=allBatters.filter(function(b){if(seen.has(b.name)) return false; seen.add(b.name); return true;});
+  var onFire=[].concat(batters).filter(function(b){return b.trend==='Heating Up'||b.hr_prob>=12;}).sort(function(a,b){return (b.hr_prob+(b.trend==='Heating Up'?5:0))-(a.hr_prob+(a.trend==='Heating Up'?5:0));});
+  var platoon=[].concat(batters).filter(function(b){return b.platoon_tag||b.hr_prob>=10;}).sort(function(a,b){return platoonScore(b)-platoonScore(a)||b.hr_prob-a.hr_prob;});
+  var highConf=[].concat(batters).sort(function(a,b){return confScore(b)-confScore(a);});
+  var power=[].concat(batters).sort(function(a,b){return powerScore(b)-powerScore(a)||b.hr_prob-a.hr_prob;});
+  el.innerHTML='<div class="parlay-disclaimer">&#9888;&#65039; Parlays are for entertainment. All 3 legs must hit. Individual bets on strong picks offer better long-term value. Odds are model-implied — check BetRivers for posted lines.</div><div class="parlay-grid"><div id="p-fire"></div><div id="p-platoon"></div><div id="p-conf"></div><div id="p-power"></div></div>';
+  buildParlayCard('p-fire','theme-fire','&#128293;','On Fire','Hottest recent form','Batters showing elevated HR rate and positive trend over the last 14 days.',onFire);
+  buildParlayCard('p-platoon','theme-platoon','&#9876;&#65039;','Platoon Edge','Pitcher weak vs this hand','Pitchers with significant splits against the batter\'s handedness.',platoon);
+  buildParlayCard('p-conf','theme-conf','&#128274;','High Confidence','Best data quality picks','High confidence rating with full pitcher stat profile and confirmed lineup.',highConf);
+  buildParlayCard('p-power','theme-power','&#128163;','Power Surge','Elite barrel rate matchups','Highest barrel rate batters facing pitchers that allow hard contact.',power);
 }
 
-// ── Main load ──
-async function load(){
-  const main=document.getElementById('main');
-  const upd=document.getElementById('upd');
-  const btn=document.getElementById('refreshBtn');
-  btn.disabled=true;
-  upd.textContent='';
-  main.innerHTML='<div class="loading">Loading Sharp Data<div class="dots"><span></span><span></span><span></span></div></div>';
-  document.getElementById('lineups-main').innerHTML='';
-  document.getElementById('parlays-main').innerHTML='';
+// Research tab
+function renderResearchShell(){
+  var el=document.getElementById('research-main');
+  el.innerHTML='<div class="research-search"><input class="research-input" id="research-input" type="text" placeholder="Search player name... e.g. Aaron Judge"><button class="research-btn" onclick="doResearch()">Research</button></div><div id="research-results"><div class="research-empty">Enter a player name and hit Research.</div></div>';
+  var inp=document.getElementById('research-input');
+  if(inp) inp.addEventListener('keydown',function(e){if(e.key==='Enter') doResearch();});
+}
 
+async function doResearch(){
+  var input=document.getElementById('research-input');
+  if(!input||!input.value.trim()) return;
+  var name=input.value.trim();
+  var dateStr=formatDateForAPI(selectedDate);
+  var resultsEl=document.getElementById('research-results');
+  resultsEl.innerHTML='<div class="loading">Looking up '+name+'...<div class="dots"><span></span><span></span><span></span></div></div>';
   try{
-    const dateStr=formatDateForAPI(selectedDate);
-    const resp=await fetch(API+'/games?date='+dateStr);
-    if(!resp.ok) throw new Error('Backend error '+resp.status);
-    const data=await resp.json();
+    var resp=await fetch(API+'/research?player='+encodeURIComponent(name)+'&date='+dateStr);
+    var data=await resp.json();
+    if(data.error){resultsEl.innerHTML='<div class="research-empty">'+data.error+'</div>';return;}
+    resultsEl.innerHTML=buildResearchHTML(data);
+  }catch(e){resultsEl.innerHTML='<div class="research-empty">Error: '+e.message+'</div>';}
+}
 
-    if(data.loading){
-      main.innerHTML='<div class="warn-box">'+(data.message||'Data loading — try again in 30 seconds.')+'</div>';
-      btn.disabled=false; return;
-    }
+function fmtStat(v,type){
+  if(!v||v===0) return '—';
+  if(type==='pct') return v.toFixed(1)+'%';
+  if(type==='iso') return '.'+String(Math.round(v*1000)).padStart(3,'0');
+  if(type==='ang') return v.toFixed(1)+'°';
+  return v;
+}
+function trendBadge(s,d14){
+  if(!d14||d14===0) return '<span class="stat-chip-trend tr-flat">No 14d</span>';
+  var pct=s>0?(d14-s)/s:0;
+  if(pct>=0.1) return '<span class="stat-chip-trend tr-up">&#8593; Rising</span>';
+  if(pct<=-0.1) return '<span class="stat-chip-trend tr-dn">&#8595; Falling</span>';
+  return '<span class="stat-chip-trend tr-flat">Steady</span>';
+}
+function rStatChip(name,s26,d14,blended,score,type,lo,mid,hi){
+  function fmt(v){return fmtStat(v,type);}
+  function hcls(v){return svnCls(v,lo,mid,hi);}
+  var scoreStr=score>0?'+'+score.toFixed(1):score.toFixed(1);
+  var h='<div class="stat-chip">';
+  h+='<div class="stat-chip-name">'+name+'</div>';
+  h+='<div class="stat-chip-values">';
+  h+='<div class="stat-val-block"><div class="stat-val-lbl">2026</div><div class="stat-val-num '+hcls(s26)+'">'+fmt(s26)+'</div></div>';
+  h+='<div class="stat-chip-divider"></div>';
+  h+='<div class="stat-val-block"><div class="stat-val-lbl">14 Day</div><div class="stat-val-num '+(d14>0?hcls(d14):'svn-cold')+'">'+fmt(d14)+'</div></div>';
+  h+='<div class="stat-chip-divider"></div>';
+  h+='<div class="stat-val-block"><div class="stat-val-lbl">Blended</div><div class="stat-val-num '+hcls(blended)+'">'+fmt(blended)+'</div></div>';
+  h+='</div>';
+  h+='<div class="stat-chip-footer"><span class="stat-chip-score">'+scoreStr+' pts</span>'+trendBadge(s26,d14)+'</div>';
+  h+='</div>';
+  return h;
+}
 
-    const games=data.games||[];
-    if(!games.length){
-      main.innerHTML='<div class="no-games">No MLB games on '+dateStr+'.</div>';
-      btn.disabled=false; return;
-    }
-
-    let html='';
-    for(const g of games){
-      const wx=g.weather||{};
-      const wc=wxCls(wx.label);
-      const awayP=g.away_pitcher||{}, homeP=g.home_pitcher||{};
-      const awayS=g.lineup_away_status||'projected', homeS=g.lineup_home_status||'projected';
-      const candidates=g.top_hr_candidates||[];
-
-      html+='<div class="game-card">' +
-        '<div class="game-header">' +
-          '<div><div class="team-name">'+g.away+'</div><div><span class="badge '+(awayS==='confirmed'?'confirmed':'proj-badge')+'">'+awayS+'</span></div></div>' +
-          '<div class="game-meta">@ '+fmtTime(g.time)+' ET</div>' +
-          '<div><div class="team-name right">'+g.home+'</div><div style="display:flex;justify-content:flex-end"><span class="badge '+(homeS==='confirmed'?'confirmed':'proj-badge')+'">'+homeS+'</span></div></div>' +
-        '</div>' +
-        '<div class="weather-strip">' +
-          '<div class="wx-item"><span class="wx-val">'+(wx.temp||'—')+'°F</span><span class="wx-lbl">Temp</span></div>' +
-          '<div class="wx-item"><span class="wx-val">'+(wx.wind_speed||0)+' mph</span><span class="wx-lbl">Wind</span></div>' +
-          '<div class="wx-badge '+wc+'">'+(wx.label||'—')+'</div>' +
-        '</div>' +
-        '<div class="pitchers">'+pitBlockHTML(awayP,false)+pitBlockHTML(homeP,true)+'</div>' +
-        '<div class="batter-section-header">' +
-          '<div class="bh">#</div><div class="bh left">Batter</div>' +
-          '<div class="bh">Brl%</div><div class="bh">ISO</div>' +
-          '<div class="bh">Pitch Edge</div><div class="bh hide-sm">BR HR</div><div class="bh">HR Prob</div>' +
-        '</div>';
-
-      if(!candidates.length){
-        html+='<div class="pending">No lineup data available yet.</div>';
-      } else {
-        candidates.forEach(function(b,i){
-          html+='<div>'+batterRowHTML(b,i+1)+'</div>';
+function buildResearchHTML(data){
+  var p=data.player; var m=data.matchup;
+  var s26=p.season_2026||{}; var b=p.blended||{}; var d14=p.last_14d||{}; var splits=p.splits||{}; var bvals=p.pitch_values||{};
+  var sc_barrel=Math.min((b.barrel_pct||0)/15,1)*25;
+  var sc_iso=Math.min((b.iso||0)/0.28,1)*10;
+  var sc_fb=Math.min((b.fb_pct||0)/45,1)*6;
+  var sc_pull=Math.min((b.pull_pct||0)/50,1)*5;
+  var sc_la=(b.launch_angle||0)>10?Math.min(((b.launch_angle||0)-10)/20,1)*4:0;
+  var sc_hrfb=Math.min((b.hr_fb_pct||0)/25,1)*5;
+  var h='';
+  h+='<div class="research-card"><div class="research-card-header"><div class="research-card-title">'+p.name+' — Batter Profile</div><div class="research-card-badge">'+p.blend_note+' · '+p.pa_2026+' PA 2026</div></div>';
+  h+='<div class="research-card-body">';
+  h+='<div class="research-section-title">Power metrics</div>';
+  h+='<div class="r-stat-grid">';
+  h+=rStatChip('Barrel',s26.barrel_pct,d14.barrel_pct,b.barrel_pct,sc_barrel,'pct',5,8,12);
+  h+=rStatChip('ISO',s26.iso,d14.iso,b.iso,sc_iso,'iso',0.08,0.15,0.22);
+  h+=rStatChip('FB%',s26.fb_pct,0,b.fb_pct,sc_fb,'pct',30,38,45);
+  h+=rStatChip('Pull%',s26.pull_pct,0,b.pull_pct,sc_pull,'pct',30,40,50);
+  h+=rStatChip('Launch Angle',s26.launch_angle,0,b.launch_angle,sc_la,'ang',10,15,20);
+  h+=rStatChip('HR/FB',s26.hr_fb_pct,0,b.hr_fb_pct,sc_hrfb,'pct',8,15,25);
+  h+='</div>';
+  if(d14.pa>0){
+    h+='<div style="margin-top:10px;padding:8px 10px;background:#0e0e0e;border:1px solid var(--border2);border-radius:7px;display:flex;gap:16px;font-size:12px">';
+    h+='<span style="color:var(--muted)">Last 14 Days:</span>';
+    h+='<span><strong style="color:var(--accent)">'+(d14.hr||0)+' HR</strong> in '+(d14.pa||0)+' PA</span>';
+    h+='<span style="color:var(--muted)">HR rate: <strong style="color:var(--text)">'+(d14.hr_rate||0)+'/600 PA</strong></span>';
+    h+='</div>';
+  }
+  var vsL=splits.vs_lhp||{}; var vsR=splits.vs_rhp||{};
+  h+='<div style="margin-top:10px"><div class="research-section-title">Splits</div>';
+  h+='<div class="r-split-row">';
+  h+='<div class="r-split-block"><div class="r-split-title">vs LHP ('+(vsL.pa||0)+' PA)</div>';
+  if(vsL.pa>0){h+='<div class="r-spl-row"><span style="color:var(--muted)">ISO</span><span>'+fmtStat(vsL.iso,'iso')+'</span></div><div class="r-spl-row"><span style="color:var(--muted)">SLG</span><span>'+fmtStat(vsL.slg,'iso')+'</span></div><div class="r-spl-row"><span style="color:var(--muted)">HR</span><span>'+(vsL.hr||0)+'</span></div>';}
+  else{h+='<div style="color:var(--muted2);font-size:11px">No data</div>';}
+  h+='</div>';
+  h+='<div class="r-split-block"><div class="r-split-title">vs RHP ('+(vsR.pa||0)+' PA)</div>';
+  if(vsR.pa>0){h+='<div class="r-spl-row"><span style="color:var(--muted)">ISO</span><span>'+fmtStat(vsR.iso,'iso')+'</span></div><div class="r-spl-row"><span style="color:var(--muted)">SLG</span><span>'+fmtStat(vsR.slg,'iso')+'</span></div><div class="r-spl-row"><span style="color:var(--muted)">HR</span><span>'+(vsR.hr||0)+'</span></div>';}
+  else{h+='<div style="color:var(--muted2);font-size:11px">No data</div>';}
+  h+='</div></div></div></div></div>';
+  if(m){
+    var ps=m.pitcher_stats||{};
+    h+='<div class="research-card"><div class="research-card-header"><div class="research-card-title">Today&#39;s Matchup</div><div class="research-card-badge">'+fmtTime(m.game_time)+' ET</div></div>';
+    h+='<div class="research-card-body">';
+    h+='<div style="margin-bottom:12px"><div style="font-size:14px;font-weight:600">vs '+m.pitcher_name+' <span class="pit-hand '+(m.pitcher_hand==='L'?'lhp':'rhp')+'">'+m.pitcher_hand+'HP</span></div>';
+    h+='<div style="font-size:11px;color:var(--muted);margin-top:2px">'+ps.blend_note+' · '+ps.ip_2026+' IP 2026</div></div>';
+    h+='<div class="research-section-title">Pitcher stats</div>';
+    h+='<div class="r-pit-grid">';
+    h+='<div class="r-pit-block"><div class="r-pit-lbl">ERA</div><div class="r-pit-val '+(ps.era>4.5?'svn-hot':ps.era>3.5?'svn-warm':'svn-cold')+'">'+(ps.era||'—')+'</div></div>';
+    h+='<div class="r-pit-block"><div class="r-pit-lbl">HR/9</div><div class="r-pit-val '+(ps.hr9>1.5?'svn-hot':ps.hr9>1.1?'svn-warm':'svn-cold')+'">'+(ps.hr9||'—')+'</div></div>';
+    h+='<div class="r-pit-block"><div class="r-pit-lbl">Hard Hit%</div><div class="r-pit-val '+(ps.hard_hit_pct>38?'svn-hot':ps.hard_hit_pct>33?'svn-warm':'svn-neutral')+'">'+(ps.hard_hit_pct>0?ps.hard_hit_pct+'%':'—')+'</div></div>';
+    h+='<div class="r-pit-block"><div class="r-pit-lbl">Brl% allowed</div><div class="r-pit-val '+(ps.barrel_pct_allowed>9?'svn-hot':ps.barrel_pct_allowed>7?'svn-warm':'svn-neutral')+'">'+(ps.barrel_pct_allowed>0?ps.barrel_pct_allowed+'%':'—')+'</div></div>';
+    h+='</div>';
+    var pitchNames={wfa:'Fastball',wsl:'Slider',wfc:'Cutter',wfs:'Splitter',wsi:'Sinker',wcu:'Curveball',wch:'Changeup'};
+    if(m.pitch_matchup&&m.pitch_matchup.length){
+      h+='<div class="research-section-title">Pitch matchup — batter vs pitcher&#39;s arsenal</div>';
+      h+='<div class="r-pitch-grid">';
+      m.pitch_matchup.forEach(function(d){
+        var batCls=pcvCls(d.bat_rv); var pitCls=pcvCls(d.pit_rv); var combCls=pcvCls(d.combined);
+        var bonusStr=d.bonus>0?'+'+d.bonus.toFixed(1):d.bonus.toFixed(1);
+        h+='<div class="r-pitch-chip"><div class="r-pitch-name">'+d.name+'</div><div class="r-pitch-usage">'+d.usage+'% of pitches</div>';
+        h+='<div class="r-pitch-vals">';
+        h+='<div class="rpcv"><div class="rpcv-lbl">Batter rv</div><div class="rpcv-num '+batCls+'">'+(d.bat_rv>0?'+':'')+d.bat_rv+'</div></div>';
+        h+='<div class="rpcv"><div class="rpcv-lbl">Pitcher rv</div><div class="rpcv-num '+pitCls+'">'+(d.pit_rv>0?'+':'')+d.pit_rv+'</div></div>';
+        h+='<div class="rpcv"><div class="rpcv-lbl">Combined</div><div class="rpcv-num '+combCls+'">'+(d.combined>0?'+':'')+d.combined+'</div></div>';
+        h+='</div><div class="r-pitch-footer"><span>Bonus</span><span class="r-pitch-bonus '+combCls+'">'+bonusStr+' pts</span></div></div>';
+      });
+      h+='</div>';
+    } else {
+      h+='<div style="padding:10px;background:#0e0e0e;border:1px solid var(--border2);border-radius:7px;color:var(--muted2);font-size:12px">No pitch matchup data available for this pitcher yet.</div>';
+      var hasBatVals=Object.keys(bvals).some(function(k){return bvals[k]!==0;});
+      if(hasBatVals){
+        h+='<div style="margin-top:8px;padding:8px 10px;background:#0e0e0e;border:1px solid var(--border2);border-radius:7px">';
+        h+='<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Batter run values vs pitch types</div>';
+        h+='<div style="display:flex;gap:10px;flex-wrap:wrap">';
+        Object.keys(bvals).forEach(function(k){
+          if(!bvals[k]) return;
+          var v=bvals[k]; var cls=v>=2?'svn-hot':v>=0.5?'svn-warm':v<=-1?'svn-hot':'svn-neutral';
+          h+='<span style="font-size:12px"><span style="color:var(--muted2)">'+(pitchNames[k]||k)+':</span> <span class="'+cls+'" style="font-weight:600">'+(v>0?'+':'')+v+'</span></span>';
         });
+        h+='</div></div>';
       }
-      html+='</div>';
     }
-    main.innerHTML=html;
+    h+='</div></div>';
+  } else {
+    h+='<div class="research-card"><div class="research-card-header"><div class="research-card-title">Today&#39;s Matchup</div></div>';
+    h+='<div class="research-card-body" style="color:var(--muted2);font-size:13px">No game found for '+p.name+' on '+data.date+'. Try a different date.</div></div>';
+  }
+  return h;
+}
 
-    renderLineups(games);
-
-    const allBatters=[];
+// Main load
+async function load(){
+  var main=document.getElementById('main');
+  var upd=document.getElementById('upd');
+  var btn=document.getElementById('refreshBtn');
+  btn.disabled=true; upd.textContent='';
+  main.innerHTML='<div class="loading">Loading Sharp Data<div class="dots"><span></span><span></span><span></span></div></div>';
+  document.getElementById('parlays-main').innerHTML='';
+  var resMain=document.getElementById('research-main');
+  if(resMain) resMain.innerHTML='';
+  try{
+    var dateStr=formatDateForAPI(selectedDate);
+    var resp=await fetch(API+'/games?date='+dateStr);
+    if(!resp.ok) throw new Error('Backend error '+resp.status);
+    var data=await resp.json();
+    if(data.loading){main.innerHTML='<div class="warn-box">'+(data.message||'Data loading — try again in 30 seconds.')+'</div>';btn.disabled=false;return;}
+    var games=data.games||[];
+    if(!games.length){main.innerHTML='<div class="no-games">No MLB games on '+dateStr+'.</div>';btn.disabled=false;return;}
+    var h='';
+    games.forEach(function(g){
+      var wx=g.weather||{};
+      var wc=wxCls(wx.label);
+      var awayP=g.away_pitcher||{}; var homeP=g.home_pitcher||{};
+      var awayS=g.lineup_away_status||'projected'; var homeS=g.lineup_home_status||'projected';
+      var awayL=g.away_lineup||[]; var homeL=g.home_lineup||[];
+      var candidates=g.top_hr_candidates||[];
+      // Separate candidates by team
+      var awayBatters=[]; var homeBatters=[];
+      if(awayL.length||homeL.length){
+        awayBatters=awayL; homeBatters=homeL;
+      } else {
+        // Split candidates roughly by pitcher matchup
+        candidates.forEach(function(b){
+          if(b.opp_pitcher===homeP.name) awayBatters.push(b);
+          else homeBatters.push(b);
+        });
+        if(!awayBatters.length&&!homeBatters.length) homeBatters=candidates;
+      }
+      h+='<div class="game-card">';
+      h+='<div class="game-header">';
+      h+='<div><div class="team-name">'+g.away+'</div><span class="badge '+(awayS==='confirmed'?'confirmed':'proj-badge')+'">'+awayS+'</span></div>';
+      h+='<div class="game-meta">@ '+fmtTime(g.time)+' ET</div>';
+      h+='<div style="text-align:right"><div class="team-name right">'+g.home+'</div><span class="badge '+(homeS==='confirmed'?'confirmed':'proj-badge')+'">'+homeS+'</span></div>';
+      h+='</div>';
+      // Weather — clickable
+      h+='<div class="weather-strip" onclick="toggleWx(this)">';
+      h+='<div class="wx-item"><span class="wx-val">'+(wx.temp||'—')+'°F</span><span class="wx-lbl">Temp</span></div>';
+      h+='<div class="wx-item"><span class="wx-val">'+(wx.wind_speed||0)+' mph</span><span class="wx-lbl">Wind</span></div>';
+      h+='<div class="wx-badge '+wc+'">'+(wx.label||'—')+'</div>';
+      h+='<span class="wx-expand">▼</span>';
+      h+='</div>';
+      h+='<div class="wx-detail">';
+      h+='<div class="wx-detail-grid">';
+      h+='<div class="wx-detail-block"><div class="wx-detail-lbl">Temp</div><div class="wx-detail-val">'+(wx.temp||'—')+'°F</div></div>';
+      h+='<div class="wx-detail-block"><div class="wx-detail-lbl">Wind</div><div class="wx-detail-val">'+(wx.wind_speed||0)+' mph</div></div>';
+      h+='<div class="wx-detail-block"><div class="wx-detail-lbl">Direction</div><div class="wx-detail-val">'+(wx.wind_dir||'—')+'</div></div>';
+      h+='<div class="wx-detail-block"><div class="wx-detail-lbl">Precip</div><div class="wx-detail-val">'+(wx.precip||0)+'%</div></div>';
+      h+='</div></div>';
+      // Pitchers — clickable
+      h+='<div class="pitchers">'+pitBlockHTML(awayP)+pitBlockHTML(homeP)+'</div>';
+      // Side-by-side lineups
+      h+='<div class="lineup-split">';
+      h+='<div class="lineup-side">';
+      h+='<div class="lineup-side-header"><div class="lsh">#</div><div class="lsh left">'+g.away+'</div><div class="lsh">Brl%</div><div class="lsh">ISO</div><div class="lsh">Pitch Edge</div><div class="lsh hide-sm">Odds</div><div class="lsh">HR%</div></div>';
+      if(!awayBatters.length){h+='<div class="pending">No lineup yet</div>';}
+      else{awayBatters.forEach(function(b,i){h+=batterRowHTML(b,i+1);});}
+      h+='</div>';
+      h+='<div class="lineup-side">';
+      h+='<div class="lineup-side-header"><div class="lsh">#</div><div class="lsh left">'+g.home+'</div><div class="lsh">Brl%</div><div class="lsh">ISO</div><div class="lsh">Pitch Edge</div><div class="lsh hide-sm">Odds</div><div class="lsh">HR%</div></div>';
+      if(!homeBatters.length){h+='<div class="pending">No lineup yet</div>';}
+      else{homeBatters.forEach(function(b,i){h+=batterRowHTML(b,i+1);});}
+      h+='</div>';
+      h+='</div></div>';
+    });
+    main.innerHTML=h;
+    var allBatters=[];
     games.forEach(function(g){
       (g.away_lineup||[]).forEach(function(b){allBatters.push(b);});
       (g.home_lineup||[]).forEach(function(b){allBatters.push(b);});
-      if(!g.away_lineup||!g.away_lineup.length){
+      if(!(g.away_lineup||[]).length&&!(g.home_lineup||[]).length){
         (g.top_hr_candidates||[]).forEach(function(b){allBatters.push(b);});
       }
     });
     renderParlays(allBatters);
-
     upd.textContent='Updated '+new Date().toLocaleTimeString()+' · '+dateStr;
-  } catch(e){
-    main.innerHTML='<div class="err"><strong>Error:</strong> '+e.message+'</div>';
-  }
+  }catch(e){main.innerHTML='<div class="err"><strong>Error:</strong> '+e.message+'</div>';}
   btn.disabled=false;
 }
 
 load();
-
-// ── Research tab ──
-function renderResearchShell(){
-  document.getElementById('research-main').innerHTML=
-    '<div class="research-search">'+
-      '<input class="research-input" id="research-input" type="text" placeholder="Search player name... e.g. Aaron Judge">'+
-      '<button class="research-btn" onclick="doResearch()">Research</button>'+
-    '</div>'+
-    '<div id="research-results"><div class="research-empty">Enter a player name and hit Research.</div></div>';
-}
-
-async function doResearch(){
-  var input = document.getElementById('research-input');
-  if(!input||!input.value.trim()) return;
-  var name = input.value.trim();
-  var dateStr = formatDateForAPI(selectedDate);
-  var resultsEl = document.getElementById('research-results');
-  resultsEl.innerHTML='<div class="loading">Looking up '+name+'...<div class="dots"><span></span><span></span><span></span></div></div>';
-
-  try{
-    var resp = await fetch(API+'/research?player='+encodeURIComponent(name)+'&date='+dateStr);
-    var data = await resp.json();
-    if(data.error){ resultsEl.innerHTML='<div class="research-empty">'+data.error+'</div>'; return; }
-    resultsEl.innerHTML = buildResearchHTML(data);
-  } catch(e){
-    resultsEl.innerHTML='<div class="research-empty">Error: '+e.message+'</div>';
-  }
-}
-
-function svnCls(val, low, mid, high){
-  if(!val||val===0) return 'svn-cold';
-  if(val>=high) return 'svn-hot';
-  if(val>=mid) return 'svn-warm';
-  if(val>=low) return 'svn-neutral';
-  return 'svn-cold';
-}
-
-function trendBadge(s26, s14){
-  if(!s14||s14===0) return '<span class="stat-chip-trend tr-flat">No 14d</span>';
-  var diff = s14 - s26;
-  var pct = s26>0?diff/s26:0;
-  if(pct>=0.1) return '<span class="stat-chip-trend tr-up">↑ Rising</span>';
-  if(pct<=-0.1) return '<span class="stat-chip-trend tr-dn">↓ Falling</span>';
-  return '<span class="stat-chip-trend tr-flat">Steady</span>';
-}
-
-function fmtStat(val, type){
-  if(!val||val===0) return '—';
-  if(type==='pct') return val.toFixed(1)+'%';
-  if(type==='iso') return '.'+String(Math.round(val*1000)).padStart(3,'0');
-  if(type==='ang') return val.toFixed(1)+'°';
-  if(type==='ev') return val.toFixed(1)+' mph';
-  return val;
-}
-
-function statChip(name, s26val, s25val, blendedVal, s14val, scoreContrib, type, thresholds){
-  var lo=thresholds[0],mid=thresholds[1],hi=thresholds[2];
-  var blendCls = svnCls(blendedVal,lo,mid,hi);
-  var s26Cls = svnCls(s26val,lo,mid,hi);
-  var s14Cls = s14val>0?svnCls(s14val,lo,mid,hi):'svn-cold';
-  var trend = trendBadge(s26val, s14val);
-  var scoreStr = scoreContrib>0?'+'+scoreContrib.toFixed(1):scoreContrib.toFixed(1);
-  return '<div class="stat-chip">'+
-    '<div class="stat-chip-name">'+name+'</div>'+
-    '<div class="stat-chip-values">'+
-      '<div class="stat-val-block"><div class="stat-val-lbl">2026</div><div class="stat-val-num '+s26Cls+'">'+fmtStat(s26val,type)+'</div></div>'+
-      '<div class="stat-chip-divider"></div>'+
-      '<div class="stat-val-block"><div class="stat-val-lbl">14 Day</div><div class="stat-val-num '+s14Cls+'">'+fmtStat(s14val,type)+'</div></div>'+
-      '<div class="stat-chip-divider"></div>'+
-      '<div class="stat-val-block"><div class="stat-val-lbl">Blended</div><div class="stat-val-num '+blendCls+'">'+fmtStat(blendedVal,type)+'</div></div>'+
-    '</div>'+
-    '<div class="stat-chip-footer"><span class="stat-chip-score">'+scoreStr+' pts</span>'+trend+'</div>'+
-  '</div>';
-}
-
-function pcvCls(val){ return val>=2?'pcv-hot':val>=0.5?'pcv-warn':val<=-1?'pcv-cold':'pcv-neutral'; }
-
-function buildResearchHTML(data){
-  var p = data.player;
-  var m = data.matchup;
-  var s26 = p.season_2026||{};
-  var b = p.blended||{};
-  var d14 = p.last_14d||{};
-  var splits = p.splits||{};
-  var bvals = p.pitch_values||{};
-
-  // Estimate score contributions (simplified)
-  var sc_barrel = Math.min(b.barrel_pct/15,1)*25;
-  var sc_iso = Math.min((b.iso||0)/0.28,1)*10;
-  var sc_fb = Math.min((b.fb_pct||0)/45,1)*6;
-  var sc_pull = Math.min((b.pull_pct||0)/50,1)*5;
-  var sc_la = b.launch_angle>10?Math.min((b.launch_angle-10)/20,1)*4:0;
-  var sc_hrfb = Math.min((b.hr_fb_pct||0)/25,1)*5;
-
-  var html = '';
-
-  // Batter stat chips
-  html += '<div class="research-card">'+
-    '<div class="research-card-header">'+
-      '<div class="research-card-title">'+p.name+' — Batter Profile</div>'+
-      '<div class="research-card-badge">'+p.blend_note+' · '+p.pa_2026+' PA 2026</div>'+
-    '</div>'+
-    '<div class="research-card-body">'+
-      '<div class="research-section-title">Power metrics — season vs 14 day vs blended</div>'+
-      '<div class="stat-chip-grid">'+
-        statChip('Barrel %', s26.barrel_pct, 0, b.barrel_pct, d14.barrel_pct, sc_barrel, 'pct', [5,8,12])+
-        statChip('ISO', s26.iso, 0, b.iso, d14.iso, sc_iso, 'iso', [0.08,0.15,0.22])+
-        statChip('FB %', s26.fb_pct, 0, b.fb_pct, d14.fb_pct, sc_fb, 'pct', [30,38,45])+
-        statChip('Pull %', s26.pull_pct, 0, b.pull_pct, d14.pull_pct, sc_pull, 'pct', [30,40,50])+
-        statChip('Launch Angle', s26.launch_angle, 0, b.launch_angle, d14.launch_angle, sc_la, 'ang', [10,15,20])+
-        statChip('HR/FB', s26.hr_fb_pct, 0, b.hr_fb_pct, d14.hr_fb_pct, sc_hrfb, 'pct', [8,15,25])+
-      '</div>';
-
-  // 14d form summary
-  if(d14.pa>0){
-    html += '<div style="margin-top:12px;padding:10px 12px;background:#0e0e0e;border:1px solid var(--border2);border-radius:8px;display:flex;gap:20px;font-size:12px">'+
-      '<span style="color:var(--muted)">Last 14 Days:</span>'+
-      '<span><strong style="color:var(--accent)">'+(d14.hr||0)+' HR</strong> in '+(d14.pa||0)+' PA</span>'+
-      '<span style="color:var(--muted)">HR rate: <strong style="color:var(--text)">'+(d14.hr_rate||0)+'/600 PA</strong></span>'+
-      (d14.slg>0?'<span style="color:var(--muted)">SLG: <strong style="color:var(--text)">'+fmtStat(d14.slg,'iso')+'</strong></span>':'')+
-    '</div>';
-  }
-
-  // Splits
-  var vsL = splits.vs_lhp||{}, vsR = splits.vs_rhp||{};
-  html += '<div style="margin-top:12px">'+
-    '<div class="research-section-title">Splits</div>'+
-    '<div class="split-row">'+
-      '<div class="split-block">'+
-        '<div class="split-block-title">vs LHP ('+( vsL.pa||0)+' PA)</div>'+
-        (vsL.pa>0?
-          '<div class="split-stat-row"><span class="split-stat-label">ISO</span><span class="split-stat-val">'+fmtStat(vsL.iso,'iso')+'</span></div>'+
-          '<div class="split-stat-row"><span class="split-stat-label">SLG</span><span class="split-stat-val">'+fmtStat(vsL.slg,'iso')+'</span></div>'+
-          '<div class="split-stat-row"><span class="split-stat-label">HR</span><span class="split-stat-val">'+(vsL.hr||0)+'</span></div>'+
-          '<div class="split-stat-row"><span class="split-stat-label">HR/600</span><span class="split-stat-val">'+fmtStat(vsL.hr_rate,'')+'</span></div>'
-        :'<div style="color:var(--muted2);font-size:11px">No data</div>')+
-      '</div>'+
-      '<div class="split-block">'+
-        '<div class="split-block-title">vs RHP ('+(vsR.pa||0)+' PA)</div>'+
-        (vsR.pa>0?
-          '<div class="split-stat-row"><span class="split-stat-label">ISO</span><span class="split-stat-val">'+fmtStat(vsR.iso,'iso')+'</span></div>'+
-          '<div class="split-stat-row"><span class="split-stat-label">SLG</span><span class="split-stat-val">'+fmtStat(vsR.slg,'iso')+'</span></div>'+
-          '<div class="split-stat-row"><span class="split-stat-label">HR</span><span class="split-stat-val">'+(vsR.hr||0)+'</span></div>'+
-          '<div class="split-stat-row"><span class="split-stat-label">HR/600</span><span class="split-stat-val">'+fmtStat(vsR.hr_rate,'')+'</span></div>'
-        :'<div style="color:var(--muted2);font-size:11px">No data</div>')+
-      '</div>'+
-    '</div>'+
-  '</div>'+
-  '</div></div>';
-
-  // Matchup section
-  if(m){
-    var ps = m.pitcher_stats||{};
-    html += '<div class="research-card">'+
-      '<div class="research-card-header">'+
-        '<div class="research-card-title">Today&#39;s Matchup</div>'+
-        '<div class="research-card-badge">'+fmtTime(m.game_time)+' ET · '+m.away_team+' @ '+m.home_team+'</div>'+
-      '</div>'+
-      '<div class="research-card-body">'+
-        '<div class="research-matchup-header" style="margin-bottom:14px">'+
-          '<div>'+
-            '<div class="matchup-pitcher-name">vs '+m.pitcher_name+' <span class="pit-hand '+(m.pitcher_hand==='L'?'lhp':'rhp')+'" style="font-size:11px">'+m.pitcher_hand+'HP</span></div>'+
-            '<div class="matchup-pitcher-sub">'+ps.blend_note+' · '+ps.ip_2026+' IP 2026</div>'+
-          '</div>'+
-        '</div>'+
-        '<div class="research-section-title">Pitcher stats</div>'+
-        '<div class="pit-stat-grid">'+
-          '<div class="pit-stat-block"><div class="pit-stat-lbl">ERA</div><div class="pit-stat-val '+(ps.era>4.5?'svn-danger':ps.era>3.5?'svn-warm':'svn-hot')+'">'+(ps.era||'—')+'</div></div>'+
-          '<div class="pit-stat-block"><div class="pit-stat-lbl">HR/9</div><div class="pit-stat-val '+(ps.hr9>1.5?'svn-danger':ps.hr9>1.1?'svn-warm':'svn-cold')+'">'+(ps.hr9||'—')+'</div></div>'+
-          '<div class="pit-stat-block"><div class="pit-stat-lbl">Hard Hit%</div><div class="pit-stat-val '+(ps.hard_hit_pct>38?'svn-danger':ps.hard_hit_pct>33?'svn-warm':'svn-neutral')+'">'+(ps.hard_hit_pct>0?ps.hard_hit_pct+'%':'—')+'</div></div>'+
-          '<div class="pit-stat-block"><div class="pit-stat-lbl">Brl% allowed</div><div class="pit-stat-val '+(ps.barrel_pct_allowed>9?'svn-danger':ps.barrel_pct_allowed>7?'svn-warm':'svn-neutral')+'">'+(ps.barrel_pct_allowed>0?ps.barrel_pct_allowed+'%':'—')+'</div></div>'+
-        '</div>';
-
-    // Pitch matchup chips
-    if(m.pitch_matchup&&m.pitch_matchup.length){
-      html += '<div class="research-section-title">Pitch matchup — batter vs pitcher&#39;s arsenal</div>'+
-        '<div class="pitch-chip-grid">';
-      m.pitch_matchup.forEach(function(d){
-        var batCls=pcvCls(d.bat_rv), pitCls=pcvCls(d.pit_rv), combCls=pcvCls(d.combined);
-        var bonusStr=d.bonus>0?'+'+d.bonus.toFixed(1):d.bonus.toFixed(1);
-        html += '<div class="pitch-chip">'+
-          '<div class="pitch-chip-name">'+d.name+'</div>'+
-          '<div class="pitch-chip-usage">'+d.usage+'% of pitches</div>'+
-          '<div class="pitch-chip-vals">'+
-            '<div class="pcv"><div class="pcv-lbl">Batter rv</div><div class="pcv-num '+batCls+'">'+(d.bat_rv>0?'+':'')+d.bat_rv+'</div></div>'+
-            '<div class="pcv"><div class="pcv-lbl">Pitcher rv</div><div class="pcv-num '+pitCls+'">'+(d.pit_rv>0?'+':'')+d.pit_rv+'</div></div>'+
-            '<div class="pcv"><div class="pcv-lbl">Combined</div><div class="pcv-num '+combCls+'">'+(d.combined>0?'+':'')+d.combined+'</div></div>'+
-          '</div>'+
-          '<div class="pitch-chip-footer"><span>Score bonus</span><span class="pitch-chip-bonus '+combCls+'">'+bonusStr+' pts</span></div>'+
-        '</div>';
-      });
-      html += '</div>';
-
-      // Batter pitch values not in matchup
-      var matchedCodes = m.pitch_matchup.map(function(d){return d.name.toLowerCase();});
-      var pitchNames = {wfa:'Fastball',wsl:'Slider',wfc:'Cutter',wfs:'Splitter',wsi:'Sinker',wcu:'Curveball',wch:'Changeup'};
-      var otherPitches = Object.keys(bvals).filter(function(k){
-        return bvals[k]!==0 && !matchedCodes.includes((pitchNames[k]||k).toLowerCase());
-      });
-      if(otherPitches.length){
-        html += '<div style="margin-top:10px;padding:10px 12px;background:#0e0e0e;border:1px solid var(--border2);border-radius:8px">'+
-          '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Batter run values vs other pitch types</div>'+
-          '<div style="display:flex;gap:12px;flex-wrap:wrap">';
-        otherPitches.forEach(function(k){
-          var v=bvals[k];
-          var cls=v>=2?'svn-hot':v>=0.5?'svn-warm':v<=-1?'svn-danger':'svn-neutral';
-          html+='<span style="font-size:12px"><span style="color:var(--muted2)">'+(pitchNames[k]||k)+':</span> <span class="'+cls+'" style="font-weight:600">'+(v>0?'+':'')+v+'</span></span>';
-        });
-        html += '</div></div>';
-      }
-    } else {
-      html += '<div style="padding:12px;background:#0e0e0e;border:1px solid var(--border2);border-radius:8px;color:var(--muted2);font-size:12px">'+
-        'No pitch matchup data — pitcher may not be in the pitch mix database yet.</div>';
-
-      // Still show batter pitch values
-      var pitchNames2 = {wfa:'Fastball',wsl:'Slider',wfc:'Cutter',wfs:'Splitter',wsi:'Sinker',wcu:'Curveball',wch:'Changeup'};
-      var hasBatVals = Object.keys(bvals).some(function(k){return bvals[k]!==0;});
-      if(hasBatVals){
-        html += '<div style="margin-top:10px;padding:10px 12px;background:#0e0e0e;border:1px solid var(--border2);border-radius:8px">'+
-          '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Batter run values vs pitch types</div>'+
-          '<div style="display:flex;gap:12px;flex-wrap:wrap">';
-        Object.keys(bvals).forEach(function(k){
-          if(bvals[k]===0) return;
-          var v=bvals[k];
-          var cls=v>=2?'svn-hot':v>=0.5?'svn-warm':v<=-1?'svn-danger':'svn-neutral';
-          html+='<span style="font-size:12px"><span style="color:var(--muted2)">'+(pitchNames2[k]||k)+':</span> <span class="'+cls+'" style="font-weight:600">'+(v>0?'+':'')+v+'</span></span>';
-        });
-        html += '</div></div>';
-      }
-    }
-
-    html += '</div></div>';
-  } else {
-    html += '<div class="research-card">'+
-      '<div class="research-card-header"><div class="research-card-title">Today&#39;s Matchup</div></div>'+
-      '<div class="research-card-body" style="color:var(--muted2);font-size:13px">'+
-        'No game found for '+p.name+' on '+data.date+'. Try a different date using the arrows at the top.'+
-      '</div></div>';
-  }
-
-  return html;
-}
 </script>
 </body>
 </html>
