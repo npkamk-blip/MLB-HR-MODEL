@@ -286,7 +286,6 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 </header>
 <div class="tabs">
   <button class="tab active" id="tab-top" onclick="switchTab('top')">Top Picks</button>
-  <button class="tab" id="tab-lineups" onclick="switchTab('lineups')">Full Lineups</button>
   <button class="tab" id="tab-parlays" onclick="switchTab('parlays')">🎯 Parlays</button>
   <button class="tab" id="tab-research" onclick="switchTab('research')">🔍 Research</button>
 </div>
@@ -330,7 +329,7 @@ updateDateLabel();
 
 // ── Tab switching ──
 function switchTab(tab){
-  ['top','lineups','parlays','research'].forEach(function(t){
+  ['top','parlays','research'].forEach(function(t){
     var tabEl=document.getElementById('tab-'+t);
     var panEl=document.getElementById(t==='top'?'main':t+'-main');
     if(tabEl) tabEl.classList.toggle('active',t===tab);
@@ -421,30 +420,56 @@ function bdPts(val,blue){
   const cls=v<0?'neg':blue?'blue':v===0?'neutral':'';
   return '<span class="bd-pts '+cls+'">'+(v>0?'+':'')+val+'</span>';
 }
+function bdChip(name, season, d14, blended, score, type){
+  function fmt(v){ if(!v||v===0) return '—'; if(type==='pct') return v.toFixed(1)+'%'; if(type==='iso') return '.'+String(Math.round(v*1000)).padStart(3,'0'); if(type==='ang') return v.toFixed(1)+'°'; return v; }
+  function cls(v,lo,mid,hi){ if(!v||v===0) return 'svn-cold'; if(v>=hi) return 'svn-hot'; if(v>=mid) return 'svn-warm'; if(v>=lo) return 'svn-neutral'; return 'svn-cold'; }
+  var thresholds = type==='iso'?[0.08,0.15,0.22]:type==='ang'?[10,15,20]:type==='pct'&&name==='Barrel'?[5,8,12]:[20,35,45];
+  var diff = (d14&&season)?d14-season:0;
+  var pct = season>0?diff/season:0;
+  var trendCls = pct>=0.1?'tr-up':pct<=-0.1?'tr-dn':'tr-flat';
+  var trendTxt = pct>=0.1?'&#8593; Rising':pct<=-0.1?'&#8595; Falling':'Steady';
+  var scoreStr = score>0?'+'+score.toFixed(1):score.toFixed(1);
+  return '<div class="stat-chip">'+
+    '<div class="stat-chip-name">'+name+'</div>'+
+    '<div class="stat-chip-values">'+
+      '<div class="stat-val-block"><div class="stat-val-lbl">Season</div><div class="stat-val-num '+cls(season,...thresholds)+'">'+fmt(season)+'</div></div>'+
+      '<div class="stat-chip-divider"></div>'+
+      '<div class="stat-val-block"><div class="stat-val-lbl">14 Day</div><div class="stat-val-num '+(d14>0?cls(d14,...thresholds):'svn-cold')+'">'+fmt(d14)+'</div></div>'+
+      '<div class="stat-chip-divider"></div>'+
+      '<div class="stat-val-block"><div class="stat-val-lbl">Blended</div><div class="stat-val-num '+cls(blended,...thresholds)+'">'+fmt(blended)+'</div></div>'+
+    '</div>'+
+    '<div class="stat-chip-footer"><span class="stat-chip-score">'+scoreStr+' pts</span><span class="stat-chip-trend '+trendCls+'">'+trendTxt+'</span></div>'+
+  '</div>';
+}
+
 function breakdownHTML(bd,hr_prob){
   if(!bd) return '';
   const pc=probCls(hr_prob);
-  return '<div class="breakdown">' +
-    '<div class="bd-title">HR Probability Breakdown — click to close</div>' +
-    '<div class="bd-section">' +
-      '<div class="bd-section-title">Step 1 — Batter Score · '+(bd.blend_note||'')+'</div>' +
-      '<div class="bd-row"><span class="bd-label">Barrel '+(bd.barrel_s||0)+'%'+(bd.barrel_14d>0?' (season '+(bd.barrel_season||0)+'% + 14d '+(bd.barrel_14d||0)+'%)':'')+'</span>'+bdBar(bd.s1_barrel,25)+bdPts(bd.s1_barrel)+'</div>' +
-      '<div class="bd-row"><span class="bd-label">ISO .'+(String(Math.round((bd.iso_use||0)*1000)).padStart(3,'0'))+(bd.iso_14d>0?' (blended 14d)':'')+'</span>'+bdBar(bd.s1_iso,10)+bdPts(bd.s1_iso)+'</div>' +
-      '<div class="bd-row"><span class="bd-label">FB% '+(bd.fb_s||0)+'%</span>'+bdBar(bd.s1_fb,6)+bdPts(bd.s1_fb)+'</div>' +
-      '<div class="bd-row"><span class="bd-label">Pull% '+(bd.pull_s||0)+'%</span>'+bdBar(bd.s1_pull,5)+bdPts(bd.s1_pull)+'</div>' +
-      '<div class="bd-row"><span class="bd-label">Launch angle '+(bd.la_s||0)+'°</span>'+bdBar(bd.s1_la,4)+bdPts(bd.s1_la)+'</div>' +
-      '<div class="bd-row"><span class="bd-label">HR/FB '+(bd.hr_fb_s||0)+'%</span>'+bdBar(bd.s1_hrfb,5)+bdPts(bd.s1_hrfb)+'</div>' +
-      '<div class="bd-row"><span class="bd-label">14d HR rate '+(bd.hr_rate_14d||0)+'/600 PA</span>'+bdBar(bd.s1_hr14d,5)+bdPts(bd.s1_hr14d)+'</div>' +
-      ((bd.pitch_breakdown||[]).map(function(p){
-        return '<div class="bd-row"><span class="bd-label">Pitch edge: '+p.name+' ('+p.usage+'% usage) — batter rv '+p.bat_rv+' + pitcher rv '+p.pit_rv+'</span>'+bdBar(Math.abs(p.bonus),4,p.bonus<0)+bdPts(p.bonus)+'</div>';
-      }).join('')) +
-      '<div class="bd-subtotal"><span class="bd-subtotal-label">Batter score (inc. pitch edge)</span><span class="bd-subtotal-val">'+(bd.batter_score||0)+'</span></div>' +
-    '</div>' +
-    '<div class="bd-section">' +
-      '<div class="bd-section-title">Step 2 — Pitcher Modifier · '+(bd.pit_blend_note||'')+'</div>' +
-      '<div class="bd-row"><span class="bd-label">HR/9 '+(bd.pit_hr9||0)+' (season '+(bd.hr9_season||0)+' · split '+(bd.hr9_split>0?bd.hr9_split:'—')+' in '+(bd.split_ip||0)+' IP) '+(bd.platoon_magnitude>15?'⚠️ Big platoon edge':bd.platoon_magnitude<-15?'✅ Strong vs this hand':'')+'</span>'+bdBar(Math.abs((bd.pit_modifier||1)-1)*35,10,(bd.pit_modifier||1)<1)+bdPts(bd.pit_modifier||1)+'</div>' +
-      '<div class="bd-row"><span class="bd-label">Hard contact '+(bd.pit_hard>0?bd.pit_hard+'%':'—')+' (avg 32%)</span>'+bdBar(Math.abs((bd.pit_hard||0)-32),15,(bd.pit_hard||0)<32)+'<span class="bd-pts '+((bd.pit_hard||0)>32?'':'neg')+'">'+((bd.pit_hard||0)>0?bd.pit_hard+'%':'—')+'</span></div>' +
-      '<div class="bd-row"><span class="bd-label">Barrel% allowed '+(bd.pit_brl>0?bd.pit_brl+'%':'—')+' (avg 7.5%)</span>'+bdBar(Math.abs((bd.pit_brl||0)-7.5),8,(bd.pit_brl||0)<7.5)+'<span class="bd-pts '+((bd.pit_brl||0)>7.5?'':'neg')+'">'+((bd.pit_brl||0)>0?bd.pit_brl+'%':'—')+'</span></div>' +
+  return '<div class="breakdown">'+
+    '<div class="bd-title">HR Probability Breakdown — click to close</div>'+
+    '<div class="bd-section">'+
+      '<div class="bd-section-title">Step 1 — Batter Score · '+(bd.blend_note||'')+'</div>'+
+      '<div class="stat-chip-grid">'+
+        bdChip('Barrel',(bd.barrel_season||bd.barrel_s||0),bd.barrel_14d,bd.barrel_s,bd.s1_barrel,'pct')+
+        bdChip('ISO',(bd.iso_use||0),bd.iso_14d,bd.iso_use,bd.s1_iso,'iso')+
+        bdChip('FB%',bd.fb_s,0,bd.fb_s,bd.s1_fb,'pct')+
+        bdChip('Pull%',bd.pull_s,0,bd.pull_s,bd.s1_pull,'pct')+
+        bdChip('Launch Angle',bd.la_s,0,bd.la_s,bd.s1_la,'ang')+
+        bdChip('HR/FB',bd.hr_fb_s,0,bd.hr_fb_s,bd.s1_hrfb,'pct')+
+      '</div>'+
+      (bd.s1_hr14d>0?'<div class="bd-row" style="margin-top:8px"><span class="bd-label">14d HR rate '+(bd.hr_rate_14d||0)+'/600 PA ('+( bd.pa_14d||0)+' PA)</span>'+bdBar(bd.s1_hr14d,5)+bdPts(bd.s1_hr14d)+'</div>':'')+
+      ((bd.pitch_breakdown||[]).length>0?'<div class="bd-section-title" style="margin-top:10px">Pitch edge</div>'+
+        (bd.pitch_breakdown||[]).map(function(p){
+          var cls=p.combined>=2?'svn-hot':p.combined>=0.5?'svn-warm':p.combined<=-1?'svn-danger':'svn-neutral';
+          return '<div class="bd-row"><span class="bd-label">'+p.name+' '+p.usage+'% usage — batter rv '+(p.bat_rv>0?'+':'')+p.bat_rv+' / pitcher rv '+(p.pit_rv>0?'+':'')+p.pit_rv+'</span>'+bdBar(Math.abs(p.bonus),4,p.bonus<0)+'<span class="bd-pts '+cls+'">'+(p.bonus>0?'+':'')+p.bonus.toFixed(1)+'</span></div>';
+        }).join(''):'')+
+      '<div class="bd-subtotal"><span class="bd-subtotal-label">Batter score</span><span class="bd-subtotal-val">'+(bd.batter_score||0)+'</span></div>'+
+    '</div>'+
+    '<div class="bd-section">'+
+      '<div class="bd-section-title">Step 2 — Pitcher Modifier · '+(bd.pit_blend_note||'')+'</div>'+
+      '<div class="bd-row"><span class="bd-label">HR/9 '+(bd.pit_hr9||0)+' (season '+(bd.hr9_season||0)+' · split '+(bd.hr9_split>0?bd.hr9_split:'—')+' in '+(bd.split_ip||0)+' IP) '+(bd.platoon_magnitude>15?'⚠️ Big platoon edge':bd.platoon_magnitude<-15?'✅ Strong vs this hand':'')+'</span>'+bdBar(Math.abs((bd.pit_modifier||1)-1)*35,10,(bd.pit_modifier||1)<1)+bdPts(bd.pit_modifier||1)+'</div>'+
+      '<div class="bd-row"><span class="bd-label">Hard contact '+(bd.pit_hard>0?bd.pit_hard+'%':'—')+' (avg 32%)</span>'+bdBar(Math.abs((bd.pit_hard||0)-32),15,(bd.pit_hard||0)<32)+'<span class="bd-pts '+((bd.pit_hard||0)>32?'':\'neg\')'>'+((bd.pit_hard||0)>0?bd.pit_hard+'%':'—')+'</span></div>' +
+      '<div class="bd-row"><span class="bd-label">Barrel% allowed '+(bd.pit_brl>0?bd.pit_brl+'%':'—')+' (avg 7.5%)</span>'+bdBar(Math.abs((bd.pit_brl||0)-7.5),8,(bd.pit_brl||0)<7.5)+'<span class="bd-pts '+((bd.pit_brl||0)>7.5?'':\'neg\')'>'+((bd.pit_brl||0)>0?bd.pit_brl+'%':'—')+'</span></div>' +
       '<div class="bd-row"><span class="bd-label">Components</span>'+bdBar(bd.n_pit_components||0,4,false,true)+'<span class="bd-pts blue">'+(bd.n_pit_components||0)+'/4</span></div>' +
       '<div class="bd-subtotal"><span class="bd-subtotal-label">Pitcher modifier</span><span class="bd-subtotal-val">'+(bd.pit_modifier||1)+'x</span></div>' +
     '</div>' +
@@ -455,9 +480,9 @@ function breakdownHTML(bd,hr_prob){
     '</div>' +
     '<div class="bd-section">' +
       '<div class="bd-section-title">Step 4 — Context</div>' +
-      '<div class="bd-row"><span class="bd-label">Park factor</span>'+bdBar(Math.abs((bd.park_factor||1)-1)*100,15,(bd.park_factor||1)<1)+'<span class="bd-pts '+((bd.park_factor||1)>=1?'':'neg')+'">'+(bd.park_factor||1)+'x</span></div>' +
-      '<div class="bd-row"><span class="bd-label">Weather</span>'+bdBar(Math.abs((bd.weather_mult||1)-1)*100,8,(bd.weather_mult||1)<1)+'<span class="bd-pts '+((bd.weather_mult||1)>=1?'':'neg')+'">'+(bd.weather_mult||1)+'x</span></div>' +
-      '<div class="bd-row"><span class="bd-label">Pitcher modifier</span>'+bdBar(Math.abs((bd.pit_modifier||1)-1)*100,30,(bd.pit_modifier||1)<1)+'<span class="bd-pts '+((bd.pit_modifier||1)>=1?'':'neg')+'">'+(bd.pit_modifier||1)+'x</span></div>' +
+      '<div class="bd-row"><span class="bd-label">Park factor</span>'+bdBar(Math.abs((bd.park_factor||1)-1)*100,15,(bd.park_factor||1)<1)+'<span class="bd-pts '+((bd.park_factor||1)>=1?'':\'neg\')'>'+( bd.park_factor||1)+'x</span></div>' +
+      '<div class="bd-row"><span class="bd-label">Weather</span>'+bdBar(Math.abs((bd.weather_mult||1)-1)*100,8,(bd.weather_mult||1)<1)+'<span class="bd-pts '+((bd.weather_mult||1)>=1?'':\'neg\')'>'+( bd.weather_mult||1)+'x</span></div>' +
+      '<div class="bd-row"><span class="bd-label">Pitcher modifier</span>'+bdBar(Math.abs((bd.pit_modifier||1)-1)*100,30,(bd.pit_modifier||1)<1)+'<span class="bd-pts '+((bd.pit_modifier||1)>=1?'':\'neg\')'>'+( bd.pit_modifier||1)+'x</span></div>' +
       '<div class="bd-subtotal"><span class="bd-subtotal-label">'+(bd.after_k||0)+' × '+(bd.park_factor||1)+' × '+(bd.weather_mult||1)+' × '+(bd.pit_modifier||1)+' = '+(bd.after_context||0)+'</span><span class="bd-subtotal-val">'+(bd.after_context||0)+'</span></div>' +
     '</div>' +
     '<div class="bd-section">' +
@@ -466,11 +491,10 @@ function breakdownHTML(bd,hr_prob){
     '</div>' +
     '<div class="bd-final">' +
       '<div><div class="bd-final-label">HR Probability</div><div style="font-size:10px;color:var(--muted2);margin-top:2px">League avg ~3% · Elite ~20-25%</div></div>' +
-      '<div class="bd-final-prob '+pc+'">'+hr_prob+'%</div>' +
+      '<div class="bd-final-prob '+ pc+'">'+ hr_prob+'%</div>' +
     '</div>' +
   '</div>';
 }
-
 function toggleBreakdown(el){
   const bd=el.nextElementSibling;
   if(bd&&bd.classList.contains('breakdown')) bd.classList.toggle('open');
@@ -712,7 +736,7 @@ async function load(){
       if(!candidates.length){
         html+='<div class="pending">No lineup data available yet.</div>';
       } else {
-        candidates.slice(0,3).forEach(function(b,i){
+        candidates.forEach(function(b,i){
           html+='<div>'+batterRowHTML(b,i+1)+'</div>';
         });
       }
