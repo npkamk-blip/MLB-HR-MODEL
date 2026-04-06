@@ -1162,6 +1162,147 @@ async def get_games(date: str = None):
 
     return {"games":games_out,"date":today,"loading":False}
 
+@app.get("/research")
+async def research(player: str, date: str = None):
+    """Deep dive on one player — all stats + today's matchup"""
+    from datetime import date as date_cls
+    today = date if date else date_cls.today().isoformat()
+
+    if not _cache["ready"]:
+        return {"error": "Data loading — try again in 30 seconds"}
+
+    # ── Batter stats ──
+    bc = get_batter_stats(player, "2026")
+    bp = get_batter_stats(player, "2025")
+    b14 = get_batter_14d(player)
+    pa_26 = bc.get("pa", 0)
+    pa_25 = bp.get("pa", 0)
+    bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
+
+    has_14d = b14.get("pa", 0) >= 5
+    w_s, w_14 = (0.70, 0.30) if has_14d else (1.0, 0.0)
+
+    def blend3(s26, s25, d14):
+        s = blend(s26, s25, bwc, bwp)
+        return round(s * w_s + d14 * w_14, 3) if (has_14d and d14 > 0) else round(s, 3)
+
+    stats = {
+        "name": player,
+        "pa_2026": pa_26,
+        "pa_2025": pa_25,
+        "blend_note": f"{int(bwc*100)}% 2026 / {int(bwp*100)}% 2025",
+        "season": {
+            "barrel_pct": round(blend(bc.get("barrel_pct",0), bp.get("barrel_pct",0), bwc, bwp), 1),
+            "iso": round(blend(bc.get("iso",0), bp.get("iso",0), bwc, bwp), 3),
+            "fb_pct": round(blend(bc.get("fb_pct",0), bp.get("fb_pct",0), bwc, bwp), 1),
+            "pull_pct": round(blend(bc.get("pull_pct",0), bp.get("pull_pct",0), bwc, bwp), 1),
+            "launch_angle": round(blend(bc.get("launch_angle",0), bp.get("launch_angle",0), bwc, bwp), 1),
+            "hr_fb_pct": round(blend(bc.get("hr_fb_pct",0), bp.get("hr_fb_pct",0), bwc, bwp), 1),
+            "k_pct": round(blend(bc.get("k_pct",0), bp.get("k_pct",0), bwc, bwp), 1),
+            "exit_velo": round(blend(bc.get("exit_velo",0), bp.get("exit_velo",0), bwc, bwp), 1),
+        },
+        "season_2026": {
+            "barrel_pct": bc.get("barrel_pct",0),
+            "iso": bc.get("iso",0),
+            "fb_pct": bc.get("fb_pct",0),
+            "pull_pct": bc.get("pull_pct",0),
+            "launch_angle": bc.get("launch_angle",0),
+            "hr_fb_pct": bc.get("hr_fb_pct",0),
+            "k_pct": bc.get("k_pct",0),
+            "exit_velo": bc.get("exit_velo",0),
+        },
+        "last_14d": {
+            "pa": b14.get("pa",0),
+            "hr": b14.get("hr",0),
+            "hr_rate": round(b14.get("hr_rate",0), 1),
+            "barrel_pct": b14.get("barrel_pct",0),
+            "iso": b14.get("iso",0),
+            "fb_pct": b14.get("fb_pct",0),
+            "pull_pct": b14.get("pull_pct",0),
+            "launch_angle": b14.get("la",0),
+            "hr_fb_pct": b14.get("hr_fb_pct",0),
+            "slg": b14.get("slg",0),
+        },
+        "blended": {
+            "barrel_pct": blend3(bc.get("barrel_pct",0), bp.get("barrel_pct",0), b14.get("barrel_pct",0)),
+            "iso": blend3(bc.get("iso",0), bp.get("iso",0), b14.get("iso",0)),
+            "fb_pct": blend3(bc.get("fb_pct",0), bp.get("fb_pct",0), b14.get("fb_pct",0)),
+            "pull_pct": blend3(bc.get("pull_pct",0), bp.get("pull_pct",0), b14.get("pull_pct",0)),
+            "launch_angle": blend3(bc.get("launch_angle",0), bp.get("launch_angle",0), b14.get("la",0)),
+            "hr_fb_pct": blend3(bc.get("hr_fb_pct",0), bp.get("hr_fb_pct",0), b14.get("hr_fb_pct",0)),
+        },
+        "splits": {
+            "vs_lhp": get_batter_split(player, "L"),
+            "vs_rhp": get_batter_split(player, "R"),
+        },
+        "pitch_values": get_batter_pitch_values(player),
+    }
+
+    # ── Today's matchup ──
+    matchup = None
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
+            schedule = r.json()
+        for game_date in schedule.get("dates", []):
+            for game in game_date.get("games", []):
+                for side in ["away", "home"]:
+                    opp_side = "home" if side == "away" else "away"
+                    team = game["teams"][side]["team"]["name"]
+                    opp_p = game["teams"][opp_side].get("probablePitcher", {})
+                    opp_p_name = opp_p.get("fullName", "TBD")
+                    opp_p_id = opp_p.get("id")
+                    opp_p_hand = "R"
+                    if opp_p_id:
+                        info = await fetch_player_hand(opp_p_id)
+                        opp_p_hand = info.get("pitch_hand", "R")
+
+                    # Check if player is on this team via recent lineups
+                    batter_row = fuzzy_match_df(player, _cache["bat_2026"])
+                    if batter_row is None:
+                        batter_row = fuzzy_match_df(player, _cache["bat_2025"])
+
+                    # Get pitcher stats
+                    pc = get_pitcher_stats(opp_p_name, "2026")
+                    pp = get_pitcher_stats(opp_p_name, "2025")
+                    ip_26 = pc.get("ip", 0)
+                    pwc, pwp = get_pitcher_blend_weights(ip_26, pp.get("ip", 0))
+                    p_split = get_pitcher_split(opp_p_name, "L")  # will update with batter hand
+                    pit_values = get_pitcher_pitch_values(opp_p_name)
+                    top_pitches = get_pitcher_top_pitches(opp_p_name)
+                    pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, player)
+
+                    matchup = {
+                        "game_id": game.get("gamePk"),
+                        "home_team": game["teams"]["home"]["team"]["name"],
+                        "away_team": game["teams"]["away"]["team"]["name"],
+                        "game_time": game.get("gameDate", ""),
+                        "pitcher_name": opp_p_name,
+                        "pitcher_hand": opp_p_hand,
+                        "pitcher_stats": {
+                            "era": round(blend(pc.get("era",0), pp.get("era",0), pwc, pwp), 2),
+                            "hr9": round(blend(pc.get("hr9",0), pp.get("hr9",0), pwc, pwp), 2),
+                            "hard_hit_pct": round(blend(pc.get("hard_hit_pct",0), pp.get("hard_hit_pct",0), pwc, pwp), 1),
+                            "barrel_pct_allowed": round(blend(pc.get("barrel_pct_allowed",0), pp.get("barrel_pct_allowed",0), pwc, pwp), 1),
+                            "fb_pct": round(blend(pc.get("fb_pct",0), pp.get("fb_pct",0), pwc, pwp), 1),
+                            "k_pct": round(blend(pc.get("k_pct",0), pp.get("k_pct",0), pwc, pwp), 1),
+                            "ip_2026": ip_26,
+                            "blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025",
+                        },
+                        "pitcher_split": get_pitcher_split(opp_p_name, "L"),
+                        "pitcher_pitch_values": pit_values,
+                        "top_pitches": top_pitches,
+                        "pitch_matchup": pitch_details,
+                        "pitch_bonus": pitch_bonus,
+                    }
+                    break
+            if matchup:
+                break
+    except Exception as e:
+        print(f"Research matchup error: {e}")
+
+    return {"player": stats, "matchup": matchup, "date": today}
+
 @app.post("/refresh-cache")
 def refresh_cache():
     _cache["player_hands"] = {}
