@@ -180,6 +180,37 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 .updated{font-size:11px;color:var(--muted);text-align:center;margin-top:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase}
 .no-games{text-align:center;padding:60px 20px;font-size:14px;color:var(--muted)}
 .pending{font-size:13px;color:var(--muted);padding:14px 20px;font-style:italic}
+/* ── PARLAY TAB ── */
+.parlay-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+@media(max-width:700px){.parlay-grid{grid-template-columns:1fr}}
+.parlay-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.parlay-card-header{padding:14px 18px;border-bottom:1px solid var(--border)}
+.parlay-theme{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.parlay-theme-sub{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4}
+.parlay-leg{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border2)}
+.parlay-leg:last-of-type{border-bottom:none}
+.parlay-leg-left{}
+.parlay-leg-name{font-size:13px;font-weight:500;color:var(--text)}
+.parlay-leg-detail{font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px}
+.parlay-leg-right{text-align:right;flex-shrink:0;margin-left:12px}
+.parlay-leg-prob{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800}
+.parlay-leg-odds{font-size:11px;color:#4dff88;margin-top:1px}
+.parlay-leg-odds.none{color:var(--muted2)}
+.parlay-footer{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:var(--s2);border-top:1px solid var(--border)}
+.parlay-footer-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.parlay-combined-odds{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:#4dff88}
+.parlay-combined-prob{font-size:11px;color:var(--muted);margin-top:2px}
+.parlay-note{font-size:11px;color:var(--muted2);padding:12px 18px;font-style:italic;border-top:1px solid var(--border2)}
+.theme-fire .parlay-theme{color:#ff6b35}
+.theme-fire .parlay-card-header{background:rgba(255,107,53,.06);border-bottom-color:rgba(255,107,53,.2)}
+.theme-platoon .parlay-theme{color:var(--blue)}
+.theme-platoon .parlay-card-header{background:rgba(77,166,255,.06);border-bottom-color:rgba(77,166,255,.2)}
+.theme-conf .parlay-theme{color:var(--accent)}
+.theme-conf .parlay-card-header{background:rgba(200,241,53,.06);border-bottom-color:rgba(200,241,53,.2)}
+.theme-power .parlay-theme{color:var(--purple)}
+.theme-power .parlay-card-header{background:rgba(192,132,252,.06);border-bottom-color:rgba(192,132,252,.2)}
+.parlay-disclaimer{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--muted);line-height:1.6}
+
 @media(max-width:700px){
   .pitchers{grid-template-columns:1fr}
   .pit-block:first-child{border-right:none;border-bottom:1px solid var(--border)}
@@ -204,10 +235,12 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 <div class="tabs">
   <button class="tab active" id="tab-top" onclick="switchTab('top')">Top Picks</button>
   <button class="tab" id="tab-lineups" onclick="switchTab('lineups')">Full Lineups</button>
+  <button class="tab" id="tab-parlays" onclick="switchTab('parlays')">🎯 Parlays</button>
 </div>
 <div class="container">
   <div id="main"></div>
   <div id="lineups-main" style="display:none"></div>
+  <div id="parlays-main" style="display:none"></div>
   <div class="updated" id="upd"></div>
 </div>
 <script>
@@ -217,8 +250,154 @@ document.getElementById('dateLbl').textContent = new Date().toLocaleDateString('
 function switchTab(tab){
   document.getElementById('tab-top').classList.toggle('active',tab==='top');
   document.getElementById('tab-lineups').classList.toggle('active',tab==='lineups');
+  document.getElementById('tab-parlays').classList.toggle('active',tab==='parlays');
   document.getElementById('main').style.display=tab==='top'?'':'none';
   document.getElementById('lineups-main').style.display=tab==='lineups'?'':'none';
+  document.getElementById('parlays-main').style.display=tab==='parlays'?'':'none';
+}
+
+function parlayOdds(probs){
+  const decimal=probs.reduce((acc,p)=>acc*(100/p),1);
+  const american=(decimal-1)*100;
+  return american>=0?'+'+Math.round(american):Math.round(american);
+}
+
+function parlayImplied(probs){
+  const decimal=probs.reduce((acc,p)=>acc*(p/100),1);
+  return (decimal*100).toFixed(1);
+}
+
+function impliedOdds(americanStr){
+  if(!americanStr) return 0;
+  const o=parseInt(americanStr);
+  if(o>0) return 100/(o+100)*100;
+  return Math.abs(o)/(Math.abs(o)+100)*100;
+}
+
+function valueGap(b){
+  if(!b.dk_odds) return 0;
+  return b.hr_prob - impliedOdds(b.dk_odds);
+}
+
+function platoonScore(b){
+  if(!b.platoon_tag) return 0;
+  const bd=b.breakdown||{};
+  const mag=bd.platoon_magnitude||0;
+  return mag>0?mag:0;
+}
+
+function powerScore(b){
+  const bd=b.breakdown||{};
+  return (bd.barrel_s||0)*2 + (bd.s1_hrfb||0)*3;
+}
+
+function confScore(b){
+  const c=b.confidence==='High'?3:b.confidence==='Medium'?2:1;
+  const comp=(b.breakdown&&b.breakdown.n_pit_components||0);
+  return c*3+comp+b.hr_prob/5;
+}
+
+function buildParlayCard(id, themeClass, emoji, title, subtitle, note, picks){
+  const el=document.getElementById(id);
+  if(!picks||picks.length<3){el.innerHTML='<div class="parlay-note">Not enough data for this parlay today.</div>';return;}
+  const legs=picks.slice(0,3);
+  const odds=parlayOdds(legs.map(b=>b.hr_prob));
+  const imp=parlayImplied(legs.map(b=>b.hr_prob));
+  let html=`<div class="parlay-card ${themeClass}">
+    <div class="parlay-card-header">
+      <div class="parlay-theme">${emoji} ${title}</div>
+      <div class="parlay-theme-sub">${subtitle}</div>
+    </div>`;
+  legs.forEach(b=>{
+    const pc=probCls(b.hr_prob);
+    const bd=b.breakdown||{};
+    html+=`<div class="parlay-leg">
+      <div class="parlay-leg-left">
+        <div class="parlay-leg-name">${b.name}</div>
+        <div class="parlay-leg-detail">
+          <span class="hand-tag ${b.bat_hand==='L'?'lhb':'rhb'}" style="font-size:9px">${b.bat_hand}</span>
+          ${b.team} · vs ${b.opp_pitcher||'TBD'}
+          ${b.trend==='Heating Up'?'· 🔥':b.trend==='Cooling Off'?'· ❄️':''}
+        </div>
+      </div>
+      <div class="parlay-leg-right">
+        <div class="parlay-leg-prob ${pc}">${b.hr_prob}%</div>
+        <div class="parlay-leg-odds ${b.dk_odds?'':'none'}">${b.dk_odds||'No odds'}</div>
+      </div>
+    </div>`;
+  });
+  html+=`<div class="parlay-footer">
+    <div>
+      <div class="parlay-footer-label">Combined Odds</div>
+      <div class="parlay-combined-prob">~${imp}% combined probability</div>
+    </div>
+    <div class="parlay-combined-odds">${odds}</div>
+  </div>
+  <div class="parlay-note">${note}</div>
+  </div>`;
+  el.innerHTML=html;
+}
+
+function renderParlays(allBatters){
+  const el=document.getElementById('parlays-main');
+  if(!allBatters||allBatters.length<3){
+    el.innerHTML='<div class="no-games">Not enough data to build parlays.</div>';
+    return;
+  }
+
+  // Deduplicate
+  const seen=new Set();
+  const batters=allBatters.filter(b=>{
+    if(seen.has(b.name)) return false;
+    seen.add(b.name); return true;
+  });
+
+  // Theme 1 — On Fire: Heating Up trend + high HR rate last 14d
+  const onFire=[...batters]
+    .filter(b=>b.trend==='Heating Up'||b.hr_prob>=12)
+    .sort((a,b)=>{
+      const aFire=a.trend==='Heating Up'?5:0;
+      const bFire=b.trend==='Heating Up'?5:0;
+      return (b.hr_prob+bFire)-(a.hr_prob+aFire);
+    });
+
+  // Theme 2 — Platoon Edge: biggest platoon advantage
+  const platoon=[...batters]
+    .filter(b=>b.platoon_tag||b.hr_prob>=10)
+    .sort((a,b)=>{
+      const as=platoonScore(a)+(a.platoon_tag?10:0);
+      const bs=platoonScore(b)+(b.platoon_tag?10:0);
+      return bs-as||b.hr_prob-a.hr_prob;
+    });
+
+  // Theme 3 — High Confidence: best data quality
+  const highConf=[...batters]
+    .sort((a,b)=>confScore(b)-confScore(a));
+
+  // Theme 4 — Power Surge: highest barrel% in good matchups
+  const power=[...batters]
+    .sort((a,b)=>powerScore(b)-powerScore(a)||b.hr_prob-a.hr_prob);
+
+  el.innerHTML=`
+    <div class="parlay-disclaimer">
+      ⚠️ Parlays are for entertainment. All 3 legs must hit. Individual bets on strong picks offer better long-term value.
+      Odds shown are model-implied — check BetRivers for actual posted lines.
+    </div>
+    <div class="parlay-grid">
+      <div id="p-fire"></div>
+      <div id="p-platoon"></div>
+      <div id="p-conf"></div>
+      <div id="p-power"></div>
+    </div>`;
+
+  buildParlayCard('p-fire','theme-fire','🔥','On Fire','Hottest recent form picks',
+    'These batters are heating up — elevated HR rate and positive trend over last 14 days.',onFire);
+  buildParlayCard('p-platoon','theme-platoon','⚔️','Platoon Edge','Pitcher weak vs this hand',
+    'Pitchers with significant splits against the batter's handedness — model weights these heavily.',platoon);
+  buildParlayCard('p-conf','theme-conf','🔒','High Confidence','Best data quality picks',
+    'High confidence rating means full stat profile + confirmed lineup + strong pitcher data.',highConf);
+  buildParlayCard('p-power','theme-power','💣','Power Surge','Elite barrel rate matchups',
+    'Highest barrel rate batters facing pitchers that allow hard contact — pure power plays.',power);
 }
 
 function probCls(p){ return p>=15?'p-high':p>=9?'p-med':'p-low'; }
@@ -542,6 +721,15 @@ async function load(){
     }
     main.innerHTML=html;
     renderLineups(games);
+
+    // Build parlay pool from all batters across all games
+    const allBatters=[];
+    for(const g of games){
+      const all=[...(g.away_lineup||[]),...(g.home_lineup||[]),...(g.top_hr_candidates||[])];
+      allBatters.push(...all);
+    }
+    renderParlays(allBatters);
+
     upd.textContent='Updated '+new Date().toLocaleTimeString()+' · '+data.date;
   } catch(e){
     main.innerHTML=`<div class="err"><strong>Error:</strong> ${e.message}</div>`;
