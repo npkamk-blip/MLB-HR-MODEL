@@ -44,11 +44,11 @@ def current_season():
     # MLB season runs roughly March-November
     return today.year if today.month >= 3 else today.year - 1
 
-def savant_14d_url():
-    cutoff = (date.today() - timedelta(days=14)).isoformat()
+def savant_8d_url():
+    cutoff = (date.today() - timedelta(days=8)).isoformat()
     yr = current_season()
     return (f"{SAVANT_BASE}/leaderboard/custom?year={yr}&type=batter&filter=&sort=4"
-            f"&sortDir=desc&min=5&selections=pa,ab,home_run,barrel_batted_rate,"
+            f"&sortDir=desc&min=3&selections=pa,ab,home_run,barrel_batted_rate,"
             f"exit_velocity_avg,launch_angle_avg,hard_hit_percent,pull_percent,"
             f"slg_percent,batting_avg,strikeout,k_percent&csv=true"
             f"&game_date_gt={cutoff}")
@@ -56,20 +56,21 @@ def savant_14d_url():
 _cache = {
     "bat_2026":     pd.DataFrame(),
     "bat_2025":     pd.DataFrame(),
-    "bat_14d":      pd.DataFrame(),
+    "bat_8d":       pd.DataFrame(),
+    "bat_l5g":      {},
     "bat_vs_lhp":   pd.DataFrame(),
     "bat_vs_rhp":   pd.DataFrame(),
     "pit_2026":     pd.DataFrame(),
     "pit_2025":     pd.DataFrame(),
     "pit_vs_lhh":   pd.DataFrame(),
     "pit_vs_rhh":   pd.DataFrame(),
-    "pit_arsenal":  pd.DataFrame(),  # pitcher pitch usage + run values
-    "bat_arsenal":  pd.DataFrame(),  # batter vs pitch type run values
+    "pit_arsenal":  pd.DataFrame(),
+    "bat_arsenal":  pd.DataFrame(),
     "player_hands": {},
-    "player_ip":    {},  # pitcher IP from MLB Stats API
+    "player_ip":    {},
     "ready":        False,
     "last_updated": None,
-    "last_14d_update": None,
+    "last_8d_update": None,
 }
 
 PARK_HR_FACTORS = {
@@ -235,11 +236,9 @@ def calc_pitcher_stats(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 async def fetch_pitcher_ip(season=2026):
-    """Fetch pitcher IP and HR/9 from MLB Stats API — uses full /stats endpoint to capture all pitchers including early-season starters"""
+    """Fetch pitcher IP/HR9/ERA from MLB Stats API — /stats endpoint first to capture all pitchers"""
     try:
         ip_map = {}
-
-        # Primary: full stats endpoint — captures ALL pitchers with any IP (no leaders threshold)
         print("Fetching pitcher stats from MLB Stats API /stats endpoint...")
         url = f"{MLB_API}/stats?stats=season&group=pitching&gameType=R&season={season}&playerPool=All&limit=2000"
         async with httpx.AsyncClient(timeout=30) as client:
@@ -251,28 +250,18 @@ async def fetch_pitcher_ip(season=2026):
                 name = person.get("fullName", "")
                 stat = split.get("stat", {})
                 ip_str = stat.get("inningsPitched", "0") or "0"
-                try:
-                    ip = float(ip_str)
-                except:
-                    ip = 0
+                try: ip = float(ip_str)
+                except: ip = 0
                 hr9_str = stat.get("homeRunsPer9", "0") or "0"
-                try:
-                    hr9 = float(hr9_str)
-                except:
-                    hr9 = 0
+                try: hr9 = float(hr9_str)
+                except: hr9 = 0
                 era_str = stat.get("era", "0") or "0"
-                try:
-                    era = float(era_str)
-                except:
-                    era = 0
+                try: era = float(era_str)
+                except: era = 0
                 if name:
-                    ip_map[name.lower()] = {
-                        "ip": ip, "hr9": hr9, "era": era, "name": name
-                    }
-
+                    ip_map[name.lower()] = {"ip": ip, "hr9": hr9, "era": era, "name": name}
         print(f"Fetched IP data for {len(ip_map)} pitchers from MLB Stats API")
-
-        # Supplemental: leaders endpoint to fill any gaps (e.g. ERA/HR9 for high-IP pitchers)
+        # Supplemental leaders fallback if stats endpoint is sparse
         if len(ip_map) < 5:
             print("Stats endpoint sparse, supplementing with leaders endpoint...")
             url2 = (f"{MLB_API}/stats/leaders?leaderCategories=inningsPitched"
@@ -288,10 +277,47 @@ async def fetch_pitcher_ip(season=2026):
                     nl = name.lower()
                     if name and nl not in ip_map:
                         ip_map[nl] = {"ip": ip, "hr9": 0, "era": 0, "name": name}
-
         return ip_map
     except Exception as e:
         print(f"MLB Stats IP fetch error: {e}")
+        import traceback; traceback.print_exc()
+        return {}
+
+async def fetch_last5_games_batting():
+    """Fetch last 5 games batting stats from MLB Stats API for all active hitters"""
+    try:
+        url = (f"{MLB_API}/stats?stats=lastXGames&group=hitting&gameType=R"
+               f"&season={current_season()}&playerPool=All&limit=2000&sitCodes=last5")
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(url)
+            data = r.json()
+        l5g_map = {}
+        for stat_group in data.get("stats", []):
+            for split in stat_group.get("splits", []):
+                person = split.get("player", {})
+                name = person.get("fullName", "")
+                stat = split.get("stat", {})
+                if not name: continue
+                try:
+                    ab = int(stat.get("atBats", 0) or 0)
+                    hr = int(stat.get("homeRuns", 0) or 0)
+                    slg_str = stat.get("slg", "0") or "0"
+                    slg = float(slg_str) if slg_str not in (".---", "", None) else 0.0
+                    avg_str = stat.get("avg", "0") or "0"
+                    avg = float(avg_str) if avg_str not in (".---", "", None) else 0.0
+                    pa = int(stat.get("plateAppearances", 0) or 0)
+                    so = int(stat.get("strikeOuts", 0) or 0)
+                    iso = round(slg - avg, 3) if slg > 0 else 0.0
+                    l5g_map[name.lower()] = {
+                        "name": name, "ab": ab, "pa": pa,
+                        "hr": hr, "slg": slg, "avg": avg, "iso": iso,
+                        "k_pct": round(so / max(pa, 1) * 100, 1) if pa > 0 else 0.0,
+                    }
+                except Exception: continue
+        print(f"Fetched last-5-games stats for {len(l5g_map)} batters")
+        return l5g_map
+    except Exception as e:
+        print(f"Last 5 games fetch error: {e}")
         import traceback; traceback.print_exc()
         return {}
 
@@ -313,11 +339,11 @@ async def load_all_savant_data():
             _cache["bat_2025"] = calc_batter_stats(df)
             print(f"bat_2025: {len(_cache['bat_2025'])} rows")
 
-        # Batter 14d
-        df = await fetch_savant_csv(savant_14d_url(), client)
+        # Batter 8d
+        df = await fetch_savant_csv(savant_8d_url(), client)
         if not df.empty:
-            _cache["bat_14d"] = calc_batter_stats(df)
-            print(f"bat_14d: {len(_cache['bat_14d'])} rows")
+            _cache["bat_8d"] = calc_batter_stats(df)
+            print(f"bat_8d: {len(_cache['bat_8d'])} rows")
 
         # Batter vs LHP
         df = await fetch_savant_csv(savant_batter_url(min_pa=5, extra="&pitchHand=L"), client)
@@ -371,30 +397,36 @@ async def load_all_savant_data():
     ip_data = await fetch_pitcher_ip(current_season())
     _cache["player_ip"] = ip_data
 
+    # Last 5 games batting from MLB Stats API
+    l5g_data = await fetch_last5_games_batting()
+    _cache["bat_l5g"] = l5g_data
+
     _cache["last_updated"] = datetime.now().isoformat()
     _cache["ready"] = True
     print("All data loaded successfully!")
 
-async def refresh_14d():
-    """Refresh just the 14-day data — runs more frequently"""
+async def refresh_8d():
+    """Refresh 8-day Savant data and last-5-games MLB API data"""
     async with httpx.AsyncClient(timeout=30) as client:
-        df = await fetch_savant_csv(savant_14d_url(), client)
+        df = await fetch_savant_csv(savant_8d_url(), client)
         if not df.empty:
-            _cache["bat_14d"] = calc_batter_stats(df)
-            _cache["last_14d_update"] = datetime.now().isoformat()
-            print(f"14d refreshed: {len(df)} rows")
+            _cache["bat_8d"] = calc_batter_stats(df)
+            print(f"bat_8d refreshed: {len(df)} rows")
+    l5g_data = await fetch_last5_games_batting()
+    if l5g_data:
+        _cache["bat_l5g"] = l5g_data
+        print(f"bat_l5g refreshed: {len(l5g_data)} players")
+    _cache["last_8d_update"] = datetime.now().isoformat()
 
 async def daily_refresh_loop():
-    """Run in background — refresh all data daily at 9am, 14d every 2 hours"""
+    """Run in background — refresh all data daily at 9am, 8d every 2 hours"""
     while True:
         now = datetime.now()
-        # Refresh 14d every 2 hours
         await asyncio.sleep(7200)
         try:
-            await refresh_14d()
+            await refresh_8d()
         except Exception as e:
-            print(f"14d refresh error: {e}")
-        # Full refresh at 9am
+            print(f"8d refresh error: {e}")
         if now.hour == 9:
             try:
                 await load_all_savant_data()
@@ -467,8 +499,8 @@ def get_batter_stats(name, year=2026):
         "hr": gs(row, "hr"),
     }
     return stats
-def get_batter_14d(name):
-    df = _cache["bat_14d"]
+def get_batter_8d(name):
+    df = _cache["bat_8d"]
     row = fuzzy_match(name, df)
     if row is None:
         return {}
@@ -477,22 +509,26 @@ def get_batter_14d(name):
     slg = gs(row, "slg_percent")
     avg = gs(row, "batting_avg")
     iso = slg - avg if slg > 0 else 0
-    stats = {
-        "pa": pa,
-        "hr": hr,
+    return {
+        "pa": pa, "hr": hr,
         "barrel_pct": gs(row, "barrel_pct"),
         "exit_velo": gs(row, "exit_velo"),
         "launch_angle": gs(row, "launch_angle"),
         "hard_hit_pct": gs(row, "hard_hit_pct"),
         "pull_pct": gs(row, "pull_pct"),
-        "fb_pct": gs(row, "fb_pct"),
-        "iso": iso,
-        "k_pct": gs(row, "k_pct"),
-        "hr_fb_pct": gs(row, "hr_fb_pct"),
+        "iso": iso, "k_pct": gs(row, "k_pct"),
         "slg": slg,
         "hr_rate": (hr / max(pa, 1)) * 600 if pa > 0 else 0,
     }
-    return stats
+
+def get_batter_l5g(name):
+    nl = name.lower().strip()
+    data = _cache["bat_l5g"]
+    if nl in data: return data[nl]
+    last = nl.split()[-1]
+    for k, v in data.items():
+        if last in k: return v
+    return {}
 
 def get_batter_split(name, pit_hand):
     df = _cache["bat_vs_lhp"] if pit_hand == "L" else _cache["bat_vs_rhp"]
@@ -549,11 +585,9 @@ def get_pitcher_split(name, vs_hand):
         return {}
     pa = gs(row, "pa")
     hr = gs(row, "hr")
-    ip = pa / 4.0  # approximate IP from PA
+    ip = pa / 4.0
     return {
-        "pa": pa,
-        "ip": round(ip, 1),
-        "hr": hr,
+        "pa": pa, "ip": round(ip, 1), "hr": hr,
         "hard_hit_pct": gs(row, "hard_hit_pct"),
         "barrel_pct": gs(row, "barrel_pct_allowed"),
         "k_pct": gs(row, "k_pct"),
@@ -697,26 +731,26 @@ def get_archetype(barrel_pct, k_pct, fb_pct, iso):
     elif k_pct >= 28: return "High K"
     else: return "Contact"
 
-def get_trend(b14, bc):
-    if not b14 or b14.get("pa", 0) < 5: return "Steady"
+def get_trend(b8d, bc):
+    if not b8d or b8d.get("pa", 0) < 3: return "Steady"
     score = 0
-    hr_rate = b14.get("hr_rate", 0)
+    hr_rate = b8d.get("hr_rate", 0)
     if hr_rate > 25: score += 2
     elif hr_rate > 12: score += 1
-    elif hr_rate == 0 and b14.get("pa", 0) >= 15: score -= 1
-    brl_14 = b14.get("barrel_pct", 0)
+    elif hr_rate == 0 and b8d.get("pa", 0) >= 10: score -= 1
+    brl_8d = b8d.get("barrel_pct", 0)
     brl_s = bc.get("barrel_pct", 0)
-    if brl_14 > 0 and brl_s > 0:
-        diff = brl_14 - brl_s
+    if brl_8d > 0 and brl_s > 0:
+        diff = brl_8d - brl_s
         if diff >= 5: score += 2
         elif diff >= 2: score += 1
         elif diff <= -5: score -= 2
         elif diff <= -2: score -= 1
-    iso_14 = b14.get("iso", 0)
+    iso_8d = b8d.get("iso", 0)
     iso_s = bc.get("iso", 0)
-    if iso_14 > 0 and iso_s > 0:
-        if iso_14 - iso_s >= 0.080: score += 1
-        elif iso_14 - iso_s <= -0.080: score -= 1
+    if iso_8d > 0 and iso_s > 0:
+        if iso_8d - iso_s >= 0.080: score += 1
+        elif iso_8d - iso_s <= -0.080: score -= 1
     if score >= 2: return "Heating Up"
     elif score <= -2: return "Cooling Off"
     return "Steady"
@@ -724,53 +758,50 @@ def get_trend(b14, bc):
 def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult):
     bc = get_batter_stats(name, 2026)
     bp = get_batter_stats(name, 2025)
-    b14 = get_batter_14d(name)
+    b8d = get_batter_8d(name)
     b_split = get_batter_split(name, opp_p_hand)
 
     pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
     bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
-    has_14d = b14.get("pa", 0) >= 5
-    w_s = 0.70 if has_14d else 1.0
-    w_14 = 0.30 if has_14d else 0.0
+    has_8d = b8d.get("pa", 0) >= 3
+    w_s = 0.70 if has_8d else 1.0
+    w_8 = 0.30 if has_8d else 0.0
 
-    def blend3(s26, s25, d14):
+    def blend3(s26, s25, d8):
         s = blend(s26, s25, bwc, bwp)
-        return round(s * w_s + d14 * w_14, 2) if (has_14d and d14 > 0) else round(s, 2)
+        return round(s * w_s + d8 * w_8, 2) if (has_8d and d8 > 0) else round(s, 2)
 
-    barrel_s = blend3(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), b14.get("barrel_pct", 0))
-    fb_s = blend3(bc.get("fb_pct", 0), bp.get("fb_pct", 0), b14.get("fb_pct", 0))
-    pull_s = blend3(bc.get("pull_pct", 0), bp.get("pull_pct", 0), b14.get("pull_pct", 0))
-    la_s = blend3(bc.get("launch_angle", 0), bp.get("launch_angle", 0), b14.get("launch_angle", 0))
-    k_s = blend3(bc.get("k_pct", 0), bp.get("k_pct", 0), 0)
-    hr_fb_s = blend3(bc.get("hr_fb_pct", 0), bp.get("hr_fb_pct", 0), b14.get("hr_fb_pct", 0))
+    barrel_s = blend3(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), b8d.get("barrel_pct", 0))
+    fb_s     = blend3(bc.get("fb_pct", 0), bp.get("fb_pct", 0), 0)
+    pull_s   = blend3(bc.get("pull_pct", 0), bp.get("pull_pct", 0), b8d.get("pull_pct", 0))
+    la_s     = blend3(bc.get("launch_angle", 0), bp.get("launch_angle", 0), b8d.get("launch_angle", 0))
+    k_s      = blend3(bc.get("k_pct", 0), bp.get("k_pct", 0), 0)
+    hr_fb_s  = 0
 
-    iso_split = b_split.get("iso", 0) if b_split.get("pa", 0) >= 20 else 0
+    iso_split  = b_split.get("iso", 0) if b_split.get("pa", 0) >= 20 else 0
     iso_season = blend(bc.get("iso", 0), bp.get("iso", 0), bwc, bwp)
-    iso_base = iso_split if iso_split > 0 else iso_season
-    iso_14d = b14.get("iso", 0) if has_14d else 0
-    iso_use = round(iso_base * w_s + iso_14d * w_14, 3) if iso_14d > 0 else iso_base
+    iso_base   = iso_split if iso_split > 0 else iso_season
+    iso_8d     = b8d.get("iso", 0) if has_8d else 0
+    iso_use    = round(iso_base * w_s + iso_8d * w_8, 3) if iso_8d > 0 else iso_base
 
-    hr_rate_14d = b14.get("hr_rate", 0)
+    hr_rate_8d    = b8d.get("hr_rate", 0)
     barrel_season = blend(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), bwc, bwp)
-    barrel_14d_raw = b14.get("barrel_pct", 0)
-    trend = get_trend(b14, bc)
+    barrel_8d_raw = b8d.get("barrel_pct", 0)
+    trend = get_trend(b8d, bc)
 
     pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
 
     # Step 1 — Batter score
-    # FB% and HR/FB unavailable — weight redistributed:
-    # Barrel 25->30, ISO 10->14, Pull 5->8, LA 4->9
     s1_barrel = round(min(barrel_s / 15.0, 1.0) * 30, 2)
     s1_iso    = round(min(iso_use / 0.280, 1.0) * 14, 2)
     s1_fb     = 0
     s1_pull   = round(min(pull_s / 50.0, 1.0) * 8, 2)
     s1_la     = round(min(max(la_s - 10, 0) / 20.0, 1.0) * 9, 2) if la_s > 0 else 0
     s1_hrfb   = 0
-    s1_hr14d  = round(min(hr_rate_14d / 40.0, 1.0) * 5, 2) if has_14d and b14.get("pa", 0) >= 15 else 0
+    s1_hr8d   = round(min(hr_rate_8d / 40.0, 1.0) * 5, 2) if has_8d and b8d.get("pa", 0) >= 10 else 0
 
-    batter_score = s1_barrel + s1_iso + s1_fb + s1_pull + s1_la + s1_hrfb + s1_hr14d + pitch_bonus
+    batter_score = s1_barrel + s1_iso + s1_pull + s1_la + s1_hr8d + pitch_bonus
 
-    # PA dampener
     total_pa = pa_26 + pa_25
     if total_pa < 30: batter_score *= 0.55
     elif total_pa < 60: batter_score *= 0.75
@@ -784,30 +815,29 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, 
     ip_26 = pc.get("ip", 0); ip_25 = pp.get("ip", 0)
     pwc, pwp = get_pitcher_blend_weights(ip_26, ip_25)
 
-    p_split = get_pitcher_split(opp_p_name, bat_hand)
+    p_split  = get_pitcher_split(opp_p_name, bat_hand)
     split_ip = p_split.get("ip", 0)
 
     hr9_season = blend(pc.get("hr9", 0), pp.get("hr9", 0), pwc, pwp)
-    hr9_split = p_split.get("hr9", 0) if split_ip >= 5 else 0
+    hr9_split  = p_split.get("hr9", 0) if split_ip >= 5 else 0
 
     if hr9_split > 0 and hr9_season > 0:
-        split_ratio = hr9_split / hr9_season
+        split_ratio  = hr9_split / hr9_season
         split_weight = min(split_ip / 30.0, 0.80)
-        pit_hr9 = hr9_season * (1 - split_weight) + hr9_split * split_weight
+        pit_hr9      = hr9_season * (1 - split_weight) + hr9_split * split_weight
         platoon_magnitude = round((split_ratio - 1.0) * 100, 1)
     else:
         pit_hr9 = hr9_season
         platoon_magnitude = 0.0
 
     pit_hard = blend(pc.get("hard_hit_pct", 0), pp.get("hard_hit_pct", 0), pwc, pwp)
-    pit_brl = blend(pc.get("barrel_pct_allowed", 0), pp.get("barrel_pct_allowed", 0), pwc, pwp)
-    pit_fb = blend(pc.get("fb_pct", 0), pp.get("fb_pct", 0), pwc, pwp)
-    pit_k = blend(pc.get("k_pct", 0), pp.get("k_pct", 0), pwc, pwp)
+    pit_brl  = blend(pc.get("barrel_pct_allowed", 0), pp.get("barrel_pct_allowed", 0), pwc, pwp)
+    pit_fb   = blend(pc.get("fb_pct", 0), pp.get("fb_pct", 0), pwc, pwp)
 
-    m_hr9 = 1.0 + (pit_hr9 - 1.15) / 1.15 * 0.40 if pit_hr9 > 0 else 1.0
+    m_hr9  = 1.0 + (pit_hr9 - 1.15) / 1.15 * 0.40 if pit_hr9 > 0 else 1.0
     m_hard = 1.0 + (pit_hard - 32.0) / 32.0 * 0.25 if pit_hard > 0 else 1.0
-    m_brl = 1.0 + (pit_brl - 7.5) / 7.5 * 0.20 if pit_brl > 0 else 1.0
-    m_fb = 1.0 + (pit_fb - 36.0) / 36.0 * 0.15 if pit_fb > 0 else 1.0
+    m_brl  = 1.0 + (pit_brl - 7.5) / 7.5 * 0.20  if pit_brl > 0 else 1.0
+    m_fb   = 1.0 + (pit_fb - 36.0) / 36.0 * 0.15  if pit_fb > 0 else 1.0
 
     components = [(m_hr9, 0.40, pit_hr9 > 0), (m_hard, 0.25, pit_hard > 0),
                   (m_brl, 0.20, pit_brl > 0), (m_fb, 0.15, pit_fb > 0)]
@@ -833,18 +863,17 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, 
     # Step 5 — Sigmoid
     hr_prob = sigmoid_to_prob(after_context)
 
-    # Platoon tag
     platoon_tag = None
     if split_ip >= 5 and hr9_split > 0 and hr9_season > 0:
         split_ratio = hr9_split / hr9_season
-        hand_label = "LHB" if bat_hand == "L" else "RHB"
+        hand_label  = "LHB" if bat_hand == "L" else "RHB"
         if split_ratio >= 1.3:
             platoon_tag = f"SP weak vs {hand_label} ({hr9_split:.1f} HR/9)"
         elif split_ratio <= 0.7:
             platoon_tag = f"SP strong vs {hand_label} ({hr9_split:.1f} HR/9)"
 
-    conf = "High" if n_components >= 3 and pa_26 >= 50 else "Medium" if n_components >= 2 else "Low"
-    blend_note = f"{int(bwc*100)}% 2026/{int(bwp*100)}% 2025" + (" + 30% 14d" if has_14d else "")
+    conf       = "High" if n_components >= 3 and pa_26 >= 50 else "Medium" if n_components >= 2 else "Low"
+    blend_note = f"{int(bwc*100)}% 2026/{int(bwp*100)}% 2025" + (" + 30% 8d" if has_8d else "")
 
     reasons = []
     if barrel_s > 10: reasons.append(f"Barrel {barrel_s:.1f}%")
@@ -856,19 +885,17 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, 
 
     breakdown = {
         "barrel_s": round(barrel_s, 1), "s1_barrel": s1_barrel,
-        "barrel_season": round(barrel_season, 1), "barrel_14d": round(barrel_14d_raw, 1),
-        "iso_use": round(iso_use, 3), "s1_iso": s1_iso,
-        "iso_14d": round(iso_14d, 3),
-        "pull_14d": round(b14.get("pull_pct", 0), 1),
-        "la_14d": round(b14.get("launch_angle", 0), 1),
-        "hr_fb_14d": round(b14.get("hr_fb_pct", 0), 1),
-        "pa_14d": int(b14.get("pa", 0)),
+        "barrel_season": round(barrel_season, 1), "barrel_8d": round(barrel_8d_raw, 1),
+        "iso_use": round(iso_use, 3), "s1_iso": s1_iso, "iso_8d": round(iso_8d, 3),
+        "pull_8d": round(b8d.get("pull_pct", 0), 1),
+        "la_8d": round(b8d.get("launch_angle", 0), 1),
+        "pa_8d": int(b8d.get("pa", 0)),
         "fb_s": round(fb_s, 1), "s1_fb": s1_fb,
         "pull_s": round(pull_s, 1), "s1_pull": s1_pull,
         "la_s": round(la_s, 1), "s1_la": s1_la,
         "hr_fb_s": round(hr_fb_s, 1), "s1_hrfb": s1_hrfb,
-        "hr_rate_14d": round(hr_rate_14d, 1), "s1_hr14d": s1_hr14d,
-        "has_14d": has_14d, "batter_score": round(batter_score, 1),
+        "hr_rate_8d": round(hr_rate_8d, 1), "s1_hr8d": s1_hr8d,
+        "has_8d": has_8d, "batter_score": round(batter_score, 1),
         "k_s": round(k_s, 1), "k_cap": k_cap,
         "pit_hr9": round(pit_hr9, 2), "pit_hard": round(pit_hard, 1),
         "pit_brl": round(pit_brl, 1), "pit_modifier": pit_modifier,
@@ -1026,12 +1053,12 @@ def pit_display(p_name, p_hand):
         "blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025",
         "vs_L_hr9": round(vs_L.get("hr9", 0), 2) if vs_L.get("pa", 0) >= 1 else None,
         "vs_R_hr9": round(vs_R.get("hr9", 0), 2) if vs_R.get("pa", 0) >= 1 else None,
-        "vs_L_hh": round(vs_L.get("hard_hit_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
-        "vs_R_hh": round(vs_R.get("hard_hit_pct", 0), 1) if vs_R.get("pa", 0) >= 1 else None,
+        "vs_L_hh":  round(vs_L.get("hard_hit_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
+        "vs_R_hh":  round(vs_R.get("hard_hit_pct", 0), 1) if vs_R.get("pa", 0) >= 1 else None,
         "vs_L_brl": round(vs_L.get("barrel_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
         "vs_R_brl": round(vs_R.get("barrel_pct", 0), 1) if vs_R.get("pa", 0) >= 1 else None,
-        "vs_L_k": round(vs_L.get("k_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
-        "vs_R_k": round(vs_R.get("k_pct", 0), 1) if vs_R.get("pa", 0) >= 1 else None,
+        "vs_L_k":   round(vs_L.get("k_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
+        "vs_R_k":   round(vs_R.get("k_pct", 0), 1) if vs_R.get("pa", 0) >= 1 else None,
         "top_pitches": [{"name": p["name"], "usage": p["usage"]} for p in top_pitches],
     }
 
@@ -1050,10 +1077,11 @@ def status():
     return {
         "ready": _cache["ready"],
         "last_updated": _cache["last_updated"],
-        "last_14d_update": _cache["last_14d_update"],
+        "last_8d_update": _cache["last_8d_update"],
         "bat_2026": len(_cache["bat_2026"]),
         "bat_2025": len(_cache["bat_2025"]),
-        "bat_14d": len(_cache["bat_14d"]),
+        "bat_8d": len(_cache["bat_8d"]),
+        "bat_l5g": len(_cache["bat_l5g"]),
         "bat_vs_lhp": len(_cache["bat_vs_lhp"]),
         "bat_vs_rhp": len(_cache["bat_vs_rhp"]),
         "pit_2026": len(_cache["pit_2026"]),
@@ -1063,7 +1091,6 @@ def status():
         "pit_arsenal": len(_cache["pit_arsenal"]),
         "bat_arsenal": len(_cache["bat_arsenal"]),
         "player_ip": len(_cache["player_ip"]),
-
     }
 
 @app.post("/reload")
@@ -1159,7 +1186,8 @@ async def get_games(date: str = None):
             bp = get_batter_stats(name, 2025)
             pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
             bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
-            b14 = get_batter_14d(name)
+            b8d = get_batter_8d(name)
+            bl5g = get_batter_l5g(name)
 
             all_batters.append({
                 "name": name, "team": team, "hr_prob": hr_prob,
@@ -1167,15 +1195,29 @@ async def get_games(date: str = None):
                 "reasons": reasons, "opp_pitcher": opp_p_name,
                 "bat_hand": bat_hand, "opp_p_hand": opp_p_hand,
                 "park_factor": round(park_factor, 2),
-                "statline": {
+                "season": {
                     "barrel": round(blend(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), bwc, bwp), 1),
-                    "ev": round(blend(bc.get("exit_velo", 0), bp.get("exit_velo", 0), bwc, bwp), 1),
-                    "iso": round(blend(bc.get("iso", 0), bp.get("iso", 0), bwc, bwp), 3),
-                    "hr_fb": round(blend(bc.get("hr_fb_pct", 0), bp.get("hr_fb_pct", 0), bwc, bwp), 1),
+                    "ev":     round(blend(bc.get("exit_velo", 0), bp.get("exit_velo", 0), bwc, bwp), 1),
+                    "la":     round(blend(bc.get("launch_angle", 0), bp.get("launch_angle", 0), bwc, bwp), 1),
+                    "hh":     round(blend(bc.get("hard_hit_pct", 0), bp.get("hard_hit_pct", 0), bwc, bwp), 1),
+                    "iso":    round(blend(bc.get("iso", 0), bp.get("iso", 0), bwc, bwp), 3),
+                    "k":      round(blend(bc.get("k_pct", 0), bp.get("k_pct", 0), bwc, bwp), 1),
                 },
-                "recent_hr": int(b14.get("hr", 0)),
-                "recent_pa": int(b14.get("pa", 0)),
-                "recent_slg": round(b14.get("slg", 0), 3),
+                "l8d": {
+                    "pa":     int(b8d.get("pa", 0)),
+                    "barrel": round(b8d.get("barrel_pct", 0), 1),
+                    "ev":     round(b8d.get("exit_velo", 0), 1),
+                    "la":     round(b8d.get("launch_angle", 0), 1),
+                    "hh":     round(b8d.get("hard_hit_pct", 0), 1),
+                    "iso":    round(b8d.get("iso", 0), 3),
+                },
+                "l5g": {
+                    "ab":  int(bl5g.get("ab", 0)),
+                    "hr":  int(bl5g.get("hr", 0)),
+                    "slg": round(bl5g.get("slg", 0), 3),
+                    "avg": round(bl5g.get("avg", 0), 3),
+                    "iso": round(bl5g.get("iso", 0), 3),
+                },
                 "dk_odds": fmt_odds(match_dk_odds(name, dk_props)),
                 "projected": is_proj, "platoon_tag": platoon_tag,
                 "breakdown": breakdown,
@@ -1214,28 +1256,29 @@ async def research(player: str, date: str = None):
 
     bc = get_batter_stats(player, 2026)
     bp = get_batter_stats(player, 2025)
-    b14 = get_batter_14d(player)
+    b8d = get_batter_8d(player)
+    bl5g = get_batter_l5g(player)
     pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
     bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
-    has_14d = b14.get("pa", 0) >= 5
-    w_s, w_14 = (0.70, 0.30) if has_14d else (1.0, 0.0)
+    has_8d = b8d.get("pa", 0) >= 3
+    w_s, w_8 = (0.70, 0.30) if has_8d else (1.0, 0.0)
 
-    def blend3(s26, s25, d14):
+    def blend3(s26, s25, d8):
         s = blend(s26, s25, bwc, bwp)
-        return round(s * w_s + d14 * w_14, 3) if (has_14d and d14 > 0) else round(s, 3)
+        return round(s * w_s + d8 * w_8, 3) if (has_8d and d8 > 0) else round(s, 3)
 
     stats = {
         "name": player, "pa_2026": pa_26, "pa_2025": pa_25,
         "blend_note": f"{int(bwc*100)}% 2026 / {int(bwp*100)}% 2025",
         "season_2026": bc,
-        "last_14d": b14,
+        "last_8d": b8d,
+        "last_5g": bl5g,
         "blended": {
-            "barrel_pct": blend3(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), b14.get("barrel_pct", 0)),
-            "iso": blend3(bc.get("iso", 0), bp.get("iso", 0), b14.get("iso", 0)),
-            "fb_pct": blend3(bc.get("fb_pct", 0), bp.get("fb_pct", 0), b14.get("fb_pct", 0)),
-            "pull_pct": blend3(bc.get("pull_pct", 0), bp.get("pull_pct", 0), b14.get("pull_pct", 0)),
-            "launch_angle": blend3(bc.get("launch_angle", 0), bp.get("launch_angle", 0), b14.get("launch_angle", 0)),
-            "hr_fb_pct": blend3(bc.get("hr_fb_pct", 0), bp.get("hr_fb_pct", 0), b14.get("hr_fb_pct", 0)),
+            "barrel_pct":   blend3(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), b8d.get("barrel_pct", 0)),
+            "iso":          blend3(bc.get("iso", 0), bp.get("iso", 0), b8d.get("iso", 0)),
+            "pull_pct":     blend3(bc.get("pull_pct", 0), bp.get("pull_pct", 0), b8d.get("pull_pct", 0)),
+            "launch_angle": blend3(bc.get("launch_angle", 0), bp.get("launch_angle", 0), b8d.get("launch_angle", 0)),
+            "hard_hit_pct": blend3(bc.get("hard_hit_pct", 0), bp.get("hard_hit_pct", 0), b8d.get("hard_hit_pct", 0)),
         },
         "splits": {
             "vs_lhp": get_batter_split(player, "L"),
