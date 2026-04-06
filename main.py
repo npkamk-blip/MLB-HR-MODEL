@@ -1151,7 +1151,7 @@ async def get_games(date: str = None):
             "game_id":gid,"away":away_team,"home":home_team,"time":gtime,
             "away_pitcher":pit_display(away_p.get("fullName","TBD"), away_p_hand),
             "home_pitcher":pit_display(home_p.get("fullName","TBD"), home_p_hand),
-            "top_hr_candidates":all_batters[:3],
+            "top_hr_candidates":all_batters,
             "away_lineup":away_lineup_ordered,
             "home_lineup":home_lineup_ordered,
             "lineups_posted":lineup_away_status=="confirmed" or lineup_home_status=="confirmed",
