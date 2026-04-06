@@ -495,6 +495,29 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand,
 
     archetype = get_archetype(barrel_season, k_s, fb_s, iso_season)
 
+    # ── PA confidence dampener ──
+    # Small samples inflate stats — dampen score if total PA is too thin
+    total_pa = pa_26 + pa_25
+    if total_pa < 30:
+        # Very thin sample — heavily dampen
+        dampen = 0.55
+        batter_score = batter_score * dampen
+    elif total_pa < 60:
+        # Thin sample — moderate dampen
+        dampen = 0.75
+        batter_score = batter_score * dampen
+    elif pa_26 < 10:
+        # Barely played this season
+        dampen = 0.80
+        batter_score = batter_score * dampen
+
+    # Fix 14d HR rate inflation from tiny samples
+    # 1 HR in 6 PA = 100/600 rate which is unrealistic
+    # Require minimum 15 PA in 14d before using HR rate boost
+    if b14.get("pa", 0) < 15:
+        s1_hr14d = 0.0
+        batter_score = max(batter_score - s1_hr14d, 0)
+
     # ── STEP 2: Pitcher modifier ──
     pc = get_pitcher_stats(opp_p_name, "2026")
     pp = get_pitcher_stats(opp_p_name, "2025")
