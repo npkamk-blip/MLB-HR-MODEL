@@ -176,6 +176,17 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 .theme-power .parlay-theme{color:var(--purple)}
 .theme-power .parlay-card-header{background:rgba(192,132,252,.06)}
 .parlay-disclaimer{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--muted);line-height:1.6}
+/* Pitch edge display */
+.pitch-edge{line-height:1.5}
+.pe-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:10px}
+.pe-pitch{color:var(--muted)}
+.pe-val{font-weight:700;font-size:11px}
+.pe-hot{color:var(--accent)}
+.pe-warm{color:#a8d429}
+.pe-neutral{color:var(--muted)}
+.pe-cold{color:var(--danger)}
+.pitch-edge-none{font-size:11px;color:var(--muted2);text-align:center}
+
 /* Misc */
 .loading{text-align:center;padding:50px 0;font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .dots{display:inline-flex;gap:5px;margin-top:14px}
@@ -352,7 +363,10 @@ function breakdownHTML(bd,hr_prob){
       '<div class="bd-row"><span class="bd-label">Launch angle '+(bd.la_s||0)+'°</span>'+bdBar(bd.s1_la,4)+bdPts(bd.s1_la)+'</div>' +
       '<div class="bd-row"><span class="bd-label">HR/FB '+(bd.hr_fb_s||0)+'%</span>'+bdBar(bd.s1_hrfb,5)+bdPts(bd.s1_hrfb)+'</div>' +
       '<div class="bd-row"><span class="bd-label">14d HR rate '+(bd.hr_rate_14d||0)+'/600 PA</span>'+bdBar(bd.s1_hr14d,5)+bdPts(bd.s1_hr14d)+'</div>' +
-      '<div class="bd-subtotal"><span class="bd-subtotal-label">Batter score</span><span class="bd-subtotal-val">'+(bd.batter_score||0)+'</span></div>' +
+      ((bd.pitch_breakdown||[]).map(function(p){
+        return '<div class="bd-row"><span class="bd-label">Pitch edge: '+p.name+' ('+p.usage+'% usage) — batter rv '+p.bat_rv+' + pitcher rv '+p.pit_rv+'</span>'+bdBar(Math.abs(p.bonus),4,p.bonus<0)+bdPts(p.bonus)+'</div>';
+      }).join('')) +
+      '<div class="bd-subtotal"><span class="bd-subtotal-label">Batter score (inc. pitch edge)</span><span class="bd-subtotal-val">'+(bd.batter_score||0)+'</span></div>' +
     '</div>' +
     '<div class="bd-section">' +
       '<div class="bd-section-title">Step 2 — Pitcher Modifier · '+(bd.pit_blend_note||'')+'</div>' +
@@ -391,6 +405,20 @@ function toggleBreakdown(el){
 }
 
 // ── Batter row ──
+function pitchEdgeHTML(breakdown){
+  if(!breakdown||!breakdown.pitch_breakdown||!breakdown.pitch_breakdown.length) return '<div class="pitch-edge-none">—</div>';
+  const details = breakdown.pitch_breakdown;
+  const totalBonus = breakdown.pitch_bonus||0;
+  const bonusCls = totalBonus>=2?'pe-hot':totalBonus>=0.5?'pe-warm':totalBonus<=-1?'pe-cold':'pe-neutral';
+  let html = '<div class="pitch-edge">';
+  details.slice(0,2).forEach(function(d){
+    const cls = d.combined>=2?'pe-hot':d.combined>=0.5?'pe-warm':d.combined<=-1?'pe-cold':'pe-neutral';
+    html += '<div class="pe-row"><span class="pe-pitch">'+d.name+' '+d.usage+'%</span><span class="pe-val '+cls+'">'+(d.combined>0?'+':'')+d.combined+'</span></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
 function batterRowHTML(b,order){
   const pc=probCls(b.hr_prob);
   const pt=probTier(b.hr_prob);
@@ -408,10 +436,7 @@ function batterRowHTML(b,order){
     '</div>' +
     '<div class="sc '+brlCls+'">'+(barrel>0?barrel.toFixed(1)+'%':'—')+'</div>' +
     '<div class="sc '+isoCls+'">'+(iso>0?'.'+String(Math.round(iso*1000)).padStart(3,'0'):'—')+'</div>' +
-    '<div class="form-cell">' +
-      '<div class="form-hr '+(b.recent_hr>=2?'fhot':b.recent_hr>=1?'fwarm':'fcold')+'">'+(b.recent_hr||0)+' HR</div>' +
-      '<div class="form-pa">'+(b.recent_pa||0)+' PA</div>' +
-    '</div>' +
+    pitchEdgeHTML(b.breakdown) +
     '<div class="'+(odds?'odds-val':'odds-none')+'">'+(odds||'—')+'</div>' +
     '<div class="prob-cell">' +
       '<div class="prob-num '+pc+'">'+b.hr_prob+'%</div>' +
@@ -609,7 +634,7 @@ async function load(){
         '<div class="batter-section-header">' +
           '<div class="bh">#</div><div class="bh left">Batter</div>' +
           '<div class="bh">Brl%</div><div class="bh">ISO</div>' +
-          '<div class="bh">14d HR</div><div class="bh hide-sm">BR HR</div><div class="bh">HR Prob</div>' +
+          '<div class="bh">Pitch Edge</div><div class="bh hide-sm">BR HR</div><div class="bh">HR Prob</div>' +
         '</div>';
 
       if(!candidates.length){
