@@ -23,6 +23,9 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 .refresh-btn{background:var(--accent);color:#0a0a0a;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:7px 16px;cursor:pointer;transition:opacity .15s}
 .refresh-btn:hover{opacity:.85}
 .refresh-btn:disabled{opacity:.4;cursor:not-allowed}
+.date-nav{display:flex;align-items:center;gap:6px}
+.date-btn{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:18px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;line-height:1}
+.date-btn:hover{border-color:var(--accent);color:var(--accent)}
 .tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 24px}
 .tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:12px 20px;cursor:pointer;transition:all .15s;margin-bottom:-1px}
 .tab:hover{color:var(--text)}
@@ -228,7 +231,11 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
     <div class="logo-sub">MLB HR Model</div>
   </div>
   <div class="hdr-r">
-    <div class="date-lbl" id="dateLbl"></div>
+    <div class="date-nav">
+      <button class="date-btn" onclick="changeDate(-1)">&#8249;</button>
+      <div class="date-lbl" id="dateLbl"></div>
+      <button class="date-btn" onclick="changeDate(1)">&#8250;</button>
+    </div>
     <button class="refresh-btn" id="refreshBtn" onclick="load()">Refresh</button>
   </div>
 </header>
@@ -245,7 +252,34 @@ header{border-bottom:1px solid var(--border);padding:12px 24px;display:flex;alig
 </div>
 <script>
 const API = 'https://web-production-c0e4.up.railway.app';
-document.getElementById('dateLbl').textContent = new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+
+// Date management
+let selectedDate = new Date();
+selectedDate.setHours(0,0,0,0);
+
+function formatDateForAPI(d){
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+
+function updateDateLabel(){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const diff=Math.round((selectedDate-today)/(1000*60*60*24));
+  const label=selectedDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+  const suffix=diff===0?' (Today)':diff===1?' (Tomorrow)':diff===-1?' (Yesterday)':'';
+  document.getElementById('dateLbl').textContent=label+suffix;
+}
+
+function changeDate(delta){
+  selectedDate=new Date(selectedDate);
+  selectedDate.setDate(selectedDate.getDate()+delta);
+  updateDateLabel();
+  load();
+}
+
+updateDateLabel();
 
 function switchTab(tab){
   document.getElementById('tab-top').classList.toggle('active',tab==='top');
@@ -661,7 +695,8 @@ async function load(){
   main.innerHTML=`<div class="loading">Loading Sharp Data<div class="dots"><span></span><span></span><span></span></div></div>`;
   document.getElementById('lineups-main').innerHTML='';
   try{
-    const resp=await fetch(API+'/games');
+    const dateStr=formatDateForAPI(selectedDate);
+    const resp=await fetch(API+'/games?date='+dateStr);
     if(!resp.ok) throw new Error('Backend error '+resp.status);
     const data=await resp.json();
     if(data.loading){
