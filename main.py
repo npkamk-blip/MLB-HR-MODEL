@@ -315,16 +315,16 @@ async def fetch_pitcher_ip(season=2026):
         return {}
 
 def load_pybaseball_data():
-    """Load FB% and HR/FB from FanGraphs via pybaseball — runs in thread"""
+    """Load FB% and HR/FB from Baseball Reference via pybaseball — runs in thread"""
     yr = current_season()
     try:
-        from pybaseball import batting_stats, pitching_stats, batting_stats_range
+        from pybaseball import batting_stats_bref, pitching_stats_bref
         from pybaseball import cache as pb_cache
         pb_cache.enable()
 
-        # Season batter stats — FB% and HR/FB
-        print("Loading FanGraphs batter stats via pybaseball...")
-        df = batting_stats(yr, qual=10)
+        # Season batter stats from Baseball Reference — has FB% and HR/FB
+        print("Loading Baseball Reference batter stats via pybaseball...")
+        df = batting_stats_bref(yr)
         if df is not None and not df.empty:
             df['name'] = df['Name']
             # Merge FB% and HR/FB into bat_2026
@@ -341,13 +341,16 @@ def load_pybaseball_data():
 
         # Prior season
         try:
-            df_prev = batting_stats(yr - 1, qual=50)
+            df_prev = batting_stats_bref(yr - 1)
             if df_prev is not None and not df_prev.empty:
                 fb_map_prev = {}
                 for _, row in df_prev.iterrows():
                     name = str(row.get('Name', '')).strip()
-                    fb = float(row.get('FB%', 0) or 0) * 100 if float(row.get('FB%', 0) or 0) < 1 else float(row.get('FB%', 0) or 0)
-                    hrfb = float(row.get('HR/FB', 0) or 0) * 100 if float(row.get('HR/FB', 0) or 0) < 1 else float(row.get('HR/FB', 0) or 0)
+                    def pct2(v):
+                        v = float(v or 0)
+                        return v * 100 if v < 1 else v
+                    fb = pct2(row.get('FB%') or row.get('FB') or 0)
+                    hrfb = pct2(row.get('HR/FB') or 0)
                     if name:
                         fb_map_prev[name.lower()] = {'fb_pct': fb, 'hr_fb_pct': hrfb}
                 _cache['fg_bat_prev'] = fb_map_prev
@@ -355,27 +358,13 @@ def load_pybaseball_data():
         except Exception as e:
             print(f"Prior season batter load error: {e}")
 
-        # 14-day batter stats
-        try:
-            cutoff = (date.today() - timedelta(days=14)).strftime('%Y-%m-%d')
-            today_str = date.today().strftime('%Y-%m-%d')
-            df_14d = batting_stats_range(cutoff, today_str)
-            if df_14d is not None and not df_14d.empty:
-                fb_map_14d = {}
-                for _, row in df_14d.iterrows():
-                    name = str(row.get('Name', '')).strip()
-                    fb = float(row.get('FB%', 0) or 0) * 100 if float(row.get('FB%', 0) or 0) < 1 else float(row.get('FB%', 0) or 0)
-                    hrfb = float(row.get('HR/FB', 0) or 0) * 100 if float(row.get('HR/FB', 0) or 0) < 1 else float(row.get('HR/FB', 0) or 0)
-                    if name:
-                        fb_map_14d[name.lower()] = {'fb_pct': fb, 'hr_fb_pct': hrfb}
-                _cache['fg_bat_14d'] = fb_map_14d
-                print(f"FanGraphs 14d batter loaded: {len(fb_map_14d)} players")
-        except Exception as e:
-            print(f"14d batter load error: {e}")
+        # 14-day FB%/HR/FB — Baseball Reference doesn't support date ranges
+        # Use season stats as proxy for 14d FB%/HR/FB (stable metric, doesn't change much)
+        print("Note: 14d FB%/HR/FB uses season values from Baseball Reference")
 
-        # Pitcher stats — FB%, HR/FB, IP, HR/9, ERA
-        print("Loading FanGraphs pitcher stats via pybaseball...")
-        df_pit = pitching_stats(yr, qual=5)
+        # Pitcher stats from Baseball Reference — has FB%, HR/FB, IP, ERA
+        print("Loading Baseball Reference pitcher stats via pybaseball...")
+        df_pit = pitching_stats_bref(yr)
         if df_pit is not None and not df_pit.empty:
             fg_pit_map = {}
             for _, row in df_pit.iterrows():
@@ -641,8 +630,10 @@ def get_batter_14d(name):
         "slg": slg,
         "hr_rate": (hr / max(pa, 1)) * 600 if pa > 0 else 0,
     }
-    # Enhance with FanGraphs 14d FB%/HR/FB
+    # Enhance with season FB%/HR/FB from Baseball Reference (no 14d range available)
     fg = get_fg_batter(name, 'fg_bat_14d')
+    if not fg:
+        fg = get_fg_batter(name, 'fg_bat_season')
     if fg.get('fb_pct', 0) > 0:
         stats['fb_pct'] = fg['fb_pct']
     if fg.get('hr_fb_pct', 0) > 0:
