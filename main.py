@@ -314,96 +314,11 @@ async def fetch_pitcher_ip(season=2026):
         import traceback; traceback.print_exc()
         return {}
 
-def load_pybaseball_data():
-    """Load FB% and HR/FB from Baseball Reference via pybaseball — runs in thread"""
-    yr = current_season()
-    try:
-        from pybaseball import batting_stats_bref, pitching_stats_bref
-        from pybaseball import cache as pb_cache
-        pb_cache.enable()
-
-        # Season batter stats from Baseball Reference — has FB% and HR/FB
-        print("Loading Baseball Reference batter stats via pybaseball...")
-        df = batting_stats_bref(yr)
-        if df is not None and not df.empty:
-            df['name'] = df['Name']
-            # Merge FB% and HR/FB into bat_2026
-            fb_map = {}
-            for _, row in df.iterrows():
-                name = str(row.get('Name', '')).strip()
-                fb = float(row.get('FB%', 0) or 0) * 100 if float(row.get('FB%', 0) or 0) < 1 else float(row.get('FB%', 0) or 0)
-                hrfb = float(row.get('HR/FB', 0) or 0) * 100 if float(row.get('HR/FB', 0) or 0) < 1 else float(row.get('HR/FB', 0) or 0)
-                pull = float(row.get('Pull%', 0) or 0) * 100 if float(row.get('Pull%', 0) or 0) < 1 else float(row.get('Pull%', 0) or 0)
-                if name:
-                    fb_map[name.lower()] = {'fb_pct': fb, 'hr_fb_pct': hrfb, 'pull_pct': pull if pull > 0 else None}
-            _cache['fg_bat_season'] = fb_map
-            print(f"FanGraphs batter FB%/HR/FB loaded: {len(fb_map)} players")
-
-        # Prior season
-        try:
-            df_prev = batting_stats_bref(yr - 1)
-            if df_prev is not None and not df_prev.empty:
-                fb_map_prev = {}
-                for _, row in df_prev.iterrows():
-                    name = str(row.get('Name', '')).strip()
-                    def pct2(v):
-                        v = float(v or 0)
-                        return v * 100 if v < 1 else v
-                    fb = pct2(row.get('FB%') or row.get('FB') or 0)
-                    hrfb = pct2(row.get('HR/FB') or 0)
-                    if name:
-                        fb_map_prev[name.lower()] = {'fb_pct': fb, 'hr_fb_pct': hrfb}
-                _cache['fg_bat_prev'] = fb_map_prev
-                print(f"FanGraphs prior season batter loaded: {len(fb_map_prev)} players")
-        except Exception as e:
-            print(f"Prior season batter load error: {e}")
-
-        # 14-day FB%/HR/FB — Baseball Reference doesn't support date ranges
-        # Use season stats as proxy for 14d FB%/HR/FB (stable metric, doesn't change much)
-        print("Note: 14d FB%/HR/FB uses season values from Baseball Reference")
-
-        # Pitcher stats from Baseball Reference — has FB%, HR/FB, IP, ERA
-        print("Loading Baseball Reference pitcher stats via pybaseball...")
-        df_pit = pitching_stats_bref(yr)
-        if df_pit is not None and not df_pit.empty:
-            fg_pit_map = {}
-            for _, row in df_pit.iterrows():
-                name = str(row.get('Name', '')).strip()
-                fb = float(row.get('FB%', 0) or 0) * 100 if float(row.get('FB%', 0) or 0) < 1 else float(row.get('FB%', 0) or 0)
-                hrfb = float(row.get('HR/FB', 0) or 0) * 100 if float(row.get('HR/FB', 0) or 0) < 1 else float(row.get('HR/FB', 0) or 0)
-                ip = float(row.get('IP', 0) or 0)
-                era = float(row.get('ERA', 0) or 0)
-                hr9 = float(row.get('HR/9', 0) or 0)
-                if name:
-                    fg_pit_map[name.lower()] = {
-                        'fb_pct': fb, 'hr_fb_pct': hrfb,
-                        'ip': ip, 'era': era, 'hr9': hr9, 'name': name
-                    }
-            _cache['fg_pit_season'] = fg_pit_map
-            # Also update player_ip cache with more accurate data
-            for nl, data in fg_pit_map.items():
-                if nl not in _cache['player_ip'] or data['ip'] > 0:
-                    _cache['player_ip'][nl] = {
-                        'ip': data['ip'], 'hr9': data['hr9'],
-                        'era': data['era'], 'name': data['name']
-                    }
-            print(f"FanGraphs pitcher loaded: {len(fg_pit_map)} pitchers")
-
-        print("pybaseball data load complete")
-    except ImportError:
-        print("pybaseball not installed — FB%/HR/FB from FanGraphs not available")
-    except Exception as e:
-        import traceback
-        print(f"pybaseball load error: {e}")
-        traceback.print_exc()
-
 async def load_all_savant_data():
     """Fetch all data from Baseball Savant + FanGraphs via pybaseball"""
     print("Loading data from Baseball Savant...")
 
     # Start pybaseball load in background thread (non-blocking)
-    threading.Thread(target=load_pybaseball_data, daemon=True).start()
-
     async with httpx.AsyncClient(timeout=30) as client:
         # Batter 2026
         df = await fetch_savant_csv(savant_batter_url(min_pa=10), client)
@@ -551,26 +466,6 @@ def gs(row, *keys, default=0.0):
     return default
 
 # ── Stat getters ──
-def get_fg_batter(name, cache_key):
-    """Look up player in FanGraphs cache by name"""
-    fg = _cache.get(cache_key, {})
-    if not fg:
-        return {}
-    nl = name.lower().strip()
-    if nl in fg:
-        return fg[nl]
-    last = nl.split()[-1]
-    matches = {k: v for k, v in fg.items() if last in k}
-    if len(matches) == 1:
-        return list(matches.values())[0]
-    if len(matches) > 1:
-        first = nl.split()[0]
-        refined = {k: v for k, v in matches.items() if first in k}
-        if refined:
-            return list(refined.values())[0]
-        return list(matches.values())[0]
-    return {}
-
 def get_batter_stats(name, year=2026):
     cur = current_season()
     df = _cache["bat_2026"] if year == cur else _cache["bat_2025"]
@@ -590,15 +485,6 @@ def get_batter_stats(name, year=2026):
         "hr_fb_pct": gs(row, "hr_fb_pct"),
         "hr": gs(row, "hr"),
     }
-    # Enhance with FanGraphs FB% and HR/FB
-    fg_key = 'fg_bat_season' if year == cur else 'fg_bat_prev'
-    fg = get_fg_batter(name, fg_key)
-    if fg.get('fb_pct', 0) > 0:
-        stats['fb_pct'] = fg['fb_pct']
-    if fg.get('hr_fb_pct', 0) > 0:
-        stats['hr_fb_pct'] = fg['hr_fb_pct']
-    if (fg.get('pull_pct') or 0) > 0 and stats['pull_pct'] == 0:
-        stats['pull_pct'] = fg['pull_pct']
     return stats
 def get_batter_14d(name):
     df = _cache["bat_14d"]
@@ -625,14 +511,6 @@ def get_batter_14d(name):
         "slg": slg,
         "hr_rate": (hr / max(pa, 1)) * 600 if pa > 0 else 0,
     }
-    # Enhance with season FB%/HR/FB from Baseball Reference (no 14d range available)
-    fg = get_fg_batter(name, 'fg_bat_14d')
-    if not fg:
-        fg = get_fg_batter(name, 'fg_bat_season')
-    if fg.get('fb_pct', 0) > 0:
-        stats['fb_pct'] = fg['fb_pct']
-    if fg.get('hr_fb_pct', 0) > 0:
-        stats['hr_fb_pct'] = fg['hr_fb_pct']
     return stats
 
 def get_batter_split(name, pit_hand):
@@ -657,38 +535,30 @@ def get_pitcher_stats(name, year=2026):
     cur = current_season()
     df = _cache["pit_2026"] if year == cur else _cache["pit_2025"]
     row = fuzzy_match(name, df)
-    # Get IP/HR9/ERA from pybaseball FanGraphs (most accurate)
-    fg_pit = _cache.get('fg_pit_season', {})
     nl = name.lower().strip()
-    fg_row = fg_pit.get(nl, {})
-    if not fg_row:
-        last = nl.split()[-1]
-        matches = {k: v for k, v in fg_pit.items() if last in k}
-        if len(matches) == 1:
-            fg_row = list(matches.values())[0]
-        elif len(matches) > 1:
-            first = nl.split()[0]
-            refined = {k: v for k, v in matches.items() if first in k}
-            fg_row = list(refined.values())[0] if refined else list(matches.values())[0]
-    # Fallback to MLB Stats API for IP/HR9
     ip_data = _cache["player_ip"].get(nl, {})
-    ip = fg_row.get('ip', 0) or ip_data.get("ip", 0)
-    hr9 = fg_row.get('hr9', 0) or ip_data.get("hr9", 0)
-    era = fg_row.get('era', 0) or ip_data.get("era", 0)
-    fb_pct = fg_row.get('fb_pct', 0)
-    hr_fb = fg_row.get('hr_fb_pct', 0)
+    # Try last name match for IP data
+    if not ip_data:
+        last = nl.split()[-1]
+        for k, v in _cache["player_ip"].items():
+            if last in k:
+                ip_data = v
+                break
+    ip = ip_data.get("ip", 0)
+    hr9 = ip_data.get("hr9", 0)
+    era = ip_data.get("era", 0)
     if row is None:
         return {"era": era, "ip": ip, "hr9": hr9, "hard_hit_pct": 0,
-                "barrel_pct_allowed": 0, "fb_pct": fb_pct, "k_pct": 0, "hr_fb_pct": hr_fb}
+                "barrel_pct_allowed": 0, "fb_pct": 0, "k_pct": 0, "hr_fb_pct": 0}
     return {
         "era": era or gs(row, "era"),
         "ip": ip,
         "hr9": hr9,
         "hard_hit_pct": gs(row, "hard_hit_pct"),
         "barrel_pct_allowed": gs(row, "barrel_pct_allowed"),
-        "fb_pct": fb_pct or gs(row, "fb_pct"),
+        "fb_pct": gs(row, "fb_pct"),
         "k_pct": gs(row, "k_pct"),
-        "hr_fb_pct": hr_fb,
+        "hr_fb_pct": 0,
     }
 
 def get_pitcher_split(name, vs_hand):
@@ -906,13 +776,15 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, 
     pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
 
     # Step 1 — Batter score
-    s1_barrel = round(min(barrel_s / 15.0, 1.0) * 25, 2)
-    s1_iso = round(min(iso_use / 0.280, 1.0) * 10, 2)
-    s1_fb = round(min(fb_s / 45.0, 1.0) * 6, 2)
-    s1_pull = round(min(pull_s / 50.0, 1.0) * 5, 2)
-    s1_la = round(min(max(la_s - 10, 0) / 20.0, 1.0) * 4, 2) if la_s > 0 else 0
-    s1_hrfb = round(min(hr_fb_s / 25.0, 1.0) * 5, 2)
-    s1_hr14d = round(min(hr_rate_14d / 40.0, 1.0) * 5, 2) if has_14d and b14.get("pa", 0) >= 15 else 0
+    # FB% and HR/FB unavailable — weight redistributed:
+    # Barrel 25->30, ISO 10->14, Pull 5->8, LA 4->9
+    s1_barrel = round(min(barrel_s / 15.0, 1.0) * 30, 2)
+    s1_iso    = round(min(iso_use / 0.280, 1.0) * 14, 2)
+    s1_fb     = 0
+    s1_pull   = round(min(pull_s / 50.0, 1.0) * 8, 2)
+    s1_la     = round(min(max(la_s - 10, 0) / 20.0, 1.0) * 9, 2) if la_s > 0 else 0
+    s1_hrfb   = 0
+    s1_hr14d  = round(min(hr_rate_14d / 40.0, 1.0) * 5, 2) if has_14d and b14.get("pa", 0) >= 15 else 0
 
     batter_score = s1_barrel + s1_iso + s1_fb + s1_pull + s1_la + s1_hrfb + s1_hr14d + pitch_bonus
 
@@ -1205,10 +1077,7 @@ def status():
         "pit_arsenal": len(_cache["pit_arsenal"]),
         "bat_arsenal": len(_cache["bat_arsenal"]),
         "player_ip": len(_cache["player_ip"]),
-        "fg_bat_season": len(_cache.get("fg_bat_season", {})),
-        "fg_bat_prev": len(_cache.get("fg_bat_prev", {})),
-        "fg_bat_14d": len(_cache.get("fg_bat_14d", {})),
-        "fg_pit_season": len(_cache.get("fg_pit_season", {})),
+
     }
 
 @app.post("/reload")
