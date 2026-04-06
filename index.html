@@ -372,25 +372,30 @@ function togglePit(el){
 
 function pitDetailHTML(pit){
   if(!pit||!pit.name||pit.name==='TBD') return '';
-  var vs_L=pit.vs_L_hr9!=null?pit.vs_L_hr9:'—';
-  var vs_R=pit.vs_R_hr9!=null?pit.vs_R_hr9:'—';
   var era=pit.era!=null?pit.era.toFixed(2):'—';
-  var hr9=pit.hr9!=null?parseFloat(pit.hr9).toFixed(2):'—';
-  var hh=pit.hard_hit_pct!=null?pit.hard_hit_pct.toFixed(1)+'%':'—';
-  var brl=pit.barrel_pct!=null?pit.barrel_pct.toFixed(1)+'%':'—';
-  var fb=pit.fb_pct!=null?pit.fb_pct.toFixed(1)+'%':'—';
-  var k=pit.k_pct!=null?pit.k_pct.toFixed(1)+'%':'—';
+  // Split-specific values (vs LHB)
+  var vsL_hr9=pit.vs_L_hr9!=null?pit.vs_L_hr9:'—';
+  var vsL_hh=pit.vs_L_hh!=null?pit.vs_L_hh.toFixed(1)+'%':'—';
+  var vsL_brl=pit.vs_L_brl!=null?pit.vs_L_brl.toFixed(1)+'%':'—';
+  var vsL_k=pit.vs_L_k!=null?pit.vs_L_k.toFixed(1)+'%':'—';
+  // Split-specific values (vs RHB)
+  var vsR_hr9=pit.vs_R_hr9!=null?pit.vs_R_hr9:'—';
+  var vsR_hh=pit.vs_R_hh!=null?pit.vs_R_hh.toFixed(1)+'%':'—';
+  var vsR_brl=pit.vs_R_brl!=null?pit.vs_R_brl.toFixed(1)+'%':'—';
+  var vsR_k=pit.vs_R_k!=null?pit.vs_R_k.toFixed(1)+'%':'—';
   var h='<div class="pit-detail">';
   h+='<div class="pit-splits-grid">';
   h+='<div class="pit-split-block"><div class="pit-split-title">vs LHB (Season)</div>';
-  h+='<div class="spl-row"><span class="spl-lbl">HR/9</span><span class="spl-val '+pitHeat(parseFloat(vs_L_hr9_num(pit)),1.15)+'">'+vs_L+'</span></div>';
-  h+='<div class="spl-row"><span class="spl-lbl">Hard Hit%</span><span class="spl-val '+pitHeat(parseFloat(pit.hard_hit_pct),32)+'">'+hh+'</span></div>';
-  h+='<div class="spl-row"><span class="spl-lbl">Brl%</span><span class="spl-val '+pitHeat(parseFloat(pit.barrel_pct),7.5)+'">'+brl+'</span></div>';
+  h+='<div class="spl-row"><span class="spl-lbl">HR/9</span><span class="spl-val '+pitHeat(parseFloat(vs_L_hr9_num(pit)),1.15)+'">'+vsL_hr9+'</span></div>';
+  h+='<div class="spl-row"><span class="spl-lbl">Hard Hit%</span><span class="spl-val '+pitHeat(parseFloat(pit.vs_L_hh),32)+'">'+vsL_hh+'</span></div>';
+  h+='<div class="spl-row"><span class="spl-lbl">Brl%</span><span class="spl-val '+pitHeat(parseFloat(pit.vs_L_brl),7.5)+'">'+vsL_brl+'</span></div>';
+  h+='<div class="spl-row"><span class="spl-lbl">K%</span><span class="spl-val">'+vsL_k+'</span></div>';
   h+='</div>';
   h+='<div class="pit-split-block"><div class="pit-split-title">vs RHB (Season)</div>';
-  h+='<div class="spl-row"><span class="spl-lbl">HR/9</span><span class="spl-val '+pitHeat(parseFloat(vs_R_hr9_num(pit)),1.15)+'">'+vs_R+'</span></div>';
-  h+='<div class="spl-row"><span class="spl-lbl">FB%</span><span class="spl-val">'+fb+'</span></div>';
-  h+='<div class="spl-row"><span class="spl-lbl">K%</span><span class="spl-val">'+k+'</span></div>';
+  h+='<div class="spl-row"><span class="spl-lbl">HR/9</span><span class="spl-val '+pitHeat(parseFloat(vs_R_hr9_num(pit)),1.15)+'">'+vsR_hr9+'</span></div>';
+  h+='<div class="spl-row"><span class="spl-lbl">Hard Hit%</span><span class="spl-val '+pitHeat(parseFloat(pit.vs_R_hh),32)+'">'+vsR_hh+'</span></div>';
+  h+='<div class="spl-row"><span class="spl-lbl">Brl%</span><span class="spl-val '+pitHeat(parseFloat(pit.vs_R_brl),7.5)+'">'+vsR_brl+'</span></div>';
+  h+='<div class="spl-row"><span class="spl-lbl">K%</span><span class="spl-val">'+vsR_k+'</span></div>';
   h+='</div>';
   h+='</div>';
   h+='<div class="pit-blend-note">ERA '+era+' · '+pit.ip_2026+' IP 2026 · '+(pit.blend_note||'')+'</div>';
