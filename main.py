@@ -398,18 +398,33 @@ def get_archetype(barrel_pct, k_pct, fb_pct, iso):
     else: return "Contact"
 
 def get_trend(stats_14d, stats_season):
-    """Compare 14d barrel/hard hit vs season"""
-    if not stats_14d or not stats_season: return "Steady"
+    """Compare 14d stats vs season to determine trend"""
+    if not stats_14d or stats_14d.get("pa", 0) < 5:
+        return "Steady"
+    score = 0
+    # HR rate signal — most direct
+    hr_rate_14d = stats_14d.get("hr_rate", 0)
+    if hr_rate_14d > 25: score += 2
+    elif hr_rate_14d > 12: score += 1
+    elif hr_rate_14d == 0 and stats_14d.get("pa",0) >= 15: score -= 1
+    # Barrel comparison if available
     brl_14 = stats_14d.get("barrel_pct", 0)
-    brl_s  = stats_season.get("barrel_pct", 0)
-    hh_14  = stats_14d.get("hard_hit_pct", 0)
-    hh_s   = stats_season.get("hard_hit_pct", 0)
-    if brl_s == 0: return "Steady"
-    brl_diff = brl_14 - brl_s if brl_14 > 0 else 0
-    hh_diff  = hh_14 - hh_s  if hh_14 > 0 else 0
-    combined = brl_diff * 0.6 + hh_diff * 0.4
-    if combined >= 3: return "Heating Up"
-    elif combined <= -3: return "Cooling Off"
+    brl_s  = stats_season.get("barrel_pct", 0) if stats_season else 0
+    if brl_14 > 0 and brl_s > 0:
+        brl_diff = brl_14 - brl_s
+        if brl_diff >= 5: score += 2
+        elif brl_diff >= 2: score += 1
+        elif brl_diff <= -5: score -= 2
+        elif brl_diff <= -2: score -= 1
+    # ISO comparison
+    iso_14d = stats_14d.get("iso", 0)
+    iso_s = stats_season.get("iso", 0) if stats_season else 0
+    if iso_14d > 0 and iso_s > 0:
+        iso_diff = iso_14d - iso_s
+        if iso_diff >= 0.080: score += 1
+        elif iso_diff <= -0.080: score -= 1
+    if score >= 2: return "Heating Up"
+    elif score <= -2: return "Cooling Off"
     return "Steady"
 
 def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand,
@@ -941,28 +956,9 @@ async def get_games():
                 "vs_L_hr9":None,"vs_R_hr9":None,"top_pitches":[],
             }
 
-        # Split batters back into away/home lineups in order
-        away_batters_ordered = [b for b in all_batters if b["team"] == away_team]
-        home_batters_ordered = [b for b in all_batters if b["team"] == home_team]
-        # Re-sort by batting order (use original lineup order)
-        away_names = [b.get("person",{}).get("fullName","") if "person" in b else b.get("name","") for b in lineup_away]
-        home_names = [b.get("person",{}).get("fullName","") if "person" in b else b.get("name","") for b in lineup_home]
-        
-        def sort_by_lineup(batters, names):
-            ordered = []
-            for name in names:
-                for b in batters:
-                    if b["name"] == name:
-                        ordered.append(b)
-                        break
-            # Add any remaining not in lineup order
-            for b in batters:
-                if b not in ordered:
-                    ordered.append(b)
-            return ordered
-
-        away_lineup_ordered = sort_by_lineup(away_batters_ordered, away_names)
-        home_lineup_ordered = sort_by_lineup(home_batters_ordered, home_names)
+        # Split batters back into away/home lineups in batting order
+        away_lineup_ordered = [b for b in all_batters if b["team"] == away_team]
+        home_lineup_ordered = [b for b in all_batters if b["team"] == home_team]
 
         games_out.append({
             "game_id":gid,"away":away_team,"home":home_team,"time":gtime,
