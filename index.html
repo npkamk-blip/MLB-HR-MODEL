@@ -330,10 +330,18 @@ updateDateLabel();
 
 // ── Tab switching ──
 function switchTab(tab){
-  ['top','lineups','parlays'].forEach(t=>{
-    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
-    document.getElementById(t==='top'?'main':t+'-main').style.display=t===tab?'':'none';
+  ['top','lineups','parlays','research'].forEach(function(t){
+    var tabEl=document.getElementById('tab-'+t);
+    var panEl=document.getElementById(t==='top'?'main':t+'-main');
+    if(tabEl) tabEl.classList.toggle('active',t===tab);
+    if(panEl) panEl.style.display=t===tab?'':'none';
   });
+  if(tab==='research'){
+    var resEl=document.getElementById('research-main');
+    if(resEl&&!resEl.querySelector('.research-search')){
+      renderResearchShell();
+    }
+  }
 }
 
 // ── Helpers ──
