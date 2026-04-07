@@ -431,8 +431,23 @@ async def load_all_savant_data():
             _cache["pit_2025"] = calc_pitcher_stats(df)
             print(f"pit_2025: {len(_cache['pit_2025'])} rows")
 
-        # Batter vs LHP/RHP and Pitcher vs LHH/RHH — MLB Stats API statSplits
-        # (Savant leaderboard ignores pitchHand/batSide filters — MLB API works correctly)
+        # Pitch arsenal - pitcher
+        await asyncio.sleep(3)
+        df = await fetch_savant_csv(savant_pitch_arsenal_url("pitcher", year=current_season(), min_pa=1), client)
+        if not df.empty:
+            _cache["pit_arsenal"] = parse_player_name(df)
+            print(f"pit_arsenal: {len(_cache['pit_arsenal'])} rows")
+        else:
+            print("pit_arsenal: 0 rows")
+
+        # Pitch arsenal - batter
+        await asyncio.sleep(3)
+        df = await fetch_savant_csv(savant_pitch_arsenal_url("batter", year=current_season(), min_pa=1), client)
+        if not df.empty:
+            _cache["bat_arsenal"] = parse_player_name(df)
+            print(f"bat_arsenal: {len(_cache['bat_arsenal'])} rows")
+        else:
+            print("bat_arsenal: 0 rows")
 
     # Fetch all handedness splits via MLB Stats API
     splits = await fetch_splits_mlb(current_season())
@@ -441,24 +456,6 @@ async def load_all_savant_data():
             df_split = pd.DataFrame(rows)
             _cache[key] = df_split
             print(f"{key}: {len(df_split)} rows")
-
-        # Pitch arsenal - pitcher (2026 only)
-        await asyncio.sleep(2)  # brief pause to avoid rate limiting
-        df = await fetch_savant_csv(savant_pitch_arsenal_url("pitcher", year=current_season(), min_pa=1), client)
-        if not df.empty:
-            _cache["pit_arsenal"] = parse_player_name(df)
-            print(f"pit_arsenal: {len(_cache['pit_arsenal'])} rows")
-        else:
-            print("pit_arsenal: 0 rows (early season)")
-
-        # Pitch arsenal - batter (2026 only)
-        await asyncio.sleep(2)
-        df = await fetch_savant_csv(savant_pitch_arsenal_url("batter", year=current_season(), min_pa=1), client)
-        if not df.empty:
-            _cache["bat_arsenal"] = parse_player_name(df)
-            print(f"bat_arsenal: {len(_cache['bat_arsenal'])} rows")
-        else:
-            print("bat_arsenal: 0 rows (early season)")
 
     # Pitcher IP from MLB Stats API
     ip_data = await fetch_pitcher_ip(current_season())
