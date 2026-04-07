@@ -551,6 +551,7 @@ def get_batter_stats(name, year=2026):
         "fb_pct": gs(row, "fb_pct"),
         "pull_pct": gs(row, "pull_pct"),
         "iso": gs(row, "iso"),
+        "slg_percent": gs(row, "slg_percent"),
         "k_pct": gs(row, "k_pct"),
         "hr_fb_pct": gs(row, "hr_fb_pct"),
         "hr": gs(row, "hr"),
@@ -1282,7 +1283,7 @@ async def get_games(date: str = None):
                     "la":     round(b8d.get("launch_angle", 0), 1),
                     "hh":     round(b8d.get("hard_hit_pct", 0), 1),
                     "iso":    round(b8d.get("iso", 0), 3),
-                    "slg":    round(b8d.get("slg_percent", 0), 3),
+                    "slg":    round(b8d.get("slg", 0), 3),
                     "pull":   round(b8d.get("pull_pct", 0), 1),
                 },
                 "l5g": {
