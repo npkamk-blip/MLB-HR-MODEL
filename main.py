@@ -321,6 +321,72 @@ async def fetch_last5_games_batting():
         import traceback; traceback.print_exc()
         return {}
 
+async def fetch_splits_mlb(season=2026):
+    """Fetch batter and pitcher splits by handedness from MLB Stats API statSplits"""
+    results = {
+        "bat_vs_lhp": [], "bat_vs_rhp": [],
+        "pit_vs_lhh": [], "pit_vs_rhh": [],
+    }
+    try:
+        configs = [
+            ("hitting", "vl", "bat_vs_lhp"),   # batters vs LHP
+            ("hitting", "vr", "bat_vs_rhp"),   # batters vs RHP
+            ("pitching", "vl", "pit_vs_lhh"),  # pitchers vs LHB
+            ("pitching", "vr", "pit_vs_rhh"),  # pitchers vs RHB
+        ]
+        for group, sit_code, cache_key in configs:
+            url = (f"{MLB_API}/stats?stats=statSplits&group={group}&gameType=R"
+                   f"&season={season}&playerPool=All&limit=2000&sitCodes={sit_code}")
+            async with httpx.AsyncClient(timeout=30) as client:
+                r = await client.get(url)
+                data = r.json()
+            for stat_group in data.get("stats", []):
+                for split in stat_group.get("splits", []):
+                    person = split.get("player", {})
+                    name = person.get("fullName", "")
+                    stat = split.get("stat", {})
+                    if not name: continue
+                    try:
+                        pa = int(stat.get("plateAppearances", 0) or 0)
+                        hr = int(stat.get("homeRuns", 0) or 0)
+                        so = int(stat.get("strikeOuts", 0) or 0)
+                        ab = int(stat.get("atBats", 0) or 0)
+                        h = int(stat.get("hits", 0) or 0)
+                        tb_str = stat.get("totalBases", "0") or "0"
+                        try: tb = int(tb_str)
+                        except: tb = 0
+                        slg = round(tb / max(ab, 1), 3) if ab > 0 else 0.0
+                        avg_str = stat.get("avg", ".000") or ".000"
+                        try: avg = float(avg_str) if avg_str not in (".---", "") else 0.0
+                        except: avg = 0.0
+                        iso = round(slg - avg, 3) if slg > 0 else 0.0
+                        woba_str = stat.get("obp", ".000") or ".000"
+                        try: woba = float(woba_str) if woba_str not in (".---", "") else 0.0
+                        except: woba = 0.0
+                        k_pct = round(so / max(pa, 1) * 100, 1) if pa > 0 else 0.0
+                        # Pitcher specific
+                        ip_str = stat.get("inningsPitched", "0") or "0"
+                        try: ip = float(ip_str)
+                        except: ip = pa / 4.0
+                        hr9 = round((hr / max(ip, 0.1)) * 9, 2) if ip > 0 else 0.0
+                        results[cache_key].append({
+                            "name": name.strip(),
+                            "pa": pa, "ab": ab, "hr": hr,
+                            "slg": slg, "iso": iso, "avg": avg,
+                            "woba": woba, "k_pct": k_pct,
+                            "hr9": hr9, "ip": round(ip, 1),
+                            # Keep these for compatibility with get_pitcher_split
+                            "hard_hit_pct": 0,
+                            "barrel_pct_allowed": 0,
+                        })
+                    except Exception:
+                        continue
+            print(f"{cache_key}: {len(results[cache_key])} rows (MLB statSplits)")
+    except Exception as e:
+        print(f"MLB statSplits error: {e}")
+        import traceback; traceback.print_exc()
+    return results
+
 async def load_all_savant_data():
     """Fetch all data from Baseball Savant + FanGraphs via pybaseball"""
     print("Loading data from Baseball Savant...")
@@ -345,18 +411,6 @@ async def load_all_savant_data():
             _cache["bat_8d"] = calc_batter_stats(df)
             print(f"bat_8d: {len(_cache['bat_8d'])} rows")
 
-        # Batter vs LHP
-        df = await fetch_savant_csv(savant_batter_url(min_pa=5, extra="&pitchHand=L"), client)
-        if not df.empty:
-            _cache["bat_vs_lhp"] = calc_batter_stats(df)
-            print(f"bat_vs_lhp: {len(_cache['bat_vs_lhp'])} rows")
-
-        # Batter vs RHP
-        df = await fetch_savant_csv(savant_batter_url(min_pa=5, extra="&pitchHand=R"), client)
-        if not df.empty:
-            _cache["bat_vs_rhp"] = calc_batter_stats(df)
-            print(f"bat_vs_rhp: {len(_cache['bat_vs_rhp'])} rows")
-
         # Pitcher 2026
         df = await fetch_savant_csv(savant_pitcher_url(min_pa=5), client)
         if not df.empty:
@@ -369,17 +423,16 @@ async def load_all_savant_data():
             _cache["pit_2025"] = calc_pitcher_stats(df)
             print(f"pit_2025: {len(_cache['pit_2025'])} rows")
 
-        # Pitcher vs LHH
-        df = await fetch_savant_csv(savant_pitcher_url(min_pa=1, extra="&batSide=L"), client)
-        if not df.empty:
-            _cache["pit_vs_lhh"] = calc_pitcher_stats(df)
-            print(f"pit_vs_lhh: {len(_cache['pit_vs_lhh'])} rows")
+        # Batter vs LHP/RHP and Pitcher vs LHH/RHH — MLB Stats API statSplits
+        # (Savant leaderboard ignores pitchHand/batSide filters — MLB API works correctly)
 
-        # Pitcher vs RHH
-        df = await fetch_savant_csv(savant_pitcher_url(min_pa=1, extra="&batSide=R"), client)
-        if not df.empty:
-            _cache["pit_vs_rhh"] = calc_pitcher_stats(df)
-            print(f"pit_vs_rhh: {len(_cache['pit_vs_rhh'])} rows")
+    # Fetch all handedness splits via MLB Stats API
+    splits = await fetch_splits_mlb(current_season())
+    for key, rows in splits.items():
+        if rows:
+            df_split = pd.DataFrame(rows)
+            _cache[key] = df_split
+            print(f"{key}: {len(df_split)} rows")
 
         # Pitch arsenal - pitcher
         df = await fetch_savant_csv(savant_pitch_arsenal_url("pitcher", min_pa=1), client)
@@ -535,17 +588,15 @@ def get_batter_split(name, pit_hand):
     row = fuzzy_match(name, df)
     if row is None:
         return {}
-    pa = gs(row, "pa")
-    hr = gs(row, "hr")
-    slg = gs(row, "slg_percent")
-    avg = gs(row, "batting_avg")
     return {
-        "pa": pa,
-        "hr": hr,
-        "iso": slg - avg if slg > 0 else 0,
-        "slg": slg,
+        "pa":         gs(row, "pa"),
+        "hr":         gs(row, "hr"),
+        "iso":        gs(row, "iso"),
+        "slg":        gs(row, "slg"),
+        "woba":       gs(row, "woba"),
+        "k_pct":      gs(row, "k_pct"),
         "barrel_pct": gs(row, "barrel_pct"),
-        "hr_rate": (hr / max(pa, 1)) * 600 if pa > 0 else 0,
+        "hr_rate":    (gs(row, "hr") / max(gs(row, "pa"), 1)) * 600 if gs(row, "pa") > 0 else 0,
     }
 
 def get_pitcher_stats(name, year=2026):
@@ -583,15 +634,20 @@ def get_pitcher_split(name, vs_hand):
     row = fuzzy_match(name, df)
     if row is None:
         return {}
-    pa = gs(row, "pa")
-    hr = gs(row, "hr")
-    ip = pa / 4.0
+    pa  = gs(row, "pa")
+    hr  = gs(row, "hr")
+    ip  = gs(row, "ip") if gs(row, "ip") > 0 else pa / 4.0
     return {
-        "pa": pa, "ip": round(ip, 1), "hr": hr,
-        "hard_hit_pct": gs(row, "hard_hit_pct"),
-        "barrel_pct": gs(row, "barrel_pct_allowed"),
-        "k_pct": gs(row, "k_pct"),
-        "hr9": (hr / max(ip, 0.1)) * 9 if ip > 0 else 0,
+        "pa":           pa,
+        "ip":           round(ip, 1),
+        "hr":           hr,
+        "hr9":          gs(row, "hr9"),
+        "k_pct":        gs(row, "k_pct"),
+        "slg":          gs(row, "slg"),
+        "woba":         gs(row, "woba"),
+        "iso":          gs(row, "iso"),
+        "hard_hit_pct": 0,
+        "barrel_pct":   0,
     }
 
 def get_pitcher_top_pitches(pitcher_name):
@@ -908,12 +964,13 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, 
         "blend_note": blend_note,
         "pit_blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025 ({ip_26:.0f} IP)",
         # Split stats for dropdown
-        "split_brl": round(b_split.get("barrel_pct", 0), 1),
-        "split_iso": round(b_split.get("iso", 0), 3),
-        "split_slg": round(b_split.get("slg", 0), 3),
-        "split_hr": int(b_split.get("hr", 0)),
-        "split_pa": int(b_split.get("pa", 0)),
-        "hr_season": int(bc.get("hr", 0)),
+        "split_brl":  round(b_split.get("barrel_pct", 0), 1),
+        "split_iso":  round(b_split.get("iso", 0), 3),
+        "split_slg":  round(b_split.get("slg", 0), 3),
+        "split_woba": round(b_split.get("woba", 0), 3),
+        "split_hr":   int(b_split.get("hr", 0)),
+        "split_pa":   int(b_split.get("pa", 0)),
+        "hr_season":  int(bc.get("hr", 0)),
     }
     return hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
@@ -1058,14 +1115,15 @@ def pit_display(p_name, p_hand):
         "barrel_pct": round(blend(pc.get("barrel_pct_allowed", 0), pp.get("barrel_pct_allowed", 0), pwc, pwp), 1) or None,
         "ip_2026": round(ip_26, 1),
         "blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025",
-        "vs_L_hr9": round(vs_L.get("hr9", 0), 2) if vs_L.get("pa", 0) >= 1 else None,
-        "vs_R_hr9": round(vs_R.get("hr9", 0), 2) if vs_R.get("pa", 0) >= 1 else None,
-        "vs_L_hh":  round(vs_L.get("hard_hit_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
-        "vs_R_hh":  round(vs_R.get("hard_hit_pct", 0), 1) if vs_R.get("pa", 0) >= 1 else None,
-        "vs_L_brl": round(vs_L.get("barrel_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
-        "vs_R_brl": round(vs_R.get("barrel_pct", 0), 1) if vs_R.get("pa", 0) >= 1 else None,
-        "vs_L_k":   round(vs_L.get("k_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
-        "vs_R_k":   round(vs_R.get("k_pct", 0), 1) if vs_R.get("pa", 0) >= 1 else None,
+        # Split fields — from MLB Stats API statSplits (actually handedness-specific)
+        "vs_L_hr9":  round(vs_L.get("hr9", 0), 2) if vs_L.get("pa", 0) >= 1 else None,
+        "vs_R_hr9":  round(vs_R.get("hr9", 0), 2) if vs_R.get("pa", 0) >= 1 else None,
+        "vs_L_k":    round(vs_L.get("k_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
+        "vs_R_k":    round(vs_R.get("k_pct", 0), 1) if vs_R.get("pa", 0) >= 1 else None,
+        "vs_L_slg":  round(vs_L.get("slg", 0), 3) if vs_L.get("pa", 0) >= 1 else None,
+        "vs_R_slg":  round(vs_R.get("slg", 0), 3) if vs_R.get("pa", 0) >= 1 else None,
+        "vs_L_woba": round(vs_L.get("woba", 0), 3) if vs_L.get("pa", 0) >= 1 else None,
+        "vs_R_woba": round(vs_R.get("woba", 0), 3) if vs_R.get("pa", 0) >= 1 else None,
         "top_pitches": [{"name": p["name"], "usage": p["usage"]} for p in top_pitches],
     }
 
