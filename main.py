@@ -159,13 +159,24 @@ PITCH_DISPLAY = {
 
 # ── Data Loading ──
 async def fetch_savant_csv(url: str, session: httpx.AsyncClient) -> pd.DataFrame:
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Referer": "https://baseballsavant.mlb.com/",
+        "DNT": "1",
+    }
     try:
-        r = await session.get(url, headers=headers, timeout=30, follow_redirects=True)
+        r = await session.get(url, headers=headers, timeout=60, follow_redirects=True)
         if not r.is_success:
             print(f"Savant fetch failed {r.status_code}: {url[:80]}")
             return pd.DataFrame()
-        df = pd.read_csv(io.StringIO(r.text))
+        text = r.text.strip()
+        if not text or text.startswith('<'):
+            print(f"Savant returned HTML (blocked?): {url[:80]}")
+            return pd.DataFrame()
+        df = pd.read_csv(io.StringIO(text))
         return df
     except Exception as e:
         print(f"Savant fetch error: {e} — {url[:80]}")
@@ -396,7 +407,7 @@ async def load_all_savant_data():
     print("Loading data from Baseball Savant...")
 
     # Start pybaseball load in background thread (non-blocking)
-    async with httpx.AsyncClient(timeout=30) as client:
+    async with httpx.AsyncClient(timeout=60) as client:
         # Batter 2026
         df = await fetch_savant_csv(savant_batter_url(min_pa=10), client)
         if not df.empty:
@@ -438,25 +449,23 @@ async def load_all_savant_data():
             _cache[key] = df_split
             print(f"{key}: {len(df_split)} rows")
 
-        # Pitch arsenal - pitcher (try current year, fall back to 2025 early season)
-        for yr_try in [current_season(), current_season()-1]:
-            df = await fetch_savant_csv(savant_pitch_arsenal_url("pitcher", year=yr_try, min_pa=1), client)
-            if not df.empty:
-                _cache["pit_arsenal"] = parse_player_name(df)
-                print(f"pit_arsenal ({yr_try}): {len(_cache['pit_arsenal'])} rows")
-                break
+        # Pitch arsenal - pitcher (2026 only)
+        await asyncio.sleep(2)  # brief pause to avoid rate limiting
+        df = await fetch_savant_csv(savant_pitch_arsenal_url("pitcher", year=current_season(), min_pa=1), client)
+        if not df.empty:
+            _cache["pit_arsenal"] = parse_player_name(df)
+            print(f"pit_arsenal: {len(_cache['pit_arsenal'])} rows")
         else:
-            print("WARNING: pit_arsenal empty — pitch pills will not show")
+            print("pit_arsenal: 0 rows (early season)")
 
-        # Pitch arsenal - batter (try current year, fall back to 2025 early season)
-        for yr_try in [current_season(), current_season()-1]:
-            df = await fetch_savant_csv(savant_pitch_arsenal_url("batter", year=yr_try, min_pa=1), client)
-            if not df.empty:
-                _cache["bat_arsenal"] = parse_player_name(df)
-                print(f"bat_arsenal ({yr_try}): {len(_cache['bat_arsenal'])} rows")
-                break
+        # Pitch arsenal - batter (2026 only)
+        await asyncio.sleep(2)
+        df = await fetch_savant_csv(savant_pitch_arsenal_url("batter", year=current_season(), min_pa=1), client)
+        if not df.empty:
+            _cache["bat_arsenal"] = parse_player_name(df)
+            print(f"bat_arsenal: {len(_cache['bat_arsenal'])} rows")
         else:
-            print("WARNING: bat_arsenal empty — pitch pills will not show")
+            print("bat_arsenal: 0 rows (early season)")
 
     # Pitcher IP from MLB Stats API
     ip_data = await fetch_pitcher_ip(current_season())
