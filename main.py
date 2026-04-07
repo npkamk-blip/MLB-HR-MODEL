@@ -438,17 +438,25 @@ async def load_all_savant_data():
             _cache[key] = df_split
             print(f"{key}: {len(df_split)} rows")
 
-        # Pitch arsenal - pitcher
-        df = await fetch_savant_csv(savant_pitch_arsenal_url("pitcher", min_pa=1), client)
-        if not df.empty:
-            _cache["pit_arsenal"] = parse_player_name(df)
-            print(f"pit_arsenal: {len(_cache['pit_arsenal'])} rows")
+        # Pitch arsenal - pitcher (try current year, fall back to 2025 early season)
+        for yr_try in [current_season(), current_season()-1]:
+            df = await fetch_savant_csv(savant_pitch_arsenal_url("pitcher", year=yr_try, min_pa=1), client)
+            if not df.empty:
+                _cache["pit_arsenal"] = parse_player_name(df)
+                print(f"pit_arsenal ({yr_try}): {len(_cache['pit_arsenal'])} rows")
+                break
+        else:
+            print("WARNING: pit_arsenal empty — pitch pills will not show")
 
-        # Pitch arsenal - batter
-        df = await fetch_savant_csv(savant_pitch_arsenal_url("batter", min_pa=1), client)
-        if not df.empty:
-            _cache["bat_arsenal"] = parse_player_name(df)
-            print(f"bat_arsenal: {len(_cache['bat_arsenal'])} rows")
+        # Pitch arsenal - batter (try current year, fall back to 2025 early season)
+        for yr_try in [current_season(), current_season()-1]:
+            df = await fetch_savant_csv(savant_pitch_arsenal_url("batter", year=yr_try, min_pa=1), client)
+            if not df.empty:
+                _cache["bat_arsenal"] = parse_player_name(df)
+                print(f"bat_arsenal ({yr_try}): {len(_cache['bat_arsenal'])} rows")
+                break
+        else:
+            print("WARNING: bat_arsenal empty — pitch pills will not show")
 
     # Pitcher IP from MLB Stats API
     ip_data = await fetch_pitcher_ip(current_season())
