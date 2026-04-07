@@ -335,9 +335,8 @@ async def fetch_splits_mlb(season=2026):
             ("pitching", "vr", "pit_vs_rhh"),
         ]
         for group, sit_code, cache_key in configs:
-            # statSplits works best with sportId instead of playerPool
             url = (f"{MLB_API}/stats?stats=statSplits&group={group}&gameType=R"
-                   f"&season={season}&sportId=1&limit=2000&sitCodes={sit_code}")
+                   f"&season={season}&sportId=1&playerPool=ALL&limit=2000&sitCodes={sit_code}")
             async with httpx.AsyncClient(timeout=30) as client:
                 r = await client.get(url)
                 data = r.json()
@@ -348,14 +347,16 @@ async def fetch_splits_mlb(season=2026):
                     stat = split.get("stat", {})
                     if not name: continue
                     try:
-                        pa  = int(stat.get("plateAppearances", 0) or 0)
+                        pa  = int(stat.get("battersFaced", 0) or stat.get("plateAppearances", 0) or 0)
                         hr  = int(stat.get("homeRuns", 0) or 0)
                         so  = int(stat.get("strikeOuts", 0) or 0)
                         ab  = int(stat.get("atBats", 0) or 0)
                         tb_str = stat.get("totalBases", "0") or "0"
                         try: tb = int(tb_str)
                         except: tb = 0
-                        slg = round(tb / max(ab, 1), 3) if ab > 0 else 0.0
+                        slg_str = stat.get("slg", ".000") or ".000"
+                        try: slg = float(slg_str) if slg_str not in (".---","") else 0.0
+                        except: slg = round(tb / max(ab, 1), 3) if ab > 0 else 0.0
                         avg_str = stat.get("avg", ".000") or ".000"
                         try: avg = float(avg_str) if avg_str not in (".---","") else 0.0
                         except: avg = 0.0
@@ -363,22 +364,24 @@ async def fetch_splits_mlb(season=2026):
                         obp_str = stat.get("obp", ".000") or ".000"
                         try: obp = float(obp_str) if obp_str not in (".---","") else 0.0
                         except: obp = 0.0
-                        # Approximate wOBA from OBP (close enough for display)
-                        woba = obp
                         k_pct = round(so / max(pa, 1) * 100, 1) if pa > 0 else 0.0
                         ip_str = stat.get("inningsPitched", "0") or "0"
                         try: ip = float(ip_str)
                         except: ip = pa / 4.0
-                        hr9 = round((hr / max(ip, 0.1)) * 9, 2) if ip > 0 else 0.0
+                        # Use pre-calculated HR/9 if available
+                        hr9_str = stat.get("homeRunsPer9", "0") or "0"
+                        try: hr9 = float(hr9_str) if hr9_str not in ("-.--","") else 0.0
+                        except: hr9 = round((hr / max(ip, 0.1)) * 9, 2) if ip > 0 else 0.0
                         results[cache_key].append({
-                            "name":             name.strip(),
+                            "name":              name.strip(),
                             "pa": pa, "ab": ab, "hr": hr,
                             "slg": slg, "iso": iso, "avg": avg,
-                            "woba": woba, "k_pct": k_pct,
+                            "woba": obp,  # OBP as wOBA proxy
+                            "k_pct": k_pct,
                             "hr9": hr9, "ip": round(ip, 1),
-                            "hard_hit_pct": 0,
+                            "hard_hit_pct":      0,
                             "barrel_pct_allowed": 0,
-                            "barrel_pct": 0,
+                            "barrel_pct":        0,
                         })
                     except Exception:
                         continue
