@@ -625,68 +625,62 @@ function bdStatBox(lbl,val,cls,delta,deltaCls){
 function batterDetailHTML(b){
   var s=b.season||{}, r=b.l8d||{}, sp=b.breakdown||{};
   var hand=b.bat_hand||'R';
-  var splitKey=hand==='L'?'vs_lhp':'vs_rhp';
-  var spd=sp.split_stats||{};
+  var splitLabel=hand==='L'?'vs LHP':'vs RHP';
   var uid='bd_'+Math.random().toString(36).substr(2,6);
 
+  function triStat(lbl, sVal, rVal, spVal, type, sCls, rCls, spCls){
+    function fmt(v){
+      if(!v&&v!==0) return '—'; if(v===0) return '—';
+      if(type==='pct') return v.toFixed(1)+'%';
+      if(type==='iso') return '.'+String(Math.round(v*1000)).padStart(3,'0');
+      if(type==='la') return v.toFixed(1)+'°';
+      if(type==='ev') return v.toFixed(1);
+      if(type==='int') return v;
+      return v;
+    }
+    var h='<div class="bd-stat">';
+    h+='<div class="bd-stat-lbl">'+lbl+'</div>';
+    h+='<div style="display:flex;gap:6px;align-items:flex-end;justify-content:center;margin-top:4px">';
+    h+='<div style="text-align:center;flex:1"><div style="font-size:8px;color:var(--muted2);margin-bottom:2px">Season</div><div class="bd-stat-val '+sCls+'">'+fmt(sVal)+'</div></div>';
+    h+='<div style="width:1px;background:var(--border2);align-self:stretch"></div>';
+    h+='<div style="text-align:center;flex:1"><div style="font-size:8px;color:#4da6ff;margin-bottom:2px">L8D</div><div class="bd-stat-val '+rCls+'">'+(r.pa>0?fmt(rVal):'—')+'</div></div>';
+    h+='<div style="width:1px;background:var(--border2);align-self:stretch"></div>';
+    h+='<div style="text-align:center;flex:1"><div style="font-size:8px;color:var(--purple);margin-bottom:2px">'+splitLabel+'</div><div class="bd-stat-val '+spCls+'">'+(spVal!==null&&spVal!==undefined?fmt(spVal):'—')+'</div></div>';
+    h+='</div></div>';
+    return h;
+  }
+
   var h='<div class="bat-detail" id="'+uid+'">';
-  h+='<div class="bd-pills">';
-  h+='<span class="bd-pill-btn active" onclick="bdTab(\''+uid+'\',\'season\',this)">Season</span>';
-  h+='<span class="bd-pill-btn" onclick="bdTab(\''+uid+'\',\'l8d\',this)">L8D</span>';
-  h+='<span class="bd-pill-btn" onclick="bdTab(\''+uid+'\',\'split\',this)">Split vs '+(hand==='L'?'LHP':'RHP')+'</span>';
+  h+='<div class="bd-stat-grid">';
+  h+=triStat('Brl%', s.barrel, r.barrel, sp.split_brl, 'pct',
+    statCls(s.barrel,LG.barrel), statCls(r.barrel,LG.barrel), statCls(sp.split_brl,LG.barrel));
+  h+=triStat('EV', s.ev, r.ev, null, 'ev',
+    statCls(s.ev,LG.ev), statCls(r.ev,LG.ev), 'sc-n');
+  h+=triStat('LA', s.la, r.la, null, 'la',
+    laSeasonCls(s.la), laSeasonCls(r.la), 'sc-n');
+  h+=triStat('HH%', s.hh, r.hh, null, 'pct',
+    statCls(s.hh,LG.hh), statCls(r.hh,LG.hh), 'sc-n');
+  h+=triStat('ISO', s.iso, r.iso, sp.split_iso, 'iso',
+    statCls(s.iso,LG.iso), statCls(r.iso,LG.iso), statCls(sp.split_iso,LG.iso));
+  h+=triStat('K%', s.k, r.k||0, null, 'pct',
+    statCls(s.k,LG.k,true), 'sc-n', 'sc-n');
+  h+=triStat('Pull%', s.pull, r.pull||sp.pull_8d||0, null, 'pct',
+    statCls(s.pull,LG.pull), 'sc-n', 'sc-n');
+  // HR row
+  var h2='<div class="bd-stat">';
+  h2+='<div class="bd-stat-lbl">HR</div>';
+  h2+='<div style="display:flex;gap:6px;align-items:flex-end;justify-content:center;margin-top:4px">';
+  h2+='<div style="text-align:center;flex:1"><div style="font-size:8px;color:var(--muted2);margin-bottom:2px">Season</div><div class="bd-stat-val '+(sp.hr_season>=5?'sc-g':sp.hr_season>=2?'sc-y':'sc-n')+'">'+(sp.hr_season||0)+'</div></div>';
+  h2+='<div style="width:1px;background:var(--border2);align-self:stretch"></div>';
+  h2+='<div style="text-align:center;flex:1"><div style="font-size:8px;color:#4da6ff;margin-bottom:2px">L8D</div><div class="bd-stat-val '+(r.pa>0&&sp.hr_rate_8d>25?'sc-g':r.pa>0&&sp.hr_rate_8d>10?'sc-y':'sc-n')+'">'+(r.pa>0?(r.pa>0?Math.round(sp.hr_rate_8d/600*r.pa)+' HR':'—'):'—')+'</div></div>';
+  h2+='<div style="width:1px;background:var(--border2);align-self:stretch"></div>';
+  h2+='<div style="text-align:center;flex:1"><div style="font-size:8px;color:var(--purple);margin-bottom:2px">'+splitLabel+'</div><div class="bd-stat-val '+(sp.split_hr>=3?'sc-g':sp.split_hr>=1?'sc-y':'sc-n')+'">'+(sp.split_hr||0)+'</div></div>';
+  h2+='</div></div>';
+  h+=h2;
   h+='</div>';
-
-  // SEASON panel
-  h+='<div class="bd-panel open" id="'+uid+'_season">';
-  h+='<div class="bd-stat-grid">';
-  h+=bdStatBox('Brl%',fmtPct(s.barrel),statCls(s.barrel,LG.barrel));
-  h+=bdStatBox('EV',s.ev>0?s.ev.toFixed(1):'—',statCls(s.ev,LG.ev));
-  h+=bdStatBox('LA',fmtLa(s.la),laSeasonCls(s.la));
-  h+=bdStatBox('HH%',fmtPct(s.hh),statCls(s.hh,LG.hh));
-  h+=bdStatBox('ISO',fmtIso(s.iso),statCls(s.iso,LG.iso));
-  h+=bdStatBox('K%',fmtPct(s.k),statCls(s.k,LG.k,true));
-  h+=bdStatBox('Pull%',fmtPct(s.pull||sp.pull_s),statCls(s.pull||sp.pull_s,LG.pull));
-  h+=bdStatBox('HR',sp.barrel_season>0?(sp.s1_barrel>0?'—':'—'):'—','sc-n');
-  h+='</div></div>';
-
-  // L8D panel
-  h+='<div class="bd-panel" id="'+uid+'_l8d">';
-  h+='<div class="bd-stat-grid">';
-  h+=bdStatBox('Brl%',fmtPct(r.barrel),statCls(r.barrel,LG.barrel),fmtDelta(s.barrel,r.barrel,'pct'),deltaCls(s.barrel,r.barrel));
-  h+=bdStatBox('EV',r.ev>0?r.ev.toFixed(1):'—',statCls(r.ev,LG.ev),fmtDelta(s.ev,r.ev,'ev'),deltaCls(s.ev,r.ev));
-  h+=bdStatBox('LA',fmtLa(r.la),laSeasonCls(r.la),fmtDelta(s.la,r.la,'la'),laDeltaCls(s.la,r.la));
-  h+=bdStatBox('HH%',fmtPct(r.hh),statCls(r.hh,LG.hh),fmtDelta(s.hh,r.hh,'pct'),deltaCls(s.hh,r.hh));
-  h+=bdStatBox('ISO',fmtIso(r.iso),statCls(r.iso,LG.iso),fmtDelta(s.iso,r.iso,'iso'),deltaCls(s.iso,r.iso));
-  h+=bdStatBox('PA',(r.pa||0)+' PA','sc-n');
-  h+='</div></div>';
-
-  // SPLIT panel — uses breakdown split_stats passed from backend
-  h+='<div class="bd-panel" id="'+uid+'_split">';
-  h+='<div class="bd-stat-grid">';
-  var sBrl=sp.split_brl||0, sIso=sp.split_iso||0, sSLG=sp.split_slg||0;
-  var sHR=sp.split_hr||0, sPA=sp.split_pa||0;
-  var sHRSeason=sp.hr_season||0;
-  h+=bdStatBox('Brl%',fmtPct(sBrl),statCls(sBrl,LG.barrel));
-  h+=bdStatBox('ISO',fmtIso(sIso),statCls(sIso,LG.iso));
-  h+=bdStatBox('SLG',sSLG>0?'.'+String(Math.round(sSLG*1000)).padStart(3,'0'):'—','sc-n');
-  h+=bdStatBox('HR (split)',sHR>0?sHR+'  HR':'—',sHR>=5?'sc-g':sHR>=2?'sc-y':'sc-n');
-  h+=bdStatBox('PA (split)',sPA>0?sPA:'—','sc-n');
-  h+=bdStatBox('HR (season)',sHRSeason>0?sHRSeason+' HR':'—',sHRSeason>=10?'sc-g':sHRSeason>=4?'sc-y':'sc-n');
-  h+='</div></div>';
-
+  h+='<div style="font-size:9px;color:var(--muted2);margin-top:6px;padding-top:4px;border-top:1px solid var(--border2)">'+(sp.blend_note||'')+(sp.split_pa>0?' · '+sp.split_pa+' PA in '+splitLabel:'')+'</div>';
   h+='</div>';
   return h;
-}
-
-function bdTab(uid,panel,btn){
-  var container=document.getElementById(uid);
-  if(!container) return;
-  container.querySelectorAll('.bd-panel').forEach(function(p){p.classList.remove('open');});
-  container.querySelectorAll('.bd-pill-btn').forEach(function(b){b.classList.remove('active','active-blue','active-purple');});
-  var target=document.getElementById(uid+'_'+panel);
-  if(target) target.classList.add('open');
-  var cls=panel==='l8d'?'active-blue':panel==='split'?'active-purple':'active';
-  btn.classList.add(cls);
 }
 
 function toggleBatDetail(row){
@@ -709,9 +703,10 @@ function batterRowHTML(b,order){
   var isoCls=statCls(isoShow,LG.iso);
   var laCls=laSeasonCls(s.la);
 
-  // L5G
-  var l5gHR=g.ab>0?g.hr:null, l5gAB=g.ab||0;
-  var hrBadgeCls=l5gHR>=2?'l5g-hot':l5gHR===1?'l5g-ok':'l5g-cold';
+  // L8D HR + PA on main row
+  var l8dPA=r.pa||0;
+  var l8dHR=l8dPA>0?Math.round((sp.hr_rate_8d||0)/600*l8dPA):null;
+  var hrBadgeCls=l8dHR>=2?'l5g-hot':l8dHR===1?'l5g-ok':'l5g-cold';
 
   var h='<div class="batter-row" onclick="toggleBatDetail(this)">';
   h+='<div class="bat-order">'+order+'</div>';
@@ -722,8 +717,8 @@ function batterRowHTML(b,order){
   h+='<div class="sc '+brlCls+'">'+(brlShow>0?brlShow.toFixed(1)+'%':'—')+'</div>';
   h+='<div class="sc '+laCls+'">'+(s.la>0?s.la.toFixed(1)+'°':'—')+'</div>';
   h+='<div class="sc '+isoCls+'">'+(isoShow>0?fmtIso(isoShow):'—')+'</div>';
-  if(l5gHR!==null&&l5gAB>0){
-    h+='<div class="l5g-cell"><div class="l5g-hr '+hrBadgeCls+'">'+l5gHR+' HR</div><div class="l5g-sub">'+l5gAB+' AB</div></div>';
+  if(l8dHR!==null&&l8dPA>0){
+    h+='<div class="l5g-cell"><div class="l5g-hr '+hrBadgeCls+'">'+l8dHR+' HR</div><div class="l5g-sub">'+l8dPA+' PA</div></div>';
   } else {
     h+='<div class="l5g-cell"><div class="l5g-sub" style="margin-top:4px">—</div></div>';
   }
@@ -993,12 +988,12 @@ async function load(){
       // Side-by-side lineups
       h+='<div class="lineup-split">';
       h+='<div class="lineup-side">';
-      h+='<div class="lineup-side-header"><div class="lsh">#</div><div class="lsh left">'+g.away+'</div><div class="lsh">Brl%</div><div class="lsh">LA</div><div class="lsh">ISO</div><div class="lsh">L5G</div><div class="lsh">HR%</div></div>';
+      h+='<div class="lineup-side-header"><div class="lsh">#</div><div class="lsh left">'+g.away+'</div><div class="lsh">Brl%</div><div class="lsh">LA</div><div class="lsh">ISO</div><div class="lsh">L8D</div><div class="lsh">HR%</div></div>';
       if(!awayBatters.length){h+='<div class="pending">No lineup yet</div>';}
       else{awayBatters.forEach(function(b,i){h+=batterRowHTML(b,i+1);});}
       h+='</div>';
       h+='<div class="lineup-side">';
-      h+='<div class="lineup-side-header"><div class="lsh">#</div><div class="lsh left">'+g.home+'</div><div class="lsh">Brl%</div><div class="lsh">LA</div><div class="lsh">ISO</div><div class="lsh">L5G</div><div class="lsh">HR%</div></div>';
+      h+='<div class="lineup-side-header"><div class="lsh">#</div><div class="lsh left">'+g.home+'</div><div class="lsh">Brl%</div><div class="lsh">LA</div><div class="lsh">ISO</div><div class="lsh">L8D</div><div class="lsh">HR%</div></div>';
       if(!homeBatters.length){h+='<div class="pending">No lineup yet</div>';}
       else{homeBatters.forEach(function(b,i){h+=batterRowHTML(b,i+1);});}
       h+='</div>';
