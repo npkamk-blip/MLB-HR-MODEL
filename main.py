@@ -286,8 +286,8 @@ async def fetch_pitcher_ip(season=2026):
 async def fetch_last5_games_batting():
     """Fetch last 5 games batting stats from MLB Stats API for all active hitters"""
     try:
-        url = (f"{MLB_API}/stats?stats=lastXGames&group=hitting&gameType=R"
-               f"&season={current_season()}&playerPool=All&limit=2000&sitCodes=last5")
+        url = (f"{MLB_API}/stats?stats=lastXGames&lastXGames=5&group=hitting&gameType=R"
+               f"&season={current_season()}&playerPool=All&limit=2000")
         async with httpx.AsyncClient(timeout=30) as client:
             r = await client.get(url)
             data = r.json()
@@ -907,6 +907,13 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, 
         "weather_mult": weather_mult, "after_context": after_context, "hr_prob": hr_prob,
         "blend_note": blend_note,
         "pit_blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025 ({ip_26:.0f} IP)",
+        # Split stats for dropdown
+        "split_brl": round(b_split.get("barrel_pct", 0), 1),
+        "split_iso": round(b_split.get("iso", 0), 3),
+        "split_slg": round(b_split.get("slg", 0), 3),
+        "split_hr": int(b_split.get("hr", 0)),
+        "split_pa": int(b_split.get("pa", 0)),
+        "hr_season": int(bc.get("hr", 0)),
     }
     return hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
@@ -1202,6 +1209,8 @@ async def get_games(date: str = None):
                     "hh":     round(blend(bc.get("hard_hit_pct", 0), bp.get("hard_hit_pct", 0), bwc, bwp), 1),
                     "iso":    round(blend(bc.get("iso", 0), bp.get("iso", 0), bwc, bwp), 3),
                     "k":      round(blend(bc.get("k_pct", 0), bp.get("k_pct", 0), bwc, bwp), 1),
+                    "pull":   round(blend(bc.get("pull_pct", 0), bp.get("pull_pct", 0), bwc, bwp), 1),
+                    "hr":     int(bc.get("hr", 0)),
                 },
                 "l8d": {
                     "pa":     int(b8d.get("pa", 0)),
