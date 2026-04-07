@@ -705,7 +705,7 @@ function batterRowHTML(b,order){
 
   // L8D HR + PA on main row
   var l8dPA=r.pa||0;
-  var l8dHR=l8dPA>0?Math.round((sp.hr_rate_8d||0)/600*l8dPA):null;
+  var l8dHR=l8dPA>0?Math.round((bd.hr_rate_8d||0)/600*l8dPA):null;
   var hrBadgeCls=l8dHR>=2?'l5g-hot':l8dHR===1?'l5g-ok':'l5g-cold';
 
   var h='<div class="batter-row" onclick="toggleBatDetail(this)">';
