@@ -637,60 +637,91 @@ function batterDetailHTML(b){
   var hand=b.bat_hand||'R';
   var splitLabel=hand==='L'?'vs LHP':'vs RHP';
   var uid='bd_'+Math.random().toString(36).substr(2,6);
+  var hasL8D=r.pa>0;
+  var hasSplit=sp.split_pa>0;
 
-  function triStat(lbl, sVal, rVal, spVal, type, sCls, rCls, spCls){
-    function fmt(v){
-      if(!v&&v!==0) return '—'; if(v===0) return '—';
-      if(type==='pct') return v.toFixed(1)+'%';
-      if(type==='iso') return '.'+String(Math.round(v*1000)).padStart(3,'0');
-      if(type==='la') return v.toFixed(1)+'°';
-      if(type==='ev') return v.toFixed(1);
-      if(type==='int') return v;
-      return v;
-    }
-    var h='<div class="bd-stat">';
-    h+='<div class="bd-stat-lbl">'+lbl+'</div>';
-    h+='<div style="display:flex;gap:6px;align-items:flex-end;justify-content:center;margin-top:4px">';
-    h+='<div style="text-align:center;flex:1"><div style="font-size:8px;color:var(--muted2);margin-bottom:2px">Season</div><div class="bd-stat-val '+sCls+'">'+fmt(sVal)+'</div></div>';
-    h+='<div style="width:1px;background:var(--border2);align-self:stretch"></div>';
-    h+='<div style="text-align:center;flex:1"><div style="font-size:8px;color:#4da6ff;margin-bottom:2px">L8D</div><div class="bd-stat-val '+rCls+'">'+(r.pa>0?fmt(rVal):'—')+'</div></div>';
-    h+='<div style="width:1px;background:var(--border2);align-self:stretch"></div>';
-    h+='<div style="text-align:center;flex:1"><div style="font-size:8px;color:var(--purple);margin-bottom:2px">'+splitLabel+'</div><div class="bd-stat-val '+spCls+'">'+(spVal!==null&&spVal!==undefined?fmt(spVal):'—')+'</div></div>';
+  function fmtV(v,type){
+    if(v===null||v===undefined||v===0) return '—';
+    if(type==='pct') return v.toFixed(1)+'%';
+    if(type==='slg'||type==='iso') return '.'+String(Math.round(v*1000)).padStart(3,'0');
+    if(type==='la') return v.toFixed(1)+'°';
+    if(type==='ev') return v.toFixed(1);
+    if(type==='int') return String(v);
+    return String(v);
+  }
+
+  var S='var(--muted2)', L='#4da6ff', SP='var(--purple)';
+
+  // Generic card builder — cols is array of {label, color, val, cls}
+  function card(title, cols){
+    var h='<div class="bd-stat"><div class="bd-stat-lbl">'+title+'</div>';
+    h+='<div style="display:flex;gap:4px;align-items:flex-end;justify-content:center;margin-top:4px">';
+    cols.forEach(function(c,i){
+      if(i>0) h+='<div style="width:1px;background:var(--border2);align-self:stretch"></div>';
+      h+='<div style="text-align:center;flex:1"><div style="font-size:8px;margin-bottom:2px;color:'+c.color+'">'+c.label+'</div>';
+      h+='<div class="bd-stat-val '+c.cls+'">'+c.val+'</div></div>';
+    });
     h+='</div></div>';
     return h;
   }
 
-  var h='<div class="bat-detail" id="'+uid+'">';
-  h+='<div class="bd-stat-grid">';
-  h+=triStat('Brl%', s.barrel, r.barrel, sp.split_brl, 'pct',
-    statCls(s.barrel,LG.barrel), statCls(r.barrel,LG.barrel), statCls(sp.split_brl,LG.barrel));
-  h+=triStat('EV', s.ev, r.ev, null, 'ev',
-    statCls(s.ev,LG.ev), statCls(r.ev,LG.ev), 'sc-n');
-  h+=triStat('LA', s.la, r.la, null, 'la',
-    laSeasonCls(s.la), laSeasonCls(r.la), 'sc-n');
-  h+=triStat('HH%', s.hh, r.hh, null, 'pct',
-    statCls(s.hh,LG.hh), statCls(r.hh,LG.hh), 'sc-n');
-  h+=triStat('ISO', s.iso, r.iso, sp.split_iso, 'iso',
-    statCls(s.iso,LG.iso), statCls(r.iso,LG.iso), statCls(sp.split_iso,LG.iso));
-  h+=triStat('SLG', s.iso>0?s.iso+0.255:0, r.iso>0?r.iso+0.255:0, sp.split_slg, 'iso',
-    'sc-n', 'sc-n', statCls(sp.split_slg,0.380));
-  h+=triStat('wOBA', 0, 0, sp.split_woba, 'iso',
-    'sc-n', 'sc-n', statCls(sp.split_woba,0.320));
-  h+=triStat('K%', s.k, r.k||0, null, 'pct',
-    statCls(s.k,LG.k,true), 'sc-n', 'sc-n');
-  h+=triStat('Pull%', s.pull, r.pull||sp.pull_8d||0, null, 'pct',
-    statCls(s.pull,LG.pull), 'sc-n', 'sc-n');
-  // HR row
-  var h2='<div class="bd-stat">';
-  h2+='<div class="bd-stat-lbl">HR</div>';
-  h2+='<div style="display:flex;gap:6px;align-items:flex-end;justify-content:center;margin-top:4px">';
-  h2+='<div style="text-align:center;flex:1"><div style="font-size:8px;color:var(--muted2);margin-bottom:2px">Season</div><div class="bd-stat-val '+(sp.hr_season>=5?'sc-g':sp.hr_season>=2?'sc-y':'sc-n')+'">'+(sp.hr_season||0)+'</div></div>';
-  h2+='<div style="width:1px;background:var(--border2);align-self:stretch"></div>';
-  h2+='<div style="text-align:center;flex:1"><div style="font-size:8px;color:#4da6ff;margin-bottom:2px">L8D</div><div class="bd-stat-val '+(r.pa>0&&sp.hr_rate_8d>25?'sc-g':r.pa>0&&sp.hr_rate_8d>10?'sc-y':'sc-n')+'">'+(r.pa>0?(r.pa>0?Math.round(sp.hr_rate_8d/600*r.pa)+' HR':'—'):'—')+'</div></div>';
-  h2+='<div style="width:1px;background:var(--border2);align-self:stretch"></div>';
-  h2+='<div style="text-align:center;flex:1"><div style="font-size:8px;color:var(--purple);margin-bottom:2px">'+splitLabel+'</div><div class="bd-stat-val '+(sp.split_hr>=3?'sc-g':sp.split_hr>=1?'sc-y':'sc-n')+'">'+(sp.split_hr||0)+'</div></div>';
-  h2+='</div></div>';
-  h+=h2;
+  var h='<div class="bat-detail" id="'+uid+'"><div class="bd-stat-grid">';
+
+  // Brl% — Season + L8D
+  h+=card('Brl%',[
+    {label:'Season', color:S, val:fmtV(s.barrel,'pct'), cls:statCls(s.barrel,LG.barrel)},
+    {label:'L8D',    color:L, val:hasL8D?fmtV(r.barrel,'pct'):'—', cls:hasL8D?statCls(r.barrel,LG.barrel):'sc-n'},
+  ]);
+  // EV — Season + L8D
+  h+=card('EV',[
+    {label:'Season', color:S, val:fmtV(s.ev,'ev'), cls:statCls(s.ev,LG.ev)},
+    {label:'L8D',    color:L, val:hasL8D?fmtV(r.ev,'ev'):'—', cls:hasL8D?statCls(r.ev,LG.ev):'sc-n'},
+  ]);
+  // LA — Season + L8D
+  h+=card('LA',[
+    {label:'Season', color:S, val:fmtV(s.la,'la'), cls:laSeasonCls(s.la)},
+    {label:'L8D',    color:L, val:hasL8D?fmtV(r.la,'la'):'—', cls:hasL8D?laSeasonCls(r.la):'sc-n'},
+  ]);
+  // HH% — Season + L8D
+  h+=card('HH%',[
+    {label:'Season', color:S, val:fmtV(s.hh,'pct'), cls:statCls(s.hh,LG.hh)},
+    {label:'L8D',    color:L, val:hasL8D?fmtV(r.hh,'pct'):'—', cls:hasL8D?statCls(r.hh,LG.hh):'sc-n'},
+  ]);
+  // ISO — Season + L8D + Split
+  h+=card('ISO',[
+    {label:'Season',   color:S,  val:fmtV(s.iso,'iso'),       cls:statCls(s.iso,LG.iso)},
+    {label:'L8D',      color:L,  val:hasL8D?fmtV(r.iso,'iso'):'—', cls:hasL8D?statCls(r.iso,LG.iso):'sc-n'},
+    {label:splitLabel, color:SP, val:hasSplit?fmtV(sp.split_iso,'iso'):'—', cls:hasSplit?statCls(sp.split_iso,LG.iso):'sc-n'},
+  ]);
+  // SLG — Season + L8D + Split
+  h+=card('SLG',[
+    {label:'Season',   color:S,  val:fmtV(s.slg,'slg'),       cls:statCls(s.slg,0.380)},
+    {label:'L8D',      color:L,  val:hasL8D?fmtV(r.slg,'slg'):'—', cls:hasL8D?statCls(r.slg,0.380):'sc-n'},
+    {label:splitLabel, color:SP, val:hasSplit?fmtV(sp.split_slg,'slg'):'—', cls:hasSplit?statCls(sp.split_slg,0.380):'sc-n'},
+  ]);
+  // wOBA — Split only
+  h+=card('wOBA',[
+    {label:splitLabel, color:SP, val:hasSplit?fmtV(sp.split_woba,'slg'):'—', cls:hasSplit?statCls(sp.split_woba,0.320):'sc-n'},
+  ]);
+  // K% — Season only
+  h+=card('K%',[
+    {label:'Season', color:S, val:fmtV(s.k,'pct'), cls:statCls(s.k,LG.k,true)},
+  ]);
+  // Pull% — Season + L8D
+  h+=card('Pull%',[
+    {label:'Season', color:S, val:fmtV(s.pull,'pct'), cls:statCls(s.pull,LG.pull)},
+    {label:'L8D',    color:L, val:hasL8D?fmtV(r.pull,'pct'):'—', cls:hasL8D?statCls(r.pull,LG.pull):'sc-n'},
+  ]);
+  // HR — Season + L8D + Split
+  var l8dHRval=hasL8D?Math.round((sp.hr_rate_8d||0)/600*r.pa):0;
+  var l8dHRcls=l8dHRval>=2?'sc-g':l8dHRval>=1?'sc-y':'sc-n';
+  var spHRcls=(sp.split_hr||0)>=3?'sc-g':(sp.split_hr||0)>=1?'sc-y':'sc-n';
+  h+=card('HR',[
+    {label:'Season',   color:S,  val:String(sp.hr_season||0), cls:(sp.hr_season||0)>=5?'sc-g':(sp.hr_season||0)>=2?'sc-y':'sc-n'},
+    {label:'L8D',      color:L,  val:hasL8D?l8dHRval+' HR':'—', cls:hasL8D?l8dHRcls:'sc-n'},
+    {label:splitLabel, color:SP, val:hasSplit?String(sp.split_hr||0):'—', cls:hasSplit?spHRcls:'sc-n'},
+  ]);
+
   h+='</div>';
   h+='<div style="font-size:9px;color:var(--muted2);margin-top:6px;padding-top:4px;border-top:1px solid var(--border2)">'+(sp.blend_note||'')+(sp.split_pa>0?' · '+sp.split_pa+' PA in '+splitLabel:'')+'</div>';
   h+='</div>';
