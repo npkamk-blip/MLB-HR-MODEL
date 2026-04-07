@@ -329,14 +329,15 @@ async def fetch_splits_mlb(season=2026):
     }
     try:
         configs = [
-            ("hitting", "vl", "bat_vs_lhp"),   # batters vs LHP
-            ("hitting", "vr", "bat_vs_rhp"),   # batters vs RHP
-            ("pitching", "vl", "pit_vs_lhh"),  # pitchers vs LHB
-            ("pitching", "vr", "pit_vs_rhh"),  # pitchers vs RHB
+            ("hitting",  "vl", "bat_vs_lhp"),
+            ("hitting",  "vr", "bat_vs_rhp"),
+            ("pitching", "vl", "pit_vs_lhh"),
+            ("pitching", "vr", "pit_vs_rhh"),
         ]
         for group, sit_code, cache_key in configs:
+            # statSplits works best with sportId instead of playerPool
             url = (f"{MLB_API}/stats?stats=statSplits&group={group}&gameType=R"
-                   f"&season={season}&playerPool=All&limit=2000&sitCodes={sit_code}")
+                   f"&season={season}&sportId=1&limit=2000&sitCodes={sit_code}")
             async with httpx.AsyncClient(timeout=30) as client:
                 r = await client.get(url)
                 data = r.json()
@@ -347,41 +348,41 @@ async def fetch_splits_mlb(season=2026):
                     stat = split.get("stat", {})
                     if not name: continue
                     try:
-                        pa = int(stat.get("plateAppearances", 0) or 0)
-                        hr = int(stat.get("homeRuns", 0) or 0)
-                        so = int(stat.get("strikeOuts", 0) or 0)
-                        ab = int(stat.get("atBats", 0) or 0)
-                        h = int(stat.get("hits", 0) or 0)
+                        pa  = int(stat.get("plateAppearances", 0) or 0)
+                        hr  = int(stat.get("homeRuns", 0) or 0)
+                        so  = int(stat.get("strikeOuts", 0) or 0)
+                        ab  = int(stat.get("atBats", 0) or 0)
                         tb_str = stat.get("totalBases", "0") or "0"
                         try: tb = int(tb_str)
                         except: tb = 0
                         slg = round(tb / max(ab, 1), 3) if ab > 0 else 0.0
                         avg_str = stat.get("avg", ".000") or ".000"
-                        try: avg = float(avg_str) if avg_str not in (".---", "") else 0.0
+                        try: avg = float(avg_str) if avg_str not in (".---","") else 0.0
                         except: avg = 0.0
-                        iso = round(slg - avg, 3) if slg > 0 else 0.0
-                        woba_str = stat.get("obp", ".000") or ".000"
-                        try: woba = float(woba_str) if woba_str not in (".---", "") else 0.0
-                        except: woba = 0.0
+                        iso  = round(slg - avg, 3) if slg > 0 else 0.0
+                        obp_str = stat.get("obp", ".000") or ".000"
+                        try: obp = float(obp_str) if obp_str not in (".---","") else 0.0
+                        except: obp = 0.0
+                        # Approximate wOBA from OBP (close enough for display)
+                        woba = obp
                         k_pct = round(so / max(pa, 1) * 100, 1) if pa > 0 else 0.0
-                        # Pitcher specific
                         ip_str = stat.get("inningsPitched", "0") or "0"
                         try: ip = float(ip_str)
                         except: ip = pa / 4.0
                         hr9 = round((hr / max(ip, 0.1)) * 9, 2) if ip > 0 else 0.0
                         results[cache_key].append({
-                            "name": name.strip(),
+                            "name":             name.strip(),
                             "pa": pa, "ab": ab, "hr": hr,
                             "slg": slg, "iso": iso, "avg": avg,
                             "woba": woba, "k_pct": k_pct,
                             "hr9": hr9, "ip": round(ip, 1),
-                            # Keep these for compatibility with get_pitcher_split
                             "hard_hit_pct": 0,
                             "barrel_pct_allowed": 0,
+                            "barrel_pct": 0,
                         })
                     except Exception:
                         continue
-            print(f"{cache_key}: {len(results[cache_key])} rows (MLB statSplits)")
+            print(f"{cache_key}: {len(results[cache_key])} rows (MLB statSplits sitCode={sit_code})")
     except Exception as e:
         print(f"MLB statSplits error: {e}")
         import traceback; traceback.print_exc()
