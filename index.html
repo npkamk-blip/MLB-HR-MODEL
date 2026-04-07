@@ -635,7 +635,7 @@ function bdStatBox(lbl,val,cls,delta,deltaCls){
 function batterDetailHTML(b){
   var s=b.season||{}, r=b.l8d||{}, sp=b.breakdown||{};
   var hand=b.bat_hand||'R';
-  var splitLabel=hand==='L'?'vs LHP':'vs RHP';
+  var splitLabel=(b.opp_p_hand||'R')==='L'?'vs LHP':'vs RHP';
   var uid='bd_'+Math.random().toString(36).substr(2,6);
   var hasL8D=r.pa>0;
   var hasSplit=sp.split_pa>0;
