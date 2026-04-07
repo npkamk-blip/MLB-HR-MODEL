@@ -25,13 +25,13 @@ def savant_batter_url(year=None, min_pa=10, extra=""):
     return (f"{SAVANT_BASE}/leaderboard/custom?year={yr}&type=batter&filter=&sort=4"
             f"&sortDir=desc&min={min_pa}&selections=pa,ab,hit,home_run,strikeout,"
             f"k_percent,slg_percent,batting_avg,barrel_batted_rate,exit_velocity_avg,"
-            f"launch_angle_avg,hard_hit_percent,pull_percent&csv=true{extra}")
+            f"launch_angle_avg,hard_hit_percent,pull_percent{extra}&csv=true")
 
 def savant_pitcher_url(year=None, min_pa=5, extra=""):
     yr = year or current_season()
     return (f"{SAVANT_BASE}/leaderboard/custom?year={yr}&type=pitcher&filter=&sort=4"
             f"&sortDir=desc&min={min_pa}&selections=pa,home_run,barrel_batted_rate,"
-            f"exit_velocity_avg,hard_hit_percent,k_percent,p_era&csv=true{extra}")
+            f"exit_velocity_avg,hard_hit_percent,k_percent,p_era{extra}&csv=true")
 
 def savant_pitch_arsenal_url(ptype="pitcher", year=None, min_pa=1):
     yr = year or current_season()
