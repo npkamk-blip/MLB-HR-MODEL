@@ -1270,6 +1270,7 @@ async def get_games(date: str = None):
                     "la":     round(blend(bc.get("launch_angle", 0), bp.get("launch_angle", 0), bwc, bwp), 1),
                     "hh":     round(blend(bc.get("hard_hit_pct", 0), bp.get("hard_hit_pct", 0), bwc, bwp), 1),
                     "iso":    round(blend(bc.get("iso", 0), bp.get("iso", 0), bwc, bwp), 3),
+                    "slg":    round(blend(bc.get("slg_percent", 0), bp.get("slg_percent", 0), bwc, bwp), 3),
                     "k":      round(blend(bc.get("k_pct", 0), bp.get("k_pct", 0), bwc, bwp), 1),
                     "pull":   round(blend(bc.get("pull_pct", 0), bp.get("pull_pct", 0), bwc, bwp), 1),
                     "hr":     int(bc.get("hr", 0)),
@@ -1281,6 +1282,8 @@ async def get_games(date: str = None):
                     "la":     round(b8d.get("launch_angle", 0), 1),
                     "hh":     round(b8d.get("hard_hit_pct", 0), 1),
                     "iso":    round(b8d.get("iso", 0), 3),
+                    "slg":    round(b8d.get("slg_percent", 0), 3),
+                    "pull":   round(b8d.get("pull_pct", 0), 1),
                 },
                 "l5g": {
                     "ab":  int(bl5g.get("ab", 0)),
