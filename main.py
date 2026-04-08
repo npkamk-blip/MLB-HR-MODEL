@@ -448,6 +448,8 @@ async def fetch_team_stats(season=2026):
     except Exception as e:
         print(f"Team stats error: {e}")
         import traceback; traceback.print_exc()
+
+async def load_all_savant_data():
     """Fetch all data from Baseball Savant + FanGraphs via pybaseball"""
     print("Loading data from Baseball Savant...")
 
