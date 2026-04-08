@@ -258,14 +258,19 @@ async def fetch_pitcher_ip(season=2026):
                 ip_str = stat.get("inningsPitched", "0") or "0"
                 try: ip = float(ip_str)
                 except: ip = 0
+                gs_val = int(stat.get("gamesStarted", 0) or 0)
                 hr9_str = stat.get("homeRunsPer9", "0") or "0"
                 try: hr9 = float(hr9_str)
                 except: hr9 = 0
                 era_str = stat.get("era", "0") or "0"
                 try: era = float(era_str)
                 except: era = 0
+                k9_str = stat.get("strikeoutsPer9Inn", "0") or "0"
+                try: k9 = float(k9_str) if k9_str not in ("-.--","") else 0
+                except: k9 = 0
+                avg_ip = round(ip / gs_val, 1) if gs_val > 0 else 5.0
                 if name:
-                    ip_map[name.lower()] = {"ip": ip, "hr9": hr9, "era": era, "name": name}
+                    ip_map[name.lower()] = {"ip": ip, "hr9": hr9, "era": era, "k9": k9, "gs": gs_val, "avg_ip": avg_ip, "name": name}
         print(f"Fetched IP data for {len(ip_map)} pitchers from MLB Stats API")
         # Supplemental leaders fallback if stats endpoint is sparse
         if len(ip_map) < 5:
@@ -685,13 +690,15 @@ def get_pitcher_stats(name, year=2026):
     ip = ip_data.get("ip", 0)
     hr9 = ip_data.get("hr9", 0)
     era = ip_data.get("era", 0)
+    k9  = ip_data.get("k9", 0)
+    avg_ip = ip_data.get("avg_ip", 5.0)
+    gs_val = ip_data.get("gs", 0)
     if row is None:
-        return {"era": era, "ip": ip, "hr9": hr9, "hard_hit_pct": 0,
-                "barrel_pct_allowed": 0, "fb_pct": 0, "k_pct": 0, "hr_fb_pct": 0}
+        return {"era": era, "ip": ip, "hr9": hr9, "k9": k9, "avg_ip": avg_ip, "gs": gs_val,
+                "hard_hit_pct": 0, "barrel_pct_allowed": 0, "fb_pct": 0, "k_pct": 0, "hr_fb_pct": 0}
     return {
         "era": era or gs(row, "era"),
-        "ip": ip,
-        "hr9": hr9,
+        "ip": ip, "hr9": hr9, "k9": k9, "avg_ip": avg_ip, "gs": gs_val,
         "hard_hit_pct": gs(row, "hard_hit_pct"),
         "barrel_pct_allowed": gs(row, "barrel_pct_allowed"),
         "fb_pct": gs(row, "fb_pct"),
@@ -1396,14 +1403,13 @@ async def get_games(date: str = None):
         # ── Strikeouts ──
         away_lineup_k = round(sum(b["season"].get("k", 0) for b in away_lineup_ordered) / max(len(away_lineup_ordered), 1), 1)
         home_lineup_k = round(sum(b["season"].get("k", 0) for b in home_lineup_ordered) / max(len(home_lineup_ordered), 1), 1)
-        # K/9 from pitcher stats
-        away_pit_k9 = away_pit_stats.get("k_pct", 0) / 100 * 27  # convert K% to K/9 approx
-        home_pit_k9 = home_pit_stats.get("k_pct", 0) / 100 * 27
+        away_pit_k9  = away_pit_stats.get("k9", 0)
+        home_pit_k9  = home_pit_stats.get("k9", 0)
+        away_avg_ip  = away_pit_stats.get("avg_ip", 5.0) or 5.0
+        home_avg_ip  = home_pit_stats.get("avg_ip", 5.0) or 5.0
         lg_k_pct = 22.5
-        exp_innings = 5.5  # avg starter innings
-        # Expected Ks = K/9 × (exp_innings/9) × lineup adjustment
-        away_exp_k = round(away_pit_k9 * (exp_innings / 9) * (home_lineup_k / lg_k_pct), 1) if away_pit_k9 > 0 else 0
-        home_exp_k = round(home_pit_k9 * (exp_innings / 9) * (away_lineup_k / lg_k_pct), 1) if home_pit_k9 > 0 else 0
+        away_exp_k = round(away_pit_k9 * (away_avg_ip / 9) * (home_lineup_k / lg_k_pct), 1) if away_pit_k9 > 0 else 0
+        home_exp_k = round(home_pit_k9 * (home_avg_ip / 9) * (away_lineup_k / lg_k_pct), 1) if home_pit_k9 > 0 else 0
 
         park_factor_neutral = 1.0  # neutral for runs (park factors are HR-specific)
 
@@ -1442,6 +1448,8 @@ async def get_games(date: str = None):
                 "home_pit_name": home_p.get("fullName", "TBD"),
                 "away_pit_k9":   round(away_pit_k9, 1),
                 "home_pit_k9":   round(home_pit_k9, 1),
+                "away_avg_ip":   round(away_avg_ip, 1),
+                "home_avg_ip":   round(home_avg_ip, 1),
             },
         })
 
