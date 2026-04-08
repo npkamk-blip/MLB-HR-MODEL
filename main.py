@@ -1396,12 +1396,14 @@ async def get_games(date: str = None):
         # ── Strikeouts ──
         away_lineup_k = round(sum(b["season"].get("k", 0) for b in away_lineup_ordered) / max(len(away_lineup_ordered), 1), 1)
         home_lineup_k = round(sum(b["season"].get("k", 0) for b in home_lineup_ordered) / max(len(home_lineup_ordered), 1), 1)
-        away_pit_k9 = away_pit_stats.get("k_pct", 0) * 2.7 if away_pit_stats.get("k_pct") else 0
-        home_pit_k9 = home_pit_stats.get("k_pct", 0) * 2.7 if home_pit_stats.get("k_pct") else 0
-        # Expected Ks: pitcher K rate adjusted by opposing lineup K%
+        # K/9 from pitcher stats
+        away_pit_k9 = away_pit_stats.get("k_pct", 0) / 100 * 27  # convert K% to K/9 approx
+        home_pit_k9 = home_pit_stats.get("k_pct", 0) / 100 * 27
         lg_k_pct = 22.5
-        away_exp_k = round(away_pit_k9 * (home_lineup_k / lg_k_pct) if away_pit_k9 > 0 else 0, 1)
-        home_exp_k = round(home_pit_k9 * (away_lineup_k / lg_k_pct) if home_pit_k9 > 0 else 0, 1)
+        exp_innings = 5.5  # avg starter innings
+        # Expected Ks = K/9 × (exp_innings/9) × lineup adjustment
+        away_exp_k = round(away_pit_k9 * (exp_innings / 9) * (home_lineup_k / lg_k_pct), 1) if away_pit_k9 > 0 else 0
+        home_exp_k = round(home_pit_k9 * (exp_innings / 9) * (away_lineup_k / lg_k_pct), 1) if home_pit_k9 > 0 else 0
 
         park_factor_neutral = 1.0  # neutral for runs (park factors are HR-specific)
 
@@ -1431,7 +1433,7 @@ async def get_games(date: str = None):
                 "away_k_pg":     away_tp.get("k_per_9", 0),
                 "home_k_pg":     home_tp.get("k_per_9", 0),
             },
-            "strikeouts": {
+        "strikeouts": {
                 "away_exp_k":    away_exp_k,
                 "home_exp_k":    home_exp_k,
                 "away_lineup_k": away_lineup_k,
