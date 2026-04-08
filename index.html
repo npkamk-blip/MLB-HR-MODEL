@@ -799,6 +799,15 @@ function renderTotals(games){
 
     h+='<div class="totals-body">';
 
+    // Column headers
+    h+='<div style="display:flex;justify-content:flex-end;gap:0;padding:4px 0 6px;border-bottom:1px solid var(--border2);margin-bottom:2px">';
+    h+='<div style="min-width:36px;text-align:center;font-size:9px;color:var(--blue);text-transform:uppercase;letter-spacing:.06em">Away</div>';
+    h+='<div style="width:1px;background:transparent;margin:0 8px"></div>';
+    h+='<div style="min-width:36px;text-align:center;font-size:9px;color:var(--warn);text-transform:uppercase;letter-spacing:.06em">Home</div>';
+    h+='<div style="width:1px;background:transparent;margin:0 8px"></div>';
+    h+='<div style="min-width:36px;text-align:center;font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em">Total</div>';
+    h+='</div>';
+
     // Pitchers row
     h+='<div class="totals-row"><span class="totals-lbl">Starter</span><div class="totals-vals">';
     h+='<span style="font-size:11px;color:var(--blue)">'+awayP.name+' <span class="pit-hand '+(awayP.hand==='L'?'lhp':'rhp')+'">'+awayP.hand+'HP</span> ERA '+(awayP.era||'—')+'</span>';
@@ -871,7 +880,7 @@ function renderStrikeouts(games){
     h+='<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+sk.away_pit_name+' <span class="pit-hand '+(awayP.hand==='L'?'lhp':'rhp')+'">'+awayP.hand+'HP</span></div>';
     h+='<div class="k-main">';
     h+='<div><div class="k-exp">'+(sk.away_exp_k||'—')+'</div><div class="k-exp-lbl">Exp Ks</div></div>';
-    h+='<div class="k-sub"><div class="k-sub-val">'+(sk.away_pit_k9||'—')+'</div><div class="k-sub-lbl">Pitcher K/9</div></div>';
+    h+='<div class="k-sub"><div class="k-sub-val">'+(sk.away_pit_k9>0?sk.away_pit_k9.toFixed(1):'—')+'</div><div class="k-sub-lbl">Pit K/9 (est)</div></div>';
     h+='</div>';
     h+='<div class="k-factors">';
     h+='<div class="k-factor"><div class="k-factor-val '+(sk.home_lineup_k>=25?'sc-g':sk.home_lineup_k>=20?'sc-y':'sc-n')+'">'+(sk.home_lineup_k||'—')+'%</div><div class="k-factor-lbl">Opp Lineup K%</div></div>';
@@ -883,7 +892,7 @@ function renderStrikeouts(games){
     h+='<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+sk.home_pit_name+' <span class="pit-hand '+(homeP.hand==='L'?'lhp':'rhp')+'">'+homeP.hand+'HP</span></div>';
     h+='<div class="k-main">';
     h+='<div><div class="k-exp">'+(sk.home_exp_k||'—')+'</div><div class="k-exp-lbl">Exp Ks</div></div>';
-    h+='<div class="k-sub"><div class="k-sub-val">'+(sk.home_pit_k9||'—')+'</div><div class="k-sub-lbl">Pitcher K/9</div></div>';
+    h+='<div class="k-sub"><div class="k-sub-val">'+(sk.home_pit_k9>0?sk.home_pit_k9.toFixed(1):'—')+'</div><div class="k-sub-lbl">Pit K/9 (est)</div></div>';
     h+='</div>';
     h+='<div class="k-factors">';
     h+='<div class="k-factor"><div class="k-factor-val '+(sk.away_lineup_k>=25?'sc-g':sk.away_lineup_k>=20?'sc-y':'sc-n')+'">'+(sk.away_lineup_k||'—')+'%</div><div class="k-factor-lbl">Opp Lineup K%</div></div>';
