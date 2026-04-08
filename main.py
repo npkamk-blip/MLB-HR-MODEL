@@ -66,6 +66,8 @@ _cache = {
     "pit_vs_rhh":   pd.DataFrame(),
     "pit_arsenal":  pd.DataFrame(),
     "bat_arsenal":  pd.DataFrame(),
+    "team_hitting":  {},
+    "team_pitching": {},
     "player_hands": {},
     "player_ip":    {},
     "ready":        False,
@@ -395,7 +397,57 @@ async def fetch_splits_mlb(season=2026):
         import traceback; traceback.print_exc()
     return results
 
-async def load_all_savant_data():
+async def fetch_team_stats(season=2026):
+    """Fetch team hitting and pitching stats from MLB Stats API"""
+    team_hitting = {}
+    team_pitching = {}
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            # Team hitting
+            r = await client.get(f"{MLB_API}/teams/stats?stats=season&group=hitting&gameType=R&season={season}&sportId=1")
+            data = r.json()
+            for rec in data.get("stats", [{}])[0].get("splits", []):
+                t = rec.get("team", {})
+                s = rec.get("stat", {})
+                name = t.get("name", "")
+                if not name: continue
+                pa = int(s.get("plateAppearances", 0) or 0)
+                g  = int(s.get("gamesPlayed", 1) or 1)
+                team_hitting[name] = {
+                    "runs_per_g":  round(float(s.get("runs", 0) or 0) / max(g, 1), 2),
+                    "hr_per_g":    round(float(s.get("homeRuns", 0) or 0) / max(g, 1), 2),
+                    "avg":         float(s.get("avg", ".000").replace(".---", "0") or 0),
+                    "obp":         float(s.get("obp", ".000").replace(".---", "0") or 0),
+                    "slg":         float(s.get("slg", ".000").replace(".---", "0") or 0),
+                    "k_pct":       round(float(s.get("strikeOuts", 0) or 0) / max(pa, 1) * 100, 1),
+                    "games":       g,
+                }
+            # Team pitching
+            r = await client.get(f"{MLB_API}/teams/stats?stats=season&group=pitching&gameType=R&season={season}&sportId=1")
+            data = r.json()
+            for rec in data.get("stats", [{}])[0].get("splits", []):
+                t = rec.get("team", {})
+                s = rec.get("stat", {})
+                name = t.get("name", "")
+                if not name: continue
+                g = int(s.get("gamesPlayed", 1) or 1)
+                ip_str = s.get("inningsPitched", "0") or "0"
+                try: ip = float(ip_str)
+                except: ip = 0
+                team_pitching[name] = {
+                    "era":         float(s.get("era", "4.50").replace("-.--", "4.50") or 4.50),
+                    "whip":        float(s.get("whip", "1.30").replace("-.--", "1.30") or 1.30),
+                    "hr_per_g":    round(float(s.get("homeRuns", 0) or 0) / max(g, 1), 2),
+                    "k_per_9":     float(s.get("strikeoutsPer9Inn", "8.0").replace("-.--", "8.0") or 8.0),
+                    "runs_per_g":  round(float(s.get("runs", 0) or 0) / max(g, 1), 2),
+                    "games":       g,
+                }
+        _cache["team_hitting"]  = team_hitting
+        _cache["team_pitching"] = team_pitching
+        print(f"team_hitting: {len(team_hitting)} teams, team_pitching: {len(team_pitching)} teams")
+    except Exception as e:
+        print(f"Team stats error: {e}")
+        import traceback; traceback.print_exc()
     """Fetch all data from Baseball Savant + FanGraphs via pybaseball"""
     print("Loading data from Baseball Savant...")
 
@@ -468,6 +520,9 @@ async def load_all_savant_data():
     _cache["last_updated"] = datetime.now().isoformat()
     _cache["ready"] = True
     print("All data loaded successfully!")
+
+    # Team stats (non-blocking, runs after main data)
+    await fetch_team_stats(current_season())
 
 async def refresh_8d():
     """Refresh 8-day Savant data and last-5-games MLB API data"""
@@ -559,6 +614,7 @@ def get_batter_stats(name, year=2026):
         "pull_pct": gs(row, "pull_pct"),
         "iso": gs(row, "iso"),
         "slg_percent": gs(row, "slg_percent"),
+        "batting_avg": gs(row, "batting_avg"),
         "k_pct": gs(row, "k_pct"),
         "hr_fb_pct": gs(row, "hr_fb_pct"),
         "hr": gs(row, "hr"),
@@ -582,7 +638,7 @@ def get_batter_8d(name):
         "hard_hit_pct": gs(row, "hard_hit_pct"),
         "pull_pct": gs(row, "pull_pct"),
         "iso": iso, "k_pct": gs(row, "k_pct"),
-        "slg": slg,
+        "slg": slg, "avg": avg,
         "hr_rate": (hr / max(pa, 1)) * 600 if pa > 0 else 0,
     }
 
@@ -1279,6 +1335,7 @@ async def get_games(date: str = None):
                     "hh":     round(blend(bc.get("hard_hit_pct", 0), bp.get("hard_hit_pct", 0), bwc, bwp), 1),
                     "iso":    round(blend(bc.get("iso", 0), bp.get("iso", 0), bwc, bwp), 3),
                     "slg":    round(blend(bc.get("slg_percent", 0), bp.get("slg_percent", 0), bwc, bwp), 3),
+                    "avg":    round(blend(bc.get("batting_avg", 0), bp.get("batting_avg", 0), bwc, bwp), 3),
                     "k":      round(blend(bc.get("k_pct", 0), bp.get("k_pct", 0), bwc, bwp), 1),
                     "pull":   round(blend(bc.get("pull_pct", 0), bp.get("pull_pct", 0), bwc, bwp), 1),
                     "hr":     int(bc.get("hr", 0)),
@@ -1291,6 +1348,7 @@ async def get_games(date: str = None):
                     "hh":     round(b8d.get("hard_hit_pct", 0), 1),
                     "iso":    round(b8d.get("iso", 0), 3),
                     "slg":    round(b8d.get("slg", 0), 3),
+                    "avg":    round(b8d.get("avg", 0), 3),
                     "pull":   round(b8d.get("pull_pct", 0), 1),
                 },
                 "l5g": {
@@ -1314,6 +1372,37 @@ async def get_games(date: str = None):
         home_lineup_ordered = [b for b in all_batters if b["team"] == home_team]
         all_batters.sort(key=lambda x: x["hr_prob"], reverse=True)
 
+        # ── Game Totals ──
+        park_factor_neutral = 1.0  # neutral for runs (park factors are HR-specific)
+        away_lineup_hr_sum  = round(sum(b["hr_prob"] for b in away_lineup_ordered) / 100, 3)
+        home_lineup_hr_sum  = round(sum(b["hr_prob"] for b in home_lineup_ordered) / 100, 3)
+        away_th = _cache["team_hitting"].get(away_team, {})
+        home_th = _cache["team_hitting"].get(home_team, {})
+        away_tp = _cache["team_pitching"].get(away_team, {})
+        home_tp = _cache["team_pitching"].get(home_team, {})
+
+        # Expected runs: blend team runs/g with starter ERA signal
+        away_pit_stats = get_pitcher_stats(away_p.get("fullName", "TBD"), 2026)
+        home_pit_stats = get_pitcher_stats(home_p.get("fullName", "TBD"), 2026)
+        lg_era = 4.20
+        away_starter_factor = 1 + (away_pit_stats.get("era", lg_era) - lg_era) / lg_era * 0.3 if away_pit_stats.get("era") else 1.0
+        home_starter_factor = 1 + (home_pit_stats.get("era", lg_era) - lg_era) / lg_era * 0.3 if home_pit_stats.get("era") else 1.0
+        away_runs_exp = round((home_th.get("runs_per_g", 4.5) * home_starter_factor * wx_mult), 2)
+        home_runs_exp = round((away_th.get("runs_per_g", 4.5) * away_starter_factor * wx_mult), 2)
+        total_runs_exp = round(away_runs_exp + home_runs_exp, 2)
+
+        # ── Strikeouts ──
+        away_lineup_k = round(sum(b["season"].get("k", 0) for b in away_lineup_ordered) / max(len(away_lineup_ordered), 1), 1)
+        home_lineup_k = round(sum(b["season"].get("k", 0) for b in home_lineup_ordered) / max(len(home_lineup_ordered), 1), 1)
+        away_pit_k9 = away_pit_stats.get("k_pct", 0) * 2.7 if away_pit_stats.get("k_pct") else 0
+        home_pit_k9 = home_pit_stats.get("k_pct", 0) * 2.7 if home_pit_stats.get("k_pct") else 0
+        # Expected Ks: pitcher K rate adjusted by opposing lineup K%
+        lg_k_pct = 22.5
+        away_exp_k = round(away_pit_k9 * (home_lineup_k / lg_k_pct) if away_pit_k9 > 0 else 0, 1)
+        home_exp_k = round(home_pit_k9 * (away_lineup_k / lg_k_pct) if home_pit_k9 > 0 else 0, 1)
+
+        park_factor_neutral = 1.0  # neutral for runs (park factors are HR-specific)
+
         games_out.append({
             "game_id": gid, "away": away_team, "home": home_team, "time": gtime,
             "away_pitcher": pit_display(away_p.get("fullName", "TBD"), away_p_hand),
@@ -1323,7 +1412,33 @@ async def get_games(date: str = None):
             "home_lineup": home_lineup_ordered,
             "lineup_away_status": lineup_away_status,
             "lineup_home_status": lineup_home_status,
-            "weather": {"label": wx_label, "temp": temp, "wind_speed": wind_speed, "wind_dir": wind_dir}
+            "weather": {"label": wx_label, "temp": temp, "wind_speed": wind_speed, "wind_dir": wind_dir},
+            "totals": {
+                "away_exp_hr":   away_lineup_hr_sum,
+                "home_exp_hr":   home_lineup_hr_sum,
+                "total_exp_hr":  round(away_lineup_hr_sum + home_lineup_hr_sum, 2),
+                "away_exp_runs": away_runs_exp,
+                "home_exp_runs": home_runs_exp,
+                "total_exp_runs": total_runs_exp,
+                "away_runs_pg":  away_th.get("runs_per_g", 0),
+                "home_runs_pg":  home_th.get("runs_per_g", 0),
+                "away_hr_pg":    away_th.get("hr_per_g", 0),
+                "home_hr_pg":    home_th.get("hr_per_g", 0),
+                "away_era":      away_tp.get("era", 0),
+                "home_era":      home_tp.get("era", 0),
+                "away_k_pg":     away_tp.get("k_per_9", 0),
+                "home_k_pg":     home_tp.get("k_per_9", 0),
+            },
+            "strikeouts": {
+                "away_exp_k":    away_exp_k,
+                "home_exp_k":    home_exp_k,
+                "away_lineup_k": away_lineup_k,
+                "home_lineup_k": home_lineup_k,
+                "away_pit_name": away_p.get("fullName", "TBD"),
+                "home_pit_name": home_p.get("fullName", "TBD"),
+                "away_pit_k9":   round(away_pit_k9, 1),
+                "home_pit_k9":   round(home_pit_k9, 1),
+            },
         })
 
     return {"games": games_out, "date": today, "loading": False}
