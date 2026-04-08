@@ -799,56 +799,51 @@ function renderTotals(games){
 
     h+='<div class="totals-body">';
 
+    // Fixed grid layout - label takes left, 3 value cols on right always same width
+    var colStyle='style="width:70px;text-align:center"';
+    var lblStyle='style="flex:1;font-size:11px;color:var(--muted)"';
+
     // Column headers
-    h+='<div style="display:flex;justify-content:flex-end;gap:0;padding:4px 0 6px;border-bottom:1px solid var(--border2);margin-bottom:2px">';
-    h+='<div style="min-width:36px;text-align:center;font-size:9px;color:var(--blue);text-transform:uppercase;letter-spacing:.06em">Away</div>';
-    h+='<div style="width:1px;background:transparent;margin:0 8px"></div>';
-    h+='<div style="min-width:36px;text-align:center;font-size:9px;color:var(--warn);text-transform:uppercase;letter-spacing:.06em">Home</div>';
-    h+='<div style="width:1px;background:transparent;margin:0 8px"></div>';
-    h+='<div style="min-width:36px;text-align:center;font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em">Total</div>';
+    h+='<div style="display:flex;align-items:center;padding:4px 0 8px;border-bottom:1px solid var(--border2)">';
+    h+='<div style="flex:1"></div>';
+    h+='<div '+colStyle+'><span style="font-size:9px;color:var(--blue);text-transform:uppercase;letter-spacing:.06em">Away</span></div>';
+    h+='<div '+colStyle+'><span style="font-size:9px;color:var(--warn);text-transform:uppercase;letter-spacing:.06em">Home</span></div>';
+    h+='<div '+colStyle+'><span style="font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em">Total</span></div>';
     h+='</div>';
 
-    // Pitchers row
-    h+='<div class="totals-row"><span class="totals-lbl">Starter</span><div class="totals-vals">';
-    h+='<span style="font-size:11px;color:var(--blue)">'+awayP.name+' <span class="pit-hand '+(awayP.hand==='L'?'lhp':'rhp')+'">'+awayP.hand+'HP</span> ERA '+(awayP.era||'—')+'</span>';
-    h+='<span class="totals-divider"></span>';
-    h+='<span style="font-size:11px;color:var(--warn)">'+homeP.name+' <span class="pit-hand '+(homeP.hand==='L'?'lhp':'rhp')+'">'+homeP.hand+'HP</span> ERA '+(homeP.era||'—')+'</span>';
-    h+='</div></div>';
+    function totRow(lbl, awayVal, homeVal, totalVal, awayCls, homeCls, totalCls){
+      var r='<div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border2)">';
+      r+='<div '+lblStyle+'>'+lbl+'</div>';
+      r+='<div '+colStyle+'><span class="totals-val '+awayCls+'">'+awayVal+'</span></div>';
+      r+='<div '+colStyle+'><span class="totals-val '+homeCls+'">'+homeVal+'</span></div>';
+      r+='<div '+colStyle+'><span class="totals-val '+totalCls+'">'+totalVal+'</span></div>';
+      r+='</div>';
+      return r;
+    }
+    function totRow2(lbl, awayVal, homeVal, awayCls, homeCls){
+      var r='<div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border2)">';
+      r+='<div '+lblStyle+'>'+lbl+'</div>';
+      r+='<div '+colStyle+'><span class="totals-val '+awayCls+'">'+awayVal+'</span></div>';
+      r+='<div '+colStyle+'><span class="totals-val '+homeCls+'">'+homeVal+'</span></div>';
+      r+='<div '+colStyle+'></div>';
+      r+='</div>';
+      return r;
+    }
 
-    // Expected runs
-    h+='<div class="totals-row"><span class="totals-lbl">Exp Runs</span><div class="totals-vals">';
-    h+='<span class="totals-val away">'+(t.away_exp_runs||'—')+'</span>';
-    h+='<span class="totals-divider"></span>';
-    h+='<span class="totals-val home">'+(t.home_exp_runs||'—')+'</span>';
-    h+='<span class="totals-divider"></span>';
-    h+='<span class="totals-val total">'+(totalRuns||'—')+'</span>';
-    h+='</div></div>';
+    // Starters row (special — text not numbers)
+    h+='<div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border2)">';
+    h+='<div '+lblStyle+'>Starter</div>';
+    h+='<div style="width:140px;text-align:left"><span style="font-size:11px;color:var(--blue)">'+awayP.name+' <span class="pit-hand '+(awayP.hand==='L'?'lhp':'rhp')+'">'+awayP.hand+'HP</span></span><span style="font-size:10px;color:var(--muted);margin-left:4px">ERA '+(awayP.era||'—')+'</span></div>';
+    h+='<div style="width:140px;text-align:right"><span style="font-size:11px;color:var(--warn)">'+homeP.name+' <span class="pit-hand '+(homeP.hand==='L'?'lhp':'rhp')+'">'+homeP.hand+'HP</span></span><span style="font-size:10px;color:var(--muted);margin-left:4px">ERA '+(homeP.era||'—')+'</span></div>';
+    h+='</div>';
 
-    // Team runs/game
-    h+='<div class="totals-row"><span class="totals-lbl">Runs/G (season)</span><div class="totals-vals">';
-    h+='<span class="totals-val away dim">'+(t.away_runs_pg||'—')+'</span>';
-    h+='<span class="totals-divider"></span>';
-    h+='<span class="totals-val home dim">'+(t.home_runs_pg||'—')+'</span>';
-    h+='</div></div>';
+    h+=totRow('Exp Runs', t.away_exp_runs||'—', t.home_exp_runs||'—', totalRuns||'—', 'away', 'home', totalCls);
+    h+=totRow2('Runs/G (season)', t.away_runs_pg||'—', t.home_runs_pg||'—', 'dim', 'dim');
+    h+=totRow('Exp HRs', t.away_exp_hr||'—', t.home_exp_hr||'—', t.total_exp_hr||'—', 'away', 'home', 'total');
+    h+=totRow2('HR/G (season)', t.away_hr_pg||'—', t.home_hr_pg||'—', 'dim', 'dim');
 
-    // Expected HRs
-    h+='<div class="totals-row"><span class="totals-lbl">Exp HRs</span><div class="totals-vals">';
-    h+='<span class="totals-val away">'+(t.away_exp_hr||'—')+'</span>';
-    h+='<span class="totals-divider"></span>';
-    h+='<span class="totals-val home">'+(t.home_exp_hr||'—')+'</span>';
-    h+='<span class="totals-divider"></span>';
-    h+='<span class="totals-val total">'+(t.total_exp_hr||'—')+'</span>';
-    h+='</div></div>';
-
-    // HR/game season
-    h+='<div class="totals-row"><span class="totals-lbl">HR/G (season)</span><div class="totals-vals">';
-    h+='<span class="totals-val away dim">'+(t.away_hr_pg||'—')+'</span>';
-    h+='<span class="totals-divider"></span>';
-    h+='<span class="totals-val home dim">'+(t.home_hr_pg||'—')+'</span>';
-    h+='</div></div>';
-
-    // Weather
-    h+='<div class="totals-row"><span class="totals-lbl">Weather</span>';
+    // Weather row
+    h+='<div style="display:flex;align-items:center;padding:7px 0"><div '+lblStyle+'>Weather</div>';
     h+='<span style="font-size:11px;color:var(--muted)">'+wx.temp+'°F · '+wx.wind_speed+' mph · '+wx.label+'</span></div>';
 
     h+='</div>';
@@ -880,11 +875,11 @@ function renderStrikeouts(games){
     h+='<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+sk.away_pit_name+' <span class="pit-hand '+(awayP.hand==='L'?'lhp':'rhp')+'">'+awayP.hand+'HP</span></div>';
     h+='<div class="k-main">';
     h+='<div><div class="k-exp">'+(sk.away_exp_k||'—')+'</div><div class="k-exp-lbl">Exp Ks</div></div>';
-    h+='<div class="k-sub"><div class="k-sub-val">'+(sk.away_pit_k9>0?sk.away_pit_k9.toFixed(1):'—')+'</div><div class="k-sub-lbl">Pit K/9 (est)</div></div>';
+    h+='<div class="k-sub"><div class="k-sub-val">'+(sk.away_pit_k9>0?sk.away_pit_k9.toFixed(1):'—')+'</div><div class="k-sub-lbl">K/9</div></div>';
     h+='</div>';
     h+='<div class="k-factors">';
     h+='<div class="k-factor"><div class="k-factor-val '+(sk.home_lineup_k>=25?'sc-g':sk.home_lineup_k>=20?'sc-y':'sc-n')+'">'+(sk.home_lineup_k||'—')+'%</div><div class="k-factor-lbl">Opp Lineup K%</div></div>';
-    h+='<div class="k-factor"><div class="k-factor-val">'+(awayP.era||'—')+'</div><div class="k-factor-lbl">ERA</div></div>';
+    h+='<div class="k-factor"><div class="k-factor-val">'+(sk.away_avg_ip||'—')+'</div><div class="k-factor-lbl">Avg IP/Start</div></div>';
     h+='</div></div>';
 
     // Home pitcher K card
@@ -892,11 +887,11 @@ function renderStrikeouts(games){
     h+='<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+sk.home_pit_name+' <span class="pit-hand '+(homeP.hand==='L'?'lhp':'rhp')+'">'+homeP.hand+'HP</span></div>';
     h+='<div class="k-main">';
     h+='<div><div class="k-exp">'+(sk.home_exp_k||'—')+'</div><div class="k-exp-lbl">Exp Ks</div></div>';
-    h+='<div class="k-sub"><div class="k-sub-val">'+(sk.home_pit_k9>0?sk.home_pit_k9.toFixed(1):'—')+'</div><div class="k-sub-lbl">Pit K/9 (est)</div></div>';
+    h+='<div class="k-sub"><div class="k-sub-val">'+(sk.home_pit_k9>0?sk.home_pit_k9.toFixed(1):'—')+'</div><div class="k-sub-lbl">K/9</div></div>';
     h+='</div>';
     h+='<div class="k-factors">';
     h+='<div class="k-factor"><div class="k-factor-val '+(sk.away_lineup_k>=25?'sc-g':sk.away_lineup_k>=20?'sc-y':'sc-n')+'">'+(sk.away_lineup_k||'—')+'%</div><div class="k-factor-lbl">Opp Lineup K%</div></div>';
-    h+='<div class="k-factor"><div class="k-factor-val">'+(homeP.era||'—')+'</div><div class="k-factor-lbl">ERA</div></div>';
+    h+='<div class="k-factor"><div class="k-factor-val">'+(sk.home_avg_ip||'—')+'</div><div class="k-factor-lbl">Avg IP/Start</div></div>';
     h+='</div></div>';
 
     h+='</div></div>';
