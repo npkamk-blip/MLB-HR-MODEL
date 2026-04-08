@@ -781,6 +781,26 @@ function batterRowHTML(b,order){
 function renderTotals(games){
   var el=document.getElementById('totals-main');
   if(!games||!games.length){el.innerHTML='<div class="no-games">No games today.</div>';return;}
+  var colStyle='style="width:70px;text-align:center"';
+  var lblStyle='style="flex:1;font-size:11px;color:var(--muted)"';
+  function totRow(lbl,awayVal,homeVal,totalVal,awayCls,homeCls,totalsCls){
+    var r='<div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border2)">';
+    r+='<div '+lblStyle+'>'+lbl+'</div>';
+    r+='<div '+colStyle+'><span class="totals-val '+awayCls+'">'+awayVal+'</span></div>';
+    r+='<div '+colStyle+'><span class="totals-val '+homeCls+'">'+homeVal+'</span></div>';
+    r+='<div '+colStyle+'><span class="totals-val '+totalsCls+'">'+totalVal+'</span></div>';
+    r+='</div>';
+    return r;
+  }
+  function totRow2(lbl,awayVal,homeVal,awayCls,homeCls){
+    var r='<div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border2)">';
+    r+='<div '+lblStyle+'>'+lbl+'</div>';
+    r+='<div '+colStyle+'><span class="totals-val '+awayCls+'">'+awayVal+'</span></div>';
+    r+='<div '+colStyle+'><span class="totals-val '+homeCls+'">'+homeVal+'</span></div>';
+    r+='<div '+colStyle+'></div>';
+    r+='</div>';
+    return r;
+  }
   var h='';
   games.forEach(function(g){
     var t=g.totals||{}; var wx=g.weather||{};
@@ -790,19 +810,12 @@ function renderTotals(games){
     var ouLbl=totalRuns>=9?'OVER LEAN':totalRuns<=7?'UNDER LEAN':'NEUTRAL';
 
     h+='<div class="totals-card">';
-    // Header
     h+='<div class="totals-header">';
     h+='<div class="totals-team">'+g.away+'</div>';
     h+='<div class="totals-vs">'+fmtTime(g.time)+'<br><span style="font-size:9px;color:var(--border)">@</span></div>';
     h+='<div class="totals-team right">'+g.home+'</div>';
     h+='</div>';
-
     h+='<div class="totals-body">';
-
-    // Fixed grid layout - label takes left, 3 value cols on right always same width
-    var colStyle='style="width:70px;text-align:center"';
-    var lblStyle='style="flex:1;font-size:11px;color:var(--muted)"';
-
     // Column headers
     h+='<div style="display:flex;align-items:center;padding:4px 0 8px;border-bottom:1px solid var(--border2)">';
     h+='<div style="flex:1"></div>';
@@ -810,49 +823,22 @@ function renderTotals(games){
     h+='<div '+colStyle+'><span style="font-size:9px;color:var(--warn);text-transform:uppercase;letter-spacing:.06em">Home</span></div>';
     h+='<div '+colStyle+'><span style="font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em">Total</span></div>';
     h+='</div>';
-
-    function totRow(lbl, awayVal, homeVal, totalVal, awayCls, homeCls, totalCls){
-      var r='<div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border2)">';
-      r+='<div '+lblStyle+'>'+lbl+'</div>';
-      r+='<div '+colStyle+'><span class="totals-val '+awayCls+'">'+awayVal+'</span></div>';
-      r+='<div '+colStyle+'><span class="totals-val '+homeCls+'">'+homeVal+'</span></div>';
-      r+='<div '+colStyle+'><span class="totals-val '+totalCls+'">'+totalVal+'</span></div>';
-      r+='</div>';
-      return r;
-    }
-    function totRow2(lbl, awayVal, homeVal, awayCls, homeCls){
-      var r='<div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border2)">';
-      r+='<div '+lblStyle+'>'+lbl+'</div>';
-      r+='<div '+colStyle+'><span class="totals-val '+awayCls+'">'+awayVal+'</span></div>';
-      r+='<div '+colStyle+'><span class="totals-val '+homeCls+'">'+homeVal+'</span></div>';
-      r+='<div '+colStyle+'></div>';
-      r+='</div>';
-      return r;
-    }
-
-    // Starters row (special — text not numbers)
+    // Starters row
     h+='<div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border2)">';
     h+='<div '+lblStyle+'>Starter</div>';
-    h+='<div style="width:140px;text-align:left"><span style="font-size:11px;color:var(--blue)">'+awayP.name+' <span class="pit-hand '+(awayP.hand==='L'?'lhp':'rhp')+'">'+awayP.hand+'HP</span></span><span style="font-size:10px;color:var(--muted);margin-left:4px">ERA '+(awayP.era||'—')+'</span></div>';
-    h+='<div style="width:140px;text-align:right"><span style="font-size:11px;color:var(--warn)">'+homeP.name+' <span class="pit-hand '+(homeP.hand==='L'?'lhp':'rhp')+'">'+homeP.hand+'HP</span></span><span style="font-size:10px;color:var(--muted);margin-left:4px">ERA '+(homeP.era||'—')+'</span></div>';
+    h+='<div style="flex:1;font-size:11px;color:var(--blue)">'+awayP.name+' <span class="pit-hand '+(awayP.hand==='L'?'lhp':'rhp')+'">'+awayP.hand+'HP</span> <span style="color:var(--muted)">ERA '+(awayP.era||'—')+'</span></div>';
+    h+='<div style="flex:1;font-size:11px;color:var(--warn);text-align:right">'+homeP.name+' <span class="pit-hand '+(homeP.hand==='L'?'lhp':'rhp')+'">'+homeP.hand+'HP</span> <span style="color:var(--muted)">ERA '+(homeP.era||'—')+'</span></div>';
     h+='</div>';
-
-    h+=totRow('Exp Runs', t.away_exp_runs||'—', t.home_exp_runs||'—', totalRuns||'—', 'away', 'home', ouCls);
-    h+=totRow2('Runs/G (season)', t.away_runs_pg||'—', t.home_runs_pg||'—', 'dim', 'dim');
-    h+=totRow('Exp HRs', t.away_exp_hr||'—', t.home_exp_hr||'—', t.total_exp_hr||'—', 'away', 'home', 'total');
-    h+=totRow2('HR/G (season)', t.away_hr_pg||'—', t.home_hr_pg||'—', 'dim', 'dim');
-
-    // Weather row
+    h+=totRow('Exp Runs',t.away_exp_runs||'—',t.home_exp_runs||'—',totalRuns||'—','away','home',ouCls);
+    h+=totRow2('Runs/G (season)',t.away_runs_pg||'—',t.home_runs_pg||'—','dim','dim');
+    h+=totRow('Exp HRs',t.away_exp_hr||'—',t.home_exp_hr||'—',t.total_exp_hr||'—','away','home','total');
+    h+=totRow2('HR/G (season)',t.away_hr_pg||'—',t.home_hr_pg||'—','dim','dim');
     h+='<div style="display:flex;align-items:center;padding:7px 0"><div '+lblStyle+'>Weather</div>';
     h+='<span style="font-size:11px;color:var(--muted)">'+wx.temp+'°F · '+wx.wind_speed+' mph · '+wx.label+'</span></div>';
-
     h+='</div>';
-
-    // O/U lean
     h+='<div class="totals-ou"><span class="totals-ou-lbl">Total Runs Model</span>';
     h+='<div style="text-align:right"><div class="totals-ou-val '+ouCls+'">'+totalRuns+'</div>';
     h+='<div style="font-size:10px;color:var(--muted);margin-top:2px">'+ouLbl+'</div></div></div>';
-
     h+='</div>';
   });
   el.innerHTML=h;
