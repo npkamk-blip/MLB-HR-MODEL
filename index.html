@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Sharp — MLB HR Model</title>
+<title>Sharp — MLB HR Model v2</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -837,7 +837,7 @@ function renderTotals(games){
     h+='<div style="width:140px;text-align:right"><span style="font-size:11px;color:var(--warn)">'+homeP.name+' <span class="pit-hand '+(homeP.hand==='L'?'lhp':'rhp')+'">'+homeP.hand+'HP</span></span><span style="font-size:10px;color:var(--muted);margin-left:4px">ERA '+(homeP.era||'—')+'</span></div>';
     h+='</div>';
 
-    h+=totRow('Exp Runs', t.away_exp_runs||'—', t.home_exp_runs||'—', totalRuns||'—', 'away', 'home', totalCls);
+    h+=totRow('Exp Runs', t.away_exp_runs||'—', t.home_exp_runs||'—', totalRuns||'—', 'away', 'home', ouCls);
     h+=totRow2('Runs/G (season)', t.away_runs_pg||'—', t.home_runs_pg||'—', 'dim', 'dim');
     h+=totRow('Exp HRs', t.away_exp_hr||'—', t.home_exp_hr||'—', t.total_exp_hr||'—', 'away', 'home', 'total');
     h+=totRow2('HR/G (season)', t.away_hr_pg||'—', t.home_hr_pg||'—', 'dim', 'dim');
