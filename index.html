@@ -758,12 +758,18 @@ function renderHistory(data) {
     h += '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Stat Correlations with HR (n='+completed.length+')</div>';
     var stats = [
       {key:'barrel_pct', label:'Barrel%'},
+      {key:'exit_velocity', label:'Exit Velocity'},
       {key:'launch_angle', label:'Launch Angle'},
       {key:'iso_vs_hand', label:'ISO vs Hand'},
+      {key:'avg_pa_per_game', label:'Avg PA/Game'},
       {key:'l8d_hr', label:'L8D HR Count'},
+      {key:'pitch_matchup_score', label:'Pitch Matchup'},
       {key:'park_factor', label:'Park Factor'},
       {key:'weather_mult', label:'Weather Mult'},
       {key:'pit_vuln_mult', label:'Pitcher Vuln'},
+      {key:'bullpen_vuln', label:'Bullpen Vuln'},
+      {key:'bat_platoon_mult', label:'Batter Platoon'},
+      {key:'pit_platoon_mult', label:'Pitcher Platoon'},
       {key:'hot_cold_mult', label:'Hot/Cold Mult'},
       {key:'model_hr_pct', label:'Model HR%'},
     ];
