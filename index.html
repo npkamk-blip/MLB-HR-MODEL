@@ -86,6 +86,17 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 .l8d-ok{background:rgba(255,170,51,.1);color:var(--y);border:1px solid rgba(255,170,51,.2)}
 .l8d-cold{background:#1a1a1a;color:var(--muted2);border:1px solid var(--border2)}
 .detail-wrap{padding:12px 16px;background:var(--s3)}
+.dstat-wrap{background:var(--surface);border:1px solid var(--border2);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.drow{display:grid;grid-template-columns:90px 1fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border2);padding:6px 10px;align-items:center}
+.drow:last-child{border-bottom:none}
+.drow-hdr{background:var(--s2)}
+.drow-hdr .drow-s,.drow-hdr .drow-l,.drow-hdr .drow-sp{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;text-align:center}
+.drow-lbl{font-size:11px;color:var(--muted);font-weight:500}
+.drow-s,.drow-l,.drow-sp{text-align:center}
+.drow-note{font-size:9px;color:var(--muted2);grid-column:span 1;text-align:right}
+.dmodel-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.dmodel-block{background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;display:flex;flex-direction:column;align-items:center;min-width:60px}
+.dmodel-lbl{font-size:8px;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
 .detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
 .detail-block{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:10px 12px}
 .detail-block-title{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
@@ -290,7 +301,7 @@ function buildBatterTable(games){
   h+='<div class="tbl-wrap"><table>';
   h+='<thead><tr>';
   h+=bth('Batter','name',false);h+=bth('Hand','hand',false);h+=bth('Pitcher','pitcher_name',false);h+=bth('P-Hand','opp_hand',false);
-  h+=bth('Batter ISO','iso_vs_hand',true);h+=bth('P-Split SLG','slg_vs_bat',true);h+=bth('HR/9 vs Hand','hr9_vs_bat',true);
+  h+=bth('P-Split SLG','slg_vs_bat',true);h+=bth('HR/9 vs Hand','hr9_vs_bat',true);h+=bth('Batter ISO','iso_vs_hand',true);
   h+=bth('Barrel%','barrel_s',true);h+=bth('LA','la_s',true);h+=bth('L8D HR','l8d_hr',true);
   h+=bth('Weather','wx_label',false);h+=bth('HR%','hr_prob',true);
   h+='</tr></thead><tbody>';
@@ -311,9 +322,12 @@ function buildBatterTable(games){
     h+='<td>'+handTag+'</td>';
     h+='<td><div class="player-name">'+(b.pitcher_name||'TBD')+'</div></td>';
     h+='<td>'+oppHTag+'</td>';
-    h+='<td class="num"><span class="dot dot-'+batDot+'"></span><span class="sc '+isoCls(b.iso_vs_hand)+'">'+(b.iso_vs_hand>0?fmtIso(b.iso_vs_hand):b.iso_overall>0?fmtIso(b.iso_overall):'--')+'</span></td>';
-    h+='<td class="num"><span class="dot dot-'+pitDot+'"></span><span class="sc-n">'+(b.slg_vs_bat>0?b.slg_vs_bat.toFixed(3):'--')+'</span></td>';
+    // P-Split SLG (pitcher weak vs batter hand) — min 20 PA threshold, inverted dot
+    var pitSplgDisp=b.slg_vs_bat>0&&b._full.breakdown&&(b._full.breakdown.split_ip_vs_bat||0)>=5?b.slg_vs_bat.toFixed(3):'--';
+    h+='<td class="num"><span class="dot dot-'+pitDot+'"></span><span class="sc-n">'+pitSplgDisp+'</span></td>';
     h+='<td class="num sc '+hr9C+'">'+(b.hr9_vs_bat>0?b.hr9_vs_bat.toFixed(2):'--')+'</td>';
+    // Batter ISO vs pitcher hand
+    h+='<td class="num"><span class="dot dot-'+batDot+'"></span><span class="sc '+isoCls(b.iso_vs_hand)+'">'+(b.iso_vs_hand>0?fmtIso(b.iso_vs_hand):b.iso_overall>0?fmtIso(b.iso_overall):'--')+'</span></td>';
     h+='<td class="num"><span class="sc '+barrelCls(brl.val)+'">'+(brl.val>0?brl.val.toFixed(1)+'%':'--')+'</span>'+(brl.flag?'<span style="font-size:10px">'+brl.flag+'</span>':'')+'</td>';
     h+='<td class="num"><span class="sc '+laCls(la.val)+'">'+(la.val>0?la.val.toFixed(1)+'&#176;':'--')+'</span>'+(la.flag?'<span style="font-size:10px">'+la.flag+'</span>':'')+'</td>';
     h+='<td class="num"><span class="l8d-badge '+l8dBadge+'">'+b.l8d_hr+' HR</span></td>';
@@ -336,50 +350,114 @@ function toggleBatRow(i){var d=document.getElementById('bdet-'+i);if(d)d.style.d
 
 function buildBatDetail(b){
   var s=b._full.season||{},l=b._full.l8d||{},bd=b._full.breakdown||{},pitP=b._pitP||{};
-  var h='<div class="detail-wrap"><div class="detail-grid">';
-  h+='<div class="detail-block"><div class="detail-block-title">Season</div><div class="chip-row">';
-  h+=chip('Barrel',s.barrel>0?s.barrel.toFixed(1)+'%':'--',barrelCls2(s.barrel));
-  h+=chip('LA',s.la>0?s.la.toFixed(1)+'&#176;':'--',laCls2(s.la));
-  h+=chip('ISO',s.iso>0?fmtIso(s.iso):'--',isoCls2(s.iso));
-  h+=chip('K%',s.k>0?s.k.toFixed(1)+'%':'--',kCls(s.k));
-  h+=chip('HR',String(s.hr||0),s.hr>=5?'g':s.hr>=2?'y':'n');
-  h+='</div></div>';
-  h+='<div class="detail-block"><div class="detail-block-title">Last 8 Days</div><div class="chip-row">';
-  h+=chip('Barrel',l.barrel>0?l.barrel.toFixed(1)+'%':'--',barrelCls2(l.barrel));
-  h+=chip('LA',l.la>0?l.la.toFixed(1)+'&#176;':'--',laCls2(l.la));
-  h+=chip('ISO',l.iso>0?fmtIso(l.iso):'--',isoCls2(l.iso));
-  h+=chip('PA',String(l.pa||0),'n');
-  h+=chip('HR',String(b.l8d_hr||b._full.l8d_hr_count||0),(b.l8d_hr||b._full.l8d_hr_count||0)>=3?'g':(b.l8d_hr||b._full.l8d_hr_count||0)>=1?'y':'n');
-  h+='</div></div>';
-  h+='<div class="detail-block"><div class="detail-block-title">Split vs '+(b.opp_hand||b._full.opp_p_hand||'R')+'HP</div><div class="chip-row">';
-  h+=chip('ISO',bd.iso_vs_hand>0?fmtIso(bd.iso_vs_hand):'--',isoCls2(bd.iso_vs_hand));
-  h+=chip('SLG',bd.split_slg>0?'.'+String(Math.round(bd.split_slg*1000)).padStart(3,'0'):'--','n');
-  h+=chip('HR',bd.split_hr>0?String(bd.split_hr):'--',bd.split_hr>=3?'g':bd.split_hr>=1?'y':'n');
-  h+=chip('PA',bd.split_pa>0?String(bd.split_pa):'--','n');
-  h+='</div></div>';
-  h+='<div class="detail-block"><div class="detail-block-title">Model ×</div><div class="chip-row">';
-  h+=chip('Base',bd.base_rate>0?bd.base_rate.toFixed(1)+'%':'--','n');
-  h+=chip('Barrel',bd.barrel_mult>0?bd.barrel_mult.toFixed(2)+'x':'--',bd.barrel_mult>=1.5?'g':bd.barrel_mult>=1?'y':'r');
-  h+=chip('LA',bd.la_mult>0?bd.la_mult.toFixed(2)+'x':'--',bd.la_mult>=1?'g':bd.la_mult>=0.9?'y':'r');
-  h+=chip('Pit',bd.pit_vuln_mult>0?bd.pit_vuln_mult.toFixed(2)+'x':'--',bd.pit_vuln_mult>=1.3?'g':bd.pit_vuln_mult>=1?'y':'r');
-  h+=chip('Hot',bd.hot_cold_mult>0?bd.hot_cold_mult.toFixed(2)+'x':'--',bd.hot_cold_mult>=1.1?'g':bd.hot_cold_mult<=0.9?'r':'y');
-  h+='</div></div>';
+  var oppHand=b.opp_hand||b._full.opp_p_hand||'R';
+  var splitLabel='vs '+oppHand+'HP';
+  var hasL8D=l.pa>0;
+  var hasSplit=bd.split_pa>0;
+  var l8dHR=b.l8d_hr||b._full.l8d_hr_count||0;
+
+  // Stat row helper: label | season | l8d | split
+  function statRow(lbl, sVal, sCls, l8dVal, l8dCls, spVal, spCls, note){
+    var r='<div class="drow">';
+    r+='<div class="drow-lbl">'+lbl+'</div>';
+    r+='<div class="drow-s"><span class="chip-val '+sCls+'">'+sVal+'</span></div>';
+    r+='<div class="drow-l"><span class="chip-val '+(hasL8D?l8dCls:'n')+'">'+( hasL8D?l8dVal:'--')+'</span></div>';
+    r+='<div class="drow-sp"><span class="chip-val '+(hasSplit?spCls:'n')+'">'+( hasSplit?spVal:'--')+'</span></div>';
+    if(note)r+='<div class="drow-note">'+note+'</div>';
+    r+='</div>';
+    return r;
+  }
+
+  var h='<div class="detail-wrap">';
+
+  // ── Stat table ──
+  h+='<div class="dstat-wrap">';
+  // Header
+  h+='<div class="drow drow-hdr"><div class="drow-lbl"></div><div class="drow-s">Season</div><div class="drow-l">L8D</div><div class="drow-sp">'+splitLabel+'</div></div>';
+
+  // Barrel%
+  var brlDiv=hasL8D&&s.barrel>0?Math.abs(l.barrel-s.barrel)/s.barrel:0;
+  var brlFlag=brlDiv>=0.50?(l.barrel>s.barrel?'🔥':'❄️'):'';
+  h+=statRow('Barrel%',
+    s.barrel>0?s.barrel.toFixed(1)+'%':'--', barrelCls2(s.barrel),
+    l.barrel>0?l.barrel.toFixed(1)+'%'+brlFlag:'--', barrelCls2(l.barrel),
+    bd.barrel_use>0?bd.barrel_use.toFixed(1)+'%':'--', barrelCls2(bd.barrel_use));
+
+  // Launch Angle
+  var laDiv=hasL8D&&s.la>0?Math.abs(l.la-s.la)/Math.max(Math.abs(s.la),1):0;
+  var laFlag='';
+  if(laDiv>=0.50){var sweet=30,ds=Math.abs(s.la-sweet),dl=Math.abs(l.la-sweet);laFlag=dl<ds?'🔥':'❄️';}
+  h+=statRow('Launch Angle',
+    s.la>0?s.la.toFixed(1)+'°':'--', laCls2(s.la),
+    l.la>0?l.la.toFixed(1)+'°'+laFlag:'--', laCls2(l.la),
+    '--', 'n');
+
+  // ISO
+  var isoDiv=hasL8D&&s.iso>0?Math.abs(l.iso-s.iso)/s.iso:0;
+  var isoFlag=isoDiv>=0.50?(l.iso>s.iso?'🔥':'❄️'):'';
+  var spISO=bd.iso_vs_hand>0?fmtIso(bd.iso_vs_hand):'--';
+  h+=statRow('ISO',
+    s.iso>0?fmtIso(s.iso):'--', isoCls2(s.iso),
+    l.iso>0?fmtIso(l.iso)+isoFlag:'--', isoCls2(l.iso),
+    spISO, isoCls2(bd.iso_vs_hand));
+
+  // K%
+  h+=statRow('K%',
+    s.k>0?s.k.toFixed(1)+'%':'--', kCls(s.k),
+    l.pa>0&&b._full.l8d&&b._full.l8d.k_pct>0?b._full.l8d.k_pct.toFixed(1)+'%':'--', kCls(b._full.l8d&&b._full.l8d.k_pct||0),
+    bd.split_pa>0&&bd.k_s>0?bd.k_s.toFixed(1)+'%':'--', kCls(bd.k_s||0));
+
+  // HR
+  h+=statRow('HR',
+    String(s.hr||0), s.hr>=5?'g':s.hr>=2?'y':'n',
+    String(l8dHR), l8dHR>=3?'g':l8dHR>=1?'y':'n',
+    bd.split_hr>0?String(bd.split_hr):'--', bd.split_hr>=3?'g':bd.split_hr>=1?'y':'n',
+    hasSplit?'('+bd.split_pa+' PA)':'');
+
+  // SLG (split only — season SLG shown in season chips below, split is the key one)
+  var spSLG=bd.split_slg>0&&bd.split_pa>=20?'.'+String(Math.round(bd.split_slg*1000)).padStart(3,'0'):'--';
+  var l8dSLG=l.slg>0?'.'+String(Math.round(l.slg*1000)).padStart(3,'0'):'--';
+  var sSLG=s.slg>0?'.'+String(Math.round(s.slg*1000)).padStart(3,'0'):'--';
+  h+=statRow('SLG', sSLG,'n', l8dSLG,'n', spSLG,'n');
+
+  h+='</div>'; // dstat-wrap
+
+  // ── Model multipliers row ──
+  h+='<div class="dmodel-row">';
+  h+='<div class="dmodel-block"><span class="dmodel-lbl">Base</span><span class="chip-val n">'+(bd.base_rate>0?bd.base_rate.toFixed(1)+'%':'--')+'</span></div>';
+  h+='<div class="dmodel-block"><span class="dmodel-lbl">Barrel×</span><span class="chip-val '+(bd.barrel_mult>=1.5?'g':bd.barrel_mult>=1?'y':'r')+'">'+(bd.barrel_mult>0?bd.barrel_mult.toFixed(2)+'x':'--')+'</span></div>';
+  h+='<div class="dmodel-block"><span class="dmodel-lbl">LA×</span><span class="chip-val '+(bd.la_mult>=1?'g':bd.la_mult>=0.9?'y':'r')+'">'+(bd.la_mult>0?bd.la_mult.toFixed(2)+'x':'--')+'</span></div>';
+  h+='<div class="dmodel-block"><span class="dmodel-lbl">Pit×</span><span class="chip-val '+(bd.pit_vuln_mult>=1.3?'g':bd.pit_vuln_mult>=1?'y':'r')+'">'+(bd.pit_vuln_mult>0?bd.pit_vuln_mult.toFixed(2)+'x':'--')+'</span></div>';
+  h+='<div class="dmodel-block"><span class="dmodel-lbl">BatPlat×</span><span class="chip-val '+(bd.bat_platoon_mult>=1.15?'g':bd.bat_platoon_mult>=0.9?'y':'r')+'">'+(bd.bat_platoon_mult>0?bd.bat_platoon_mult.toFixed(2)+'x':'--')+'</span></div>';
+  h+='<div class="dmodel-block"><span class="dmodel-lbl">PitPlat×</span><span class="chip-val '+(bd.pit_platoon_mult>=1.15?'g':bd.pit_platoon_mult>=0.9?'y':'r')+'">'+(bd.pit_platoon_mult>0?bd.pit_platoon_mult.toFixed(2)+'x':'--')+'</span></div>';
+  h+='<div class="dmodel-block"><span class="dmodel-lbl">Park×</span><span class="chip-val '+(bd.park_factor>=1.10?'g':bd.park_factor>=0.95?'y':'r')+'">'+(bd.park_factor>0?bd.park_factor.toFixed(2)+'x':'--')+'</span></div>';
+  h+='<div class="dmodel-block"><span class="dmodel-lbl">Hot×</span><span class="chip-val '+(bd.hot_cold_mult>=1.1?'g':bd.hot_cold_mult<=0.9?'r':'y')+'">'+(bd.hot_cold_mult>0?bd.hot_cold_mult.toFixed(2)+'x':'--')+'</span></div>';
+  h+='<div class="dmodel-block"><span class="dmodel-lbl">K%×</span><span class="chip-val '+(bd.k_mult>=1?'g':bd.k_mult>=0.94?'y':'r')+'">'+(bd.k_mult>0?bd.k_mult.toFixed(2)+'x':'--')+'</span></div>';
+  h+='</div>';
+
+  // ── Pitcher + pitch matchup ──
+  h+='<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">';
   if(pitP&&pitP.name){
-    h+='<div class="detail-block"><div class="detail-block-title">'+pitP.name+'</div><div class="chip-row">';
-    h+=chip('ERA',pitP.era?String(pitP.era):'--',pitP.era>=4.5?'r':pitP.era>=3.5?'y':'g');
-    h+=chip('HR/9',pitP.hr9?String(pitP.hr9):'--',pitP.hr9>=1.4?'g':pitP.hr9>=1?'y':'r');
+    h+='<div class="detail-block" style="flex:1;min-width:200px"><div class="detail-block-title">'+pitP.name+' ('+pitP.hand+'HP)</div><div class="chip-row">';
+    h+=chip('ERA',pitP.era?pitP.era.toFixed(2):'--',pitP.era>=4.5?'r':pitP.era>=3.5?'y':'g');
+    h+=chip('HR/9',pitP.hr9?pitP.hr9.toFixed(2):'--',pitP.hr9>=1.4?'g':pitP.hr9>=1?'y':'r');
     h+=chip('HH%',pitP.hard_hit_pct?pitP.hard_hit_pct+'%':'--',pitP.hard_hit_pct>=42?'r':pitP.hard_hit_pct>=36?'y':'g');
+    var slgKey='vs_'+(b.hand==='L'?'L':'R')+'_slg';
+    var pitSplgV=pitP[slgKey];
+    h+=chip('SLG vs '+b.hand,pitSplgV&&bd.split_ip_vs_bat>=5?'.'+String(Math.round(pitSplgV*1000)).padStart(3,'0'):'--','n');
     h+='</div></div>';
   }
   if(bd.pitch_breakdown&&bd.pitch_breakdown.length){
-    h+='<div class="detail-block" style="grid-column:span 2"><div class="detail-block-title">Pitch Matchup</div><div class="chip-row">';
+    h+='<div class="detail-block" style="flex:2;min-width:240px"><div class="detail-block-title">Pitch Matchup</div><div class="chip-row">';
     bd.pitch_breakdown.forEach(function(p){
       var rv=p.bat_rv||0;var rvc=rv>=2?'g':rv<=-2?'r':'n';
       h+=chip(p.name+' '+p.usage+'%',(rv>0?'+':'')+rv,rvc);
     });
     h+='</div></div>';
   }
-  h+='</div></div>';
+  h+='</div>';
+
+  h+='</div>'; // detail-wrap
   return h;
 }
 
