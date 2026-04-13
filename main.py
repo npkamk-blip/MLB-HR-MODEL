@@ -856,6 +856,273 @@ def sigmoid_to_prob(raw_score):
     sigmoid = 1 / (1 + math.exp(-centered))
     return round(min(max(0.02 + sigmoid * 0.25, 0.02), 0.25) * 100, 1)
 
+def compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult):
+    """
+    Multiplicative HR probability model.
+    P(HR) = Base Rate × Barrel% × LA × Pitcher Vuln × Batter Platoon ×
+            Pitcher Platoon × Park × Weather × Hot/Cold × K% penalty
+    Hard cap: 28%
+    """
+    # ── Data fetch ──
+    bc  = get_batter_stats(name, 2026)
+    bp  = get_batter_stats(name, 2025)
+    b8d = get_batter_8d(name)
+    b_split_vs_hand = get_batter_split(name, opp_p_hand)   # batter vs pitcher hand
+    b_split_opp     = get_batter_split(name, "R" if opp_p_hand == "L" else "L")  # vs opposite hand
+    p_split_vs_bat  = get_pitcher_split(opp_p_name, bat_hand)  # pitcher vs batter hand
+
+    pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
+    bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
+    has_8d = b8d.get("pa", 0) >= 3
+    total_pa = pa_26 + pa_25
+
+    # ── Step 1: Base HR rate (career/season blend by PA) ──
+    # Blend weights: <150 PA → 30% season / 70% career; 150-300 → 60/40; 300+ → 85/15
+    hr_season = bc.get("hr", 0)
+    hr_career  = blend(bc.get("hr", 0), bp.get("hr", 0), bwc, bwp)
+    pa_season  = max(pa_26, 1)
+
+    # HR/PA rate from season
+    hr_per_pa_season = hr_season / pa_season if pa_season > 0 else 0
+
+    # Career blend rate
+    total_pa_safe = max(total_pa, 1)
+    hr_per_pa_career = hr_career / max(pa_25 + pa_26, 1) if (pa_25 + pa_26) > 0 else 0.035
+
+    # PA-weighted blend
+    if pa_26 >= 300:
+        base_rate = hr_per_pa_season * 0.85 + hr_per_pa_career * 0.15
+    elif pa_26 >= 150:
+        base_rate = hr_per_pa_season * 0.60 + hr_per_pa_career * 0.40
+    else:
+        base_rate = hr_per_pa_season * 0.30 + hr_per_pa_career * 0.70
+
+    # Floor: use league avg ~2.8% if no data
+    if base_rate <= 0:
+        base_rate = 0.028
+    base_rate = min(base_rate, 0.12)  # no single batter truly > 12% per PA
+
+    # Small sample confidence gate (not a hard cut — just dampens)
+    if total_pa < 30:   base_rate = base_rate * 0.55 + 0.028 * 0.45
+    elif total_pa < 60: base_rate = base_rate * 0.75 + 0.028 * 0.25
+
+    running = base_rate
+
+    # ── Step 2: Barrel% multiplier ──
+    LG_BARREL = 8.0
+    barrel_season = blend(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), bwc, bwp)
+    barrel_8d     = b8d.get("barrel_pct", 0) if has_8d else 0
+    # 50% relative divergence rule
+    if has_8d and barrel_8d > 0 and barrel_season > 0:
+        rel_div = abs(barrel_8d - barrel_season) / barrel_season
+        barrel_use = barrel_8d if rel_div >= 0.50 else barrel_season
+    else:
+        barrel_use = barrel_season if barrel_season > 0 else LG_BARREL
+    if barrel_use < 0.1: barrel_use = LG_BARREL  # no data → neutral
+    barrel_mult = barrel_use / LG_BARREL
+    # Min 50 BBE threshold (proxy: pa_26 >= 50 season, else fallback to 1.0)
+    if pa_26 < 50 and barrel_8d == 0:
+        barrel_mult = 1.0
+    barrel_mult = max(min(barrel_mult, 3.5), 0.3)
+    running *= barrel_mult
+
+    # ── Step 3: Launch angle multiplier ──
+    la_season = blend(bc.get("launch_angle", 0), bp.get("launch_angle", 0), bwc, bwp)
+    la_8d     = b8d.get("launch_angle", 0) if has_8d else 0
+    # Direction toward 25-35° sweet zone matters — higher is NOT always better
+    if has_8d and la_8d > 0 and la_season > 0:
+        rel_div_la = abs(la_8d - la_season) / max(abs(la_season), 1)
+        if rel_div_la >= 0.50:
+            # Check if moving toward or away from sweet zone
+            sweet_mid = 30.0
+            dist_season = abs(la_season - sweet_mid)
+            dist_8d     = abs(la_8d - sweet_mid)
+            la_use = la_8d if dist_8d < dist_season else la_season
+        else:
+            la_use = la_season
+    else:
+        la_use = la_season if la_season > 0 else 20.0
+    if la_use <= 0: la_use = 20.0
+    if 25 <= la_use <= 35:   la_mult = 1.00
+    elif 20 <= la_use < 25:  la_mult = 0.90
+    elif 35 < la_use <= 40:  la_mult = 0.90
+    elif 18 <= la_use < 20:  la_mult = 0.80
+    elif 40 < la_use <= 45:  la_mult = 0.80
+    else:                     la_mult = 0.75
+    running *= la_mult
+
+    # ── Step 4: Pitcher vulnerability multiplier ──
+    pc = get_pitcher_stats(opp_p_name, 2026)
+    pp2 = get_pitcher_stats(opp_p_name, 2025)
+    ip_26 = pc.get("ip", 0)
+    pwc, pwp = get_pitcher_blend_weights(ip_26, pp2.get("ip", 0))
+
+    LG_HR9  = 1.10
+    LG_HH   = 38.0
+    pit_hr9_season = blend(pc.get("hr9", 0), pp2.get("hr9", 0), pwc, pwp)
+    pit_hard = blend(pc.get("hard_hit_pct", 0), pp2.get("hard_hit_pct", 0), pwc, pwp)
+
+    m_hr9  = (pit_hr9_season / LG_HR9) if pit_hr9_season > 0 else 1.0
+    m_hard = (pit_hard / LG_HH) if pit_hard > 0 else 1.0
+    # Average — not multiply — to avoid double counting correlated stats
+    active_pit = [x for x in [m_hr9 if pit_hr9_season > 0 else None,
+                               m_hard if pit_hard > 0 else None] if x is not None]
+    pit_vuln_mult = sum(active_pit) / len(active_pit) if active_pit else 1.0
+    # Min 40 IP threshold
+    if ip_26 < 40 and pp2.get("ip", 0) < 40:
+        pit_vuln_mult = 0.5 + pit_vuln_mult * 0.5  # dampen to neutral
+    pit_vuln_mult = max(min(pit_vuln_mult, 1.80), 0.50)
+    running *= pit_vuln_mult
+
+    # ── Step 5: Batter platoon multiplier (ISO vs pitcher hand / overall ISO) ──
+    iso_vs_hand = b_split_vs_hand.get("iso", 0)
+    iso_overall = blend(bc.get("iso", 0), bp.get("iso", 0), bwc, bwp)
+    split_pa_vs_hand = b_split_vs_hand.get("pa", 0)
+    if split_pa_vs_hand >= 80 and iso_vs_hand > 0 and iso_overall > 0:
+        bat_platoon_mult = iso_vs_hand / iso_overall
+        bat_platoon_mult = max(min(bat_platoon_mult, 1.60), 0.60)
+    else:
+        bat_platoon_mult = 1.0
+    running *= bat_platoon_mult
+
+    # ── Step 6: Pitcher platoon multiplier (SLG allowed vs batter hand / overall SLG) ──
+    slg_vs_bat   = p_split_vs_bat.get("slg", 0)
+    # Pitcher overall SLG allowed — average of vs L and vs R as proxy
+    p_split_opp_hand = get_pitcher_split(opp_p_name, "L" if bat_hand == "R" else "R")
+    slg_overall_pit = 0
+    slg_sources = [x for x in [slg_vs_bat, p_split_opp_hand.get("slg", 0)] if x > 0]
+    slg_overall_pit = sum(slg_sources) / len(slg_sources) if slg_sources else 0
+    split_ip_vs_bat = p_split_vs_bat.get("ip", 0)
+    if split_ip_vs_bat >= 20 and slg_vs_bat > 0 and slg_overall_pit > 0:
+        pit_platoon_mult = slg_vs_bat / slg_overall_pit
+        pit_platoon_mult = max(min(pit_platoon_mult, 1.60), 0.60)
+    else:
+        pit_platoon_mult = 1.0
+    running *= pit_platoon_mult
+
+    # ── Step 7: Park multiplier ──
+    running *= park_factor
+
+    # ── Step 8: Weather multiplier ──
+    running *= weather_mult
+
+    # ── Step 9: Hot/cold multiplier (L8D rate vs expected rate) ──
+    hot_cold_mult = 1.0
+    if has_8d and b8d.get("pa", 0) >= 8:
+        pa_8d = b8d.get("pa", 0)
+        hr_8d_count = b8d.get("hr", 0)
+        hr_8d_rate  = hr_8d_count / pa_8d
+        expected_8d_rate = base_rate  # what we'd expect based on talent
+        if expected_8d_rate > 0:
+            ratio = hr_8d_rate / expected_8d_rate
+            # Soft-cap the multiplier to prevent one hot week dominating
+            hot_cold_mult = max(min(ratio, 1.20), 0.85)
+    running *= hot_cold_mult
+
+    # ── Step 10: K% penalty (smooth, applied last, only trims) ──
+    k_season = blend(bc.get("k_pct", 0), bp.get("k_pct", 0), bwc, bwp)
+    if k_season >= 35:   k_mult = 0.88
+    elif k_season >= 30: k_mult = 0.94
+    elif k_season >= 25: k_mult = 0.97
+    else:                k_mult = 1.0
+    running *= k_mult
+
+    # ── Hard cap at 28% ──
+    hr_prob = round(min(running * 100, 28.0), 1)
+
+    # ── Build breakdown for frontend ──
+    pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
+    archetype = get_archetype(barrel_season, k_season,
+                              blend(bc.get("fb_pct", 0), bp.get("fb_pct", 0), bwc, bwp),
+                              iso_overall)
+    trend = get_trend(b8d, bc)
+
+    reasons = []
+    if barrel_use >= 12: reasons.append(f"Barrel {barrel_use:.1f}%")
+    if iso_vs_hand > 0.220: reasons.append(f"ISO vs hand .{int(iso_vs_hand*1000):03d}")
+    if pit_hr9_season > 1.3: reasons.append(f"SP {pit_hr9_season:.1f} HR/9")
+    if pit_hard > 40: reasons.append(f"SP {pit_hard:.1f}% HH")
+    if park_factor >= 1.15: reasons.append("HR-friendly park")
+    elif park_factor <= 0.90: reasons.append("Pitcher-friendly park")
+    if hot_cold_mult >= 1.10: reasons.append("Hot streak")
+    elif hot_cold_mult <= 0.90: reasons.append("Cold streak")
+
+    # Platoon tag for display
+    platoon_tag = None
+    if bat_platoon_mult >= 1.20:
+        hand_label = "LHB" if bat_hand == "L" else "RHB"
+        platoon_tag = f"Batter strong vs {opp_p_hand}HP"
+    if pit_platoon_mult >= 1.20:
+        platoon_tag = (platoon_tag + " + " if platoon_tag else "") + f"SP weak vs {bat_hand}HB"
+
+    n_components = len(active_pit)
+    conf = "High" if n_components >= 2 and pa_26 >= 50 else "Medium" if n_components >= 1 else "Low"
+    blend_note = f"{int(bwc*100)}% 2026/{int(bwp*100)}% 2025" + (" + 8d" if has_8d else "")
+
+    breakdown = {
+        # Base
+        "base_rate": round(base_rate * 100, 2),
+        # Barrel
+        "barrel_use": round(barrel_use, 1), "barrel_season": round(barrel_season, 1),
+        "barrel_8d": round(b8d.get("barrel_pct", 0), 1), "barrel_mult": round(barrel_mult, 3),
+        # LA
+        "la_use": round(la_use, 1), "la_season": round(la_season, 1),
+        "la_8d": round(la_8d, 1), "la_mult": round(la_mult, 3),
+        # Pitcher
+        "pit_hr9": round(pit_hr9_season, 2), "pit_hard": round(pit_hard, 1),
+        "pit_vuln_mult": round(pit_vuln_mult, 3),
+        # Platoon
+        "bat_platoon_mult": round(bat_platoon_mult, 3),
+        "pit_platoon_mult": round(pit_platoon_mult, 3),
+        "iso_vs_hand": round(iso_vs_hand, 3), "iso_overall": round(iso_overall, 3),
+        "slg_vs_bat": round(slg_vs_bat, 3),
+        "split_pa_vs_hand": split_pa_vs_hand,
+        "split_ip_vs_bat": round(split_ip_vs_bat, 1),
+        # Context
+        "park_factor": round(park_factor, 3),
+        "weather_mult": round(weather_mult, 3),
+        "hot_cold_mult": round(hot_cold_mult, 3),
+        "k_mult": round(k_mult, 3), "k_season": round(k_season, 1),
+        # Running
+        "hr_prob": hr_prob, "has_8d": has_8d,
+        "blend_note": blend_note,
+        "pit_blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025 ({ip_26:.0f} IP)",
+        # Legacy fields for Research tab compatibility
+        "barrel_s": round(barrel_use, 1), "s1_barrel": round(barrel_mult * 10, 2),
+        "iso_use": round(iso_vs_hand if iso_vs_hand > 0 else iso_overall, 3),
+        "la_s": round(la_use, 1), "s1_la": round(la_mult * 9, 2),
+        "pull_s": round(blend(bc.get("pull_pct", 0), bp.get("pull_pct", 0), bwc, bwp), 1),
+        "s1_pull": 0, "fb_s": 0, "s1_fb": 0, "s1_iso": 0,
+        "hr_rate_8d": round(b8d.get("hr", 0) / max(b8d.get("pa", 1), 1) * 600, 1) if has_8d else 0,
+        "s1_hr8d": round(hot_cold_mult, 3),
+        "batter_score": round(running * 100, 2),
+        "k_s": round(k_season, 1), "k_cap": round(k_mult, 3),
+        "pit_modifier": round(pit_vuln_mult, 3),
+        "platoon_magnitude": round((pit_platoon_mult - 1.0) * 100, 1),
+        "hr9_split": round(p_split_vs_bat.get("hr9", 0), 2),
+        "hr9_season": round(pit_hr9_season, 2),
+        "split_ip": round(split_ip_vs_bat, 1),
+        "split_brl": round(b_split_vs_hand.get("barrel_pct", 0), 1),
+        "split_iso": round(iso_vs_hand, 3),
+        "split_slg": round(b_split_vs_hand.get("slg", 0), 3),
+        "split_woba": round(b_split_vs_hand.get("woba", 0), 3),
+        "split_hr": int(b_split_vs_hand.get("hr", 0)),
+        "split_pa": split_pa_vs_hand,
+        "hr_season": int(bc.get("hr", 0)),
+        "pa_8d": int(b8d.get("pa", 0)),
+        "barrel_8d_raw": round(b8d.get("barrel_pct", 0), 1),
+        "iso_8d": round(b8d.get("iso", 0), 3),
+        "pull_8d": round(b8d.get("pull_pct", 0), 1),
+        "la_8d_raw": round(la_8d, 1),
+        "pitch_bonus": pitch_bonus, "pitch_breakdown": pitch_details,
+        "after_k": round(running * 100, 1), "after_context": round(running * 100, 1),
+        "n_pit_components": n_components,
+        # Pitcher SLG vs batter hand for table display
+        "pit_slg_vs_bat": round(slg_vs_bat, 3),
+        "pit_slg_overall": round(slg_overall_pit, 3),
+    }
+    return hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
+
 def get_archetype(barrel_pct, k_pct, fb_pct, iso):
     if barrel_pct >= 10 and k_pct >= 28: return "Boom/Bust"
     elif barrel_pct >= 10 and k_pct < 22: return "Pure Power"
@@ -889,6 +1156,9 @@ def get_trend(b8d, bc):
     return "Steady"
 
 def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult):
+    return compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult)
+
+def _compute_hr_probability_legacy(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult):
     bc = get_batter_stats(name, 2026)
     bp = get_batter_stats(name, 2025)
     b8d = get_batter_8d(name)
@@ -1156,12 +1426,64 @@ async def fetch_dk_hr_props():
                     if bk.get("key") != "betrivers": continue
                     for mkt in bk.get("markets", []):
                         for outcome in mkt.get("outcomes", []):
-                            name = outcome.get("description") or outcome.get("name", "")
+                            pname = outcome.get("description") or outcome.get("name", "")
                             price = outcome.get("price", 0)
-                            if name and price: props[name.lower()] = price
+                            if pname and price: props[pname.lower()] = price
             except: continue
         return props
     except: return {}
+
+async def fetch_pitcher_k_props():
+    """Fetch pitcher strikeout prop lines from BetRivers/DraftKings/FanDuel via Odds API"""
+    if not ODDS_API_KEY: return {}
+    try:
+        url = f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events?apiKey={ODDS_API_KEY}&dateFormat=iso"
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(url)
+            if not r.is_success: return {}
+            events = r.json()
+        k_props = {}
+        for event in events[:15]:
+            event_id = event.get("id", "")
+            try:
+                prop_url = (f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events/{event_id}/odds?"
+                            f"apiKey={ODDS_API_KEY}&regions=us"
+                            f"&markets=pitcher_strikeouts,pitcher_outs"
+                            f"&oddsFormat=american&bookmakers=betrivers,draftkings,fanduel")
+                async with httpx.AsyncClient(timeout=10) as client:
+                    pr = await client.get(prop_url)
+                    if not pr.is_success: continue
+                    pd_data = pr.json()
+                for bk in pd_data.get("bookmakers", []):
+                    for mkt in bk.get("markets", []):
+                        mkt_key = mkt.get("key", "")
+                        for outcome in mkt.get("outcomes", []):
+                            pname = outcome.get("description") or outcome.get("name", "")
+                            line  = outcome.get("point", 0)
+                            side  = outcome.get("name", "")
+                            price = outcome.get("price", 0)
+                            if pname and line and side == "Over":
+                                key = pname.lower()
+                                if key not in k_props or mkt_key == "pitcher_strikeouts":
+                                    k_props[key] = {
+                                        "line": line, "price": price,
+                                        "market": mkt_key, "book": bk.get("title", ""),
+                                    }
+            except: continue
+        print(f"Pitcher K props fetched: {len(k_props)} pitchers")
+        return k_props
+    except Exception as e:
+        print(f"Pitcher K props error: {e}")
+        return {}
+
+def match_pitcher_k_prop(pitcher_name, k_props):
+    if not k_props: return None
+    nl = pitcher_name.lower()
+    if nl in k_props: return k_props[nl]
+    last = nl.split()[-1]
+    for k, v in k_props.items():
+        if last in k: return v
+    return None
 
 def match_dk_odds(player_name, props):
     if not props: return None
@@ -1184,6 +1506,15 @@ def pit_display(p_name, p_hand):
     top_pitches = get_pitcher_top_pitches(p_name)
     vs_L = get_pitcher_split(p_name, "L")
     vs_R = get_pitcher_split(p_name, "R")
+    nl = p_name.lower().strip()
+    ip_data = _cache["player_ip"].get(nl, {})
+    if not ip_data:
+        last = nl.split()[-1]
+        for k, v in _cache["player_ip"].items():
+            if last in k: ip_data = v; break
+    k9_val  = blend(pc.get("k9", 0), pp.get("k9", 0), pwc, pwp)
+    avg_ip  = ip_data.get("avg_ip", 5.0) or 5.0
+    gs_val  = ip_data.get("gs", 0)
     return {
         "name": p_name, "hand": p_hand,
         "era": round(blend(pc.get("era", 0), pp.get("era", 0), pwc, pwp), 2) or None,
@@ -1192,7 +1523,6 @@ def pit_display(p_name, p_hand):
         "barrel_pct": round(blend(pc.get("barrel_pct_allowed", 0), pp.get("barrel_pct_allowed", 0), pwc, pwp), 1) or None,
         "ip_2026": round(ip_26, 1),
         "blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025",
-        # Split fields — from MLB Stats API statSplits (actually handedness-specific)
         "vs_L_hr9":  round(vs_L.get("hr9", 0), 2) if vs_L.get("pa", 0) >= 1 else None,
         "vs_R_hr9":  round(vs_R.get("hr9", 0), 2) if vs_R.get("pa", 0) >= 1 else None,
         "vs_L_k":    round(vs_L.get("k_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
@@ -1202,6 +1532,9 @@ def pit_display(p_name, p_hand):
         "vs_L_woba": round(vs_L.get("woba", 0), 3) if vs_L.get("pa", 0) >= 1 else None,
         "vs_R_woba": round(vs_R.get("woba", 0), 3) if vs_R.get("pa", 0) >= 1 else None,
         "top_pitches": [{"name": p["name"], "usage": p["usage"]} for p in top_pitches],
+        "k9": round(k9_val, 1) if k9_val > 0 else None,
+        "avg_ip": round(avg_ip, 1),
+        "gs": gs_val,
     }
 
 # ── API Endpoints ──
@@ -1254,6 +1587,7 @@ async def get_games(date: str = None):
         data = r.json()
 
     dk_props = await fetch_dk_hr_props()
+    k_props  = await fetch_pitcher_k_props()
     dates = data.get("dates", [])
     if not dates: return {"games": [], "date": today, "loading": False}
 
@@ -1337,6 +1671,7 @@ async def get_games(date: str = None):
                 "reasons": reasons, "opp_pitcher": opp_p_name,
                 "bat_hand": bat_hand, "opp_p_hand": opp_p_hand,
                 "park_factor": round(park_factor, 2),
+                "l8d_hr_count": int(b8d.get("hr", 0)),
                 "season": {
                     "barrel": round(blend(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), bwc, bwp), 1),
                     "ev":     round(blend(bc.get("exit_velo", 0), bp.get("exit_velo", 0), bwc, bwp), 1),
@@ -1400,7 +1735,7 @@ async def get_games(date: str = None):
         home_runs_exp = round((away_th.get("runs_per_g", 4.5) * away_starter_factor * wx_mult), 2)
         total_runs_exp = round(away_runs_exp + home_runs_exp, 2)
 
-        # ── Strikeouts ──
+        # ── Strikeouts + K Props ──
         away_lineup_k = round(sum(b["season"].get("k", 0) for b in away_lineup_ordered) / max(len(away_lineup_ordered), 1), 1)
         home_lineup_k = round(sum(b["season"].get("k", 0) for b in home_lineup_ordered) / max(len(home_lineup_ordered), 1), 1)
         away_pit_k9  = away_pit_stats.get("k9", 0)
@@ -1411,12 +1746,29 @@ async def get_games(date: str = None):
         away_exp_k = round(away_pit_k9 * (away_avg_ip / 9) * (home_lineup_k / lg_k_pct), 1) if away_pit_k9 > 0 else 0
         home_exp_k = round(home_pit_k9 * (home_avg_ip / 9) * (away_lineup_k / lg_k_pct), 1) if home_pit_k9 > 0 else 0
 
-        park_factor_neutral = 1.0  # neutral for runs (park factors are HR-specific)
+        # K prop lines from Odds API
+        away_k_prop = match_pitcher_k_prop(away_p.get("fullName", "TBD"), k_props)
+        home_k_prop = match_pitcher_k_prop(home_p.get("fullName", "TBD"), k_props)
+        away_k_edge = round(away_exp_k - away_k_prop["line"], 1) if away_k_prop and away_exp_k > 0 else None
+        home_k_edge = round(home_exp_k - home_k_prop["line"], 1) if home_k_prop and home_exp_k > 0 else None
+
+        # Build pitcher display objects with K data attached
+        away_pit_obj = pit_display(away_p.get("fullName", "TBD"), away_p_hand)
+        home_pit_obj = pit_display(home_p.get("fullName", "TBD"), home_p_hand)
+        for obj, exp_k, k_prop, k_edge, opp_t, opp_lk in [
+            (away_pit_obj, away_exp_k, away_k_prop, away_k_edge, home_team, home_lineup_k),
+            (home_pit_obj, home_exp_k, home_k_prop, home_k_edge, away_team, away_lineup_k),
+        ]:
+            obj["exp_k"]       = exp_k
+            obj["k_prop"]      = k_prop
+            obj["k_edge"]      = k_edge
+            obj["opp_team"]    = opp_t
+            obj["opp_lineup_k"] = opp_lk
 
         games_out.append({
             "game_id": gid, "away": away_team, "home": home_team, "time": gtime,
-            "away_pitcher": pit_display(away_p.get("fullName", "TBD"), away_p_hand),
-            "home_pitcher": pit_display(home_p.get("fullName", "TBD"), home_p_hand),
+            "away_pitcher": away_pit_obj,
+            "home_pitcher": home_pit_obj,
             "top_hr_candidates": all_batters,
             "away_lineup": away_lineup_ordered,
             "home_lineup": home_lineup_ordered,
@@ -1424,22 +1776,22 @@ async def get_games(date: str = None):
             "lineup_home_status": lineup_home_status,
             "weather": {"label": wx_label, "temp": temp, "wind_speed": wind_speed, "wind_dir": wind_dir},
             "totals": {
-                "away_exp_hr":   away_lineup_hr_sum,
-                "home_exp_hr":   home_lineup_hr_sum,
-                "total_exp_hr":  round(away_lineup_hr_sum + home_lineup_hr_sum, 2),
-                "away_exp_runs": away_runs_exp,
-                "home_exp_runs": home_runs_exp,
+                "away_exp_hr":    away_lineup_hr_sum,
+                "home_exp_hr":    home_lineup_hr_sum,
+                "total_exp_hr":   round(away_lineup_hr_sum + home_lineup_hr_sum, 2),
+                "away_exp_runs":  away_runs_exp,
+                "home_exp_runs":  home_runs_exp,
                 "total_exp_runs": total_runs_exp,
-                "away_runs_pg":  away_th.get("runs_per_g", 0),
-                "home_runs_pg":  home_th.get("runs_per_g", 0),
-                "away_hr_pg":    away_th.get("hr_per_g", 0),
-                "home_hr_pg":    home_th.get("hr_per_g", 0),
-                "away_era":      away_tp.get("era", 0),
-                "home_era":      home_tp.get("era", 0),
-                "away_k_pg":     away_tp.get("k_per_9", 0),
-                "home_k_pg":     home_tp.get("k_per_9", 0),
+                "away_runs_pg":   away_th.get("runs_per_g", 0),
+                "home_runs_pg":   home_th.get("runs_per_g", 0),
+                "away_hr_pg":     away_th.get("hr_per_g", 0),
+                "home_hr_pg":     home_th.get("hr_per_g", 0),
+                "away_era":       away_tp.get("era", 0),
+                "home_era":       home_tp.get("era", 0),
+                "away_k_pg":      away_tp.get("k_per_9", 0),
+                "home_k_pg":      home_tp.get("k_per_9", 0),
             },
-        "strikeouts": {
+            "strikeouts": {
                 "away_exp_k":    away_exp_k,
                 "home_exp_k":    home_exp_k,
                 "away_lineup_k": away_lineup_k,
@@ -1450,6 +1802,10 @@ async def get_games(date: str = None):
                 "home_pit_k9":   round(home_pit_k9, 1),
                 "away_avg_ip":   round(away_avg_ip, 1),
                 "home_avg_ip":   round(home_avg_ip, 1),
+                "away_k_prop":   away_k_prop,
+                "home_k_prop":   home_k_prop,
+                "away_k_edge":   away_k_edge,
+                "home_k_edge":   home_k_edge,
             },
         })
 
