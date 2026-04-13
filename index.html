@@ -714,7 +714,9 @@ function renderHistory(data) {
   }
 
   // Compute stats
-  var completed = records.filter(function(r){return r.hit_hr !== null;});
+  // Completed = hit_hr is 0 or 1 (not null, not DNP)
+  var completed = records.filter(function(r){return r.hit_hr === 0 || r.hit_hr === 1;});
+  var dnp = records.filter(function(r){return r.hit_hr === 'DNP';});
   var hits = completed.filter(function(r){return r.hit_hr === 1;});
   var total_preds = completed.length;
   var total_hits = hits.length;
@@ -757,7 +759,9 @@ function renderHistory(data) {
   }
 
   // Correlation analysis — which stats correlate with actually hitting HRs
-  if (completed.length >= 10) {
+  // For ML correlations — only use confirmed lineup records to avoid noise
+  var confirmed = completed.filter(function(r){return r.lineup_source !== 'projected';});
+  var mlRecords = confirmed.length >= 10 ? confirmed : completed;
     h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px">';
     h += '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Stat Correlations with HR (n='+completed.length+')</div>';
     var stats = [
@@ -816,9 +820,11 @@ function renderHistory(data) {
     dayRecs.forEach(function(r) {
       var resultBadge = r.hit_hr === null
         ? '<span class="hit-badge hit-pending">Pending</span>'
-        : r.hit_hr === 1
-          ? '<span class="hit-badge hit-yes">HR ✓</span>'
-          : '<span class="hit-badge hit-no">No HR</span>';
+        : r.hit_hr === 'DNP'
+          ? '<span class="hit-badge" style="background:#1a1a1a;color:var(--muted2);border:1px solid var(--border2)">DNP</span>'
+          : r.hit_hr === 1
+            ? '<span class="hit-badge hit-yes">HR ✓</span>'
+            : '<span class="hit-badge hit-no">No HR</span>';
       var pc = probCls(r.model_hr_pct);
       h += '<tr>';
       h += '<td><div class="player-name">'+r.name+'</div><div class="player-sub">'+r.team+'</div></td>';
@@ -839,9 +845,11 @@ function renderHistory(data) {
       h += '<div class="tbl-wrap"><table>';
       h += '<thead><tr><th>Date</th><th>Batter</th><th>Pitcher</th><th class="num">Model HR%</th><th class="num">Barrel%</th><th class="num">LA</th><th>Result</th></tr></thead><tbody>';
       recentCompleted.forEach(function(r) {
-        var resultBadge = r.hit_hr === 1
-          ? '<span class="hit-badge hit-yes">HR ✓</span>'
-          : '<span class="hit-badge hit-no">No HR</span>';
+        var resultBadge = r.hit_hr === 'DNP'
+          ? '<span class="hit-badge" style="background:#1a1a1a;color:var(--muted2);border:1px solid var(--border2)">DNP</span>'
+          : r.hit_hr === 1
+            ? '<span class="hit-badge hit-yes">HR ✓</span>'
+            : '<span class="hit-badge hit-no">No HR</span>';
         var pc = probCls(r.model_hr_pct);
         h += '<tr>';
         h += '<td style="font-size:11px;color:var(--muted)">'+r.date+'</td>';
