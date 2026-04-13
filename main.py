@@ -16,6 +16,9 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 
 MLB_API = "https://statsapi.mlb.com/api/v1"
 ODDS_API_KEY = os.environ.get("ODDS_API_KEY", "")
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
+GITHUB_REPO = "npkamk-blip/MLB-HR-MODEL"
+GITHUB_API = "https://api.github.com"
 
 # ── Baseball Savant URLs ──
 SAVANT_BASE = "https://baseballsavant.mlb.com"
@@ -593,6 +596,197 @@ async def daily_refresh_loop():
                 await load_all_savant_data()
             except Exception as e:
                 print(f"Daily refresh error: {e}")
+        # Save predictions at 1pm ET (18:00 UTC) — lineups mostly confirmed
+        if now.hour == 13:
+            try:
+                await save_daily_predictions()
+            except Exception as e:
+                print(f"Prediction save error: {e}")
+        # Record results at 2am ET (07:00 UTC) — all games finished
+        if now.hour == 2:
+            try:
+                yesterday = (date.today() - timedelta(days=1)).isoformat()
+                await record_results(yesterday)
+            except Exception as e:
+                print(f"Result recording error: {e}")
+
+# ── GitHub Storage ──
+async def github_get_file(path: str):
+    """Get a file from GitHub repo, returns (content_str, sha) or (None, None)"""
+    if not GITHUB_TOKEN: return None, None
+    try:
+        url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{path}"
+        headers = {"Authorization": f"token {GITHUB_TOKEN}", "Accept": "application/vnd.github.v3+json"}
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(url, headers=headers)
+        if r.status_code == 404: return None, None
+        if not r.is_success: return None, None
+        data = r.json()
+        import base64
+        content = base64.b64decode(data["content"]).decode("utf-8")
+        return content, data["sha"]
+    except Exception as e:
+        print(f"GitHub get error: {e}")
+        return None, None
+
+async def github_put_file(path: str, content: str, message: str, sha: str = None):
+    """Create or update a file in GitHub repo"""
+    if not GITHUB_TOKEN:
+        print("No GITHUB_TOKEN set — skipping GitHub write")
+        return False
+    try:
+        import base64
+        url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{path}"
+        headers = {"Authorization": f"token {GITHUB_TOKEN}", "Accept": "application/vnd.github.v3+json"}
+        body = {
+            "message": message,
+            "content": base64.b64encode(content.encode("utf-8")).decode("utf-8"),
+        }
+        if sha: body["sha"] = sha
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.put(url, headers=headers, json=body)
+        if r.is_success:
+            print(f"GitHub write OK: {path}")
+            return True
+        print(f"GitHub write failed {r.status_code}: {r.text[:200]}")
+        return False
+    except Exception as e:
+        print(f"GitHub put error: {e}")
+        return False
+
+async def save_daily_predictions():
+    """Save today's predictions to GitHub as data/predictions/YYYY-MM-DD.json"""
+    if not _cache["ready"]: return
+    today = date.today().isoformat()
+    path = f"data/predictions/{today}.json"
+    # Check if already saved today
+    existing, _ = await github_get_file(path)
+    if existing:
+        print(f"Predictions already saved for {today}")
+        return
+    try:
+        # Fetch today's games and collect all batter predictions above 5%
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
+            data = r.json()
+        records = []
+        for game_date in data.get("dates", []):
+            for game in game_date.get("games", []):
+                if game.get("status", {}).get("abstractGameState") == "Final": continue
+                home_team = game["teams"]["home"]["team"]["name"]
+                away_team = game["teams"]["away"]["team"]["name"]
+                away_p = game["teams"]["away"].get("probablePitcher", {})
+                home_p = game["teams"]["home"].get("probablePitcher", {})
+                # Get lineups from cache — use top_hr_candidates from all_batters if available
+                # We'll store predictions for any batter we've computed
+                for side, opp_p, team in [("away", home_p, away_team), ("home", away_p, home_team)]:
+                    opp_p_name = opp_p.get("fullName", "TBD")
+                    opp_p_id = opp_p.get("id")
+                    opp_p_hand = "R"
+                    if opp_p_id:
+                        info = await fetch_player_hand(opp_p_id)
+                        opp_p_hand = info.get("pitch_hand", "R")
+                    # Get projected lineup
+                    team_id = game["teams"][side]["team"]["id"]
+                    lineup, _ = await fetch_projected_lineup(team_id, team)
+                    for batter in lineup[:9]:
+                        name = batter.get("name", "")
+                        pid = batter.get("id")
+                        if not name: continue
+                        bat_hand = "R"
+                        if pid:
+                            info = await fetch_player_hand(pid)
+                            bat_hand = info.get("bat_side", "R")
+                        if bat_hand == "S": bat_hand = "L" if opp_p_hand == "R" else "R"
+                        park_factor = get_park_hr_factor(home_team, bat_hand)
+                        stadium = STADIUMS.get(home_team, {})
+                        temp, wind_speed, wind_dir = 70, 0, 0
+                        if not stadium.get("dome") and stadium.get("lat"):
+                            temp, wind_speed, wind_dir = await fetch_weather(stadium["lat"], stadium["lon"], game.get("gameDate",""))
+                        wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
+                        hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult)
+                        if hr_prob < 5: continue
+                        records.append({
+                            "date": today,
+                            "name": name,
+                            "team": team,
+                            "opp_pitcher": opp_p_name,
+                            "opp_pitcher_hand": opp_p_hand,
+                            "bat_hand": bat_hand,
+                            "home_team": home_team,
+                            "model_hr_pct": hr_prob,
+                            "hit_hr": None,  # filled in later by record_results
+                            "barrel_pct": breakdown.get("barrel_use", 0),
+                            "launch_angle": breakdown.get("la_use", 0),
+                            "iso_vs_hand": breakdown.get("iso_vs_hand", 0),
+                            "l8d_hr": get_l8d_hr(name),
+                            "park_factor": breakdown.get("park_factor", 1.0),
+                            "weather_mult": breakdown.get("weather_mult", 1.0),
+                            "barrel_mult": breakdown.get("barrel_mult", 1.0),
+                            "la_mult": breakdown.get("la_mult", 1.0),
+                            "pit_vuln_mult": breakdown.get("pit_vuln_mult", 1.0),
+                            "bat_platoon_mult": breakdown.get("bat_platoon_mult", 1.0),
+                            "pit_platoon_mult": breakdown.get("pit_platoon_mult", 1.0),
+                            "hot_cold_mult": breakdown.get("hot_cold_mult", 1.0),
+                            "k_mult": breakdown.get("k_mult", 1.0),
+                        })
+        if not records:
+            print(f"No predictions to save for {today}")
+            return
+        import json
+        content = json.dumps(records, indent=2)
+        await github_put_file(path, content, f"predictions: {today} ({len(records)} batters)")
+        print(f"Saved {len(records)} predictions for {today}")
+    except Exception as e:
+        print(f"save_daily_predictions error: {e}")
+        import traceback; traceback.print_exc()
+
+async def record_results(target_date: str):
+    """Fetch actual HR results for target_date and update the predictions file"""
+    if not GITHUB_TOKEN: return
+    path = f"data/predictions/{target_date}.json"
+    content, sha = await github_get_file(path)
+    if not content:
+        print(f"No predictions file found for {target_date}")
+        return
+    import json
+    try:
+        records = json.loads(content)
+    except Exception:
+        return
+    # Fetch box scores for that date
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={target_date}&hydrate=team")
+            sched = r.json()
+        hr_hitters = set()
+        for game_date in sched.get("dates", []):
+            for game in game_date.get("games", []):
+                if game.get("status", {}).get("abstractGameState") != "Final": continue
+                gid = game["gamePk"]
+                try:
+                    async with httpx.AsyncClient(timeout=10) as client:
+                        r2 = await client.get(f"{MLB_API}/game/{gid}/boxscore")
+                        box = r2.json()
+                    for side in ["away", "home"]:
+                        for _, p in box.get("teams", {}).get(side, {}).get("players", {}).items():
+                            stats = p.get("stats", {}).get("batting", {})
+                            if int(stats.get("homeRuns", 0) or 0) > 0:
+                                name = p.get("person", {}).get("fullName", "")
+                                if name: hr_hitters.add(name.lower())
+                except Exception: continue
+        # Update records with actual results
+        updated = 0
+        for rec in records:
+            if rec.get("hit_hr") is None:
+                rec["hit_hr"] = 1 if rec["name"].lower() in hr_hitters else 0
+                updated += 1
+        content_updated = json.dumps(records, indent=2)
+        await github_put_file(path, content_updated, f"results: {target_date} ({len(hr_hitters)} HRs recorded)", sha)
+        print(f"Recorded results for {target_date}: {len(hr_hitters)} HR hitters, {updated} records updated")
+    except Exception as e:
+        print(f"record_results error: {e}")
+        import traceback; traceback.print_exc()
 
 def run_async(coro):
     loop = asyncio.new_event_loop()
@@ -1584,6 +1778,55 @@ def pit_display(p_name, p_hand):
     }
 
 # ── API Endpoints ──
+@app.get("/history")
+async def get_history():
+    """Return all historical prediction/result files from GitHub"""
+    if not GITHUB_TOKEN:
+        return {"error": "GitHub not configured", "records": []}
+    import json
+    try:
+        # List all files in data/predictions/
+        url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions"
+        headers = {"Authorization": f"token {GITHUB_TOKEN}", "Accept": "application/vnd.github.v3+json"}
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(url, headers=headers)
+        if r.status_code == 404:
+            return {"records": [], "dates": [], "message": "No history yet — predictions start saving at 1pm ET daily"}
+        if not r.is_success:
+            return {"error": f"GitHub error {r.status_code}", "records": []}
+        files = r.json()
+        all_records = []
+        dates = []
+        # Fetch each file (most recent 30 days)
+        for f in sorted(files, key=lambda x: x["name"], reverse=True)[:30]:
+            fname = f["name"]
+            if not fname.endswith(".json"): continue
+            d = fname.replace(".json", "")
+            dates.append(d)
+            content, _ = await github_get_file(f"data/predictions/{fname}")
+            if not content: continue
+            try:
+                recs = json.loads(content)
+                all_records.extend(recs)
+            except Exception: continue
+        return {"records": all_records, "dates": dates}
+    except Exception as e:
+        print(f"History endpoint error: {e}")
+        return {"error": str(e), "records": []}
+
+@app.post("/save-predictions")
+async def manual_save_predictions():
+    """Manually trigger saving today's predictions"""
+    await save_daily_predictions()
+    return {"status": "done", "date": date.today().isoformat()}
+
+@app.post("/record-results")
+async def manual_record_results(target_date: str = None):
+    """Manually trigger recording results for a date"""
+    d = target_date or (date.today() - timedelta(days=1)).isoformat()
+    await record_results(d)
+    return {"status": "done", "date": d}
+
 @app.get("/")
 def root():
     return {
