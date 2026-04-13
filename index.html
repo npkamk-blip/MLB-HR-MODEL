@@ -136,6 +136,32 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 .r-header{background:var(--s2);padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .r-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800}
 .r-body{padding:16px 18px}
+/* History */
+.hist-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.hist-stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.hist-stat-val{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--accent)}
+.hist-stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+.hist-hit{background:rgba(57,211,83,.08);border-color:rgba(57,211,83,.2)}
+.hist-hit .hist-stat-val{color:var(--g)}
+.hist-miss{background:rgba(255,77,77,.05)}
+.cal-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.cal-day{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border2);font-family:'Barlow Condensed',sans-serif}
+.cal-day:hover{border-color:var(--accent)}
+.cal-day.has-data{background:var(--s2)}
+.cal-day.selected{border-color:var(--accent);background:rgba(200,241,53,.1);color:var(--accent)}
+.cal-day.no-data{color:var(--muted2)}
+.acc-bar-wrap{background:var(--border2);border-radius:4px;height:8px;margin-top:6px;overflow:hidden}
+.acc-bar{height:100%;border-radius:4px;background:var(--accent);transition:width .4s}
+.corr-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border2)}
+.corr-row:last-child{border-bottom:none}
+.corr-lbl{font-size:12px;color:var(--muted);width:140px;flex-shrink:0}
+.corr-bar-wrap{flex:1;background:var(--border2);border-radius:4px;height:6px}
+.corr-bar{height:100%;border-radius:4px;transition:width .4s}
+.corr-val{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;width:40px;text-align:right}
+.hit-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px}
+.hit-yes{background:rgba(57,211,83,.12);color:var(--g);border:1px solid rgba(57,211,83,.25)}
+.hit-no{background:#1a1a1a;color:var(--muted2);border:1px solid var(--border2)}
+.hit-pending{background:rgba(255,170,51,.08);color:var(--warn);border:1px solid rgba(255,170,51,.2)}
 </style>
 </head>
 <body>
@@ -158,6 +184,7 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
   <button class="tab active" onclick="switchTab('batters',this)">Batters</button>
   <button class="tab" onclick="switchTab('pitchers',this)">Pitchers</button>
   <button class="tab" onclick="switchTab('games',this)">Games</button>
+  <button class="tab" onclick="switchTab('history',this)">History</button>
   <button class="tab" onclick="switchTab('research',this)">Research</button>
 </div>
 
@@ -174,6 +201,11 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 <div id="games-panel" class="tab-panel">
   <div class="container">
     <div id="game-main"><div class="no-data">Load data first</div></div>
+  </div>
+</div>
+<div id="history-panel" class="tab-panel">
+  <div class="container">
+    <div id="history-main"><div class="no-data">Loading history...</div></div>
   </div>
 </div>
 <div id="research-panel" class="tab-panel">
@@ -203,6 +235,7 @@ function switchTab(id,btn){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   document.getElementById(id+'-panel').classList.add('active');
   btn.classList.add('active');
+  if(id==='history'&&!historyData) loadHistory();
 }
 
 function probCls(p){return p>=20?'p-elite':p>=15?'p-high':p>=10?'p-mid':'p-low';}
@@ -644,6 +677,221 @@ async function searchPlayer(){
   }catch(e){el.innerHTML='<div class="err">'+e.message+'</div>';}
 }
 function rchip(lbl,val){return '<div class="r-chip"><div class="r-chip-lbl">'+lbl+'</div><div class="r-chip-val">'+val+'</div></div>';}
+
+// ── HISTORY ──
+var historyData = null;
+var selectedHistDate = null;
+
+async function loadHistory() {
+  var el = document.getElementById('history-main');
+  el.innerHTML = '<div class="loading">Loading history<div class="dots"><span></span><span></span><span></span></div></div>';
+  try {
+    var resp = await fetch(API + '/history');
+    var data = await resp.json();
+    historyData = data;
+    renderHistory(data);
+  } catch(e) {
+    el.innerHTML = '<div class="err">'+e.message+'</div>';
+  }
+}
+
+function renderHistory(data) {
+  var el = document.getElementById('history-main');
+  var records = data.records || [];
+  var dates = data.dates || [];
+
+  if (!records.length) {
+    el.innerHTML = '<div class="no-data" style="padding:60px 20px">'
+      + '<div style="font-size:18px;color:var(--muted);margin-bottom:12px">No history yet</div>'
+      + '<div style="font-size:13px;color:var(--muted2)">Predictions save automatically at 1pm ET each day.<br>Results record at 2am ET after games finish.</div>'
+      + '<div style="margin-top:20px"><button class="refresh-btn" onclick="manualSave()">Save Today\'s Predictions Now</button></div>'
+      + '</div>';
+    return;
+  }
+
+  // Compute stats
+  var completed = records.filter(function(r){return r.hit_hr !== null;});
+  var hits = completed.filter(function(r){return r.hit_hr === 1;});
+  var total_preds = completed.length;
+  var total_hits = hits.length;
+  var hit_rate = total_preds > 0 ? (total_hits / total_preds * 100).toFixed(1) : '--';
+
+  // Model calibration — among top picks (>= 15%), how many hit?
+  var top_preds = completed.filter(function(r){return r.model_hr_pct >= 15;});
+  var top_hits = top_preds.filter(function(r){return r.hit_hr === 1;});
+  var top_rate = top_preds.length > 0 ? (top_hits.length / top_preds.length * 100).toFixed(1) : '--';
+
+  // Average model% for hits vs misses
+  var avg_pct_hit = hits.length > 0 ? (hits.reduce(function(s,r){return s+r.model_hr_pct;},0)/hits.length).toFixed(1) : '--';
+  var misses = completed.filter(function(r){return r.hit_hr === 0;});
+  var avg_pct_miss = misses.length > 0 ? (misses.reduce(function(s,r){return s+r.model_hr_pct;},0)/misses.length).toFixed(1) : '--';
+
+  var h = '';
+
+  // Summary cards
+  h += '<div class="section-hdr"><div class="section-title">Model History</div>';
+  h += '<div style="display:flex;gap:8px"><button class="refresh-btn" style="font-size:11px;padding:4px 10px" onclick="manualSave()">Save Today</button>';
+  h += '<button class="refresh-btn" style="font-size:11px;padding:4px 10px;background:var(--s2);color:var(--muted)" onclick="manualRecord()">Record Yesterday</button></div></div>';
+
+  h += '<div class="hist-summary">';
+  h += histCard(total_preds, 'Total Predictions', false);
+  h += histCard(total_hits, 'HR Hits', true);
+  h += histCard(hit_rate + '%', 'Overall Hit Rate', false);
+  h += histCard(top_rate + '%', 'Hit Rate 15%+', false);
+  h += histCard(avg_pct_hit + '%', 'Avg Model% (Hits)', true);
+  h += histCard(avg_pct_miss + '%', 'Avg Model% (Misses)', false);
+  h += '</div>';
+
+  // Accuracy bar
+  if (total_preds > 0) {
+    var acc = parseFloat(hit_rate);
+    h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px">';
+    h += '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Overall Accuracy — '+total_preds+' predictions recorded</div>';
+    h += '<div class="acc-bar-wrap"><div class="acc-bar" style="width:'+Math.min(acc*3,100)+'%"></div></div>';
+    h += '<div style="font-size:11px;color:var(--muted);margin-top:6px">'+hit_rate+'% hit rate &nbsp;·&nbsp; League avg HR rate ~3% per PA &nbsp;·&nbsp; Model targeting 8–28% range</div>';
+    h += '</div>';
+  }
+
+  // Correlation analysis — which stats correlate with actually hitting HRs
+  if (completed.length >= 10) {
+    h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px">';
+    h += '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Stat Correlations with HR (n='+completed.length+')</div>';
+    var stats = [
+      {key:'barrel_pct', label:'Barrel%'},
+      {key:'launch_angle', label:'Launch Angle'},
+      {key:'iso_vs_hand', label:'ISO vs Hand'},
+      {key:'l8d_hr', label:'L8D HR Count'},
+      {key:'park_factor', label:'Park Factor'},
+      {key:'weather_mult', label:'Weather Mult'},
+      {key:'pit_vuln_mult', label:'Pitcher Vuln'},
+      {key:'hot_cold_mult', label:'Hot/Cold Mult'},
+      {key:'model_hr_pct', label:'Model HR%'},
+    ];
+    stats.forEach(function(s) {
+      var corr = pointBiserial(completed, s.key);
+      if (corr === null) return;
+      var abs = Math.abs(corr);
+      var pct = Math.min(abs * 200, 100);
+      var clr = abs >= 0.3 ? 'var(--g)' : abs >= 0.15 ? 'var(--y)' : 'var(--muted2)';
+      var sign = corr >= 0 ? '+' : '-';
+      h += '<div class="corr-row">';
+      h += '<div class="corr-lbl">'+s.label+'</div>';
+      h += '<div class="corr-bar-wrap"><div class="corr-bar" style="width:'+pct+'%;background:'+clr+'"></div></div>';
+      h += '<div class="corr-val" style="color:'+clr+'">'+sign+abs.toFixed(2)+'</div>';
+      h += '</div>';
+    });
+    h += '</div>';
+  }
+
+  // Date selector
+  h += '<div class="section-hdr" style="margin-top:4px"><div class="section-title">By Date</div></div>';
+  h += '<div class="cal-grid">';
+  dates.forEach(function(d) {
+    var dayRecs = records.filter(function(r){return r.date === d;});
+    var dayHits = dayRecs.filter(function(r){return r.hit_hr === 1;}).length;
+    var dayTotal = dayRecs.filter(function(r){return r.hit_hr !== null;}).length;
+    var label = d.slice(5); // MM-DD
+    var cls = 'cal-day has-data' + (selectedHistDate === d ? ' selected' : '');
+    var title = d + ': ' + dayHits + '/' + dayTotal + ' HR';
+    h += '<div class="'+cls+'" title="'+title+'" onclick="selectHistDate(\''+d+'\')">'+label+'</div>';
+  });
+  h += '</div>';
+
+  // Selected date detail
+  if (selectedHistDate) {
+    var dayRecs = records.filter(function(r){return r.date === selectedHistDate;});
+    dayRecs.sort(function(a,b){return b.model_hr_pct - a.model_hr_pct;});
+    h += '<div class="tbl-wrap"><table>';
+    h += '<thead><tr><th>Batter</th><th>Pitcher</th><th class="num">Model HR%</th><th class="num">Barrel%</th><th class="num">LA</th><th class="num">L8D HR</th><th>Result</th></tr></thead><tbody>';
+    dayRecs.forEach(function(r) {
+      var resultBadge = r.hit_hr === null
+        ? '<span class="hit-badge hit-pending">Pending</span>'
+        : r.hit_hr === 1
+          ? '<span class="hit-badge hit-yes">HR ✓</span>'
+          : '<span class="hit-badge hit-no">No HR</span>';
+      var pc = probCls(r.model_hr_pct);
+      h += '<tr>';
+      h += '<td><div class="player-name">'+r.name+'</div><div class="player-sub">'+r.team+'</div></td>';
+      h += '<td style="font-size:12px;color:var(--muted)">'+r.opp_pitcher+'</td>';
+      h += '<td class="num"><span class="prob-big '+pc+'">'+r.model_hr_pct+'%</span></td>';
+      h += '<td class="num sc '+barrelCls(r.barrel_pct)+'">'+( r.barrel_pct>0?r.barrel_pct.toFixed(1)+'%':'--')+'</td>';
+      h += '<td class="num sc '+laCls(r.launch_angle)+'">'+( r.launch_angle>0?r.launch_angle.toFixed(1)+'°':'--')+'</td>';
+      h += '<td class="num"><span class="l8d-badge '+(r.l8d_hr>=3?'l8d-hot':r.l8d_hr>=1?'l8d-ok':'l8d-cold')+'">'+r.l8d_hr+' HR</span></td>';
+      h += '<td>'+resultBadge+'</td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table></div>';
+  } else {
+    // Show all completed records sorted by model_hr_pct
+    var recentCompleted = completed.slice().sort(function(a,b){return b.model_hr_pct-a.model_hr_pct;}).slice(0,50);
+    if (recentCompleted.length) {
+      h += '<div class="section-hdr" style="margin-top:4px"><div class="section-title">Recent Results</div></div>';
+      h += '<div class="tbl-wrap"><table>';
+      h += '<thead><tr><th>Date</th><th>Batter</th><th>Pitcher</th><th class="num">Model HR%</th><th class="num">Barrel%</th><th class="num">LA</th><th>Result</th></tr></thead><tbody>';
+      recentCompleted.forEach(function(r) {
+        var resultBadge = r.hit_hr === 1
+          ? '<span class="hit-badge hit-yes">HR ✓</span>'
+          : '<span class="hit-badge hit-no">No HR</span>';
+        var pc = probCls(r.model_hr_pct);
+        h += '<tr>';
+        h += '<td style="font-size:11px;color:var(--muted)">'+r.date+'</td>';
+        h += '<td><div class="player-name">'+r.name+'</div></td>';
+        h += '<td style="font-size:12px;color:var(--muted)">'+r.opp_pitcher+'</td>';
+        h += '<td class="num"><span class="prob-big '+pc+'">'+r.model_hr_pct+'%</span></td>';
+        h += '<td class="num sc '+barrelCls(r.barrel_pct)+'">'+( r.barrel_pct>0?r.barrel_pct.toFixed(1)+'%':'--')+'</td>';
+        h += '<td class="num sc '+laCls(r.launch_angle)+'">'+( r.launch_angle>0?r.launch_angle.toFixed(1)+'°':'--')+'</td>';
+        h += '<td>'+resultBadge+'</td>';
+        h += '</tr>';
+      });
+      h += '</tbody></table></div>';
+    }
+  }
+
+  el.innerHTML = h;
+}
+
+function histCard(val, lbl, isHit) {
+  return '<div class="hist-stat'+(isHit?' hist-hit':'')+'"><div class="hist-stat-val">'+val+'</div><div class="hist-stat-lbl">'+lbl+'</div></div>';
+}
+
+function selectHistDate(d) {
+  selectedHistDate = selectedHistDate === d ? null : d;
+  if (historyData) renderHistory(historyData);
+}
+
+function pointBiserial(records, key) {
+  // Point-biserial correlation between a continuous stat and binary hit_hr outcome
+  var valid = records.filter(function(r){return r[key] != null && r[key] !== 0;});
+  if (valid.length < 5) return null;
+  var n = valid.length;
+  var n1 = valid.filter(function(r){return r.hit_hr===1;}).length;
+  var n0 = n - n1;
+  if (n1 === 0 || n0 === 0) return null;
+  var vals = valid.map(function(r){return parseFloat(r[key])||0;});
+  var mean_all = vals.reduce(function(s,v){return s+v;},0) / n;
+  var std = Math.sqrt(vals.reduce(function(s,v){return s+Math.pow(v-mean_all,2);},0) / n);
+  if (std === 0) return null;
+  var mean1 = valid.filter(function(r){return r.hit_hr===1;}).reduce(function(s,r){return s+(parseFloat(r[key])||0);},0) / n1;
+  return ((mean1 - mean_all) / std) * Math.sqrt(n1 * n0 / (n * n));
+}
+
+async function manualSave() {
+  try {
+    var r = await fetch(API+'/save-predictions', {method:'POST'});
+    var d = await r.json();
+    alert('Saved predictions for '+d.date);
+    loadHistory();
+  } catch(e) { alert('Error: '+e.message); }
+}
+
+async function manualRecord() {
+  try {
+    var r = await fetch(API+'/record-results', {method:'POST'});
+    var d = await r.json();
+    alert('Recorded results for '+d.date);
+    loadHistory();
+  } catch(e) { alert('Error: '+e.message); }
+}
 
 async function load(){
   var btn=document.getElementById('refreshBtn'),upd=document.getElementById('upd');
