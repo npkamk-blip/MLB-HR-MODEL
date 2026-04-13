@@ -58,6 +58,7 @@ _cache = {
     "bat_2025":     pd.DataFrame(),
     "bat_8d":       pd.DataFrame(),
     "bat_l5g":      {},
+    "bat_l8d_hr":   {},
     "bat_vs_lhp":   pd.DataFrame(),
     "bat_vs_rhp":   pd.DataFrame(),
     "pit_2026":     pd.DataFrame(),
@@ -332,6 +333,33 @@ async def fetch_last5_games_batting():
         import traceback; traceback.print_exc()
         return {}
 
+async def fetch_last8d_hr():
+    """Fetch last 8 games HR count from MLB Stats API — reliable source for L8D HR count.
+    Baseball Savant 8d CSV returns season HR totals for some players, so we use this instead."""
+    try:
+        url = (f"{MLB_API}/stats?stats=lastXGames&lastXGames=8&group=hitting&gameType=R"
+               f"&season={current_season()}&playerPool=All&limit=2000")
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(url)
+            data = r.json()
+        l8d_hr_map = {}
+        for stat_group in data.get("stats", []):
+            for split in stat_group.get("splits", []):
+                person = split.get("player", {})
+                name = person.get("fullName", "")
+                stat = split.get("stat", {})
+                if not name: continue
+                try:
+                    hr = int(stat.get("homeRuns", 0) or 0)
+                    pa = int(stat.get("plateAppearances", 0) or 0)
+                    l8d_hr_map[name.lower()] = {"hr": hr, "pa": pa, "name": name}
+                except Exception: continue
+        print(f"Fetched last-8-games HR data for {len(l8d_hr_map)} batters")
+        return l8d_hr_map
+    except Exception as e:
+        print(f"Last 8 games HR fetch error: {e}")
+        return {}
+
 async def fetch_splits_mlb(season=2026):
     """Fetch batter and pitcher splits by handedness from MLB Stats API statSplits"""
     results = {
@@ -524,6 +552,9 @@ async def load_all_savant_data():
     l5g_data = await fetch_last5_games_batting()
     _cache["bat_l5g"] = l5g_data
 
+    l8d_hr_data = await fetch_last8d_hr()
+    _cache["bat_l8d_hr"] = l8d_hr_data
+
     _cache["last_updated"] = datetime.now().isoformat()
     _cache["ready"] = True
     print("All data loaded successfully!")
@@ -542,6 +573,10 @@ async def refresh_8d():
     if l5g_data:
         _cache["bat_l5g"] = l5g_data
         print(f"bat_l5g refreshed: {len(l5g_data)} players")
+    l8d_hr_data = await fetch_last8d_hr()
+    if l8d_hr_data:
+        _cache["bat_l8d_hr"] = l8d_hr_data
+        print(f"bat_l8d_hr refreshed: {len(l8d_hr_data)} players")
     _cache["last_8d_update"] = datetime.now().isoformat()
 
 async def daily_refresh_loop():
@@ -657,6 +692,16 @@ def get_batter_l5g(name):
     for k, v in data.items():
         if last in k: return v
     return {}
+
+def get_l8d_hr(name):
+    """Get reliable L8D HR count from MLB Stats API lastXGames=8"""
+    nl = name.lower().strip()
+    data = _cache["bat_l8d_hr"]
+    if nl in data: return data[nl].get("hr", 0)
+    last = nl.split()[-1]
+    for k, v in data.items():
+        if last in k: return v.get("hr", 0)
+    return 0
 
 def get_batter_split(name, pit_hand):
     df = _cache["bat_vs_lhp"] if pit_hand == "L" else _cache["bat_vs_rhp"]
@@ -1010,12 +1055,12 @@ def compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_
     hot_cold_mult = 1.0
     if has_8d and b8d.get("pa", 0) >= 8:
         pa_8d = b8d.get("pa", 0)
-        hr_8d_count = b8d.get("hr", 0)
+        # Use MLB Stats API lastXGames=8 for reliable HR count (Savant 8d returns season totals for some players)
+        hr_8d_count = get_l8d_hr(name)
         hr_8d_rate  = hr_8d_count / pa_8d
-        expected_8d_rate = base_rate  # what we'd expect based on talent
+        expected_8d_rate = base_rate
         if expected_8d_rate > 0:
             ratio = hr_8d_rate / expected_8d_rate
-            # Soft-cap the multiplier to prevent one hot week dominating
             hot_cold_mult = max(min(ratio, 1.20), 0.85)
     running *= hot_cold_mult
 
@@ -1318,6 +1363,7 @@ def _compute_hr_probability_legacy(name, bat_hand, opp_p_name, opp_p_hand, park_
         "split_hr":   int(b_split.get("hr", 0)),
         "split_pa":   int(b_split.get("pa", 0)),
         "hr_season":  int(bc.get("hr", 0)),
+        "l8d_hr_reliable": get_l8d_hr(name),
     }
     return hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
@@ -1671,7 +1717,7 @@ async def get_games(date: str = None):
                 "reasons": reasons, "opp_pitcher": opp_p_name,
                 "bat_hand": bat_hand, "opp_p_hand": opp_p_hand,
                 "park_factor": round(park_factor, 2),
-                "l8d_hr_count": int(b8d.get("hr", 0)),
+                "l8d_hr_count": get_l8d_hr(name),
                 "season": {
                     "barrel": round(blend(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), bwc, bwp), 1),
                     "ev":     round(blend(bc.get("exit_velo", 0), bp.get("exit_velo", 0), bwc, bwp), 1),
