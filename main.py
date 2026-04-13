@@ -62,6 +62,7 @@ _cache = {
     "bat_8d":       pd.DataFrame(),
     "bat_l5g":      {},
     "bat_l8d_hr":   {},
+    "bat_games":    {},
     "bat_vs_lhp":   pd.DataFrame(),
     "bat_vs_rhp":   pd.DataFrame(),
     "pit_2026":     pd.DataFrame(),
@@ -72,6 +73,7 @@ _cache = {
     "bat_arsenal":  pd.DataFrame(),
     "team_hitting":  {},
     "team_pitching": {},
+    "team_bullpen":  {},
     "player_hands": {},
     "player_ip":    {},
     "ready":        False,
@@ -363,6 +365,41 @@ async def fetch_last8d_hr():
         print(f"Last 8 games HR fetch error: {e}")
         return {}
 
+async def fetch_batter_games():
+    """Fetch season games played + PA per batter from MLB Stats API for avg PA/game calculation"""
+    try:
+        url = (f"{MLB_API}/stats?stats=season&group=hitting&gameType=R"
+               f"&season={current_season()}&playerPool=All&limit=2000")
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(url)
+            data = r.json()
+        games_map = {}
+        for stat_group in data.get("stats", []):
+            for split in stat_group.get("splits", []):
+                person = split.get("player", {})
+                name = person.get("fullName", "")
+                stat = split.get("stat", {})
+                if not name: continue
+                try:
+                    games = int(stat.get("gamesPlayed", 0) or 0)
+                    pa = int(stat.get("plateAppearances", 0) or 0)
+                    ab = int(stat.get("atBats", 0) or 0)
+                    if games > 0:
+                        games_map[name.lower()] = {
+                            "games": games,
+                            "pa": pa,
+                            "ab": ab,
+                            "avg_pa_per_game": round(pa / games, 2),
+                            "avg_ab_per_game": round(ab / games, 2),
+                            "name": name,
+                        }
+                except Exception: continue
+        print(f"Fetched games played data for {len(games_map)} batters")
+        return games_map
+    except Exception as e:
+        print(f"Batter games fetch error: {e}")
+        return {}
+
 async def fetch_splits_mlb(season=2026):
     """Fetch batter and pitcher splits by handedness from MLB Stats API statSplits"""
     results = {
@@ -474,6 +511,7 @@ async def fetch_team_stats(season=2026):
                     "era":         float(s.get("era", "4.50").replace("-.--", "4.50") or 4.50),
                     "whip":        float(s.get("whip", "1.30").replace("-.--", "1.30") or 1.30),
                     "hr_per_g":    round(float(s.get("homeRuns", 0) or 0) / max(g, 1), 2),
+                    "hr9":         round(float(s.get("homeRuns", 0) or 0) / max(ip, 1) * 9, 2) if ip > 0 else 1.1,
                     "k_per_9":     float(s.get("strikeoutsPer9Inn", "8.0").replace("-.--", "8.0") or 8.0),
                     "runs_per_g":  round(float(s.get("runs", 0) or 0) / max(g, 1), 2),
                     "games":       g,
@@ -481,6 +519,31 @@ async def fetch_team_stats(season=2026):
         _cache["team_hitting"]  = team_hitting
         _cache["team_pitching"] = team_pitching
         print(f"team_hitting: {len(team_hitting)} teams, team_pitching: {len(team_pitching)} teams")
+
+        # Fetch reliever-only stats for bullpen component
+        try:
+            r = await client.get(f"{MLB_API}/teams/stats?stats=season&group=pitching&gameType=R&season={season}&sportId=1&startingPitcher=false")
+            data = r.json()
+            bullpen_stats = {}
+            for rec in data.get("stats", [{}])[0].get("splits", []):
+                t = rec.get("team", {})
+                s = rec.get("stat", {})
+                name = t.get("name", "")
+                if not name: continue
+                ip_str = s.get("inningsPitched", "0") or "0"
+                try: ip = float(ip_str)
+                except: ip = 0
+                g = int(s.get("gamesPlayed", 1) or 1)
+                bullpen_stats[name] = {
+                    "era":  float(s.get("era", "4.50").replace("-.--", "4.50") or 4.50),
+                    "hr9":  round(float(s.get("homeRuns", 0) or 0) / max(ip, 1) * 9, 2) if ip > 0 else 1.1,
+                    "whip": float(s.get("whip", "1.30").replace("-.--", "1.30") or 1.30),
+                }
+            if bullpen_stats:
+                _cache["team_bullpen"] = bullpen_stats
+                print(f"team_bullpen: {len(bullpen_stats)} teams")
+        except Exception as e:
+            print(f"Bullpen stats error: {e}")
     except Exception as e:
         print(f"Team stats error: {e}")
         import traceback; traceback.print_exc()
@@ -557,6 +620,9 @@ async def load_all_savant_data():
 
     l8d_hr_data = await fetch_last8d_hr()
     _cache["bat_l8d_hr"] = l8d_hr_data
+
+    games_data = await fetch_batter_games()
+    _cache["bat_games"] = games_data
 
     _cache["last_updated"] = datetime.now().isoformat()
     _cache["ready"] = True
@@ -706,6 +772,17 @@ async def save_daily_predictions():
                         wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
                         hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult)
                         if hr_prob < 5: continue
+                        # Get top 2 pitches
+                        top_pitches = get_pitcher_top_pitches(opp_p_name)[:2]
+                        pitch1 = top_pitches[0] if len(top_pitches) > 0 else {}
+                        pitch2 = top_pitches[1] if len(top_pitches) > 1 else {}
+                        pitch_score, _ = compute_pitch_matchup(opp_p_name, name)
+                        bc2 = get_batter_stats(name, 2026)
+                        bp2 = get_batter_stats(name, 2025)
+                        pa26 = bc2.get("pa", 0); pa25 = bp2.get("pa", 0)
+                        bwc2, bwp2 = get_batter_blend_weights(pa26, pa25)
+                        ev = round(blend(bc2.get("exit_velo", 0), bp2.get("exit_velo", 0), bwc2, bwp2), 1)
+                        pa_data = get_avg_pa_per_game(name)
                         records.append({
                             "date": today,
                             "name": name,
@@ -715,9 +792,10 @@ async def save_daily_predictions():
                             "bat_hand": bat_hand,
                             "home_team": home_team,
                             "model_hr_pct": hr_prob,
-                            "hit_hr": None,  # filled in later by record_results
+                            "hit_hr": None,
                             "barrel_pct": breakdown.get("barrel_use", 0),
                             "launch_angle": breakdown.get("la_use", 0),
+                            "exit_velocity": ev,
                             "iso_vs_hand": breakdown.get("iso_vs_hand", 0),
                             "l8d_hr": get_l8d_hr(name),
                             "park_factor": breakdown.get("park_factor", 1.0),
@@ -729,6 +807,16 @@ async def save_daily_predictions():
                             "pit_platoon_mult": breakdown.get("pit_platoon_mult", 1.0),
                             "hot_cold_mult": breakdown.get("hot_cold_mult", 1.0),
                             "k_mult": breakdown.get("k_mult", 1.0),
+                            "bullpen_hr9": breakdown.get("bullpen_hr9", 1.2),
+                            "bullpen_vuln": breakdown.get("bullpen_vuln", 1.0),
+                            "pitch_matchup_score": round(pitch_score, 2),
+                            "pitch1_type": pitch1.get("name", ""),
+                            "pitch1_usage": pitch1.get("usage", 0),
+                            "pitch2_type": pitch2.get("name", ""),
+                            "pitch2_usage": pitch2.get("usage", 0),
+                            "avg_pa_per_game": pa_data.get("avg_pa_per_game", 3.1),
+                            "avg_ab_per_game": pa_data.get("avg_ab_per_game", 2.8),
+                            "games_played": pa_data.get("games", 0),
                         })
         if not records:
             print(f"No predictions to save for {today}")
@@ -896,6 +984,16 @@ def get_l8d_hr(name):
     for k, v in data.items():
         if last in k: return v.get("hr", 0)
     return 0
+
+def get_avg_pa_per_game(name):
+    """Get batter's avg PA per game this season — key ML feature for opportunity"""
+    nl = name.lower().strip()
+    data = _cache.get("bat_games", {})
+    if nl in data: return data[nl]
+    last = nl.split()[-1]
+    for k, v in data.items():
+        if last in k: return v
+    return {"games": 0, "avg_pa_per_game": 3.1, "avg_ab_per_game": 2.8}
 
 def get_batter_split(name, pit_hand):
     df = _cache["bat_vs_lhp"] if pit_hand == "L" else _cache["bat_vs_rhp"]
@@ -1095,7 +1193,7 @@ def sigmoid_to_prob(raw_score):
     sigmoid = 1 / (1 + math.exp(-centered))
     return round(min(max(0.02 + sigmoid * 0.25, 0.02), 0.25) * 100, 1)
 
-def compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult):
+def compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
     """
     Multiplicative HR probability model.
     P(HR) = Base Rate × Barrel% × LA × Pitcher Vuln × Batter Platoon ×
@@ -1267,6 +1365,21 @@ def compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_
     running *= k_mult
 
     # ── Hard cap at 28% ──
+    # Before capping — blend in bullpen exposure (25% of PA face relievers)
+    # Bullpen component uses batter skill only + park + weather + bullpen HR/9
+    LG_BULLPEN_HR9 = 1.20  # relievers give up slightly more HRs per 9 than starters
+    bullpen_data = _cache.get("team_bullpen", {}).get(home_team, {})
+    bullpen_hr9 = bullpen_data.get("hr9", LG_BULLPEN_HR9)
+    bullpen_vuln = bullpen_hr9 / LG_BULLPEN_HR9
+    bullpen_vuln = max(min(bullpen_vuln, 1.80), 0.50)
+
+    # Bullpen component = base batter ability × park × weather × bullpen vulnerability
+    bullpen_component = base_rate * barrel_mult * la_mult * bat_platoon_mult * park_factor * weather_mult * k_mult * bullpen_vuln
+
+    # Blend: 75% starter exposure, 25% bullpen exposure
+    running_blended = (running * 0.75) + (bullpen_component * 0.25)
+    running = running_blended
+
     hr_prob = round(min(running * 100, 28.0), 1)
 
     # ── Build breakdown for frontend ──
@@ -1359,6 +1472,8 @@ def compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_
         # Pitcher SLG vs batter hand for table display
         "pit_slg_vs_bat": round(slg_vs_bat, 3) if split_ip_vs_bat >= 5 else 0,
         "pit_slg_overall": round(slg_overall_pit, 3),
+        "bullpen_hr9": round(bullpen_hr9, 2),
+        "bullpen_vuln": round(bullpen_vuln, 3),
     }
     return hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
@@ -1394,8 +1509,8 @@ def get_trend(b8d, bc):
     elif score <= -2: return "Cooling Off"
     return "Steady"
 
-def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult):
-    return compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult)
+def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
+    return compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team)
 
 def _compute_hr_probability_legacy(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult):
     bc = get_batter_stats(name, 2026)
@@ -1945,7 +2060,7 @@ async def get_games(date: str = None):
             batter_wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
 
             hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf = compute_hr_probability(
-                name, bat_hand, opp_p_name, opp_p_hand, park_factor, batter_wx_mult)
+                name, bat_hand, opp_p_name, opp_p_hand, park_factor, batter_wx_mult, home_team)
 
             bc = get_batter_stats(name, 2026)
             bp = get_batter_stats(name, 2025)
