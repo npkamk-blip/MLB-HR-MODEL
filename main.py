@@ -721,17 +721,24 @@ async def github_put_file(path: str, content: str, message: str, sha: str = None
         return False
 
 async def save_daily_predictions():
-    """Save today's predictions to GitHub as data/predictions/YYYY-MM-DD.json"""
+    """Save today's predictions to GitHub — uses same data as /games endpoint for consistency"""
     if not _cache["ready"]: return
     today = date.today().isoformat()
     path = f"data/predictions/{today}.json"
-    # Check if already saved today
-    existing, _ = await github_get_file(path)
+    existing, sha = await github_get_file(path)
+    # Allow overwrite if hit_hr is still null (predictions not yet recorded)
     if existing:
-        print(f"Predictions already saved for {today}")
-        return
+        import json
+        try:
+            ex_recs = json.loads(existing)
+            if any(r.get("hit_hr") is not None for r in ex_recs):
+                print(f"Predictions already recorded for {today} — skipping")
+                return
+            print(f"Overwriting pending predictions for {today}")
+        except Exception:
+            pass
     try:
-        # Fetch today's games and collect all batter predictions above 5%
+        # Fetch today's schedule
         async with httpx.AsyncClient(timeout=30) as client:
             r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
             data = r.json()
@@ -739,25 +746,66 @@ async def save_daily_predictions():
         for game_date in data.get("dates", []):
             for game in game_date.get("games", []):
                 if game.get("status", {}).get("abstractGameState") == "Final": continue
+                gid = game["gamePk"]
                 home_team = game["teams"]["home"]["team"]["name"]
                 away_team = game["teams"]["away"]["team"]["name"]
+                away_team_id = game["teams"]["away"]["team"]["id"]
+                home_team_id = game["teams"]["home"]["team"]["id"]
                 away_p = game["teams"]["away"].get("probablePitcher", {})
                 home_p = game["teams"]["home"].get("probablePitcher", {})
-                # Get lineups from cache — use top_hr_candidates from all_batters if available
-                # We'll store predictions for any batter we've computed
-                for side, opp_p, team in [("away", home_p, away_team), ("home", away_p, home_team)]:
-                    opp_p_name = opp_p.get("fullName", "TBD")
-                    opp_p_id = opp_p.get("id")
-                    opp_p_hand = "R"
-                    if opp_p_id:
-                        info = await fetch_player_hand(opp_p_id)
-                        opp_p_hand = info.get("pitch_hand", "R")
-                    # Get projected lineup
-                    team_id = game["teams"][side]["team"]["id"]
-                    lineup, _ = await fetch_projected_lineup(team_id, team)
-                    for batter in lineup[:9]:
-                        name = batter.get("name", "")
-                        pid = batter.get("id")
+                gtime = game.get("gameDate", "")
+
+                away_p_hand = home_p_hand = "R"
+                if away_p.get("id"):
+                    info = await fetch_player_hand(away_p.get("id"))
+                    away_p_hand = info.get("pitch_hand", "R")
+                if home_p.get("id"):
+                    info = await fetch_player_hand(home_p.get("id"))
+                    home_p_hand = info.get("pitch_hand", "R")
+
+                stadium = STADIUMS.get(home_team, {})
+                temp, wind_speed, wind_dir = 70, 0, 0
+                if not stadium.get("dome") and stadium.get("lat"):
+                    temp, wind_speed, wind_dir = await fetch_weather(stadium["lat"], stadium["lon"], gtime)
+
+                # Try confirmed lineup first, fall back to projected
+                lineup_away, lineup_home = [], []
+                try:
+                    async with httpx.AsyncClient(timeout=15) as client:
+                        r2 = await client.get(f"{MLB_API}/game/{gid}/boxscore")
+                        box = r2.json()
+                    teams = box.get("teams", {})
+                    def extract(side):
+                        players = teams.get(side, {}).get("players", {})
+                        return sorted([p for p in players.values() if p.get("battingOrder") and int(p["battingOrder"]) <= 900],
+                                      key=lambda x: int(x["battingOrder"]))[:9]
+                    ca, ch = extract("away"), extract("home")
+                    if ca: lineup_away = ca
+                    if ch: lineup_home = ch
+                except Exception: pass
+
+                lineup_away_source = "confirmed"
+                lineup_home_source = "confirmed"
+                if not lineup_away:
+                    proj, _ = await fetch_projected_lineup(away_team_id, away_team)
+                    lineup_away = proj
+                    lineup_away_source = "projected"
+                if not lineup_home:
+                    proj, _ = await fetch_projected_lineup(home_team_id, home_team)
+                    lineup_home = proj
+                    lineup_home_source = "projected"
+
+                for batters, team, opp_p_name, opp_p_hand, lineup_src in [
+                    (lineup_away, away_team, home_p.get("fullName","TBD"), home_p_hand, lineup_away_source),
+                    (lineup_home, home_team, away_p.get("fullName","TBD"), away_p_hand, lineup_home_source),
+                ]:
+                    for batter in batters:
+                        if "person" in batter:
+                            name = batter.get("person", {}).get("fullName", "")
+                            pid = batter.get("person", {}).get("id")
+                        else:
+                            name = batter.get("name", "")
+                            pid = batter.get("id")
                         if not name: continue
                         bat_hand = "R"
                         if pid:
@@ -765,14 +813,10 @@ async def save_daily_predictions():
                             bat_hand = info.get("bat_side", "R")
                         if bat_hand == "S": bat_hand = "L" if opp_p_hand == "R" else "R"
                         park_factor = get_park_hr_factor(home_team, bat_hand)
-                        stadium = STADIUMS.get(home_team, {})
-                        temp, wind_speed, wind_dir = 70, 0, 0
-                        if not stadium.get("dome") and stadium.get("lat"):
-                            temp, wind_speed, wind_dir = await fetch_weather(stadium["lat"], stadium["lon"], game.get("gameDate",""))
                         wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
-                        hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult)
+                        hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(
+                            name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult, home_team)
                         if hr_prob < 5: continue
-                        # Get top 2 pitches
                         top_pitches = get_pitcher_top_pitches(opp_p_name)[:2]
                         pitch1 = top_pitches[0] if len(top_pitches) > 0 else {}
                         pitch2 = top_pitches[1] if len(top_pitches) > 1 else {}
@@ -784,15 +828,10 @@ async def save_daily_predictions():
                         ev = round(blend(bc2.get("exit_velo", 0), bp2.get("exit_velo", 0), bwc2, bwp2), 1)
                         pa_data = get_avg_pa_per_game(name)
                         records.append({
-                            "date": today,
-                            "name": name,
-                            "team": team,
-                            "opp_pitcher": opp_p_name,
-                            "opp_pitcher_hand": opp_p_hand,
-                            "bat_hand": bat_hand,
-                            "home_team": home_team,
-                            "model_hr_pct": hr_prob,
-                            "hit_hr": None,
+                            "date": today, "name": name, "team": team,
+                            "opp_pitcher": opp_p_name, "opp_pitcher_hand": opp_p_hand,
+                            "bat_hand": bat_hand, "home_team": home_team,
+                            "model_hr_pct": hr_prob, "hit_hr": None,
                             "barrel_pct": breakdown.get("barrel_use", 0),
                             "launch_angle": breakdown.get("la_use", 0),
                             "exit_velocity": ev,
@@ -817,13 +856,14 @@ async def save_daily_predictions():
                             "avg_pa_per_game": pa_data.get("avg_pa_per_game", 3.1),
                             "avg_ab_per_game": pa_data.get("avg_ab_per_game", 2.8),
                             "games_played": pa_data.get("games", 0),
+                            "lineup_source": lineup_src,
                         })
         if not records:
             print(f"No predictions to save for {today}")
             return
         import json
         content = json.dumps(records, indent=2)
-        await github_put_file(path, content, f"predictions: {today} ({len(records)} batters)")
+        await github_put_file(path, content, f"predictions: {today} ({len(records)} batters)", sha)
         print(f"Saved {len(records)} predictions for {today}")
     except Exception as e:
         print(f"save_daily_predictions error: {e}")
@@ -848,6 +888,7 @@ async def record_results(target_date: str):
             r = await client.get(f"{MLB_API}/schedule?sportId=1&date={target_date}&hydrate=team")
             sched = r.json()
         hr_hitters = set()
+        actual_ab = {}  # name.lower() -> ab count
         for game_date in sched.get("dates", []):
             for game in game_date.get("games", []):
                 if game.get("status", {}).get("abstractGameState") != "Final": continue
@@ -859,19 +900,38 @@ async def record_results(target_date: str):
                     for side in ["away", "home"]:
                         for _, p in box.get("teams", {}).get(side, {}).get("players", {}).items():
                             stats = p.get("stats", {}).get("batting", {})
+                            name = p.get("person", {}).get("fullName", "")
+                            if not name: continue
+                            ab = int(stats.get("atBats", 0) or 0)
+                            actual_ab[name.lower()] = ab
                             if int(stats.get("homeRuns", 0) or 0) > 0:
-                                name = p.get("person", {}).get("fullName", "")
-                                if name: hr_hitters.add(name.lower())
+                                hr_hitters.add(name.lower())
                 except Exception: continue
-        # Update records with actual results
+        # Update records with actual results — DNP if fewer than 2 AB
         updated = 0
+        dnp_count = 0
         for rec in records:
             if rec.get("hit_hr") is None:
-                rec["hit_hr"] = 1 if rec["name"].lower() in hr_hitters else 0
+                nl = rec["name"].lower()
+                ab = actual_ab.get(nl, 0)
+                # Check partial name match too
+                if ab == 0:
+                    last = nl.split()[-1]
+                    for k, v in actual_ab.items():
+                        if last in k:
+                            ab = v
+                            break
+                if ab < 2:
+                    rec["hit_hr"] = "DNP"  # Did not play / not enough AB for ML
+                    rec["actual_ab"] = ab
+                    dnp_count += 1
+                else:
+                    rec["hit_hr"] = 1 if nl in hr_hitters else 0
+                    rec["actual_ab"] = ab
                 updated += 1
         content_updated = json.dumps(records, indent=2)
-        await github_put_file(path, content_updated, f"results: {target_date} ({len(hr_hitters)} HRs recorded)", sha)
-        print(f"Recorded results for {target_date}: {len(hr_hitters)} HR hitters, {updated} records updated")
+        await github_put_file(path, content_updated, f"results: {target_date} ({len(hr_hitters)} HRs, {dnp_count} DNP)", sha)
+        print(f"Recorded results for {target_date}: {len(hr_hitters)} HR hitters, {dnp_count} DNP, {updated} records updated")
     except Exception as e:
         print(f"record_results error: {e}")
         import traceback; traceback.print_exc()
