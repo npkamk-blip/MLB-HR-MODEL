@@ -1075,7 +1075,7 @@ def compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_
         "bat_platoon_mult": round(bat_platoon_mult, 3),
         "pit_platoon_mult": round(pit_platoon_mult, 3),
         "iso_vs_hand": round(iso_vs_hand, 3), "iso_overall": round(iso_overall, 3),
-        "slg_vs_bat": round(slg_vs_bat, 3),
+        "slg_vs_bat": round(slg_vs_bat, 3) if split_ip_vs_bat >= 5 else 0,
         "split_pa_vs_hand": split_pa_vs_hand,
         "split_ip_vs_bat": round(split_ip_vs_bat, 1),
         # Context
@@ -1118,7 +1118,7 @@ def compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_
         "after_k": round(running * 100, 1), "after_context": round(running * 100, 1),
         "n_pit_components": n_components,
         # Pitcher SLG vs batter hand for table display
-        "pit_slg_vs_bat": round(slg_vs_bat, 3),
+        "pit_slg_vs_bat": round(slg_vs_bat, 3) if split_ip_vs_bat >= 5 else 0,
         "pit_slg_overall": round(slg_overall_pit, 3),
     }
     return hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
@@ -1694,6 +1694,7 @@ async def get_games(date: str = None):
                     "slg":    round(b8d.get("slg", 0), 3),
                     "avg":    round(b8d.get("avg", 0), 3),
                     "pull":   round(b8d.get("pull_pct", 0), 1),
+                    "k_pct":  round(b8d.get("k_pct", 0), 1),
                 },
                 "l5g": {
                     "ab":  int(bl5g.get("ab", 0)),
