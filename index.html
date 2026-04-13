@@ -331,10 +331,12 @@ function buildBatterTable(games){
   if(!batters.length){document.getElementById('batter-main').innerHTML='<div class="no-data">No batters above 8% HR probability today.</div>';return;}
 
   var h='<div class="section-hdr"><div class="section-title">HR Probabilities</div><div class="section-count">'+batters.length+' batters &middot; 8%+ threshold</div></div>';
+  h+='<div style="font-size:10px;color:var(--muted2);margin-bottom:8px">Matchup: <span class="dot dot-g" style="display:inline-block"></span> Batter strong vs hand &nbsp;·&nbsp; <span class="dot dot-g" style="display:inline-block"></span> Pitcher weak vs hand &nbsp;·&nbsp; Double green = elite spot</div>';
   h+='<div class="tbl-wrap"><table>';
   h+='<thead><tr>';
-  h+=bth('Batter','name',false);h+=bth('Hand','hand',false);h+=bth('Pitcher','pitcher_name',false);h+=bth('P-Hand','opp_hand',false);
-  h+=bth('P-Split SLG','slg_vs_bat',true);h+=bth('HR/9 vs Hand','hr9_vs_bat',true);h+=bth('Batter ISO','iso_vs_hand',true);
+  h+=bth('Batter','name',false);h+=bth('Hand','hand',false);
+  h+=bth('Pitcher','pitcher_name',false);
+  h+=bth('Matchup','bat_platoon_mult',false);
   h+=bth('Barrel%','barrel_s',true);h+=bth('LA','la_s',true);h+=bth('L8D HR','l8d_hr',true);
   h+=bth('Weather','wx_label',false);h+=bth('HR%','hr_prob',true);
   h+='</tr></thead><tbody>';
@@ -353,21 +355,23 @@ function buildBatterTable(games){
     h+='<tr onclick="toggleBatRow('+i+')">';
     h+='<td><div class="player-name">'+b.name+'</div><div class="player-sub">'+b.team+'</div></td>';
     h+='<td>'+handTag+'</td>';
-    h+='<td><div class="player-name">'+(b.pitcher_name||'TBD')+'</div></td>';
-    h+='<td>'+oppHTag+'</td>';
-    // P-Split SLG (pitcher weak vs batter hand) — min 20 PA threshold, inverted dot
-    var pitSplgDisp=b.slg_vs_bat>0&&b._full.breakdown&&(b._full.breakdown.split_ip_vs_bat||0)>=5?b.slg_vs_bat.toFixed(3):'--';
-    h+='<td class="num"><span class="dot dot-'+pitDot+'"></span><span class="sc-n">'+pitSplgDisp+'</span></td>';
-    h+='<td class="num sc '+hr9C+'">'+(b.hr9_vs_bat>0?b.hr9_vs_bat.toFixed(2):'--')+'</td>';
-    // Batter ISO vs pitcher hand
-    h+='<td class="num"><span class="dot dot-'+batDot+'"></span><span class="sc '+isoCls(b.iso_vs_hand)+'">'+(b.iso_vs_hand>0?fmtIso(b.iso_vs_hand):b.iso_overall>0?fmtIso(b.iso_overall):'--')+'</span></td>';
+    h+='<td><div class="player-name">'+(b.pitcher_name||'TBD')+'</div><div class="player-sub">'+(b.opp_hand||'R')+'HP</div></td>';
+    // Matchup column — two dots side by side, double green = screaming spot
+    var matchupTitle='Batter ISO vs hand: '+(b.iso_vs_hand>0?fmtIso(b.iso_vs_hand):'--')+' | Pit SLG allowed: '+(b.slg_vs_bat>0?b.slg_vs_bat.toFixed(3):'--')+' | HR/9: '+(b.hr9_vs_bat>0?b.hr9_vs_bat.toFixed(2):'--');
+    var doubleGreen=batDot==='g'&&pitDot==='g';
+    h+='<td title="'+matchupTitle+'">';
+    h+='<div style="display:flex;align-items:center;gap:4px'+(doubleGreen?';background:rgba(57,211,83,.08);border-radius:6px;padding:2px 6px':'')+'">';
+    h+='<span class="dot dot-'+batDot+'" title="Batter ISO vs hand"></span>';
+    h+='<span class="dot dot-'+pitDot+'" title="Pitcher weak vs hand"></span>';
+    if(b.hr9_vs_bat>0)h+='<span style="font-size:10px;color:var(--muted2);margin-left:2px">'+b.hr9_vs_bat.toFixed(1)+'</span>';
+    h+='</div></td>';
     h+='<td class="num"><span class="sc '+barrelCls(brl.val)+'">'+(brl.val>0?brl.val.toFixed(1)+'%':'--')+'</span>'+(brl.flag?'<span style="font-size:10px">'+brl.flag+'</span>':'')+'</td>';
     h+='<td class="num"><span class="sc '+laCls(la.val)+'">'+(la.val>0?la.val.toFixed(1)+'&#176;':'--')+'</span>'+(la.flag?'<span style="font-size:10px">'+la.flag+'</span>':'')+'</td>';
     h+='<td class="num"><span class="l8d-badge '+l8dBadge+'">'+b.l8d_hr+' HR</span></td>';
     h+='<td style="font-size:11px;'+wxTextCls(b.wx_label)+'">'+wxIcon(b.wx_label,b.wx_temp,b.wx_wind)+' '+(b.wx_temp||'--')+'&#176;<span style="color:var(--muted2);font-size:10px;margin-left:2px">'+(b.wx_wind>0?b.wx_wind+'mph':'calm')+'</span></td>';
     h+='<td class="num"><span class="prob-big '+pc+'">'+b.hr_prob+'%</span></td>';
     h+='</tr>';
-    h+='<tr class="detail-row" id="bdet-'+i+'" style="display:none"><td colspan="12">'+buildBatDetail(b)+'</td></tr>';
+    h+='<tr class="detail-row" id="bdet-'+i+'" style="display:none"><td colspan="9">'+buildBatDetail(b)+'</td></tr>';
   });
   h+='</tbody></table></div>';
   document.getElementById('batter-main').innerHTML=h;
