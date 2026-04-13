@@ -739,11 +739,9 @@ function batterRowHTML(b,order){
   var hand=b.bat_hand||'R';
   var s=b.season||{}, r=b.l8d||{}, g=b.l5g||{}, bd=b.breakdown||{};
 
-  // Split-specific Brl% and ISO from breakdown
-  var splitBrl=bd.split_brl||0;
-  var splitIso=bd.split_iso||0;
-  var brlShow=splitBrl>0?splitBrl:s.barrel||0;
-  var isoShow=splitIso>0?splitIso:s.iso||0;
+  // Main row shows season ISO, split ISO used only for model scoring
+  var brlShow=bd.split_brl>0?bd.split_brl:s.barrel||0;
+  var isoShow=s.iso||0;
 
   var brlCls=statCls(brlShow,LG.barrel);
   var isoCls=statCls(isoShow,LG.iso);
