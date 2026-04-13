@@ -821,42 +821,114 @@ async def save_daily_predictions():
                         pitch1 = top_pitches[0] if len(top_pitches) > 0 else {}
                         pitch2 = top_pitches[1] if len(top_pitches) > 1 else {}
                         pitch_score, _ = compute_pitch_matchup(opp_p_name, name)
+                        pa_data = get_avg_pa_per_game(name)
+                        # Raw batter season stats
                         bc2 = get_batter_stats(name, 2026)
                         bp2 = get_batter_stats(name, 2025)
                         pa26 = bc2.get("pa", 0); pa25 = bp2.get("pa", 0)
                         bwc2, bwp2 = get_batter_blend_weights(pa26, pa25)
-                        ev = round(blend(bc2.get("exit_velo", 0), bp2.get("exit_velo", 0), bwc2, bwp2), 1)
-                        pa_data = get_avg_pa_per_game(name)
+                        barrel_s = round(blend(bc2.get("barrel_pct",0), bp2.get("barrel_pct",0), bwc2, bwp2), 1)
+                        la_s     = round(blend(bc2.get("launch_angle",0), bp2.get("launch_angle",0), bwc2, bwp2), 1)
+                        ev_s     = round(blend(bc2.get("exit_velo",0), bp2.get("exit_velo",0), bwc2, bwp2), 1)
+                        iso_s    = round(blend(bc2.get("iso",0), bp2.get("iso",0), bwc2, bwp2), 3)
+                        hh_s     = round(blend(bc2.get("hard_hit_pct",0), bp2.get("hard_hit_pct",0), bwc2, bwp2), 1)
+                        k_s      = round(blend(bc2.get("k_pct",0), bp2.get("k_pct",0), bwc2, bwp2), 1)
+                        # Raw batter L8D stats
+                        b8d2 = get_batter_8d(name)
+                        barrel_l8d = round(b8d2.get("barrel_pct",0), 1)
+                        la_l8d     = round(b8d2.get("launch_angle",0), 1)
+                        ev_l8d     = round(b8d2.get("exit_velo",0), 1)
+                        iso_l8d    = round(b8d2.get("iso",0), 3)
+                        hh_l8d     = round(b8d2.get("hard_hit_pct",0), 1)
+                        pa_l8d     = int(b8d2.get("pa",0))
+                        # Raw batter split vs pitcher hand
+                        b_split2   = get_batter_split(name, opp_p_hand)
+                        iso_split  = round(b_split2.get("iso",0), 3)
+                        slg_split  = round(b_split2.get("slg",0), 3)
+                        hr_split   = int(b_split2.get("hr",0))
+                        pa_split   = int(b_split2.get("pa",0))
+                        # Raw pitcher stats
+                        pc2  = get_pitcher_stats(opp_p_name, 2026)
+                        pp2b = get_pitcher_stats(opp_p_name, 2025)
+                        ip26 = pc2.get("ip",0)
+                        pwc2, pwp2 = get_pitcher_blend_weights(ip26, pp2b.get("ip",0))
+                        pit_hr9_s   = round(blend(pc2.get("hr9",0), pp2b.get("hr9",0), pwc2, pwp2), 2)
+                        pit_era_s   = round(blend(pc2.get("era",0), pp2b.get("era",0), pwc2, pwp2), 2)
+                        pit_hh_s    = round(blend(pc2.get("hard_hit_pct",0), pp2b.get("hard_hit_pct",0), pwc2, pwp2), 1)
+                        pit_k9_s    = round(blend(pc2.get("k9",0), pp2b.get("k9",0), pwc2, pwp2), 1)
+                        # Pitcher split vs batter hand
+                        p_split2    = get_pitcher_split(opp_p_name, bat_hand)
+                        pit_hr9_vs  = round(p_split2.get("hr9",0), 2)
+                        pit_slg_vs  = round(p_split2.get("slg",0), 3)
+                        pit_k_vs    = round(p_split2.get("k_pct",0), 1)
+                        pit_ip_vs   = round(p_split2.get("ip",0), 1)
                         records.append({
+                            # Identity
                             "date": today, "name": name, "team": team,
                             "opp_pitcher": opp_p_name, "opp_pitcher_hand": opp_p_hand,
                             "bat_hand": bat_hand, "home_team": home_team,
-                            "model_hr_pct": hr_prob, "hit_hr": None,
-                            "barrel_pct": breakdown.get("barrel_use", 0),
-                            "launch_angle": breakdown.get("la_use", 0),
-                            "exit_velocity": ev,
-                            "iso_vs_hand": breakdown.get("iso_vs_hand", 0),
-                            "l8d_hr": get_l8d_hr(name),
-                            "park_factor": breakdown.get("park_factor", 1.0),
-                            "weather_mult": breakdown.get("weather_mult", 1.0),
-                            "barrel_mult": breakdown.get("barrel_mult", 1.0),
-                            "la_mult": breakdown.get("la_mult", 1.0),
-                            "pit_vuln_mult": breakdown.get("pit_vuln_mult", 1.0),
-                            "bat_platoon_mult": breakdown.get("bat_platoon_mult", 1.0),
-                            "pit_platoon_mult": breakdown.get("pit_platoon_mult", 1.0),
-                            "hot_cold_mult": breakdown.get("hot_cold_mult", 1.0),
-                            "k_mult": breakdown.get("k_mult", 1.0),
-                            "bullpen_hr9": breakdown.get("bullpen_hr9", 1.2),
-                            "bullpen_vuln": breakdown.get("bullpen_vuln", 1.0),
-                            "pitch_matchup_score": round(pitch_score, 2),
-                            "pitch1_type": pitch1.get("name", ""),
-                            "pitch1_usage": pitch1.get("usage", 0),
-                            "pitch2_type": pitch2.get("name", ""),
-                            "pitch2_usage": pitch2.get("usage", 0),
-                            "avg_pa_per_game": pa_data.get("avg_pa_per_game", 3.1),
-                            "avg_ab_per_game": pa_data.get("avg_ab_per_game", 2.8),
-                            "games_played": pa_data.get("games", 0),
                             "lineup_source": lineup_src,
+                            # Model output
+                            "model_hr_pct": hr_prob, "hit_hr": None,
+                            # ── BATTER SEASON ──
+                            "barrel_pct_season": barrel_s,
+                            "la_season": la_s,
+                            "ev_season": ev_s,
+                            "iso_season": iso_s,
+                            "hard_hit_season": hh_s,
+                            "k_pct_season": k_s,
+                            "hr_season": int(bc2.get("hr",0)),
+                            "pa_season": pa26,
+                            # ── BATTER L8D ──
+                            "barrel_pct_l8d": barrel_l8d,
+                            "la_l8d": la_l8d,
+                            "ev_l8d": ev_l8d,
+                            "iso_l8d": iso_l8d,
+                            "hard_hit_l8d": hh_l8d,
+                            "pa_l8d": pa_l8d,
+                            "l8d_hr": get_l8d_hr(name),
+                            # ── BATTER SPLIT vs PITCHER HAND ──
+                            "iso_vs_hand": iso_split,
+                            "slg_vs_hand": slg_split,
+                            "hr_vs_hand": hr_split,
+                            "pa_vs_hand": pa_split,
+                            # ── MODEL USED (blended) ──
+                            "barrel_pct_used": breakdown.get("barrel_use",0),
+                            "la_used": breakdown.get("la_use",0),
+                            # ── PITCHER SEASON ──
+                            "pit_hr9_season": pit_hr9_s,
+                            "pit_era_season": pit_era_s,
+                            "pit_hard_hit_season": pit_hh_s,
+                            "pit_k9_season": pit_k9_s,
+                            "pit_ip_season": round(ip26,1),
+                            # ── PITCHER SPLIT vs BATTER HAND ──
+                            "pit_hr9_vs_hand": pit_hr9_vs,
+                            "pit_slg_vs_hand": pit_slg_vs,
+                            "pit_k_vs_hand": pit_k_vs,
+                            "pit_ip_vs_hand": pit_ip_vs,
+                            # ── CONTEXT ──
+                            "park_factor": breakdown.get("park_factor",1.0),
+                            "weather_mult": breakdown.get("weather_mult",1.0),
+                            "bullpen_hr9": breakdown.get("bullpen_hr9",1.2),
+                            "bullpen_vuln": breakdown.get("bullpen_vuln",1.0),
+                            # ── MODEL MULTIPLIERS ──
+                            "barrel_mult": breakdown.get("barrel_mult",1.0),
+                            "la_mult": breakdown.get("la_mult",1.0),
+                            "pit_vuln_mult": breakdown.get("pit_vuln_mult",1.0),
+                            "bat_platoon_mult": breakdown.get("bat_platoon_mult",1.0),
+                            "pit_platoon_mult": breakdown.get("pit_platoon_mult",1.0),
+                            "hot_cold_mult": breakdown.get("hot_cold_mult",1.0),
+                            "k_mult": breakdown.get("k_mult",1.0),
+                            # ── PITCH DATA ──
+                            "pitch_matchup_score": round(pitch_score,2),
+                            "pitch1_type": pitch1.get("name",""),
+                            "pitch1_usage": pitch1.get("usage",0),
+                            "pitch2_type": pitch2.get("name",""),
+                            "pitch2_usage": pitch2.get("usage",0),
+                            # ── OPPORTUNITY ──
+                            "avg_pa_per_game": pa_data.get("avg_pa_per_game",3.1),
+                            "avg_ab_per_game": pa_data.get("avg_ab_per_game",2.8),
+                            "games_played": pa_data.get("games",0),
                         })
         if not records:
             print(f"No predictions to save for {today}")
