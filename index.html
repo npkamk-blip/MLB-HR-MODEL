@@ -162,6 +162,32 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 .hit-yes{background:rgba(57,211,83,.12);color:var(--g);border:1px solid rgba(57,211,83,.25)}
 .hit-no{background:#1a1a1a;color:var(--muted2);border:1px solid var(--border2)}
 .hit-pending{background:rgba(255,170,51,.08);color:var(--warn);border:1px solid rgba(255,170,51,.2)}
+.model-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:768px){.model-layout{grid-template-columns:1fr}}
+.model-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.model-card-title{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.weight-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border2)}
+.weight-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.weight-rank{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--muted2);width:18px;flex-shrink:0}
+.weight-name{font-size:11px;color:var(--fg);width:130px;flex-shrink:0}
+.weight-bar-wrap{flex:1;height:6px;background:var(--border2);border-radius:3px;overflow:hidden}
+.weight-bar{height:100%;border-radius:3px;transition:width .3s}
+.weight-val{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;width:38px;text-align:right;flex-shrink:0}
+.weight-delta{font-size:10px;width:42px;text-align:right;flex-shrink:0}
+.stat-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid var(--border2)}
+.stat-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.stat-rank{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted2);width:22px;flex-shrink:0;text-align:right}
+.stat-name{font-size:11px;width:150px;flex-shrink:0}
+.stat-bar-wrap{flex:1;height:4px;background:var(--border2);border-radius:2px;overflow:hidden}
+.stat-bar{height:100%;border-radius:2px}
+.stat-corr{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;width:38px;text-align:right;flex-shrink:0}
+.stat-badge{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0}
+.badge-active{background:rgba(57,211,83,.15);color:var(--g);border:1px solid rgba(57,211,83,.3)}
+.badge-candidate{background:rgba(255,200,0,.12);color:var(--y);border:1px solid rgba(255,200,0,.25)}
+.badge-promoted{background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.3)}
+.badge-dropped{background:rgba(255,59,48,.12);color:var(--r);border:1px solid rgba(255,59,48,.25)}
+.recal-btn{background:var(--accent);color:#000;font-weight:700;font-size:11px;padding:5px 12px;border-radius:6px;border:none;cursor:pointer;letter-spacing:.04em}
+.recal-btn:disabled{background:var(--muted2);cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -185,6 +211,7 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
   <button class="tab" onclick="switchTab('pitchers',this)">Pitchers</button>
   <button class="tab" onclick="switchTab('games',this)">Games</button>
   <button class="tab" onclick="switchTab('history',this)">History</button>
+  <button class="tab" onclick="switchTab('model',this)">Model</button>
   <button class="tab" onclick="switchTab('research',this)">Research</button>
 </div>
 
@@ -206,6 +233,11 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 <div id="history-panel" class="tab-panel">
   <div class="container">
     <div id="history-main"><div class="no-data">Loading history...</div></div>
+  </div>
+</div>
+<div id="model-panel" class="tab-panel">
+  <div class="container">
+    <div id="model-main"><div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div></div>
   </div>
 </div>
 <div id="research-panel" class="tab-panel">
@@ -236,9 +268,149 @@ function switchTab(id,btn){
   document.getElementById(id+'-panel').classList.add('active');
   btn.classList.add('active');
   if(id==='history'&&!historyData) loadHistory();
+  if(id==='model') loadModelTab();
 }
 
 function probCls(p){return p>=20?'p-elite':p>=15?'p-high':p>=10?'p-mid':'p-low';}
+var modelWeightsData = null;
+async function loadModelTab() {
+  var el = document.getElementById('model-main');
+  el.innerHTML = '<div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div>';
+  try {
+    var r = await fetch(API + '/model-weights');
+    modelWeightsData = await r.json();
+    if (!historyData) { var hr = await fetch(API + '/history'); historyData = await hr.json(); }
+    renderModelTab(modelWeightsData, historyData);
+  } catch(e) { el.innerHTML = '<div class="err">Failed to load: ' + e.message + '</div>'; }
+}
+async function manualRecalibrate() {
+  var btn = document.getElementById('recalibrate-btn');
+  if(btn){btn.disabled=true;btn.textContent='Recalibrating...';}
+  try {
+    var r = await fetch(API + '/recalibrate', {method:'POST'});
+    var data = await r.json();
+    if(data.error){alert('Failed: '+data.error);}
+    else{alert('Done! '+data.weight_changes+' changes. Records: '+data.records_used);loadModelTab();}
+  } catch(e){alert('Error: '+e.message);}
+  if(btn){btn.disabled=false;btn.textContent='Recalibrate Now';}
+}
+function renderModelTab(md,hd){
+  var el=document.getElementById('model-main');
+  if(!md){el.innerHTML='<div class="err">No data</div>';return;}
+  var weights=md.weights||{};var rotation=md.rotation||{};
+  var activeStats=weights.active_stats||['barrel_season','la_season','pit_hr9_vs_hand','iso_vs_hand','park','weather','pitch_delta','bat_platoon'];
+  var lastCal=weights.last_calibrated;var recordsUsed=weights.records_used||0;
+  var changes=weights.recent_changes||[];var promoted=weights.promoted_stats||[];var dropped=weights.dropped_stats||[];
+  var completed=[];
+  if(hd&&hd.records)completed=hd.records.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
+  function correlate(field){
+    var vals=completed.filter(function(r){return r[field]!=null&&r[field]!==0;});
+    if(vals.length<10)return null;
+    var n=vals.length,mx=vals.reduce(function(s,r){return s+Number(r[field]);},0)/n,my=vals.reduce(function(s,r){return s+Number(r.hit_hr);},0)/n;
+    var num=vals.reduce(function(s,r){return s+(Number(r[field])-mx)*(Number(r.hit_hr)-my);},0);
+    var dx=Math.sqrt(vals.reduce(function(s,r){return s+Math.pow(Number(r[field])-mx,2);},0));
+    var dy=Math.sqrt(vals.reduce(function(s,r){return s+Math.pow(Number(r.hit_hr)-my,2);},0));
+    if(!dx||!dy)return null;
+    return Math.round(num/(dx*dy)*1000)/1000;
+  }
+  var allStats=[
+    {key:'barrel_season_w',field:'barrel_pct_season',label:'Barrel% Season',round:1},
+    {key:'barrel_l8d_w',field:'barrel_pct_l8d',label:'Barrel% L8D',round:1},
+    {key:'la_season_w',field:'la_season',label:'Launch Angle Season',round:1},
+    {key:'la_l8d_w',field:'la_l8d',label:'Launch Angle L8D',round:1},
+    {key:'ev_season_w',field:'ev_season',label:'Exit Velocity Season',round:1},
+    {key:'ev_l8d_w',field:'ev_l8d',label:'Exit Velocity L8D',round:1},
+    {key:'iso_season_w',field:'iso_season',label:'ISO Season',round:1},
+    {key:'iso_vs_hand_w',field:'iso_vs_hand',label:'ISO vs Hand',round:1},
+    {key:'hard_hit_season_w',field:'hard_hit_season',label:'Hard Hit% Season',round:1},
+    {key:'hard_hit_l8d_w',field:'hard_hit_l8d',label:'Hard Hit% L8D',round:1},
+    {key:'pit_hr9_season_w',field:'pit_hr9_season',label:'Pit HR/9 Season',round:1},
+    {key:'pit_hr9_vs_hand_w',field:'pit_hr9_vs_hand',label:'Pit HR/9 vs Hand',round:1},
+    {key:'pit_slg_season_w',field:'pit_slg_season',label:'Pit SLG Season',round:1},
+    {key:'pit_slg_vs_hand_w',field:'pit_slg_vs_hand',label:'Pit SLG vs Hand',round:1},
+    {key:'park_w',field:'park_factor',label:'Park Factor',round:1},
+    {key:'weather_w',field:'weather_mult',label:'Weather Mult',round:1},
+    {key:'bullpen_w',field:'bullpen_vuln',label:'Bullpen Vuln',round:1},
+    {key:'bat_platoon_w',field:'bat_platoon_mult',label:'Batter Platoon',round:1},
+    {key:'pit_platoon_w',field:'pit_platoon_mult',label:'Pitcher Platoon',round:1},
+    {key:'pitch_delta_w',field:'combined_pitch_delta',label:'Pitch Delta',round:1},
+    {key:'k_pct_w',field:'k_pct_season',label:'K% Penalty',round:1},
+    {key:'fb_pct_season',field:'fb_pct_season',label:'Flyball% Season',round:2},
+    {key:'pull_pct_season',field:'pull_pct_season',label:'Pull% Season',round:2},
+    {key:'pit_fb_pct_allowed',field:'pit_fb_pct_allowed',label:'Pit FB% Allowed',round:2},
+    {key:'hard_hit_l8d',field:'hard_hit_l8d',label:'Hard Hit% L8D',round:3},
+    {key:'k_pct_l8d',field:'k_pct_l8d',label:'K% L8D',round:3},
+    {key:'pit_hr_fb_pct',field:'pit_hr_fb_pct',label:'Pit HR/FB%',round:3},
+  ];
+  var statCorrs=allStats.map(function(s){
+    var sk=s.key.endsWith('_w')?s.key.slice(0,-2):s.key;
+    return Object.assign({},s,{corr:correlate(s.field),weight:weights[s.key]||1.0,isActive:activeStats.indexOf(sk)>=0});
+  }).sort(function(a,b){return(b.corr!=null?Math.abs(b.corr):0)-(a.corr!=null?Math.abs(a.corr):0);});
+  var activeObjs=statCorrs.filter(function(s){return s.isActive;}).sort(function(a,b){return b.weight-a.weight;});
+  var h='';
+  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">';
+  h+='<div><div style="font-size:20px;font-weight:700;font-family:'Barlow Condensed',sans-serif;color:var(--accent)">MODEL INTELLIGENCE</div>';
+  h+='<div style="font-size:11px;color:var(--muted);margin-top:2px">'+(lastCal?'Last calibrated: '+lastCal+' - '+recordsUsed+' records':'Not calibrated - default weights 1.0x')+'</div></div>';
+  h+='<div style="display:flex;gap:8px;align-items:center">';
+  h+='<span style="font-size:11px;color:var(--muted2)">'+completed.length+' records</span>';
+  var canR=completed.length>=50;
+  h+='<button id="recalibrate-btn" class="recal-btn" onclick="manualRecalibrate()" '+(canR?'':'disabled')+'>'+(canR?'Recalibrate Now':'Need '+(50-completed.length)+' more')+'</button>';
+  h+='</div></div>';
+  var rn={1:'Baseline',2:'Testing: FB%, Pull%, Pit FB%',3:'Testing: HH L8D, K% L8D, Pit HR/FB%'};
+  h+='<div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">';
+  h+='<div><span style="font-size:11px;color:var(--accent);font-weight:600">Round '+(rotation.round||1)+'</span> <span style="font-size:11px;color:var(--muted)">'+(rn[rotation.round||1]||'')+'</span></div>';
+  h+='<div style="text-align:right"><div style="font-size:10px;color:var(--muted)">Day '+(rotation.day||0)+' of 45 - <span style="color:var(--warn)">'+(rotation.days_left||45)+' days left</span></div>';
+  h+='<div style="width:120px;height:3px;background:var(--border2);border-radius:2px;margin-top:3px;overflow:hidden"><div style="width:'+(((rotation.day||0)/45)*100).toFixed(0)+'%;height:100%;background:var(--accent)"></div></div></div></div>';
+  if(changes.length){
+    h+='<div style="background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.18);border-radius:8px;padding:8px 14px;margin-bottom:14px">';
+    h+='<div style="font-size:10px;color:#a78bfa;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Recent Weight Changes</div>';
+    changes.slice(0,6).forEach(function(c){
+      var up=c.indexOf('->')>-1&&parseFloat((c.split('->')[1]||'0'))>parseFloat(((c.split('->')[0]||'').split(':')[1]||'1'));
+      h+='<div style="font-size:11px;color:var(--muted)"><span style="color:'+(up?'var(--g)':'var(--r)')+'"></span>'+c+'</div>';
+    });
+    h+='</div>';
+  }
+  h+='<div class="model-layout">';
+  h+='<div class="model-card">';
+  h+='<div class="model-card-title"><span>Active Model ('+(activeObjs.length)+'/8)</span><span style="font-weight:400">weight / corr</span></div>';
+  if(!activeObjs.length)h+='<div style="font-size:11px;color:var(--muted);padding:8px 0">Using defaults (1.0x). Run recalibration once you have 50+ records.</div>';
+  activeObjs.forEach(function(s,i){
+    var w=s.weight,corr=s.corr;
+    var bW=Math.min(Math.abs(w-1)*150+15,100);
+    var bc=w>1.1?'var(--g)':w<0.9?'var(--r)':'var(--muted2)';
+    var cc=corr!=null?(Math.abs(corr)>=0.2?'var(--g)':Math.abs(corr)>=0.1?'var(--y)':'var(--muted2)'):'var(--border2)';
+    h+='<div class="weight-row"><div class="weight-rank">'+(i+1)+'</div><div class="weight-name">'+s.label+'</div>';
+    h+='<div class="weight-bar-wrap"><div class="weight-bar" style="width:'+bW+'%;background:'+bc+'"></div></div>';
+    h+='<div class="weight-val" style="color:'+bc+'">'+w.toFixed(2)+'x</div>';
+    h+='<div class="weight-delta" style="color:'+cc+'">'+(corr!=null?(corr>0?'+':'')+corr.toFixed(2):'--')+'</div></div>';
+  });
+  if(promoted.length||dropped.length){
+    h+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border2);display:flex;gap:4px;flex-wrap:wrap">';
+    promoted.forEach(function(p){h+='<span class="stat-badge badge-promoted">+'+p+'</span>';});
+    dropped.forEach(function(d){h+='<span class="stat-badge badge-dropped">-'+d+'</span>';});
+    h+='</div>';
+  }
+  h+='</div>';
+  h+='<div class="model-card">';
+  h+='<div class="model-card-title"><span>All Stats Ranked</span><span style="font-weight:400">'+(completed.length>=10?completed.length+' records':'need 10+')+'</span></div>';
+  statCorrs.forEach(function(s,i){
+    var corr=s.corr,isA=s.isActive,isCand=s.round>1&&!isA;
+    var ca=corr!=null?Math.abs(corr):0;
+    var bW=Math.min(ca*300,100);
+    var bc=ca>=0.25?'var(--g)':ca>=0.12?'var(--y)':'var(--muted2)';
+    var cc=corr!=null?bc:'var(--border2)';
+    h+='<div class="stat-row"><div class="stat-rank">'+(i+1)+'</div>';
+    h+='<div class="stat-name" style="color:'+(isA?'var(--fg)':'var(--muted)')+'">'+s.label+'</div>';
+    h+='<div class="stat-bar-wrap"><div class="stat-bar" style="width:'+bW+'%;background:'+bc+'"></div></div>';
+    h+='<div class="stat-corr" style="color:'+cc+'">'+(corr!=null?(corr>0?'+':'')+corr.toFixed(3):'no data')+'</div>';
+    if(isA)h+='<span class="stat-badge badge-active">IN</span>';
+    else if(isCand)h+='<span class="stat-badge badge-candidate">R'+s.round+'</span>';
+    h+='</div>';
+  });
+  h+='</div></div>';
+  el.innerHTML=h;
+}
+
 function barrelCls(v){return v>=12?'sc-g':v>=6?'sc-y':'sc-r';}
 function laCls(v){return(v>=25&&v<=35)?'sc-g':(v>=20&&v<=40)?'sc-y':'sc-r';}
 function isoCls(v){return v>=0.200?'sc-g':v>=0.150?'sc-y':'sc-r';}
@@ -734,6 +906,32 @@ function renderHistory(data) {
 
   var h = '';
 
+  // Rotation status
+  var rotationStart = new Date('2026-04-13');
+  var today2 = new Date();
+  var daysSinceStart = Math.floor((today2 - rotationStart) / (1000*60*60*24));
+  var currentRound = Math.max(1, Math.floor(daysSinceStart / 45) + 1);
+  var dayInRound = daysSinceStart % 45;
+  var daysLeft = 45 - dayInRound;
+  var roundNotes = {
+    1: 'Baseline - establishing correlations for all core stats',
+    2: 'Testing: Flyball%, Pull%, Pitcher FB% allowed',
+    3: 'Testing: Pitcher recent form vs season ERA, lineup K%',
+    4: 'Testing: H2H career history, days rest, game time'
+  };
+  h += '<div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">';
+  h += '<div>';
+  h += '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Stat Rotation</div>';
+  h += '<div style="font-size:14px;font-weight:600;color:var(--accent)">Round '+currentRound+' &nbsp;<span style="font-size:11px;color:var(--muted);font-weight:400">'+( roundNotes[currentRound]||'')+'</span></div>';
+  h += '</div>';
+  h += '<div style="text-align:right">';
+  h += '<div style="font-size:11px;color:var(--muted)">Day '+dayInRound+' of 45</div>';
+  h += '<div style="font-size:11px;color:var(--warn)">'+daysLeft+' days until next rotation</div>';
+  // Progress bar
+  h += '<div style="width:160px;height:4px;background:var(--border2);border-radius:2px;margin-top:4px;overflow:hidden">';
+  h += '<div style="width:'+(dayInRound/45*100).toFixed(0)+'%;height:100%;background:var(--accent);border-radius:2px"></div>';
+  h += '</div></div></div>';
+
   // Summary cards
   h += '<div class="section-hdr"><div class="section-title">Model History</div>';
   h += '<div style="display:flex;gap:8px"><button class="refresh-btn" style="font-size:11px;padding:4px 10px" onclick="manualSave()">Save Today</button>';
@@ -754,7 +952,7 @@ function renderHistory(data) {
     h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px">';
     h += '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Overall Accuracy - '+total_preds+' predictions recorded</div>';
     h += '<div class="acc-bar-wrap"><div class="acc-bar" style="width:'+Math.min(acc*3,100)+'%"></div></div>';
-    h += '<div style="font-size:11px;color:var(--muted);margin-top:6px">'+hit_rate+'% hit rate &nbsp;·&nbsp; League avg HR rate ~3% per PA &nbsp;·&nbsp; Model targeting 8–28% range</div>';
+    h += '<div style="font-size:11px;color:var(--muted);margin-top:6px">'+hit_rate+'% hit rate &nbsp;·&nbsp; League avg HR rate ~3% per PA &nbsp;·&nbsp; Model targeting 8-28% range</div>';
     h += '</div>';
   }
 
@@ -766,25 +964,35 @@ function renderHistory(data) {
     h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px">';
     h += '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Stat Correlations with HR (n='+completed.length+')</div>';
     var stats = [
-      {key:'barrel_pct_season', label:'Barrel% (Season)'},
-      {key:'barrel_pct_l8d', label:'Barrel% (L8D)'},
-      {key:'ev_season', label:'Exit Velocity'},
-      {key:'la_season', label:'Launch Angle'},
-      {key:'iso_vs_hand', label:'ISO vs Hand'},
-      {key:'iso_season', label:'ISO (Season)'},
-      {key:'avg_pa_per_game', label:'Avg PA/Game'},
-      {key:'l8d_hr', label:'L8D HR Count'},
-      {key:'pitch_matchup_score', label:'Pitch Matchup'},
-      {key:'pit_hr9_vs_hand', label:'Pitcher HR/9 vs Hand'},
-      {key:'pit_slg_vs_hand', label:'Pitcher SLG vs Hand'},
-      {key:'pit_vuln_mult', label:'Pitcher Vuln Mult'},
-      {key:'bullpen_vuln', label:'Bullpen Vuln'},
-      {key:'bat_platoon_mult', label:'Batter Platoon'},
-      {key:'pit_platoon_mult', label:'Pitcher Platoon'},
-      {key:'park_factor', label:'Park Factor'},
-      {key:'weather_mult', label:'Weather Mult'},
-      {key:'hot_cold_mult', label:'Hot/Cold Mult'},
-      {key:'model_hr_pct', label:'Model HR%'},
+      // Round 1 - core stats
+      {key:'barrel_pct_season', label:'Barrel% (Season)', round:1},
+      {key:'barrel_pct_l8d', label:'Barrel% (L8D)', round:1},
+      {key:'ev_season', label:'Exit Velocity', round:1},
+      {key:'la_season', label:'Launch Angle', round:1},
+      {key:'iso_vs_hand', label:'ISO vs Hand', round:1},
+      {key:'iso_season', label:'ISO Season', round:1},
+      {key:'l8d_hr', label:'L8D HR Count', round:1},
+      {key:'pitch_matchup_score', label:'Pitch Matchup', round:1},
+      {key:'pit_hr9_vs_hand', label:'Pit HR/9 vs Hand', round:1},
+      {key:'pit_slg_vs_hand', label:'Pit SLG vs Hand', round:1},
+      {key:'pit_vuln_mult', label:'Pitcher Vuln Mult', round:1},
+      {key:'bullpen_vuln', label:'Bullpen Vuln', round:1},
+      {key:'bat_platoon_mult', label:'Batter Platoon', round:1},
+      {key:'pit_platoon_mult', label:'Pitcher Platoon', round:1},
+      {key:'park_factor', label:'Park Factor', round:1},
+      {key:'weather_mult', label:'Weather Mult', round:1},
+      {key:'hot_cold_mult', label:'Hot/Cold Mult', round:1},
+      {key:'avg_pa_per_game', label:'Avg PA/Game', round:1},
+      // Round 2 candidates
+      {key:'fb_pct_season', label:'Flyball% (R2)', round:2},
+      {key:'pull_pct_season', label:'Pull% (R2)', round:2},
+      {key:'pit_fb_pct_allowed', label:'Pit FB% Allowed (R2)', round:2},
+      {key:'hard_hit_l8d', label:'Hard Hit% L8D (R2)', round:2},
+      {key:'k_pct_l8d', label:'K% L8D (R2)', round:2},
+      // Round 3 candidates
+      {key:'pit_era_diff', label:'Pit ERA vs Avg (R3)', round:3},
+      // Round 4 candidates
+      {key:'pit_k9_season', label:'Pit K/9 Season (R4)', round:4},
     ];
     stats.forEach(function(s) {
       var corr = pointBiserial(completed, s.key);
