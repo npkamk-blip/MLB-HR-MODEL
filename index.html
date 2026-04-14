@@ -835,8 +835,8 @@ function renderHistory(data) {
             ? '<span class="hit-badge hit-yes">HR ✓</span>'
             : '<span class="hit-badge hit-no">No HR</span>';
       var pc = probCls(r.model_hr_pct);
-      var brl = r.barrel_pct_season||r.barrel_pct_used||0;
-      var la  = r.la_season||r.la_used||0;
+      var brl = r.barrel_pct_season||r.barrel_pct_used||r.barrel_pct||0;
+      var la  = r.la_season||r.la_used||r.launch_angle||0;
       var hr9 = r.pit_hr9_vs_hand||r.pit_hr9_season||0;
       var slg = r.pit_slg_vs_hand||0;
       var hr9Cls = hr9>=1.4?'sc-g':hr9>=1.0?'sc-y':hr9>0?'sc-r':'sc-n';
@@ -871,8 +871,8 @@ function renderHistory(data) {
             ? '<span class="hit-badge hit-yes">HR ✓</span>'
             : '<span class="hit-badge hit-no">No HR</span>';
         var pc = probCls(r.model_hr_pct);
-        var brl = r.barrel_pct_season||r.barrel_pct_used||0;
-        var la  = r.la_season||r.la_used||0;
+        var brl = r.barrel_pct_season||r.barrel_pct_used||r.barrel_pct||0;
+        var la  = r.la_season||r.la_used||r.launch_angle||0;
         var hr9 = r.pit_hr9_vs_hand||r.pit_hr9_season||0;
         var slg = r.pit_slg_vs_hand||0;
         var hr9Cls = hr9>=1.4?'sc-g':hr9>=1.0?'sc-y':hr9>0?'sc-r':'sc-n';
