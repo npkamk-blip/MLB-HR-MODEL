@@ -2519,19 +2519,32 @@ def status():
         "ready": _cache["ready"],
         "last_updated": _cache["last_updated"],
         "last_8d_update": _cache["last_8d_update"],
+        # Batter data
         "bat_2026": len(_cache["bat_2026"]),
         "bat_2025": len(_cache["bat_2025"]),
         "bat_8d": len(_cache["bat_8d"]),
         "bat_l5g": len(_cache["bat_l5g"]),
         "bat_vs_lhp": len(_cache["bat_vs_lhp"]),
         "bat_vs_rhp": len(_cache["bat_vs_rhp"]),
+        # Pitcher data
         "pit_2026": len(_cache["pit_2026"]),
         "pit_2025": len(_cache["pit_2025"]),
         "pit_vs_lhh": len(_cache["pit_vs_lhh"]),
         "pit_vs_rhh": len(_cache["pit_vs_rhh"]),
         "pit_arsenal": len(_cache["pit_arsenal"]),
         "bat_arsenal": len(_cache["bat_arsenal"]),
-        "player_ip": len(_cache["player_ip"]),
+        # New caches
+        "bat_l8d_hr": len(_cache.get("bat_l8d_hr", {})),
+        "bat_games": len(_cache.get("bat_games", {})),
+        "team_hitting": len(_cache.get("team_hitting", {})),
+        "team_pitching": len(_cache.get("team_pitching", {})),
+        "team_bullpen": len(_cache.get("team_bullpen", {})),
+        "player_hands": len(_cache.get("player_hands", {})),
+        "player_ip": len(_cache.get("player_ip", {})),
+        # Model weights
+        "model_calibrated": _model_weights.get("last_calibrated"),
+        "model_round": get_rotation_round(),
+        "model_day": get_rotation_day(),
     }
 
 @app.post("/reload")
