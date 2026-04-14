@@ -1996,8 +1996,18 @@ def compute_hr_prob_multiplicative(
         "pitch_bonus": pitch_bonus, "pitch_breakdown": pitch_details,
         "after_k": round(running * 100, 1), "after_context": round(running * 100, 1),
         "n_pit_components": n_components,
-        # Pitcher SLG vs batter hand for table display
-        "pit_slg_vs_bat": round(slg_vs_bat, 3) if split_ip_vs_bat >= 5 else 0,
+        # ── Data confidence score — X/8 real stats ──
+        # Each of the 8 active model slots gets 1 point if it has real data (not a default)
+        "data_conf": {
+            "barrel":       1 if barrel_season > 0 and pa_26 >= 20 else 0,
+            "la":           1 if la_season > 0 and pa_26 >= 20 else 0,
+            "pit_hr9":      1 if pit_hr9_season > 0 and total_ip >= 10 else 0,
+            "pit_hr9_hand": 1 if pit_hr9_vs_hand > 0 and pit_ip_vs_hand >= 5 else 0,
+            "iso_vs_hand":  1 if iso_vs_hand > 0 and split_pa >= 30 else 0,
+            "park":         1 if park_factor != 1.0 else 0,
+            "pitch_delta":  1 if pitch_bonus != 0 else 0,
+            "bat_platoon":  1 if bat_platoon_mult != 1.0 else 0,
+        },
         "pit_slg_overall": round(slg_overall_pit, 3),
         "bullpen_hr9": round(bullpen_hr9, 2),
         "bullpen_vuln": round(bullpen_vuln, 3),
