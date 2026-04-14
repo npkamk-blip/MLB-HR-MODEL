@@ -1955,7 +1955,7 @@ def compute_hr_prob_multiplicative(
         "pit_platoon_mult": round(pit_platoon_mult, 3),
         "iso_vs_hand": round(iso_vs_hand, 3), "iso_overall": round(iso_overall, 3),
         "slg_vs_bat": round(slg_vs_bat, 3) if split_ip_vs_bat >= 5 else 0,
-        "split_pa_vs_hand": split_pa_vs_hand,
+        "split_pa": split_pa,
         "split_ip_vs_bat": round(split_ip_vs_bat, 1),
         # Context
         "park_factor": round(park_factor, 3),
@@ -1986,7 +1986,7 @@ def compute_hr_prob_multiplicative(
         "split_slg": round(b_split_vs_hand.get("slg", 0), 3),
         "split_woba": round(b_split_vs_hand.get("woba", 0), 3),
         "split_hr": int(b_split_vs_hand.get("hr", 0)),
-        "split_pa": split_pa_vs_hand,
+        "split_pa": split_pa,
         "hr_season": int(bc.get("hr", 0)),
         "pa_8d": int(b8d.get("pa", 0)),
         "barrel_8d_raw": round(b8d.get("barrel_pct", 0), 1),
