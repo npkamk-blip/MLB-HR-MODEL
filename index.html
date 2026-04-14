@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>Sharp — MLB Model</title>
+<title>Sharp - MLB Model</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -356,7 +356,7 @@ function buildBatterTable(games){
     h+='<td><div class="player-name">'+b.name+'</div><div class="player-sub">'+b.team+'</div></td>';
     h+='<td>'+handTag+'</td>';
     h+='<td><div class="player-name">'+(b.pitcher_name||'TBD')+'</div><div class="player-sub">'+(b.opp_hand||'R')+'HP</div></td>';
-    // Matchup column — two dots side by side, double green = screaming spot
+    // Matchup column - two dots side by side, double green = screaming spot
     var matchupTitle='Batter ISO vs hand: '+(b.iso_vs_hand>0?fmtIso(b.iso_vs_hand):'--')+' | Pit SLG allowed: '+(b.slg_vs_bat>0?b.slg_vs_bat.toFixed(3):'--')+' | HR/9: '+(b.hr9_vs_bat>0?b.hr9_vs_bat.toFixed(2):'--');
     var doubleGreen=batDot==='g'&&pitDot==='g';
     h+='<td title="'+matchupTitle+'">';
@@ -407,7 +407,7 @@ function buildBatDetail(b){
 
   var h='<div class="detail-wrap">';
 
-  // ── Stat table ──
+  // -- Stat table --
   h+='<div class="dstat-wrap">';
   // Header
   h+='<div class="drow drow-hdr"><div class="drow-lbl"></div><div class="drow-s">Season</div><div class="drow-l">L8D</div><div class="drow-sp">'+splitLabel+'</div></div>';
@@ -451,7 +451,7 @@ function buildBatDetail(b){
     bd.split_hr>0?String(bd.split_hr):'--', bd.split_hr>=3?'g':bd.split_hr>=1?'y':'n',
     hasSplit?'('+bd.split_pa+' PA)':'');
 
-  // SLG (split only — season SLG shown in season chips below, split is the key one)
+  // SLG (split only - season SLG shown in season chips below, split is the key one)
   var spSLG=bd.split_slg>0&&bd.split_pa>=20?'.'+String(Math.round(bd.split_slg*1000)).padStart(3,'0'):'--';
   var l8dSLG=l.slg>0?'.'+String(Math.round(l.slg*1000)).padStart(3,'0'):'--';
   var sSLG=s.slg>0?'.'+String(Math.round(s.slg*1000)).padStart(3,'0'):'--';
@@ -459,7 +459,7 @@ function buildBatDetail(b){
 
   h+='</div>'; // dstat-wrap
 
-  // ── Model multipliers row ──
+  // -- Model multipliers row --
   h+='<div class="dmodel-row">';
   h+='<div class="dmodel-block"><span class="dmodel-lbl">Base</span><span class="chip-val n">'+(bd.base_rate>0?bd.base_rate.toFixed(1)+'%':'--')+'</span></div>';
   h+='<div class="dmodel-block"><span class="dmodel-lbl">Barrel×</span><span class="chip-val '+(bd.barrel_mult>=1.5?'g':bd.barrel_mult>=1?'y':'r')+'">'+(bd.barrel_mult>0?bd.barrel_mult.toFixed(2)+'x':'--')+'</span></div>';
@@ -472,7 +472,7 @@ function buildBatDetail(b){
   h+='<div class="dmodel-block"><span class="dmodel-lbl">K%×</span><span class="chip-val '+(bd.k_mult>=1?'g':bd.k_mult>=0.94?'y':'r')+'">'+(bd.k_mult>0?bd.k_mult.toFixed(2)+'x':'--')+'</span></div>';
   h+='</div>';
 
-  // ── Pitcher + pitch matchup ──
+  // -- Pitcher + pitch matchup --
   h+='<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">';
   if(pitP&&pitP.name){
     h+='<div class="detail-block" style="flex:1;min-width:200px"><div class="detail-block-title">'+pitP.name+' ('+pitP.hand+'HP)</div><div class="chip-row">';
@@ -672,7 +672,7 @@ async function searchPlayer(){
     }
     if(m.pitcher_stats){
       var ps=m.pitcher_stats;
-      h+='<div class="r-section"><div class="r-section-title">Pitcher — '+m.pitcher_name+'</div>';
+      h+='<div class="r-section"><div class="r-section-title">Pitcher - '+m.pitcher_name+'</div>';
       h+=rchip('ERA',ps.era?ps.era.toFixed(2):'--');h+=rchip('HR/9',ps.hr9?ps.hr9.toFixed(2):'--');h+=rchip('HH%',ps.hard_hit_pct?ps.hard_hit_pct+'%':'--');
       h+='</div>';
     }
@@ -682,7 +682,7 @@ async function searchPlayer(){
 }
 function rchip(lbl,val){return '<div class="r-chip"><div class="r-chip-lbl">'+lbl+'</div><div class="r-chip-val">'+val+'</div></div>';}
 
-// ── HISTORY ──
+// -- HISTORY --
 var historyData = null;
 var selectedHistDate = null;
 
@@ -722,7 +722,7 @@ function renderHistory(data) {
   var total_hits = hits.length;
   var hit_rate = total_preds > 0 ? (total_hits / total_preds * 100).toFixed(1) : '--';
 
-  // Model calibration — among top picks (>= 15%), how many hit?
+  // Model calibration - among top picks (>= 15%), how many hit?
   var top_preds = completed.filter(function(r){return r.model_hr_pct >= 15;});
   var top_hits = top_preds.filter(function(r){return r.hit_hr === 1;});
   var top_rate = top_preds.length > 0 ? (top_hits.length / top_preds.length * 100).toFixed(1) : '--';
@@ -752,16 +752,17 @@ function renderHistory(data) {
   if (total_preds > 0) {
     var acc = parseFloat(hit_rate);
     h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px">';
-    h += '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Overall Accuracy — '+total_preds+' predictions recorded</div>';
+    h += '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Overall Accuracy - '+total_preds+' predictions recorded</div>';
     h += '<div class="acc-bar-wrap"><div class="acc-bar" style="width:'+Math.min(acc*3,100)+'%"></div></div>';
     h += '<div style="font-size:11px;color:var(--muted);margin-top:6px">'+hit_rate+'% hit rate &nbsp;·&nbsp; League avg HR rate ~3% per PA &nbsp;·&nbsp; Model targeting 8–28% range</div>';
     h += '</div>';
   }
 
-  // Correlation analysis — which stats correlate with actually hitting HRs
-  // For ML correlations — only use confirmed lineup records to avoid noise
+  // Correlation analysis - which stats correlate with actually hitting HRs
+  // Only use confirmed lineup records to avoid noise
   var confirmed = completed.filter(function(r){return r.lineup_source !== 'projected';});
   var mlRecords = confirmed.length >= 10 ? confirmed : completed;
+  if (mlRecords.length >= 10) {
     h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px">';
     h += '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Stat Correlations with HR (n='+completed.length+')</div>';
     var stats = [
@@ -949,7 +950,7 @@ async function load(){
     var resp=await fetch(API+'/games?date='+dateStr);
     if(!resp.ok)throw new Error('Backend error '+resp.status);
     var data=await resp.json();
-    if(data.loading){document.getElementById('batter-main').innerHTML='<div class="err">'+(data.message||'Data loading — try again in 30 seconds.')+'</div>';btn.disabled=false;return;}
+    if(data.loading){document.getElementById('batter-main').innerHTML='<div class="err">'+(data.message||'Data loading - try again in 30 seconds.')+'</div>';btn.disabled=false;return;}
     allGames=data.games||[];
     if(!allGames.length){
       var nm='<div class="no-data">No MLB games on '+dateStr+'.</div>';
