@@ -1475,18 +1475,19 @@ def compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_
     # ── Step 8: Weather multiplier ──
     running *= weather_mult
 
-    # ── Step 9: Hot/cold multiplier (L8D rate vs expected rate) ──
+    # ── Step 9: Hot/cold — display signal only, NOT in model ──
+    # Removed from calculation — L8D HR count is shown on the table as a visual signal
+    # ML will determine if it actually matters. Keeping calc for breakdown display only.
     hot_cold_mult = 1.0
     if has_8d and b8d.get("pa", 0) >= 8:
         pa_8d = b8d.get("pa", 0)
-        # Use MLB Stats API lastXGames=8 for reliable HR count (Savant 8d returns season totals for some players)
         hr_8d_count = get_l8d_hr(name)
         hr_8d_rate  = hr_8d_count / pa_8d
-        expected_8d_rate = base_rate
-        if expected_8d_rate > 0:
-            ratio = hr_8d_rate / expected_8d_rate
+        if base_rate > 0:
+            ratio = hr_8d_rate / base_rate
             hot_cold_mult = max(min(ratio, 1.20), 0.85)
-    running *= hot_cold_mult
+    # NOT applied to running — hot_cold_mult stored for ML analysis only
+    # running *= hot_cold_mult  <-- removed
 
     # ── Step 10: K% penalty (smooth, applied last, only trims) ──
     k_season = blend(bc.get("k_pct", 0), bp.get("k_pct", 0), bwc, bwp)
@@ -1528,8 +1529,6 @@ def compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_
     if pit_hard > 40: reasons.append(f"SP {pit_hard:.1f}% HH")
     if park_factor >= 1.15: reasons.append("HR-friendly park")
     elif park_factor <= 0.90: reasons.append("Pitcher-friendly park")
-    if hot_cold_mult >= 1.10: reasons.append("Hot streak")
-    elif hot_cold_mult <= 0.90: reasons.append("Cold streak")
 
     # Platoon tag for display
     platoon_tag = None
