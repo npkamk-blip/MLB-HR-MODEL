@@ -349,7 +349,7 @@ function renderModelTab(md,hd){
   var activeObjs=statCorrs.filter(function(s){return s.isActive;}).sort(function(a,b){return b.weight-a.weight;});
   var h='';
   h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">';
-  h+='<div><div style="font-size:20px;font-weight:700;font-family:'Barlow Condensed',sans-serif;color:var(--accent)">MODEL INTELLIGENCE</div>';
+  h+='<div><div style="font-size:20px;font-weight:700;color:var(--accent)">MODEL INTELLIGENCE</div>';
   h+='<div style="font-size:11px;color:var(--muted);margin-top:2px">'+(lastCal?'Last calibrated: '+lastCal+' - '+recordsUsed+' records':'Not calibrated - default weights 1.0x')+'</div></div>';
   h+='<div style="display:flex;gap:8px;align-items:center">';
   h+='<span style="font-size:11px;color:var(--muted2)">'+completed.length+' records</span>';
