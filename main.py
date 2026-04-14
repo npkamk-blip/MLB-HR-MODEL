@@ -861,30 +861,37 @@ async def fetch_team_stats(season=2026):
         _cache["team_pitching"] = team_pitching
         print(f"team_hitting: {len(team_hitting)} teams, team_pitching: {len(team_pitching)} teams")
 
-        # Fetch reliever-only stats for bullpen component
+        # Fetch reliever-only stats — try pitcherTypes=RP, fallback to team pitching
         try:
-            r = await client.get(f"{MLB_API}/teams/stats?stats=season&group=pitching&gameType=R&season={season}&sportId=1&startingPitcher=false")
-            data = r.json()
             bullpen_stats = {}
-            for rec in data.get("stats", [{}])[0].get("splits", []):
-                t = rec.get("team", {})
-                s = rec.get("stat", {})
-                name = t.get("name", "")
-                if not name: continue
-                ip_str = s.get("inningsPitched", "0") or "0"
-                try: ip = float(ip_str)
-                except: ip = 0
-                g = int(s.get("gamesPlayed", 1) or 1)
-                bullpen_stats[name] = {
-                    "era":  float(s.get("era", "4.50").replace("-.--", "4.50") or 4.50),
-                    "hr9":  round(float(s.get("homeRuns", 0) or 0) / max(ip, 1) * 9, 2) if ip > 0 else 1.1,
-                    "whip": float(s.get("whip", "1.30").replace("-.--", "1.30") or 1.30),
-                }
+            r_bp = await client.get(f"{MLB_API}/teams/stats?stats=season&group=pitching&gameType=R&season={season}&sportId=1&pitcherTypes=RP")
+            if r_bp.is_success:
+                bp_data = r_bp.json()
+                for rec in bp_data.get("stats", [{}])[0].get("splits", []):
+                    t = rec.get("team", {})
+                    s = rec.get("stat", {})
+                    name = t.get("name", "")
+                    if not name: continue
+                    ip_str = s.get("inningsPitched", "0") or "0"
+                    try: ip = float(ip_str)
+                    except: ip = 0
+                    bullpen_stats[name] = {
+                        "era":  float(s.get("era", "4.50").replace("-.--", "4.50") or 4.50),
+                        "hr9":  round(float(s.get("homeRuns", 0) or 0) / max(ip, 1) * 9, 2) if ip > 0 else 1.2,
+                        "whip": float(s.get("whip", "1.30").replace("-.--", "1.30") or 1.30),
+                    }
             if bullpen_stats:
                 _cache["team_bullpen"] = bullpen_stats
-                print(f"team_bullpen: {len(bullpen_stats)} teams")
+                print(f"team_bullpen: {len(bullpen_stats)} teams via RP filter")
+            else:
+                # Fallback — use team pitching as proxy for bullpen
+                _cache["team_bullpen"] = {k: {"era": v.get("era", 4.50), "hr9": v.get("hr9", 1.2), "whip": 1.30}
+                                           for k, v in team_pitching.items()}
+                print(f"team_bullpen: using team pitching as fallback ({len(team_pitching)} teams)")
         except Exception as e:
             print(f"Bullpen stats error: {e}")
+            _cache["team_bullpen"] = {k: {"era": v.get("era", 4.50), "hr9": v.get("hr9", 1.2), "whip": 1.30}
+                                       for k, v in team_pitching.items()}
     except Exception as e:
         print(f"Team stats error: {e}")
         import traceback; traceback.print_exc()
@@ -1992,7 +1999,7 @@ def compute_hr_prob_multiplicative(
         "barrel_8d_raw": round(b8d.get("barrel_pct", 0), 1),
         "iso_8d": round(b8d.get("iso", 0), 3),
         "pull_8d": round(b8d.get("pull_pct", 0), 1),
-        "la_8d_raw": round(la_8d, 1),
+        "la_8d_raw": round(la_l8d, 1),
         "pitch_bonus": pitch_bonus, "pitch_breakdown": pitch_details,
         "after_k": round(running * 100, 1), "after_context": round(running * 100, 1),
         "n_pit_components": n_components,
