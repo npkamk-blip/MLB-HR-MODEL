@@ -8,7 +8,7 @@
     "bat_hand": "L",
     "home_team": "Seattle Mariners",
     "model_hr_pct": 6.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 15.5,
     "launch_angle": 19.5,
     "exit_velocity": 94.3,
@@ -32,7 +32,8 @@
     "pitch2_usage": 16.4,
     "avg_pa_per_game": 4.5,
     "avg_ab_per_game": 3.31,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-13",
@@ -43,7 +44,7 @@
     "bat_hand": "R",
     "home_team": "Seattle Mariners",
     "model_hr_pct": 5.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 13.1,
     "launch_angle": 16.9,
     "exit_velocity": 90.8,
@@ -67,7 +68,8 @@
     "pitch2_usage": 16.4,
     "avg_pa_per_game": 4.0,
     "avg_ab_per_game": 3.56,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-13",
@@ -78,7 +80,7 @@
     "bat_hand": "L",
     "home_team": "Seattle Mariners",
     "model_hr_pct": 5.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct": 14.6,
     "launch_angle": 29.0,
     "exit_velocity": 93.5,
@@ -102,7 +104,8 @@
     "pitch2_usage": 24.2,
     "avg_pa_per_game": 2.92,
     "avg_ab_per_game": 2.62,
-    "games_played": 13
+    "games_played": 13,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-13",
@@ -113,7 +116,7 @@
     "bat_hand": "L",
     "home_team": "Baltimore Orioles",
     "model_hr_pct": 5.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 14.4,
     "launch_angle": 16.0,
     "exit_velocity": 92.1,
@@ -137,7 +140,8 @@
     "pitch2_usage": 0,
     "avg_pa_per_game": 4.14,
     "avg_ab_per_game": 3.5,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-13",
@@ -148,7 +152,7 @@
     "bat_hand": "L",
     "home_team": "Baltimore Orioles",
     "model_hr_pct": 7.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 9.7,
     "launch_angle": 18.8,
     "exit_velocity": 91.7,
@@ -172,7 +176,8 @@
     "pitch2_usage": 20.1,
     "avg_pa_per_game": 4.73,
     "avg_ab_per_game": 4.13,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-13",
@@ -183,7 +188,7 @@
     "bat_hand": "R",
     "home_team": "Baltimore Orioles",
     "model_hr_pct": 6.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 13.7,
     "launch_angle": 18.2,
     "exit_velocity": 89.6,
@@ -207,7 +212,8 @@
     "pitch2_usage": 20.1,
     "avg_pa_per_game": 4.67,
     "avg_ab_per_game": 3.93,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-13",
@@ -218,7 +224,7 @@
     "bat_hand": "L",
     "home_team": "Pittsburgh Pirates",
     "model_hr_pct": 7.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 18.2,
     "launch_angle": 5.6,
     "exit_velocity": 94.3,
@@ -242,7 +248,8 @@
     "pitch2_usage": 22.4,
     "avg_pa_per_game": 4.93,
     "avg_ab_per_game": 4.13,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-13",
@@ -253,7 +260,7 @@
     "bat_hand": "L",
     "home_team": "Pittsburgh Pirates",
     "model_hr_pct": 5.4,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct": 12.7,
     "launch_angle": 15.4,
     "exit_velocity": 90.4,
@@ -277,7 +284,8 @@
     "pitch2_usage": 35.2,
     "avg_pa_per_game": 4.54,
     "avg_ab_per_game": 3.77,
-    "games_played": 13
+    "games_played": 13,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-13",
@@ -288,7 +296,7 @@
     "bat_hand": "L",
     "home_team": "Pittsburgh Pirates",
     "model_hr_pct": 6.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 18.3,
     "launch_angle": 8.2,
     "exit_velocity": 95.9,
@@ -312,7 +320,8 @@
     "pitch2_usage": 35.2,
     "avg_pa_per_game": 4.33,
     "avg_ab_per_game": 3.93,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-13",
@@ -323,7 +332,7 @@
     "bat_hand": "R",
     "home_team": "Philadelphia Phillies",
     "model_hr_pct": 8.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 18.8,
     "launch_angle": 15.7,
     "exit_velocity": 90.1,
@@ -347,7 +356,8 @@
     "pitch2_usage": 31.2,
     "avg_pa_per_game": 4.62,
     "avg_ab_per_game": 4.0,
-    "games_played": 13
+    "games_played": 13,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-13",
@@ -358,7 +368,7 @@
     "bat_hand": "L",
     "home_team": "Philadelphia Phillies",
     "model_hr_pct": 14.3,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct": 21.5,
     "launch_angle": 21.3,
     "exit_velocity": 94.2,
@@ -382,7 +392,8 @@
     "pitch2_usage": 18.8,
     "avg_pa_per_game": 4.4,
     "avg_ab_per_game": 3.47,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-13",
@@ -393,7 +404,7 @@
     "bat_hand": "L",
     "home_team": "Philadelphia Phillies",
     "model_hr_pct": 6.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 13.0,
     "launch_angle": 11.4,
     "exit_velocity": 90.8,
@@ -417,7 +428,8 @@
     "pitch2_usage": 18.8,
     "avg_pa_per_game": 4.27,
     "avg_ab_per_game": 3.67,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-13",
@@ -428,7 +440,7 @@
     "bat_hand": "R",
     "home_team": "New York Yankees",
     "model_hr_pct": 6.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 13.7,
     "launch_angle": 19.4,
     "exit_velocity": 90.7,
@@ -452,7 +464,8 @@
     "pitch2_usage": 28.6,
     "avg_pa_per_game": 4.75,
     "avg_ab_per_game": 4.0,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-13",
@@ -463,7 +476,7 @@
     "bat_hand": "R",
     "home_team": "New York Yankees",
     "model_hr_pct": 5.7,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct": 17.4,
     "launch_angle": 18.6,
     "exit_velocity": 91.1,
@@ -487,7 +500,8 @@
     "pitch2_usage": 28.6,
     "avg_pa_per_game": 4.67,
     "avg_ab_per_game": 3.53,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-13",
@@ -498,7 +512,7 @@
     "bat_hand": "R",
     "home_team": "New York Yankees",
     "model_hr_pct": 5.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 13.0,
     "launch_angle": 15.1,
     "exit_velocity": 89.3,
@@ -522,7 +536,8 @@
     "pitch2_usage": 28.6,
     "avg_pa_per_game": 4.31,
     "avg_ab_per_game": 3.56,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-13",
@@ -533,7 +548,7 @@
     "bat_hand": "R",
     "home_team": "New York Yankees",
     "model_hr_pct": 13.5,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct": 24.7,
     "launch_angle": 17.2,
     "exit_velocity": 94.4,
@@ -557,7 +572,8 @@
     "pitch2_usage": 22.3,
     "avg_pa_per_game": 4.33,
     "avg_ab_per_game": 3.67,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-13",
@@ -568,7 +584,7 @@
     "bat_hand": "L",
     "home_team": "New York Yankees",
     "model_hr_pct": 15.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 25.0,
     "launch_angle": 14.0,
     "exit_velocity": 93.6,
@@ -592,7 +608,8 @@
     "pitch2_usage": 22.3,
     "avg_pa_per_game": 4.14,
     "avg_ab_per_game": 3.21,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 2
   },
   {
     "date": "2026-04-13",
@@ -603,7 +620,7 @@
     "bat_hand": "L",
     "home_team": "New York Yankees",
     "model_hr_pct": 5.1,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct": 14.0,
     "launch_angle": 16.2,
     "exit_velocity": 91.1,
@@ -627,7 +644,8 @@
     "pitch2_usage": 22.3,
     "avg_pa_per_game": 3.87,
     "avg_ab_per_game": 3.0,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-13",
@@ -638,7 +656,7 @@
     "bat_hand": "R",
     "home_team": "New York Yankees",
     "model_hr_pct": 9.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 21.5,
     "launch_angle": 17.8,
     "exit_velocity": 94.3,
@@ -662,7 +680,8 @@
     "pitch2_usage": 22.3,
     "avg_pa_per_game": 3.93,
     "avg_ab_per_game": 3.57,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-13",
@@ -673,7 +692,7 @@
     "bat_hand": "R",
     "home_team": "New York Yankees",
     "model_hr_pct": 5.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 15.8,
     "launch_angle": 10.6,
     "exit_velocity": 90.3,
@@ -697,7 +716,8 @@
     "pitch2_usage": 22.3,
     "avg_pa_per_game": 3.0,
     "avg_ab_per_game": 2.67,
-    "games_played": 9
+    "games_played": 9,
+    "actual_ab": 2
   },
   {
     "date": "2026-04-13",
@@ -708,7 +728,7 @@
     "bat_hand": "R",
     "home_team": "New York Yankees",
     "model_hr_pct": 6.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct": 33.3,
     "launch_angle": 21.4,
     "exit_velocity": 90.7,
@@ -732,7 +752,8 @@
     "pitch2_usage": 22.3,
     "avg_pa_per_game": 1.5,
     "avg_ab_per_game": 1.5,
-    "games_played": 8
+    "games_played": 8,
+    "actual_ab": 1
   },
   {
     "date": "2026-04-13",
@@ -743,7 +764,7 @@
     "bat_hand": "L",
     "home_team": "Atlanta Braves",
     "model_hr_pct": 9.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 25.0,
     "launch_angle": 23.8,
     "exit_velocity": 91.6,
@@ -767,7 +788,8 @@
     "pitch2_usage": 47.9,
     "avg_pa_per_game": 3.29,
     "avg_ab_per_game": 2.86,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-13",
@@ -778,7 +800,7 @@
     "bat_hand": "L",
     "home_team": "Atlanta Braves",
     "model_hr_pct": 7.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct": 18.4,
     "launch_angle": 7.4,
     "exit_velocity": 90.6,
@@ -802,7 +824,8 @@
     "pitch2_usage": 47.9,
     "avg_pa_per_game": 2.27,
     "avg_ab_per_game": 2.0,
-    "games_played": 11
+    "games_played": 11,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-13",
@@ -813,7 +836,7 @@
     "bat_hand": "R",
     "home_team": "Atlanta Braves",
     "model_hr_pct": 5.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 15.8,
     "launch_angle": 13.7,
     "exit_velocity": 91.5,
@@ -837,7 +860,8 @@
     "pitch2_usage": 34.3,
     "avg_pa_per_game": 4.5,
     "avg_ab_per_game": 3.88,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-13",
@@ -848,7 +872,7 @@
     "bat_hand": "L",
     "home_team": "Atlanta Braves",
     "model_hr_pct": 5.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 11.4,
     "launch_angle": 7.5,
     "exit_velocity": 91.0,
@@ -872,7 +896,8 @@
     "pitch2_usage": 34.3,
     "avg_pa_per_game": 4.56,
     "avg_ab_per_game": 4.12,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-13",
@@ -883,7 +908,7 @@
     "bat_hand": "L",
     "home_team": "Atlanta Braves",
     "model_hr_pct": 8.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 15.8,
     "launch_angle": 15.1,
     "exit_velocity": 93.1,
@@ -907,7 +932,8 @@
     "pitch2_usage": 34.3,
     "avg_pa_per_game": 4.44,
     "avg_ab_per_game": 3.88,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-13",
@@ -918,7 +944,7 @@
     "bat_hand": "R",
     "home_team": "Minnesota Twins",
     "model_hr_pct": 6.1,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct": 16.7,
     "launch_angle": 30.8,
     "exit_velocity": 92.0,
@@ -942,7 +968,8 @@
     "pitch2_usage": 26.1,
     "avg_pa_per_game": 4.43,
     "avg_ab_per_game": 3.93,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-13",
@@ -953,7 +980,7 @@
     "bat_hand": "L",
     "home_team": "St. Louis Cardinals",
     "model_hr_pct": 14.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct": 19.5,
     "launch_angle": 12.4,
     "exit_velocity": 93.0,
@@ -977,7 +1004,8 @@
     "pitch2_usage": 24.8,
     "avg_pa_per_game": 3.87,
     "avg_ab_per_game": 3.33,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-13",
@@ -988,7 +1016,7 @@
     "bat_hand": "R",
     "home_team": "St. Louis Cardinals",
     "model_hr_pct": 7.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 20.0,
     "launch_angle": 28.1,
     "exit_velocity": 87.1,
@@ -1012,7 +1040,8 @@
     "pitch2_usage": 24.8,
     "avg_pa_per_game": 2.18,
     "avg_ab_per_game": 1.82,
-    "games_played": 11
+    "games_played": 11,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-13",
@@ -1023,7 +1052,7 @@
     "bat_hand": "L",
     "home_team": "St. Louis Cardinals",
     "model_hr_pct": 5.5,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct": 21.4,
     "launch_angle": 19.1,
     "exit_velocity": 90.1,
@@ -1047,7 +1076,8 @@
     "pitch2_usage": 24.8,
     "avg_pa_per_game": 2.78,
     "avg_ab_per_game": 2.44,
-    "games_played": 9
+    "games_played": 9,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-13",
@@ -1058,7 +1088,7 @@
     "bat_hand": "R",
     "home_team": "St. Louis Cardinals",
     "model_hr_pct": 12.0,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct": 26.3,
     "launch_angle": 10.7,
     "exit_velocity": 92.8,
@@ -1082,7 +1112,8 @@
     "pitch2_usage": 45.3,
     "avg_pa_per_game": 4.07,
     "avg_ab_per_game": 3.67,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-13",
@@ -1093,7 +1124,7 @@
     "bat_hand": "R",
     "home_team": "St. Louis Cardinals",
     "model_hr_pct": 6.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct": 18.2,
     "launch_angle": 13.1,
     "exit_velocity": 90.7,
@@ -1117,7 +1148,8 @@
     "pitch2_usage": 45.3,
     "avg_pa_per_game": 2.62,
     "avg_ab_per_game": 2.31,
-    "games_played": 13
+    "games_played": 13,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-13",
@@ -1128,7 +1160,7 @@
     "bat_hand": "L",
     "home_team": "Athletics",
     "model_hr_pct": 6.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 15.4,
     "launch_angle": 12.5,
     "exit_velocity": 92.8,
@@ -1152,7 +1184,8 @@
     "pitch2_usage": 25.1,
     "avg_pa_per_game": 4.33,
     "avg_ab_per_game": 3.6,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-13",
@@ -1163,7 +1196,7 @@
     "bat_hand": "L",
     "home_team": "Athletics",
     "model_hr_pct": 7.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 18.1,
     "launch_angle": 15.1,
     "exit_velocity": 93.3,
@@ -1187,7 +1220,8 @@
     "pitch2_usage": 22.6,
     "avg_pa_per_game": 4.5,
     "avg_ab_per_game": 3.5,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-13",
@@ -1198,7 +1232,7 @@
     "bat_hand": "R",
     "home_team": "Athletics",
     "model_hr_pct": 6.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 11.4,
     "launch_angle": 17.4,
     "exit_velocity": 91.1,
@@ -1222,7 +1256,8 @@
     "pitch2_usage": 22.6,
     "avg_pa_per_game": 4.36,
     "avg_ab_per_game": 4.14,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-13",
@@ -1233,7 +1268,7 @@
     "bat_hand": "R",
     "home_team": "Athletics",
     "model_hr_pct": 6.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct": 16.4,
     "launch_angle": 16.4,
     "exit_velocity": 89.9,
@@ -1257,7 +1292,8 @@
     "pitch2_usage": 22.6,
     "avg_pa_per_game": 4.08,
     "avg_ab_per_game": 3.42,
-    "games_played": 12
+    "games_played": 12,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-13",
@@ -1268,7 +1304,7 @@
     "bat_hand": "R",
     "home_team": "Athletics",
     "model_hr_pct": 9.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 16.1,
     "launch_angle": 14.9,
     "exit_velocity": 87.4,
@@ -1292,7 +1328,8 @@
     "pitch2_usage": 22.6,
     "avg_pa_per_game": 4.0,
     "avg_ab_per_game": 3.5,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-13",
@@ -1303,7 +1340,7 @@
     "bat_hand": "R",
     "home_team": "Los Angeles Dodgers",
     "model_hr_pct": 8.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 18.8,
     "launch_angle": 7.9,
     "exit_velocity": 92.0,
@@ -1327,7 +1364,8 @@
     "pitch2_usage": 38.4,
     "avg_pa_per_game": 3.43,
     "avg_ab_per_game": 2.86,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-13",
@@ -1338,7 +1376,7 @@
     "bat_hand": "L",
     "home_team": "Los Angeles Dodgers",
     "model_hr_pct": 15.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 24.4,
     "launch_angle": 14.7,
     "exit_velocity": 94.7,
@@ -1362,7 +1400,8 @@
     "pitch2_usage": 19.7,
     "avg_pa_per_game": 4.87,
     "avg_ab_per_game": 3.73,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-13",
@@ -1373,7 +1412,7 @@
     "bat_hand": "L",
     "home_team": "Los Angeles Dodgers",
     "model_hr_pct": 7.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 18.2,
     "launch_angle": 14.8,
     "exit_velocity": 91.2,
@@ -1397,7 +1436,8 @@
     "pitch2_usage": 19.7,
     "avg_pa_per_game": 4.47,
     "avg_ab_per_game": 4.13,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-13",
@@ -1408,7 +1448,7 @@
     "bat_hand": "L",
     "home_team": "Los Angeles Dodgers",
     "model_hr_pct": 7.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 16.1,
     "launch_angle": 14.9,
     "exit_velocity": 87.4,
@@ -1432,7 +1472,8 @@
     "pitch2_usage": 19.7,
     "avg_pa_per_game": 4.0,
     "avg_ab_per_game": 3.5,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-13",
@@ -1443,7 +1484,7 @@
     "bat_hand": "R",
     "home_team": "Los Angeles Dodgers",
     "model_hr_pct": 6.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct": 11.5,
     "launch_angle": 9.9,
     "exit_velocity": 90.2,
@@ -1467,6 +1508,7 @@
     "pitch2_usage": 19.7,
     "avg_pa_per_game": 4.0,
     "avg_ab_per_game": 3.77,
-    "games_played": 13
+    "games_played": 13,
+    "actual_ab": 2
   }
 ]
