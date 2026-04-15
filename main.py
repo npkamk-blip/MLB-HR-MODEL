@@ -422,6 +422,9 @@ _cache = {
     "last_8d_update": None,
 }
 
+_games_cache = {}   # { date_str: { "data": ..., "ts": datetime } }
+GAMES_CACHE_TTL = 900  # 15 minutes in seconds
+
 PARK_HR_FACTORS = {
     "Colorado Rockies":      {"L":1.40,"R":1.40},
     "Cincinnati Reds":       {"L":1.30,"R":1.25},
@@ -2565,17 +2568,23 @@ def status():
 
 @app.post("/reload")
 async def reload_data():
+    _games_cache.clear()  # invalidate so next /games fetch is fresh
     threading.Thread(target=run_async, args=(load_all_savant_data(),), daemon=True).start()
     return {"status": "Reloading data from Baseball Savant"}
 
 @app.get("/games")
-async def get_games(date: str = None):
+async def get_games(date: str = None, refresh: bool = False):
     if not _cache["ready"]:
         return {"games": [], "loading": True, "message": "Data loading — try again in 30 seconds."}
 
     from datetime import date as date_cls
     today = date if date else date_cls.today().isoformat()
     date = None  # clear to avoid shadowing
+
+    # ── Response cache — return cached result if < 15 min old and not forced refresh ──
+    cached = _games_cache.get(today)
+    if cached and not refresh and (datetime.now() - cached["ts"]).total_seconds() < GAMES_CACHE_TTL:
+        return cached["data"]
 
     async with httpx.AsyncClient(timeout=30) as client:
         r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
@@ -2586,8 +2595,26 @@ async def get_games(date: str = None):
     dates = data.get("dates", [])
     if not dates: return {"games": [], "date": today, "loading": False}
 
+    # ── Batch-fetch ALL player IDs needed upfront ──
+    all_player_ids = set()
+    games_list = dates[0].get("games", [])
+    for game in games_list:
+        if game.get("status", {}).get("abstractGameState") == "Final": continue
+        for side in ["away", "home"]:
+            pid = game["teams"][side].get("probablePitcher", {}).get("id")
+            if pid: all_player_ids.add(pid)
+
+    # Batch fetch all pitcher hands in parallel (batters added below after lineups)
+    async def batch_fetch_hands(pids):
+        tasks = [fetch_player_hand(pid) for pid in pids]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        return {pid: (r if not isinstance(r, Exception) else {"bat_side": "R", "pitch_hand": "R"})
+                for pid, r in zip(pids, results)}
+
+    await batch_fetch_hands(all_player_ids)  # warms the cache for pitchers
+
     games_out = []
-    for game in dates[0].get("games", []):
+    for game in games_list:
         if game.get("status", {}).get("abstractGameState") == "Final": continue
 
         gid = game["gamePk"]
@@ -2703,10 +2730,19 @@ async def get_games(date: str = None):
                 "breakdown": breakdown,
             })
 
-        for b in lineup_away:
-            await process(b, away_team, home_p.get("fullName", "TBD"), home_p_hand, lineup_away_status == "projected")
-        for b in lineup_home:
-            await process(b, home_team, away_p.get("fullName", "TBD"), away_p_hand, lineup_home_status == "projected")
+        # Pre-fetch all batter hands in parallel before processing
+        all_lineup = list(lineup_away) + list(lineup_home)
+        batter_pids = set()
+        for b in all_lineup:
+            pid = b.get("person", {}).get("id") if "person" in b else b.get("id")
+            if pid: batter_pids.add(pid)
+        if batter_pids:
+            await batch_fetch_hands(batter_pids)  # warms cache — process() hits cache not network
+
+        # Process all batters in parallel
+        away_tasks = [process(b, away_team, home_p.get("fullName", "TBD"), home_p_hand, lineup_away_status == "projected") for b in lineup_away]
+        home_tasks = [process(b, home_team, away_p.get("fullName", "TBD"), away_p_hand, lineup_home_status == "projected") for b in lineup_home]
+        await asyncio.gather(*away_tasks, *home_tasks)
 
         away_lineup_ordered = [b for b in all_batters if b["team"] == away_team]
         home_lineup_ordered = [b for b in all_batters if b["team"] == home_team]
@@ -2805,7 +2841,9 @@ async def get_games(date: str = None):
             },
         })
 
-    return {"games": games_out, "date": today, "loading": False}
+    result = {"games": games_out, "date": today, "loading": False}
+    _games_cache[today] = {"data": result, "ts": datetime.now()}
+    return result
 
 @app.get("/research")
 async def research(player: str, date: str = None):
