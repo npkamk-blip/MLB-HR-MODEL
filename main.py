@@ -1005,13 +1005,13 @@ async def daily_refresh_loop():
             await refresh_8d()
         except Exception as e:
             print(f"8d refresh error: {e}")
-        if now.hour == 9:
+        if now.hour == 7:
             try:
                 await load_all_savant_data()
             except Exception as e:
                 print(f"Daily refresh error: {e}")
         # Save predictions at 1pm ET (18:00 UTC) — lineups mostly confirmed
-        if now.hour == 13:
+        if now.hour == 11:
             try:
                 await save_daily_predictions()
             except Exception as e:
@@ -1584,15 +1584,22 @@ def get_pitcher_top_pitches(pitcher_name):
     df = _cache["pit_arsenal"]
     if df.empty:
         return []
-    matches = df[df["name"].str.lower().str.contains(pitcher_name.split()[-1].lower(), na=False)]
+    last = pitcher_name.split()[-1].lower()
+    matches = df[df["name"].str.lower().str.contains(last, na=False)]
     if matches.empty:
         return []
+    # If multiple rows (same pitcher different contexts), take the one with most PA
+    if "pa" in matches.columns and len(matches) > 1:
+        matches = matches.sort_values("pa", ascending=False)
     pitches = []
+    seen_codes = set()
+    seen_types = set()
     for _, row in matches.iterrows():
         pt = str(row.get("pitch_type", "")).upper()
+        if pt in seen_types: continue  # skip duplicate pitch types from multiple rows
         code = PITCH_TYPE_MAP.get(pt)
-        if not code:
-            continue
+        if not code: continue
+        if code in seen_codes: continue  # skip duplicate codes
         usage = gs(row, "pitch_usage") * 100 if gs(row, "pitch_usage") <= 1 else gs(row, "pitch_usage")
         rv = gs(row, "run_value_per_100")
         if usage >= 5:
@@ -1603,15 +1610,16 @@ def get_pitcher_top_pitches(pitcher_name):
                 "pit_rv": round(rv, 2),
                 "pitch_type": pt,
             })
+            seen_codes.add(code)
+            seen_types.add(pt)
     pitches.sort(key=lambda x: x["usage"], reverse=True)
-    # Deduplicate by code
-    seen = set()
-    unique = []
-    for p in pitches:
-        if p["code"] not in seen:
-            seen.add(p["code"])
-            unique.append(p)
-    return unique[:3]
+    pitches = pitches[:3]
+    # Normalize usage to sum to 100% across top pitches
+    total_usage = sum(p["usage"] for p in pitches)
+    if total_usage > 0 and total_usage != 100.0:
+        for p in pitches:
+            p["usage"] = round(p["usage"] / total_usage * 100, 1)
+    return pitches
 
 def get_batter_pitch_rv(batter_name, pitch_code):
     df = _cache["bat_arsenal"]
