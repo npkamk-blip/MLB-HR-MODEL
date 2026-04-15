@@ -1765,11 +1765,6 @@ def compute_hr_prob_multiplicative(
 
     pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
     bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
-    # Sanity check — if L8D PA >= 80% of season PA, Savant returned full season data
-    # This happens for new players where game_date_gt filter is ignored by Savant
-    l8d_pa_raw = b8d.get("pa", 0)
-    if pa_26 > 10 and l8d_pa_raw >= pa_26 * 0.80:
-        b8d = {}  # reject — not real L8D data
     has_8d = b8d.get("pa", 0) >= 3
     total_pa = pa_26 + pa_25
 
@@ -2722,9 +2717,6 @@ async def get_games(date: str = None, refresh: bool = False):
             pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
             bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
             b8d = get_batter_8d(name)
-            # Sanity check — if L8D PA >= 80% of season PA, Savant returned full season data
-            if pa_26 > 10 and b8d.get("pa", 0) >= pa_26 * 0.80:
-                b8d = {}
             bl5g = get_batter_l5g(name)
 
             all_batters.append({
