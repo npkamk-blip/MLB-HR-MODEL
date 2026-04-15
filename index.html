@@ -28,13 +28,15 @@ header{border-bottom:1px solid var(--border);padding:10px 20px;display:flex;alig
 .refresh-btn:hover{opacity:.85}
 .refresh-btn:disabled{opacity:.4;cursor:not-allowed}
 .upd{font-size:11px;color:var(--muted2)}
-.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 20px;position:sticky;top:49px;z-index:99}
-.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:10px 18px;cursor:pointer;transition:all .15s;margin-bottom:-1px}
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 20px;position:sticky;top:49px;z-index:99;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;cursor:pointer;transition:all .15s;margin-bottom:-1px;white-space:nowrap}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
-.container{max-width:1300px;margin:0 auto;padding:16px}
+.container{max-width:1300px;margin:0 auto;padding:12px 10px}
+@media(min-width:600px){.container{padding:16px}}
 .loading{text-align:center;padding:60px 20px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:18px;letter-spacing:.1em}
 .dots{display:inline-flex;gap:6px;margin-left:10px}
 .dots span{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:dot .8s infinite alternate}
@@ -597,37 +599,40 @@ function buildBatDetail(b){
   // Header
   h+='<div class="drow drow-hdr"><div class="drow-lbl"></div><div class="drow-s">Season</div><div class="drow-l">L8D</div><div class="drow-sp">'+splitLabel+'</div></div>';
 
-  // Barrel%
+  // Barrel% - NO split available from MLB API (Statcast only)
   var brlDiv=hasL8D&&s.barrel>0?Math.abs(l.barrel-s.barrel)/s.barrel:0;
   var brlFlag=brlDiv>=0.50?(l.barrel>s.barrel?'🔥':'❄️'):'';
   h+=statRow('Barrel%',
     s.barrel>0?s.barrel.toFixed(1)+'%':'--', barrelCls2(s.barrel),
     l.barrel>0?l.barrel.toFixed(1)+'%'+brlFlag:'--', barrelCls2(l.barrel),
-    bd.barrel_use>0?bd.barrel_use.toFixed(1)+'%':'--', barrelCls2(bd.barrel_use));
+    '--', 'n', '');  // no split barrel% available
 
-  // Launch Angle
+  // Launch Angle - NO split available
   var laDiv=hasL8D&&s.la>0?Math.abs(l.la-s.la)/Math.max(Math.abs(s.la),1):0;
   var laFlag='';
   if(laDiv>=0.50){var sweet=30,ds=Math.abs(s.la-sweet),dl=Math.abs(l.la-sweet);laFlag=dl<ds?'🔥':'❄️';}
   h+=statRow('Launch Angle',
     s.la>0?s.la.toFixed(1)+'°':'--', laCls2(s.la),
     l.la>0?l.la.toFixed(1)+'°'+laFlag:'--', laCls2(l.la),
-    '--', 'n');
+    '--', 'n', '');
 
-  // ISO
+  // ISO - real split from MLB API
   var isoDiv=hasL8D&&s.iso>0?Math.abs(l.iso-s.iso)/s.iso:0;
   var isoFlag=isoDiv>=0.50?(l.iso>s.iso?'🔥':'❄️'):'';
   var spISO=bd.iso_vs_hand>0?fmtIso(bd.iso_vs_hand):'--';
   h+=statRow('ISO',
     s.iso>0?fmtIso(s.iso):'--', isoCls2(s.iso),
     l.iso>0?fmtIso(l.iso)+isoFlag:'--', isoCls2(l.iso),
-    spISO, isoCls2(bd.iso_vs_hand));
+    spISO, isoCls2(bd.iso_vs_hand), '');
 
-  // K%
+  // K% - real split from MLB API
+  var spK=bd.split_pa>0&&bd.split_pa>=10&&b._full.season&&b._full.season.k!==undefined?'--':'--';
+  // K% split comes from statSplits so it IS real - use split_k if available
+  var splitKPct = b._full.breakdown&&b._full.breakdown.split_k_pct||0;
   h+=statRow('K%',
     s.k>0?s.k.toFixed(1)+'%':'--', kCls(s.k),
     l.pa>0&&b._full.l8d&&b._full.l8d.k_pct>0?b._full.l8d.k_pct.toFixed(1)+'%':'--', kCls(b._full.l8d&&b._full.l8d.k_pct||0),
-    bd.split_pa>0&&bd.k_s>0?bd.k_s.toFixed(1)+'%':'--', kCls(bd.k_s||0));
+    splitKPct>0?splitKPct.toFixed(1)+'%':'--', kCls(splitKPct));
 
   // HR
   h+=statRow('HR',
