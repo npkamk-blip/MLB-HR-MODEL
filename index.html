@@ -209,7 +209,7 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
       <span class="date-lbl" id="dateLbl"></span>
       <button class="date-btn" onclick="changeDate(1)">&#8250;</button>
     </div>
-    <button class="refresh-btn" id="refreshBtn" onclick="load()">Refresh</button>
+    <button class="refresh-btn" id="refreshBtn" onclick="load(true)">Refresh</button>
     <span class="upd" id="upd"></span>
   </div>
 </header>
@@ -1165,7 +1165,7 @@ async function manualRecord() {
   } catch(e) { alert('Error: '+e.message); }
 }
 
-async function load(){
+async function load(forceRefresh){
   var btn=document.getElementById('refreshBtn'),upd=document.getElementById('upd');
   btn.disabled=true;
   document.getElementById('batter-main').innerHTML='<div class="loading">Loading Sharp Data<div class="dots"><span></span><span></span><span></span></div></div>';
@@ -1173,7 +1173,8 @@ async function load(){
   document.getElementById('game-main').innerHTML='<div class="no-data">Loading...</div>';
   try{
     var dateStr=formatDateForAPI(selectedDate);
-    var resp=await fetch(API+'/games?date='+dateStr);
+    var url=API+'/games?date='+dateStr+(forceRefresh?'&refresh=true':'');
+    var resp=await fetch(url);
     if(!resp.ok)throw new Error('Backend error '+resp.status);
     var data=await resp.json();
     if(data.loading){document.getElementById('batter-main').innerHTML='<div class="err">'+(data.message||'Data loading - try again in 30 seconds.')+'</div>';btn.disabled=false;return;}
