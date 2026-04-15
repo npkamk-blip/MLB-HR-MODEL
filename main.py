@@ -1411,20 +1411,26 @@ def fuzzy_match(name: str, df: pd.DataFrame, col="name"):
     if df is None or df.empty or col not in df.columns:
         return None
     nl = name.lower().strip()
+    # Exact match first
     exact = df[df[col].str.lower().str.strip() == nl]
     if not exact.empty:
         return exact.iloc[0]
-    last = nl.split()[-1]
+    # Last name match
+    parts = nl.split()
+    if not parts: return None
+    last = parts[-1]
     matches = df[df[col].str.lower().str.contains(last, na=False)]
     if len(matches) == 1:
         return matches.iloc[0]
     if len(matches) > 1:
         # Try first name too
-        first = nl.split()[0]
+        first = parts[0]
         refined = matches[matches[col].str.lower().str.contains(first, na=False)]
         if not refined.empty:
             return refined.iloc[0]
-        return matches.iloc[0]
+        # Multiple last name matches, no first name match — too ambiguous, return None
+        # This prevents e.g. "Murakami" matching the wrong player
+        return None
     return None
 
 def gs(row, *keys, default=0.0):
@@ -1676,11 +1682,15 @@ def blend(v1, v2, w1, w2):
 
 def get_batter_blend_weights(pa_2026, pa_2025):
     pa = float(pa_2026 or 0)
-    if pa >= 200:   return 1.0, 0.0              # 200+ PA → 100% season
-    elif pa >= 150: w = 0.80; return w, 1.0 - w  # 150-199 → 80/20
-    elif pa >= 100: w = 0.60; return w, 1.0 - w  # 100-149 → 60/40
-    elif pa >= 50:  w = 0.30; return w, 1.0 - w  # 50-99   → 30/70
-    else:           return 0.0, 1.0               # <50     → 100% career
+    pa25 = float(pa_2025 or 0)
+    # If no 2025 MLB data (new MLB player), use whatever 2026 data we have
+    if pa25 < 10:
+        return 1.0, 0.0  # no career MLB data → use 2026 only, even if small
+    if pa >= 200:   return 1.0, 0.0
+    elif pa >= 150: w = 0.80; return w, 1.0 - w
+    elif pa >= 100: w = 0.60; return w, 1.0 - w
+    elif pa >= 50:  w = 0.30; return w, 1.0 - w
+    else:           return 0.0, 1.0  # <50 PA but has 2025 data → use career
 
 def get_pitcher_blend_weights(ip_2026, ip_2025):
     ip = float(ip_2026 or 0)
@@ -1755,6 +1765,11 @@ def compute_hr_prob_multiplicative(
 
     pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
     bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
+    # Sanity check — if L8D PA >= 80% of season PA, Savant returned full season data
+    # This happens for new players where game_date_gt filter is ignored by Savant
+    l8d_pa_raw = b8d.get("pa", 0)
+    if pa_26 > 10 and l8d_pa_raw >= pa_26 * 0.80:
+        b8d = {}  # reject — not real L8D data
     has_8d = b8d.get("pa", 0) >= 3
     total_pa = pa_26 + pa_25
 
@@ -2485,6 +2500,28 @@ async def get_history():
         print(f"History endpoint error: {e}")
         return {"error": str(e), "records": []}
 
+@app.get("/debug-l8d")
+async def debug_l8d(player: str = "Murakami"):
+    """Debug L8D data — check what Savant returns vs season stats"""
+    from datetime import date as date_cls
+    b8d = get_batter_8d(player)
+    bc = get_batter_stats(player, 2026)
+    url = savant_8d_url()
+    return {
+        "player_searched": player,
+        "l8d_url": url,
+        "l8d_stats": b8d,
+        "season_stats": {
+            "pa": bc.get("pa"), "hr": bc.get("hr"),
+            "barrel_pct": bc.get("barrel_pct"),
+            "launch_angle": bc.get("launch_angle"),
+            "k_pct": bc.get("k_pct"),
+            "iso": bc.get("iso"),
+        },
+        "l8d_cache_size": len(_cache["bat_8d"]) if not _cache["bat_8d"].empty else 0,
+        "same_as_season": b8d.get("barrel_pct") == bc.get("barrel_pct"),
+    }
+
 @app.post("/recalibrate")
 async def manual_recalibrate():
     """Manually trigger model recalibration — requires 50+ completed records"""
@@ -2685,6 +2722,9 @@ async def get_games(date: str = None, refresh: bool = False):
             pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
             bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
             b8d = get_batter_8d(name)
+            # Sanity check — if L8D PA >= 80% of season PA, Savant returned full season data
+            if pa_26 > 10 and b8d.get("pa", 0) >= pa_26 * 0.80:
+                b8d = {}
             bl5g = get_batter_l5g(name)
 
             all_batters.append({
