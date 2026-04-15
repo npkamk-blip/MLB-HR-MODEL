@@ -9,7 +9,7 @@
     "home_team": "Baltimore Orioles",
     "lineup_source": "projected",
     "model_hr_pct": 5.7,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 12.6,
     "la_season": 13.3,
     "ev_season": 91.2,
@@ -58,7 +58,8 @@
     "pitch2_usage": 46.8,
     "avg_pa_per_game": 4.24,
     "avg_ab_per_game": 3.88,
-    "games_played": 17
+    "games_played": 17,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-14",
@@ -70,7 +71,7 @@
     "home_team": "Baltimore Orioles",
     "lineup_source": "projected",
     "model_hr_pct": 5.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 14.3,
     "la_season": 15.7,
     "ev_season": 92.1,
@@ -119,7 +120,8 @@
     "pitch2_usage": 46.8,
     "avg_pa_per_game": 4.13,
     "avg_ab_per_game": 3.53,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -131,7 +133,7 @@
     "home_team": "Baltimore Orioles",
     "lineup_source": "projected",
     "model_hr_pct": 5.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.7,
     "la_season": 11.9,
     "ev_season": 91.8,
@@ -180,7 +182,8 @@
     "pitch2_usage": 43.0,
     "avg_pa_per_game": 4.75,
     "avg_ab_per_game": 4.19,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-14",
@@ -192,7 +195,7 @@
     "home_team": "Baltimore Orioles",
     "lineup_source": "projected",
     "model_hr_pct": 6.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.7,
     "la_season": 17.9,
     "ev_season": 89.4,
@@ -241,7 +244,8 @@
     "pitch2_usage": 43.0,
     "avg_pa_per_game": 4.69,
     "avg_ab_per_game": 3.94,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-14",
@@ -253,7 +257,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "projected",
     "model_hr_pct": 8.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 19.7,
     "la_season": 7.2,
     "ev_season": 92.9,
@@ -302,7 +306,8 @@
     "pitch2_usage": 48.3,
     "avg_pa_per_game": 3.07,
     "avg_ab_per_game": 2.8,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -314,7 +319,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "projected",
     "model_hr_pct": 5.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 16.4,
     "la_season": 14.2,
     "ev_season": 89.6,
@@ -363,7 +368,8 @@
     "pitch2_usage": 18.3,
     "avg_pa_per_game": 4.31,
     "avg_ab_per_game": 3.75,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -375,7 +381,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "projected",
     "model_hr_pct": 6.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.5,
     "la_season": 15.6,
     "ev_season": 90.1,
@@ -424,7 +430,8 @@
     "pitch2_usage": 18.3,
     "avg_pa_per_game": 3.79,
     "avg_ab_per_game": 3.14,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -436,7 +443,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "projected",
     "model_hr_pct": 8.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 12.6,
     "la_season": 20.9,
     "ev_season": 91.5,
@@ -485,7 +492,8 @@
     "pitch2_usage": 18.3,
     "avg_pa_per_game": 3.8,
     "avg_ab_per_game": 3.2,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-14",
@@ -497,7 +505,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "projected",
     "model_hr_pct": 5.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 13.2,
     "la_season": 22.5,
     "ev_season": 90.2,
@@ -546,7 +554,8 @@
     "pitch2_usage": 18.3,
     "avg_pa_per_game": 3.93,
     "avg_ab_per_game": 3.13,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 1
   },
   {
     "date": "2026-04-14",
@@ -558,7 +567,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "projected",
     "model_hr_pct": 6.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 18.4,
     "la_season": 5.5,
     "ev_season": 94.4,
@@ -607,7 +616,8 @@
     "pitch2_usage": 26.3,
     "avg_pa_per_game": 4.88,
     "avg_ab_per_game": 4.06,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -619,7 +629,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "projected",
     "model_hr_pct": 9.8,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 12.8,
     "la_season": 15.7,
     "ev_season": 90.1,
@@ -668,7 +678,8 @@
     "pitch2_usage": 20.9,
     "avg_pa_per_game": 4.64,
     "avg_ab_per_game": 3.86,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 2
   },
   {
     "date": "2026-04-14",
@@ -680,7 +691,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "projected",
     "model_hr_pct": 9.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 18.6,
     "la_season": 8.2,
     "ev_season": 96.0,
@@ -729,7 +740,8 @@
     "pitch2_usage": 20.9,
     "avg_pa_per_game": 4.38,
     "avg_ab_per_game": 3.88,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-14",
@@ -741,7 +753,7 @@
     "home_team": "Cincinnati Reds",
     "lineup_source": "projected",
     "model_hr_pct": 6.4,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 12.3,
     "la_season": 21.9,
     "ev_season": 88.9,
@@ -790,7 +802,8 @@
     "pitch2_usage": 25.2,
     "avg_pa_per_game": 4.19,
     "avg_ab_per_game": 3.88,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -802,7 +815,7 @@
     "home_team": "Cincinnati Reds",
     "lineup_source": "projected",
     "model_hr_pct": 7.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 15.2,
     "la_season": 12.6,
     "ev_season": 93.0,
@@ -851,7 +864,8 @@
     "pitch2_usage": 25.2,
     "avg_pa_per_game": 4.19,
     "avg_ab_per_game": 3.94,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -863,7 +877,7 @@
     "home_team": "Cincinnati Reds",
     "lineup_source": "projected",
     "model_hr_pct": 9.2,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 17.9,
     "la_season": 17.1,
     "ev_season": 95.0,
@@ -912,7 +926,8 @@
     "pitch2_usage": 50.7,
     "avg_pa_per_game": 4.31,
     "avg_ab_per_game": 3.44,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -924,7 +939,7 @@
     "home_team": "Cincinnati Reds",
     "lineup_source": "projected",
     "model_hr_pct": 9.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.8,
     "la_season": 21.6,
     "ev_season": 89.5,
@@ -973,7 +988,8 @@
     "pitch2_usage": 50.7,
     "avg_pa_per_game": 4.0,
     "avg_ab_per_game": 3.62,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 2
   },
   {
     "date": "2026-04-14",
@@ -985,7 +1001,7 @@
     "home_team": "Cincinnati Reds",
     "lineup_source": "projected",
     "model_hr_pct": 7.0,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 8.1,
     "la_season": 18.9,
     "ev_season": 87.3,
@@ -1034,7 +1050,8 @@
     "pitch2_usage": 50.7,
     "avg_pa_per_game": 3.93,
     "avg_ab_per_game": 3.64,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -1046,7 +1063,7 @@
     "home_team": "Philadelphia Phillies",
     "lineup_source": "projected",
     "model_hr_pct": 9.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.8,
     "la_season": 15.5,
     "ev_season": 90.2,
@@ -1095,7 +1112,8 @@
     "pitch2_usage": 33.0,
     "avg_pa_per_game": 4.64,
     "avg_ab_per_game": 4.07,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-14",
@@ -1107,7 +1125,7 @@
     "home_team": "Philadelphia Phillies",
     "lineup_source": "projected",
     "model_hr_pct": 6.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.6,
     "la_season": 6.6,
     "ev_season": 91.0,
@@ -1156,7 +1174,8 @@
     "pitch2_usage": 33.0,
     "avg_pa_per_game": 2.86,
     "avg_ab_per_game": 2.57,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 2
   },
   {
     "date": "2026-04-14",
@@ -1168,7 +1187,7 @@
     "home_team": "Philadelphia Phillies",
     "lineup_source": "projected",
     "model_hr_pct": 21.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 22.5,
     "la_season": 22.0,
     "ev_season": 94.3,
@@ -1217,7 +1236,8 @@
     "pitch2_usage": 40.4,
     "avg_pa_per_game": 4.44,
     "avg_ab_per_game": 3.44,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -1229,7 +1249,7 @@
     "home_team": "Philadelphia Phillies",
     "lineup_source": "projected",
     "model_hr_pct": 6.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.0,
     "la_season": 11.4,
     "ev_season": 90.8,
@@ -1278,7 +1298,8 @@
     "pitch2_usage": 40.4,
     "avg_pa_per_game": 4.25,
     "avg_ab_per_game": 3.62,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -1290,7 +1311,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "projected",
     "model_hr_pct": 6.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.6,
     "la_season": 19.7,
     "ev_season": 90.6,
@@ -1339,7 +1360,8 @@
     "pitch2_usage": 25.3,
     "avg_pa_per_game": 4.76,
     "avg_ab_per_game": 4.0,
-    "games_played": 17
+    "games_played": 17,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-14",
@@ -1351,7 +1373,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "projected",
     "model_hr_pct": 8.4,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 18.8,
     "la_season": 18.8,
     "ev_season": 91.2,
@@ -1400,7 +1422,8 @@
     "pitch2_usage": 25.3,
     "avg_pa_per_game": 4.69,
     "avg_ab_per_game": 3.62,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-14",
@@ -1412,7 +1435,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "projected",
     "model_hr_pct": 17.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 25.8,
     "la_season": 16.8,
     "ev_season": 94.5,
@@ -1461,7 +1484,8 @@
     "pitch2_usage": 34.7,
     "avg_pa_per_game": 4.38,
     "avg_ab_per_game": 3.75,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -1473,7 +1497,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "projected",
     "model_hr_pct": 8.7,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 16.4,
     "la_season": 14.0,
     "ev_season": 93.7,
@@ -1522,7 +1546,8 @@
     "pitch2_usage": 34.7,
     "avg_pa_per_game": 4.07,
     "avg_ab_per_game": 3.13,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-14",
@@ -1534,7 +1559,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "projected",
     "model_hr_pct": 6.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.9,
     "la_season": 10.8,
     "ev_season": 90.6,
@@ -1583,7 +1608,8 @@
     "pitch2_usage": 34.7,
     "avg_pa_per_game": 2.9,
     "avg_ab_per_game": 2.6,
-    "games_played": 10
+    "games_played": 10,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -1595,7 +1621,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "projected",
     "model_hr_pct": 9.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 21.2,
     "la_season": 18.0,
     "ev_season": 94.2,
@@ -1644,7 +1670,8 @@
     "pitch2_usage": 34.7,
     "avg_pa_per_game": 4.0,
     "avg_ab_per_game": 3.6,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -1656,7 +1683,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "projected",
     "model_hr_pct": 6.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 14.1,
     "la_season": 16.3,
     "ev_season": 91.2,
@@ -1705,7 +1732,8 @@
     "pitch2_usage": 34.7,
     "avg_pa_per_game": 3.81,
     "avg_ab_per_game": 3.0,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -1717,7 +1745,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "projected",
     "model_hr_pct": 6.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 20.6,
     "la_season": 21.5,
     "ev_season": 91.4,
@@ -1766,7 +1794,8 @@
     "pitch2_usage": 34.7,
     "avg_pa_per_game": 1.56,
     "avg_ab_per_game": 1.44,
-    "games_played": 9
+    "games_played": 9,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -1778,7 +1807,7 @@
     "home_team": "Atlanta Braves",
     "lineup_source": "projected",
     "model_hr_pct": 9.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 22.2,
     "la_season": 22.3,
     "ev_season": 92.8,
@@ -1827,7 +1856,8 @@
     "pitch2_usage": 33.9,
     "avg_pa_per_game": 3.4,
     "avg_ab_per_game": 3.0,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -1839,7 +1869,7 @@
     "home_team": "Atlanta Braves",
     "lineup_source": "projected",
     "model_hr_pct": 5.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.3,
     "la_season": 7.7,
     "ev_season": 91.1,
@@ -1888,7 +1918,8 @@
     "pitch2_usage": 21.0,
     "avg_pa_per_game": 4.59,
     "avg_ab_per_game": 4.12,
-    "games_played": 17
+    "games_played": 17,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -1900,7 +1931,7 @@
     "home_team": "Atlanta Braves",
     "lineup_source": "projected",
     "model_hr_pct": 5.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 15.8,
     "la_season": 14.9,
     "ev_season": 93.0,
@@ -1949,7 +1980,8 @@
     "pitch2_usage": 21.0,
     "avg_pa_per_game": 4.47,
     "avg_ab_per_game": 3.94,
-    "games_played": 17
+    "games_played": 17,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -1961,7 +1993,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "projected",
     "model_hr_pct": 5.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.7,
     "la_season": 22.0,
     "ev_season": 90.7,
@@ -2010,7 +2042,8 @@
     "pitch2_usage": 18.0,
     "avg_pa_per_game": 4.19,
     "avg_ab_per_game": 3.88,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -2022,7 +2055,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "projected",
     "model_hr_pct": 6.7,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 16.6,
     "la_season": 19.9,
     "ev_season": 91.9,
@@ -2071,7 +2104,8 @@
     "pitch2_usage": 19.5,
     "avg_pa_per_game": 4.47,
     "avg_ab_per_game": 4.0,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-14",
@@ -2083,7 +2117,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "projected",
     "model_hr_pct": 5.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 17.2,
     "la_season": 15.1,
     "ev_season": 90.6,
@@ -2132,7 +2166,8 @@
     "pitch2_usage": 19.5,
     "avg_pa_per_game": 3.67,
     "avg_ab_per_game": 3.11,
-    "games_played": 9
+    "games_played": 9,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -2144,7 +2179,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 7.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.2,
     "la_season": 12.2,
     "ev_season": 92.0,
@@ -2193,7 +2228,8 @@
     "pitch2_usage": 23.5,
     "avg_pa_per_game": 4.47,
     "avg_ab_per_game": 3.8,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -2205,7 +2241,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 11.5,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 20.0,
     "la_season": 11.4,
     "ev_season": 91.8,
@@ -2254,7 +2290,8 @@
     "pitch2_usage": 28.4,
     "avg_pa_per_game": 4.06,
     "avg_ab_per_game": 3.19,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -2266,7 +2303,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 7.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 14.1,
     "la_season": 18.9,
     "ev_season": 88.9,
@@ -2315,7 +2352,8 @@
     "pitch2_usage": 28.4,
     "avg_pa_per_game": 3.94,
     "avg_ab_per_game": 3.44,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -2327,7 +2365,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 6.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 15.4,
     "la_season": 17.8,
     "ev_season": 89.9,
@@ -2376,7 +2414,8 @@
     "pitch2_usage": 17.3,
     "avg_pa_per_game": 4.43,
     "avg_ab_per_game": 3.86,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-14",
@@ -2388,7 +2427,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 6.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 17.3,
     "la_season": 23.4,
     "ev_season": 93.0,
@@ -2437,7 +2476,8 @@
     "pitch2_usage": 17.3,
     "avg_pa_per_game": 2.7,
     "avg_ab_per_game": 2.1,
-    "games_played": 10
+    "games_played": 10,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -2449,7 +2489,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 20.0,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 17.4,
     "la_season": 21.2,
     "ev_season": 92.7,
@@ -2498,7 +2538,8 @@
     "pitch2_usage": 44.5,
     "avg_pa_per_game": 3.11,
     "avg_ab_per_game": 2.44,
-    "games_played": 9
+    "games_played": 9,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-14",
@@ -2510,7 +2551,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 5.0,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 13.6,
     "la_season": 16.6,
     "ev_season": 91.7,
@@ -2559,7 +2600,8 @@
     "pitch2_usage": 44.5,
     "avg_pa_per_game": 3.57,
     "avg_ab_per_game": 3.29,
-    "games_played": 14
+    "games_played": 14,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -2571,7 +2613,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "projected",
     "model_hr_pct": 12.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 19.5,
     "la_season": 12.4,
     "ev_season": 93.0,
@@ -2620,7 +2662,8 @@
     "pitch2_usage": 21.8,
     "avg_pa_per_game": 3.87,
     "avg_ab_per_game": 3.33,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-14",
@@ -2632,7 +2675,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "projected",
     "model_hr_pct": 10.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.3,
     "la_season": 10.8,
     "ev_season": 92.9,
@@ -2681,7 +2724,8 @@
     "pitch2_usage": 21.5,
     "avg_pa_per_game": 4.12,
     "avg_ab_per_game": 3.75,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -2693,7 +2737,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "projected",
     "model_hr_pct": 5.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.1,
     "la_season": 13.1,
     "ev_season": 90.7,
@@ -2742,7 +2786,8 @@
     "pitch2_usage": 21.5,
     "avg_pa_per_game": 2.62,
     "avg_ab_per_game": 2.31,
-    "games_played": 13
+    "games_played": 13,
+    "actual_ab": 2
   },
   {
     "date": "2026-04-14",
@@ -2754,7 +2799,7 @@
     "home_team": "Houston Astros",
     "lineup_source": "projected",
     "model_hr_pct": 11.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 14.5,
     "la_season": 22.4,
     "ev_season": 88.9,
@@ -2803,7 +2848,8 @@
     "pitch2_usage": 18.8,
     "avg_pa_per_game": 3.6,
     "avg_ab_per_game": 3.4,
-    "games_played": 10
+    "games_played": 10,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -2815,7 +2861,7 @@
     "home_team": "Houston Astros",
     "lineup_source": "projected",
     "model_hr_pct": 7.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 15.5,
     "la_season": 20.2,
     "ev_season": 94.2,
@@ -2864,7 +2910,8 @@
     "pitch2_usage": 0,
     "avg_pa_per_game": 4.47,
     "avg_ab_per_game": 3.29,
-    "games_played": 17
+    "games_played": 17,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -2876,7 +2923,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 7.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 17.1,
     "la_season": 24.9,
     "ev_season": 89.5,
@@ -2925,7 +2972,8 @@
     "pitch2_usage": 35.7,
     "avg_pa_per_game": 4.35,
     "avg_ab_per_game": 3.82,
-    "games_played": 17
+    "games_played": 17,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -2937,7 +2985,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 5.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.8,
     "la_season": 13.4,
     "ev_season": 90.3,
@@ -2986,7 +3034,8 @@
     "pitch2_usage": 35.7,
     "avg_pa_per_game": 4.13,
     "avg_ab_per_game": 3.73,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -2998,7 +3047,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 5.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.8,
     "la_season": 9.0,
     "ev_season": 90.6,
@@ -3047,7 +3096,8 @@
     "pitch2_usage": 35.7,
     "avg_pa_per_game": 2.67,
     "avg_ab_per_game": 2.33,
-    "games_played": 6
+    "games_played": 6,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-14",
@@ -3059,7 +3109,7 @@
     "home_team": "Athletics",
     "lineup_source": "projected",
     "model_hr_pct": 5.7,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 15.7,
     "la_season": 12.8,
     "ev_season": 92.8,
@@ -3108,7 +3158,8 @@
     "pitch2_usage": 20.8,
     "avg_pa_per_game": 4.38,
     "avg_ab_per_game": 3.62,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-14",
@@ -3120,7 +3171,7 @@
     "home_team": "Athletics",
     "lineup_source": "projected",
     "model_hr_pct": 6.7,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 17.9,
     "la_season": 15.2,
     "ev_season": 93.5,
@@ -3169,7 +3220,8 @@
     "pitch2_usage": 24.6,
     "avg_pa_per_game": 4.47,
     "avg_ab_per_game": 3.47,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-14",
@@ -3181,7 +3233,7 @@
     "home_team": "Athletics",
     "lineup_source": "projected",
     "model_hr_pct": 5.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 11.3,
     "la_season": 17.6,
     "ev_season": 91.2,
@@ -3230,7 +3282,8 @@
     "pitch2_usage": 24.6,
     "avg_pa_per_game": 4.33,
     "avg_ab_per_game": 4.13,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-14",
@@ -3242,7 +3295,7 @@
     "home_team": "Athletics",
     "lineup_source": "projected",
     "model_hr_pct": 9.7,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 12.9,
     "la_season": 18.1,
     "ev_season": 87.5,
@@ -3291,7 +3344,8 @@
     "pitch2_usage": 24.6,
     "avg_pa_per_game": 2.0,
     "avg_ab_per_game": 1.8,
-    "games_played": 5
+    "games_played": 5,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-14",
@@ -3303,7 +3357,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 9.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.2,
     "la_season": 9.6,
     "ev_season": 93.1,
@@ -3352,7 +3406,8 @@
     "pitch2_usage": 22.9,
     "avg_pa_per_game": 3.4,
     "avg_ab_per_game": 2.87,
-    "games_played": 15
+    "games_played": 15,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -3364,7 +3419,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 9.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 24.1,
     "la_season": 14.9,
     "ev_season": 94.6,
@@ -3413,6 +3468,7 @@
     "pitch2_usage": 16.6,
     "avg_pa_per_game": 4.88,
     "avg_ab_per_game": 3.75,
-    "games_played": 16
+    "games_played": 16,
+    "actual_ab": 3
   }
 ]
