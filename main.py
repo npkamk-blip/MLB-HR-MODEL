@@ -2002,6 +2002,7 @@ def compute_hr_prob_multiplicative(
         "split_woba": round(b_split_vs_hand.get("woba", 0), 3),
         "split_hr": int(b_split_vs_hand.get("hr", 0)),
         "split_pa": split_pa,
+        "split_k_pct": round(b_split_vs_hand.get("k_pct", 0), 1),
         "hr_season": int(bc.get("hr", 0)),
         "pa_8d": int(b8d.get("pa", 0)),
         "barrel_8d_raw": round(b8d.get("barrel_pct", 0), 1),
