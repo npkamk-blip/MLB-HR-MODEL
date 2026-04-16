@@ -1405,6 +1405,28 @@ async def startup_event():
     threading.Thread(target=run_async, args=(load_all_savant_data(),), daemon=True).start()
     asyncio.create_task(daily_refresh_loop())
     asyncio.create_task(load_model_weights())
+    asyncio.create_task(startup_catchup())
+
+async def startup_catchup():
+    """On startup, check if yesterday's results were missed and record them"""
+    await asyncio.sleep(30)  # wait for data to load first
+    try:
+        yesterday = (date.today() - timedelta(days=1)).isoformat()
+        path = f"data/predictions/{yesterday}.json"
+        content, _ = await github_get_file(path)
+        if not content:
+            return
+        import json
+        records = json.loads(content)
+        # Check if any results are still null
+        nulls = [r for r in records if r.get("hit_hr") is None]
+        if nulls:
+            print(f"Startup catchup: {len(nulls)} unrecorded results for {yesterday} — recording now")
+            await record_results(yesterday)
+        else:
+            print(f"Startup catchup: {yesterday} already complete")
+    except Exception as e:
+        print(f"Startup catchup error: {e}")
 
 # ── Player matching ──
 def fuzzy_match(name: str, df: pd.DataFrame, col="name"):
@@ -1765,6 +1787,12 @@ def compute_hr_prob_multiplicative(
 
     pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
     bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
+    # For brand new MLB players (under 60 PA, no 2025 data), Savant's game_date_gt
+    # filter sometimes returns full season stats instead of true L8D window.
+    # If L8D PA matches season PA exactly, it's bogus — clear it.
+    l8d_pa_raw = b8d.get("pa", 0)
+    if pa_26 < 60 and pa_25 < 10 and l8d_pa_raw == pa_26:
+        b8d = {}
     has_8d = b8d.get("pa", 0) >= 3
     total_pa = pa_26 + pa_25
 
@@ -2017,6 +2045,7 @@ def compute_hr_prob_multiplicative(
         "split_pa": split_pa,
         "split_k_pct": round(b_split_vs_hand.get("k_pct", 0), 1),
         "hr_season": int(bc.get("hr", 0)),
+        "pa_season": int(pa_26),
         "pa_8d": int(b8d.get("pa", 0)),
         "barrel_8d_raw": round(b8d.get("barrel_pct", 0), 1),
         "iso_8d": round(b8d.get("iso", 0), 3),
@@ -2717,6 +2746,8 @@ async def get_games(date: str = None, refresh: bool = False):
             pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
             bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
             b8d = get_batter_8d(name)
+            if pa_26 < 60 and pa_25 < 10 and b8d.get("pa", 0) == pa_26:
+                b8d = {}
             bl5g = get_batter_l5g(name)
 
             all_batters.append({
