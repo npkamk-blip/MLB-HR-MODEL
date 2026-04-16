@@ -9,7 +9,7 @@
     "home_team": "Baltimore Orioles",
     "lineup_source": "projected",
     "model_hr_pct": 5.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.7,
     "la_season": 14.6,
     "ev_season": 85.3,
@@ -70,7 +70,8 @@
     "k_pct_l8d": 27.3,
     "pit_era_diff": 1.07,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-15",
@@ -82,7 +83,7 @@
     "home_team": "Baltimore Orioles",
     "lineup_source": "projected",
     "model_hr_pct": 5.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0,
     "la_season": 0,
     "ev_season": 0,
@@ -143,7 +144,8 @@
     "k_pct_l8d": 60.0,
     "pit_era_diff": 1.07,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-15",
@@ -155,7 +157,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "projected",
     "model_hr_pct": 28.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 19.5,
     "la_season": 12.4,
     "ev_season": 93.0,
@@ -216,7 +218,8 @@
     "k_pct_l8d": 17.5,
     "pit_era_diff": 5.25,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-15",
@@ -228,7 +231,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "projected",
     "model_hr_pct": 7.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.8,
     "la_season": 21.3,
     "ev_season": 90.3,
@@ -289,7 +292,8 @@
     "k_pct_l8d": 33.3,
     "pit_era_diff": 5.25,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 2
   },
   {
     "date": "2026-04-15",
@@ -301,7 +305,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "projected",
     "model_hr_pct": 8.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.7,
     "la_season": 21.3,
     "ev_season": 89.6,
@@ -362,7 +366,8 @@
     "k_pct_l8d": 20.5,
     "pit_era_diff": 5.25,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-15",
@@ -374,7 +379,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "projected",
     "model_hr_pct": 7.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.4,
     "la_season": 10.9,
     "ev_season": 88.9,
@@ -435,7 +440,8 @@
     "k_pct_l8d": 27.3,
     "pit_era_diff": 5.25,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-15",
@@ -447,7 +453,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "confirmed",
     "model_hr_pct": 5.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.5,
     "la_season": 14.1,
     "ev_season": 91.4,
@@ -508,7 +514,8 @@
     "k_pct_l8d": 8.0,
     "pit_era_diff": 1.54,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-15",
@@ -520,7 +527,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "confirmed",
     "model_hr_pct": 14.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 15.5,
     "la_season": 11.3,
     "ev_season": 93.5,
@@ -581,7 +588,8 @@
     "k_pct_l8d": 27.1,
     "pit_era_diff": 1.54,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-15",
@@ -593,7 +601,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "projected",
     "model_hr_pct": 8.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 13.0,
     "la_season": 21.2,
     "ev_season": 90.7,
@@ -654,7 +662,8 @@
     "k_pct_l8d": 21.1,
     "pit_era_diff": 0.4,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-15",
@@ -666,7 +675,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "projected",
     "model_hr_pct": 6.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.0,
     "la_season": 16.7,
     "ev_season": 91.5,
@@ -727,7 +736,8 @@
     "k_pct_l8d": 35.1,
     "pit_era_diff": -1.57,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 2
   },
   {
     "date": "2026-04-15",
@@ -739,7 +749,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "projected",
     "model_hr_pct": 7.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 20.8,
     "la_season": 7.3,
     "ev_season": 95.4,
@@ -800,7 +810,8 @@
     "k_pct_l8d": 32.7,
     "pit_era_diff": 0.94,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -812,7 +823,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "projected",
     "model_hr_pct": 7.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.0,
     "la_season": 20.7,
     "ev_season": 92.0,
@@ -873,7 +884,8 @@
     "k_pct_l8d": 36.8,
     "pit_era_diff": -2.67,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-15",
@@ -885,7 +897,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "projected",
     "model_hr_pct": 8.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 18.6,
     "la_season": 5.4,
     "ev_season": 94.4,
@@ -946,7 +958,8 @@
     "k_pct_l8d": 31.3,
     "pit_era_diff": 0,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -958,7 +971,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "projected",
     "model_hr_pct": 5.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 9.2,
     "la_season": 14.4,
     "ev_season": 89.5,
@@ -1019,7 +1032,8 @@
     "k_pct_l8d": 14.7,
     "pit_era_diff": 0,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 1
   },
   {
     "date": "2026-04-15",
@@ -1031,7 +1045,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "projected",
     "model_hr_pct": 13.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.7,
     "la_season": 16.2,
     "ev_season": 89.0,
@@ -1092,7 +1106,8 @@
     "k_pct_l8d": 20.6,
     "pit_era_diff": 2.87,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -1104,7 +1119,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "projected",
     "model_hr_pct": 7.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 18.9,
     "la_season": 8.2,
     "ev_season": 96.0,
@@ -1165,7 +1180,8 @@
     "k_pct_l8d": 30.7,
     "pit_era_diff": 2.87,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -1177,7 +1193,7 @@
     "home_team": "Cincinnati Reds",
     "lineup_source": "projected",
     "model_hr_pct": 5.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.0,
     "la_season": 22.5,
     "ev_season": 88.8,
@@ -1238,7 +1254,8 @@
     "k_pct_l8d": 22.5,
     "pit_era_diff": -0.89,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -1250,7 +1267,7 @@
     "home_team": "Cincinnati Reds",
     "lineup_source": "projected",
     "model_hr_pct": 14.2,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 18.1,
     "la_season": 16.6,
     "ev_season": 94.7,
@@ -1311,7 +1328,8 @@
     "k_pct_l8d": 16.7,
     "pit_era_diff": 0.1,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -1323,7 +1341,7 @@
     "home_team": "Cincinnati Reds",
     "lineup_source": "projected",
     "model_hr_pct": 6.6,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 13.2,
     "la_season": 21.3,
     "ev_season": 88.8,
@@ -1384,7 +1402,8 @@
     "k_pct_l8d": 31.3,
     "pit_era_diff": 0.1,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -1396,7 +1415,7 @@
     "home_team": "Cincinnati Reds",
     "lineup_source": "projected",
     "model_hr_pct": 6.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.3,
     "la_season": 19.2,
     "ev_season": 87.3,
@@ -1457,7 +1476,8 @@
     "k_pct_l8d": 27.6,
     "pit_era_diff": 0.1,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -1469,7 +1489,7 @@
     "home_team": "Philadelphia Phillies",
     "lineup_source": "projected",
     "model_hr_pct": 13.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 23.3,
     "la_season": 22.9,
     "ev_season": 94.2,
@@ -1530,7 +1550,8 @@
     "k_pct_l8d": 34.7,
     "pit_era_diff": -1.39,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -1542,7 +1563,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "projected",
     "model_hr_pct": 6.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.6,
     "la_season": 19.7,
     "ev_season": 90.6,
@@ -1603,7 +1624,8 @@
     "k_pct_l8d": 29.1,
     "pit_era_diff": 2.55,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 2
   },
   {
     "date": "2026-04-15",
@@ -1615,7 +1637,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "projected",
     "model_hr_pct": 8.8,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 19.4,
     "la_season": 19.1,
     "ev_season": 91.3,
@@ -1676,7 +1698,8 @@
     "k_pct_l8d": 21.3,
     "pit_era_diff": 2.55,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -1688,7 +1711,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "projected",
     "model_hr_pct": 6.5,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 12.8,
     "la_season": 16.0,
     "ev_season": 89.2,
@@ -1749,7 +1772,8 @@
     "k_pct_l8d": 32.9,
     "pit_era_diff": 2.55,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-15",
@@ -1761,7 +1785,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "projected",
     "model_hr_pct": 8.4,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 26.3,
     "la_season": 15.7,
     "ev_season": 94.0,
@@ -1822,7 +1846,8 @@
     "k_pct_l8d": 29.7,
     "pit_era_diff": -0.96,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -1834,7 +1859,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "projected",
     "model_hr_pct": 16.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 18.0,
     "la_season": 13.7,
     "ev_season": 94.4,
@@ -1895,7 +1920,8 @@
     "k_pct_l8d": 29.0,
     "pit_era_diff": -0.96,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -1907,7 +1933,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "projected",
     "model_hr_pct": 6.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.9,
     "la_season": 16.1,
     "ev_season": 91.3,
@@ -1968,7 +1994,8 @@
     "k_pct_l8d": 20.0,
     "pit_era_diff": -0.96,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-15",
@@ -1980,7 +2007,7 @@
     "home_team": "Atlanta Braves",
     "lineup_source": "projected",
     "model_hr_pct": 5.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 22.2,
     "la_season": 22.3,
     "ev_season": 92.8,
@@ -2041,7 +2068,8 @@
     "k_pct_l8d": 41.8,
     "pit_era_diff": -3.18,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 2
   },
   {
     "date": "2026-04-15",
@@ -2053,7 +2081,7 @@
     "home_team": "Atlanta Braves",
     "lineup_source": "projected",
     "model_hr_pct": 5.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 16.2,
     "la_season": 14.0,
     "ev_season": 91.2,
@@ -2114,7 +2142,8 @@
     "k_pct_l8d": 18.5,
     "pit_era_diff": 1.94,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -2126,7 +2155,7 @@
     "home_team": "Atlanta Braves",
     "lineup_source": "projected",
     "model_hr_pct": 5.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.3,
     "la_season": 7.8,
     "ev_season": 91.0,
@@ -2187,7 +2216,8 @@
     "k_pct_l8d": 15.9,
     "pit_era_diff": 1.94,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -2199,7 +2229,7 @@
     "home_team": "Atlanta Braves",
     "lineup_source": "projected",
     "model_hr_pct": 5.8,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 16.0,
     "la_season": 14.9,
     "ev_season": 93.0,
@@ -2260,7 +2290,8 @@
     "k_pct_l8d": 28.7,
     "pit_era_diff": 1.94,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -2272,7 +2303,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 12.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 20.0,
     "la_season": 11.4,
     "ev_season": 91.8,
@@ -2333,7 +2364,8 @@
     "k_pct_l8d": 31.4,
     "pit_era_diff": 0,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 2
   },
   {
     "date": "2026-04-15",
@@ -2345,7 +2377,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 5.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.1,
     "la_season": 21.0,
     "ev_season": 88.5,
@@ -2406,7 +2438,8 @@
     "k_pct_l8d": 12.7,
     "pit_era_diff": -3.47,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-15",
@@ -2418,7 +2451,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 5.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.1,
     "la_season": 9.3,
     "ev_season": 91.3,
@@ -2479,7 +2512,8 @@
     "k_pct_l8d": 20.4,
     "pit_era_diff": -3.47,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 2
   },
   {
     "date": "2026-04-15",
@@ -2491,7 +2525,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 5.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 14.0,
     "la_season": 24.2,
     "ev_season": 90.8,
@@ -2552,7 +2586,8 @@
     "k_pct_l8d": 30.0,
     "pit_era_diff": -3.47,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 1
   },
   {
     "date": "2026-04-15",
@@ -2564,7 +2599,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 8.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.7,
     "la_season": 14.0,
     "ev_season": 92.5,
@@ -2625,7 +2660,8 @@
     "k_pct_l8d": 20.0,
     "pit_era_diff": -1.75,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-15",
@@ -2637,7 +2673,7 @@
     "home_team": "Houston Astros",
     "lineup_source": "projected",
     "model_hr_pct": 12.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.8,
     "la_season": 17.4,
     "ev_season": 89.7,
@@ -2698,7 +2734,8 @@
     "k_pct_l8d": 23.1,
     "pit_era_diff": 0,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-15",
@@ -2710,7 +2747,7 @@
     "home_team": "Houston Astros",
     "lineup_source": "projected",
     "model_hr_pct": 8.5,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 15.8,
     "la_season": 20.5,
     "ev_season": 94.1,
@@ -2771,7 +2808,8 @@
     "k_pct_l8d": 11.3,
     "pit_era_diff": -0.05,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-15",
@@ -2783,7 +2821,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 6.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.9,
     "la_season": 13.5,
     "ev_season": 90.2,
@@ -2844,7 +2882,8 @@
     "k_pct_l8d": 21.2,
     "pit_era_diff": -2.16,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-15",
@@ -2856,7 +2895,7 @@
     "home_team": "Athletics",
     "lineup_source": "projected",
     "model_hr_pct": 6.7,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 15.8,
     "la_season": 13.3,
     "ev_season": 92.7,
@@ -2917,7 +2956,8 @@
     "k_pct_l8d": 25.7,
     "pit_era_diff": -0.93,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 3
   },
   {
     "date": "2026-04-15",
@@ -2929,7 +2969,7 @@
     "home_team": "Athletics",
     "lineup_source": "projected",
     "model_hr_pct": 8.0,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 13.8,
     "la_season": 12.7,
     "ev_season": 90.6,
@@ -2990,7 +3030,8 @@
     "k_pct_l8d": 30.6,
     "pit_era_diff": -0.93,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 2
   },
   {
     "date": "2026-04-15",
@@ -3002,7 +3043,7 @@
     "home_team": "Athletics",
     "lineup_source": "projected",
     "model_hr_pct": 6.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 17.5,
     "la_season": 15.2,
     "ev_season": 94.1,
@@ -3063,7 +3104,8 @@
     "k_pct_l8d": 38.0,
     "pit_era_diff": 0.3,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 4
   },
   {
     "date": "2026-04-15",
@@ -3075,7 +3117,7 @@
     "home_team": "Athletics",
     "lineup_source": "projected",
     "model_hr_pct": 6.5,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 11.5,
     "la_season": 18.8,
     "ev_season": 91.6,
@@ -3136,7 +3178,8 @@
     "k_pct_l8d": 33.3,
     "pit_era_diff": 0.3,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 5
   },
   {
     "date": "2026-04-15",
@@ -3148,7 +3191,7 @@
     "home_team": "Athletics",
     "lineup_source": "projected",
     "model_hr_pct": 7.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 9.6,
     "la_season": 13.0,
     "ev_season": 88.6,
@@ -3209,7 +3252,8 @@
     "k_pct_l8d": 7.1,
     "pit_era_diff": 0.3,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 0
   },
   {
     "date": "2026-04-15",
@@ -3221,7 +3265,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 9.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 15.5,
     "la_season": 8.5,
     "ev_season": 92.2,
@@ -3282,7 +3326,8 @@
     "k_pct_l8d": 18.2,
     "pit_era_diff": 0,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 2
   },
   {
     "date": "2026-04-15",
@@ -3294,7 +3339,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 6.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 24.1,
     "la_season": 14.8,
     "ev_season": 94.6,
@@ -3355,6 +3400,7 @@
     "k_pct_l8d": 23.2,
     "pit_era_diff": -2.7,
     "pit_hr_fb_pct": 0,
-    "lineup_k_pct": 0
+    "lineup_k_pct": 0,
+    "actual_ab": 0
   }
 ]
