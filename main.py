@@ -1408,25 +1408,41 @@ async def startup_event():
     asyncio.create_task(startup_catchup())
 
 async def startup_catchup():
-    """On startup, check if yesterday's results were missed and record them"""
-    await asyncio.sleep(30)  # wait for data to load first
+    """On startup:
+    1. Check if yesterday results were missed and record them
+    2. Check if today predictions not saved yet and save them
+    """
+    await asyncio.sleep(60)  # wait for data to load first
+    import json
+
+    # Record yesterday results if missed
     try:
         yesterday = (date.today() - timedelta(days=1)).isoformat()
-        path = f"data/predictions/{yesterday}.json"
-        content, _ = await github_get_file(path)
-        if not content:
-            return
-        import json
-        records = json.loads(content)
-        # Check if any results are still null
-        nulls = [r for r in records if r.get("hit_hr") is None]
-        if nulls:
-            print(f"Startup catchup: {len(nulls)} unrecorded results for {yesterday} — recording now")
-            await record_results(yesterday)
-        else:
-            print(f"Startup catchup: {yesterday} already complete")
+        ypath = f"data/predictions/{yesterday}.json"
+        ycontent, _ = await github_get_file(ypath)
+        if ycontent:
+            records = json.loads(ycontent)
+            nulls = [r for r in records if r.get("hit_hr") is None]
+            if nulls:
+                print(f"Startup catchup: {len(nulls)} unrecorded results for {yesterday} — recording now")
+                await record_results(yesterday)
+            else:
+                print(f"Startup catchup: {yesterday} results already complete")
     except Exception as e:
-        print(f"Startup catchup error: {e}")
+        print(f"Startup catchup (results) error: {e}")
+
+    # Save today predictions if not yet saved
+    try:
+        today = date.today().isoformat()
+        tpath = f"data/predictions/{today}.json"
+        tcontent, _ = await github_get_file(tpath)
+        if not tcontent:
+            print(f"Startup catchup: no predictions for {today} — saving now")
+            await save_daily_predictions()
+        else:
+            print(f"Startup catchup: {today} predictions already saved")
+    except Exception as e:
+        print(f"Startup catchup (predictions) error: {e}")
 
 # ── Player matching ──
 def fuzzy_match(name: str, df: pd.DataFrame, col="name"):
