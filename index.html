@@ -579,6 +579,7 @@ function buildBatDetail(b){
   var hasL8D=l.pa>0;
   var hasSplit=bd.split_pa>0;
   var l8dHR=b.l8d_hr||b._full.l8d_hr_count||0;
+  var bc_pa=b._full.breakdown&&b._full.breakdown.pa_season||0;
 
   // Stat row helper: label | season | l8d | split
   function statRow(lbl, sVal, sCls, l8dVal, l8dCls, spVal, spCls, note){
@@ -636,10 +637,10 @@ function buildBatDetail(b){
 
   // HR
   h+=statRow('HR',
-    String(s.hr||0), s.hr>=5?'g':s.hr>=2?'y':'n',
+    String(s.hr||0)+' <span style="font-size:9px;color:var(--muted2)">('+bc_pa+' PA)</span>', s.hr>=5?'g':s.hr>=2?'y':'n',
     String(l8dHR), l8dHR>=3?'g':l8dHR>=1?'y':'n',
     bd.split_hr>0?String(bd.split_hr):'--', bd.split_hr>=3?'g':bd.split_hr>=1?'y':'n',
-    hasSplit?'('+bd.split_pa+' PA)':'');
+    hasSplit?'<span style="font-size:9px;color:var(--muted2)">('+bd.split_pa+' split PA)</span>':'');
 
   // SLG (split only - season SLG shown in season chips below, split is the key one)
   var spSLG=bd.split_slg>0&&bd.split_pa>=20?'.'+String(Math.round(bd.split_slg*1000)).padStart(3,'0'):'--';
@@ -971,60 +972,6 @@ function renderHistory(data) {
     h += '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Overall Accuracy - '+total_preds+' predictions recorded</div>';
     h += '<div class="acc-bar-wrap"><div class="acc-bar" style="width:'+Math.min(acc*3,100)+'%"></div></div>';
     h += '<div style="font-size:11px;color:var(--muted);margin-top:6px">'+hit_rate+'% hit rate &nbsp;·&nbsp; League avg HR rate ~3% per PA &nbsp;·&nbsp; Model targeting 8-28% range</div>';
-    h += '</div>';
-  }
-
-  // Correlation analysis - which stats correlate with actually hitting HRs
-  // Only use confirmed lineup records to avoid noise
-  var confirmed = completed.filter(function(r){return r.lineup_source !== 'projected';});
-  var mlRecords = confirmed.length >= 10 ? confirmed : completed;
-  if (mlRecords.length >= 10) {
-    h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px">';
-    h += '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Stat Correlations with HR (n='+completed.length+')</div>';
-    var stats = [
-      // Round 1 - core stats
-      {key:'barrel_pct_season', label:'Barrel% (Season)', round:1},
-      {key:'barrel_pct_l8d', label:'Barrel% (L8D)', round:1},
-      {key:'ev_season', label:'Exit Velocity', round:1},
-      {key:'la_season', label:'Launch Angle', round:1},
-      {key:'iso_vs_hand', label:'ISO vs Hand', round:1},
-      {key:'iso_season', label:'ISO Season', round:1},
-      {key:'l8d_hr', label:'L8D HR Count', round:1},
-      {key:'pitch_matchup_score', label:'Pitch Matchup', round:1},
-      {key:'pit_hr9_vs_hand', label:'Pit HR/9 vs Hand', round:1},
-      {key:'pit_slg_vs_hand', label:'Pit SLG vs Hand', round:1},
-      {key:'pit_vuln_mult', label:'Pitcher Vuln Mult', round:1},
-      {key:'bullpen_vuln', label:'Bullpen Vuln', round:1},
-      {key:'bat_platoon_mult', label:'Batter Platoon', round:1},
-      {key:'pit_platoon_mult', label:'Pitcher Platoon', round:1},
-      {key:'park_factor', label:'Park Factor', round:1},
-      {key:'weather_mult', label:'Weather Mult', round:1},
-      {key:'hot_cold_mult', label:'Hot/Cold Mult', round:1},
-      {key:'avg_pa_per_game', label:'Avg PA/Game', round:1},
-      // Round 2 candidates
-      {key:'fb_pct_season', label:'Flyball% (R2)', round:2},
-      {key:'pull_pct_season', label:'Pull% (R2)', round:2},
-      {key:'pit_fb_pct_allowed', label:'Pit FB% Allowed (R2)', round:2},
-      {key:'hard_hit_l8d', label:'Hard Hit% L8D (R2)', round:2},
-      {key:'k_pct_l8d', label:'K% L8D (R2)', round:2},
-      // Round 3 candidates
-      {key:'pit_era_diff', label:'Pit ERA vs Avg (R3)', round:3},
-      // Round 4 candidates
-      {key:'pit_k9_season', label:'Pit K/9 Season (R4)', round:4},
-    ];
-    stats.forEach(function(s) {
-      var corr = pointBiserial(completed, s.key);
-      if (corr === null) return;
-      var abs = Math.abs(corr);
-      var pct = Math.min(abs * 200, 100);
-      var clr = abs >= 0.3 ? 'var(--g)' : abs >= 0.15 ? 'var(--y)' : 'var(--muted2)';
-      var sign = corr >= 0 ? '+' : '-';
-      h += '<div class="corr-row">';
-      h += '<div class="corr-lbl">'+s.label+'</div>';
-      h += '<div class="corr-bar-wrap"><div class="corr-bar" style="width:'+pct+'%;background:'+clr+'"></div></div>';
-      h += '<div class="corr-val" style="color:'+clr+'">'+sign+abs.toFixed(2)+'</div>';
-      h += '</div>';
-    });
     h += '</div>';
   }
 
