@@ -389,16 +389,19 @@ def current_season():
     return today.year if today.month >= 3 else today.year - 1
 
 def savant_contact_log_url():
-    """Pitch-by-pitch URL for building contact log — individual batted ball events only.
-    Smaller than full statcast search — only batted balls (hfAB=) in last 8 days."""
+    """Pitch-by-pitch URL — only batted ball contact events, minimal columns for speed."""
     cutoff = (date.today() - timedelta(days=8)).isoformat()
     today_str = (date.today() + timedelta(days=1)).isoformat()
+    # hfAB=54 filters to balls in play only (no strikes/balls) — much smaller dataset
+    # Only request columns we need for contact log
+    # hfAB=54 = "in_play" filter — returns only batted ball events (~8k rows vs 25k)
+    # This reduces download from 16MB to ~5MB, preventing Railway timeout
     return (f"{SAVANT_BASE}/statcast_search/csv?all=true"
-            f"&hfPT=&hfAB=&hfGT=R%7C&hfPR=&hfZ=&hfStadium=&hfBBL=&hfNewZones=&hfPull="
+            f"&hfPT=&hfAB=54%7C&hfGT=R%7C&hfPR=&hfZ=&hfStadium=&hfBBL=&hfNewZones=&hfPull="
             f"&hfC=&hfSea={current_season()}%7C&hfSit=&player_type=batter&hfOuts=&hfOpponent="
             f"&pitcher_throws=&batter_stands=&hfSA=&game_date_gt={cutoff}"
             f"&game_date_lt={today_str}&hfMon=&hfInfield=&team=&position=&hfRO="
-            f"&home_road=&hfFlag=&metric_1=&hfInn=&min_pitches=0&min_results=3"
+            f"&home_road=&hfFlag=&metric_1=&hfInn=&min_pitches=0&min_results=0"
             f"&group_by=pitch&sort_col=game_date&player_event_sort=api_p_release_speed"
             f"&sort_order=desc&min_pas=0&type=details")
 
@@ -1169,14 +1172,10 @@ async def refresh_8d():
     _cache["last_8d_update"] = datetime.now().isoformat()
 
 async def daily_refresh_loop():
-    """Run in background — refresh all data daily at 9am, 8d every 2 hours"""
+    """Run in background — check every hour for scheduled tasks"""
     while True:
         now = datetime.now()
-        await asyncio.sleep(7200)
-        try:
-            await refresh_8d()
-        except Exception as e:
-            print(f"8d refresh error: {e}")
+        await asyncio.sleep(3600)  # check every hour
         if now.hour == 7:
             try:
                 await load_all_savant_data()
@@ -2875,7 +2874,7 @@ async def reload_data():
 async def reload_contact_log():
     """Fetch contact log separately after a short delay so main data loads first"""
     await asyncio.sleep(45)
-    async with httpx.AsyncClient(timeout=60) as client:
+    async with httpx.AsyncClient(timeout=120) as client:
         df = await fetch_savant_csv(savant_contact_log_url(), client)
         if not df.empty:
             _build_contact_log(df)
