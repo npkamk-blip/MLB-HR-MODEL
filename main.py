@@ -389,13 +389,18 @@ def current_season():
     return today.year if today.month >= 3 else today.year - 1
 
 def savant_8d_url():
+    """Statcast pitch-by-pitch search — reliable date filtering, includes bat speed + xStats.
+    We aggregate this ourselves rather than relying on the broken leaderboard date filter."""
     cutoff = (date.today() - timedelta(days=8)).isoformat()
-    yr = current_season()
-    return (f"{SAVANT_BASE}/leaderboard/custom?year={yr}&type=batter&filter=&sort=4"
-            f"&sortDir=desc&min=3&selections=pa,ab,home_run,barrel_batted_rate,"
-            f"exit_velocity_avg,launch_angle_avg,hard_hit_percent,pull_percent,"
-            f"slg_percent,batting_avg,strikeout,k_percent&csv=true"
-            f"&game_date_gt={cutoff}")
+    today_str = (date.today() + timedelta(days=1)).isoformat()  # tomorrow to include today's games
+    return (f"{SAVANT_BASE}/statcast_search/csv?all=true"
+            f"&hfPT=&hfAB=&hfGT=R%7C&hfPR=&hfZ=&hfStadium=&hfBBL=&hfNewZones=&hfPull="
+            f"&hfC=&hfSea={current_season()}%7C&hfSit=&player_type=batter&hfOuts=&hfOpponent="
+            f"&pitcher_throws=&batter_stands=&hfSA=&game_date_gt={cutoff}"
+            f"&game_date_lt={today_str}&hfMon=&hfInfield=&team=&position=&hfRO="
+            f"&home_road=&hfFlag=&metric_1=&hfInn=&min_pitches=0&min_results=0"
+            f"&group_by=name&sort_col=xwoba&player_event_sort=api_p_release_speed"
+            f"&sort_order=desc&min_pas=0&type=details")
 
 _cache = {
     "bat_2026":     pd.DataFrame(),
@@ -590,6 +595,87 @@ def calc_pitcher_stats(df: pd.DataFrame) -> pd.DataFrame:
     }
     df = df.rename(columns={k: v for k, v in rename.items() if k in df.columns})
     return df
+
+def calc_statcast_8d(df: pd.DataFrame) -> pd.DataFrame:
+    """Aggregate pitch-by-pitch Statcast CSV into per-player L8D stats.
+    Groups by batter name and computes: barrel%, avg EV, avg LA, hard hit%, 
+    bat speed, xwOBA, xSLG, pull%, PA, HR, K%, ISO, SLG, AVG."""
+    df = df.copy()
+    # Normalize name: "Last, First" -> "First Last"
+    if 'player_name' in df.columns:
+        df['name'] = df['player_name'].apply(lambda x: reverse_name(str(x)) if pd.notna(x) else "")
+    else:
+        return pd.DataFrame()
+
+    results = []
+    for name, grp in df.groupby('name'):
+        if not name: continue
+        # All pitches for K% and PA
+        pa_events = grp[grp['events'].notna() & (grp['events'] != '')]
+        pa = len(pa_events)
+        if pa < 1: continue
+
+        hr  = len(pa_events[pa_events['events'] == 'home_run'])
+        so  = len(pa_events[pa_events['events'].isin(['strikeout','strikeout_double_play'])])
+        k_pct = round(so / pa * 100, 1) if pa > 0 else 0.0
+
+        # Contact events only (for Statcast metrics)
+        contact = grp[grp['launch_speed'].notna() & (grp['launch_speed'] > 0)]
+        n_contact = len(contact)
+
+        avg_ev   = round(contact['launch_speed'].mean(), 1) if n_contact > 0 else 0.0
+        avg_la   = round(contact['launch_angle'].mean(), 1) if n_contact > 0 else 0.0
+        hard_hit = round(len(contact[contact['launch_speed'] >= 95]) / n_contact * 100, 1) if n_contact > 0 else 0.0
+        barrels  = len(contact[contact['launch_speed_angle'] == 6]) if 'launch_speed_angle' in contact.columns else 0
+        barrel_pct = round(barrels / n_contact * 100, 1) if n_contact > 0 else 0.0
+
+        # Bat speed (all swings)
+        swings = grp[grp['bat_speed'].notna() & (grp['bat_speed'] > 0)]
+        avg_bat_speed = round(swings['bat_speed'].mean(), 1) if len(swings) > 0 else 0.0
+
+        # Expected stats
+        xwoba = round(contact['estimated_woba_using_speedangle'].dropna().mean(), 3) if n_contact > 0 else 0.0
+        xslg  = round(contact['estimated_slg_using_speedangle'].dropna().mean(), 3) if n_contact > 0 else 0.0
+
+        # Pull%
+        pull_events = contact[contact['hc_x'].notna()]
+        if len(pull_events) > 0:
+            stand = grp['stand'].iloc[0] if 'stand' in grp.columns else 'R'
+            if stand == 'L':
+                pulls = len(pull_events[pull_events['hc_x'] > 170])
+            else:
+                pulls = len(pull_events[pull_events['hc_x'] < 100])
+            pull_pct = round(pulls / len(pull_events) * 100, 1)
+        else:
+            pull_pct = 0.0
+
+        # Traditional stats from woba/iso values
+        woba_vals = pa_events['woba_value'].dropna()
+        iso_vals  = pa_events['iso_value'].dropna()
+        avg_iso   = round(iso_vals.mean(), 3) if len(iso_vals) > 0 else 0.0
+        # Approximate SLG from xSLG since actual SLG isn't directly in the CSV
+        slg = xslg  # use xSLG as proxy — available for all contact
+        avg_val = round(len(pa_events[pa_events['events'].isin(['single','double','triple','home_run'])]) / pa, 3) if pa > 0 else 0.0
+
+        results.append({
+            'name': name,
+            'pa': pa, 'hr': hr, 'k_pct': k_pct,
+            'barrel_pct': barrel_pct,
+            'exit_velo': avg_ev,
+            'launch_angle': avg_la,
+            'hard_hit_pct': hard_hit,
+            'bat_speed': avg_bat_speed,
+            'xwoba': xwoba,
+            'xslg': xslg,
+            'pull_pct': pull_pct,
+            'iso': avg_iso,
+            'slg': slg,
+            'batting_avg': avg_val,
+        })
+
+    if not results:
+        return pd.DataFrame()
+    return pd.DataFrame(results)
 
 async def fetch_pitcher_ip(season=2026):
     """Fetch pitcher IP/HR9/ERA from MLB Stats API — /stats endpoint first to capture all pitchers"""
@@ -930,11 +1016,13 @@ async def load_all_savant_data():
             _cache["bat_2025"] = calc_batter_stats(df)
             print(f"bat_2025: {len(_cache['bat_2025'])} rows")
 
-        # Batter 8d
+        # Batter 8d — pitch-by-pitch statcast search, aggregated per player
         df = await fetch_savant_csv(savant_8d_url(), client)
         if not df.empty:
-            _cache["bat_8d"] = calc_batter_stats(df)
-            print(f"bat_8d: {len(_cache['bat_8d'])} rows")
+            _cache["bat_8d"] = calc_statcast_8d(df)
+            print(f"bat_8d: {len(_cache['bat_8d'])} rows (statcast pitch-by-pitch)")
+        else:
+            print("bat_8d: 0 rows")
 
         # Pitcher 2026
         df = await fetch_savant_csv(savant_pitcher_url(min_pa=5), client)
@@ -996,12 +1084,14 @@ async def load_all_savant_data():
     await fetch_team_stats(current_season())
 
 async def refresh_8d():
-    """Refresh 8-day Savant data and last-5-games MLB API data"""
-    async with httpx.AsyncClient(timeout=30) as client:
+    """Refresh 8-day Statcast pitch-by-pitch data and last-5-games MLB API data"""
+    async with httpx.AsyncClient(timeout=60) as client:
         df = await fetch_savant_csv(savant_8d_url(), client)
         if not df.empty:
-            _cache["bat_8d"] = calc_batter_stats(df)
-            print(f"bat_8d refreshed: {len(df)} rows")
+            agg = calc_statcast_8d(df)
+            if not agg.empty:
+                _cache["bat_8d"] = agg
+                print(f"bat_8d refreshed: {len(agg)} players from {len(df)} pitches")
     l5g_data = await fetch_last5_games_batting()
     if l5g_data:
         _cache["bat_l5g"] = l5g_data
@@ -1212,12 +1302,17 @@ async def save_daily_predictions():
                         k_s      = round(blend(bc2.get("k_pct",0), bp2.get("k_pct",0), bwc2, bwp2), 1)
                         # Raw batter L8D stats
                         b8d2 = get_batter_8d(name)
-                        barrel_l8d = round(b8d2.get("barrel_pct",0), 1)
-                        la_l8d     = round(b8d2.get("launch_angle",0), 1)
-                        ev_l8d     = round(b8d2.get("exit_velo",0), 1)
-                        iso_l8d    = round(b8d2.get("iso",0), 3)
-                        hh_l8d     = round(b8d2.get("hard_hit_pct",0), 1)
-                        pa_l8d     = int(b8d2.get("pa",0))
+                        barrel_l8d   = round(b8d2.get("barrel_pct",0), 1)
+                        la_l8d       = round(b8d2.get("launch_angle",0), 1)
+                        ev_l8d       = round(b8d2.get("exit_velo",0), 1)
+                        iso_l8d      = round(b8d2.get("iso",0), 3)
+                        hh_l8d       = round(b8d2.get("hard_hit_pct",0), 1)
+                        pa_l8d       = int(b8d2.get("pa",0))
+                        slg_l8d      = round(b8d2.get("slg",0), 3)
+                        xslg_l8d     = round(b8d2.get("xslg",0), 3)
+                        xslg_gap_l8d = round(b8d2.get("xslg",0) - b8d2.get("slg",0), 3) if b8d2.get("xslg",0) > 0 else 0
+                        xwoba_l8d    = round(b8d2.get("xwoba",0), 3)
+                        bat_speed_l8d = round(b8d2.get("bat_speed",0), 1)
                         # Raw batter split vs pitcher hand
                         b_split2   = get_batter_split(name, opp_p_hand)
                         iso_split  = round(b_split2.get("iso",0), 3)
@@ -1264,6 +1359,11 @@ async def save_daily_predictions():
                             "hard_hit_l8d": hh_l8d,
                             "pa_l8d": pa_l8d,
                             "l8d_hr": get_l8d_hr(name),
+                            "slg_l8d": slg_l8d,
+                            "xslg_l8d": xslg_l8d,
+                            "xslg_gap_l8d": xslg_gap_l8d,
+                            "xwoba_l8d": xwoba_l8d,
+                            "bat_speed_l8d": bat_speed_l8d,
                             # ── BATTER SPLIT vs PITCHER HAND ──
                             "iso_vs_hand": iso_split,
                             "slg_vs_hand": slg_split,
@@ -1521,10 +1621,17 @@ def get_batter_stats(name, year=2026):
     }
     return stats
 def get_batter_8d(name):
-    """Hybrid L8D: MLB API for counting stats (PA/HR/ISO/SLG/K%), Savant for Statcast (barrel%/LA/EV).
-    Savant date filtering returns season data for some players — detect and ignore those fields.
-    MLB API lastXGames=8 is always reliable for counting stats."""
-    # ── MLB API data (reliable counting stats) ──
+    """L8D stats from two sources:
+    1. bat_8d cache — pitch-by-pitch Statcast aggregated by calc_statcast_8d
+       gives: barrel%, EV, LA, hard hit%, bat speed, xwOBA, xSLG, pull%, K%, HR, PA
+    2. bat_l8d_hr cache — MLB API lastXGames=8
+       gives: PA, HR, ISO, SLG, AVG, K% (reliable counting stats)
+    Statcast source is preferred for Statcast metrics, MLB API for counting stats."""
+    # ── Statcast aggregated data (pitch-by-pitch) ──
+    df = _cache["bat_8d"]
+    row = fuzzy_match(name, df)
+
+    # ── MLB API counting stats (reliable) ──
     nl = name.lower().strip()
     mlb_data = _cache.get("bat_l8d_hr", {})
     mlb = mlb_data.get(nl)
@@ -1533,23 +1640,21 @@ def get_batter_8d(name):
         for k, v in mlb_data.items():
             if last in k: mlb = v; break
 
-    # ── Savant data (Statcast metrics) ──
-    df = _cache["bat_8d"]
-    row = fuzzy_match(name, df)
+    # No data at all
+    if row is None and (not mlb or mlb.get("pa", 0) == 0):
+        return {}
 
-    # Validate Savant — if PA > 40 it returned season data, clear Statcast fields
-    sav_barrel = sav_ev = sav_la = sav_hh = sav_pull = 0.0
-    if row is not None:
-        sav_pa = int(gs(row, "pa"))
-        if sav_pa <= 40:  # realistic 8-day PA ceiling
-            sav_barrel = gs(row, "barrel_pct")
-            sav_ev     = gs(row, "exit_velo")
-            sav_la     = gs(row, "launch_angle")
-            sav_hh     = gs(row, "hard_hit_pct")
-            sav_pull   = gs(row, "pull_pct")
-        # If sav_pa > 40, Savant returned season data — don't use any of it
+    # Statcast metrics from aggregated pitch-by-pitch
+    barrel_pct = gs(row, "barrel_pct") if row is not None else 0.0
+    exit_velo  = gs(row, "exit_velo")  if row is not None else 0.0
+    launch_angle = gs(row, "launch_angle") if row is not None else 0.0
+    hard_hit_pct = gs(row, "hard_hit_pct") if row is not None else 0.0
+    pull_pct   = gs(row, "pull_pct")   if row is not None else 0.0
+    bat_speed  = gs(row, "bat_speed")  if row is not None else 0.0
+    xwoba      = gs(row, "xwoba")      if row is not None else 0.0
+    xslg       = gs(row, "xslg")       if row is not None else 0.0
 
-    # ── Counting stats: MLB API primary, Savant fallback ──
+    # Counting stats: MLB API primary, Statcast fallback
     if mlb and mlb.get("pa", 0) > 0:
         pa    = mlb.get("pa", 0)
         hr    = mlb.get("hr", 0)
@@ -1557,12 +1662,12 @@ def get_batter_8d(name):
         slg   = mlb.get("slg", 0.0)
         avg   = mlb.get("avg", 0.0)
         k_pct = mlb.get("k_pct", 0.0)
-    elif row is not None and int(gs(row, "pa")) <= 40:
+    elif row is not None:
         pa    = int(gs(row, "pa"))
         hr    = gs(row, "hr")
-        slg   = gs(row, "slg_percent")
+        iso   = gs(row, "iso")
+        slg   = gs(row, "slg")
         avg   = gs(row, "batting_avg")
-        iso   = slg - avg if slg > 0 else 0
         k_pct = gs(row, "k_pct")
     else:
         return {}
@@ -1572,11 +1677,14 @@ def get_batter_8d(name):
 
     return {
         "pa": pa, "hr": hr,
-        "barrel_pct":   sav_barrel,
-        "exit_velo":    sav_ev,
-        "launch_angle": sav_la,
-        "hard_hit_pct": sav_hh,
-        "pull_pct":     sav_pull,
+        "barrel_pct":    barrel_pct,
+        "exit_velo":     exit_velo,
+        "launch_angle":  launch_angle,
+        "hard_hit_pct":  hard_hit_pct,
+        "pull_pct":      pull_pct,
+        "bat_speed":     bat_speed,
+        "xwoba":         xwoba,
+        "xslg":          xslg,
         "iso": iso, "k_pct": k_pct,
         "slg": slg, "avg": avg,
         "hr_rate": (hr / max(pa, 1)) * 600 if pa > 0 else 0,
