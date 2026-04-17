@@ -428,6 +428,7 @@ _cache = {
 }
 
 _games_cache = {}   # { date_str: { "data": ..., "ts": datetime } }
+_contact_log = {}   # { player_name_lower: [ {date, pitch_type, ev, la, dist, bat_speed, result}, ... ] }
 GAMES_CACHE_TTL = 900  # 15 minutes in seconds
 
 PARK_HR_FACTORS = {
@@ -675,6 +676,43 @@ def calc_statcast_8d(df: pd.DataFrame) -> pd.DataFrame:
 
     if not results:
         return pd.DataFrame()
+
+    # Build contact log — last 8 batted ball events per player for UI display
+    for name, grp in df.groupby('name'):
+        if not name: continue
+        contact = grp[grp['launch_speed'].notna() & (grp['launch_speed'] > 0)].copy()
+        if contact.empty: continue
+        contact = contact.sort_values('game_date', ascending=False).head(8)
+        events = []
+        for _, row in contact.iterrows():
+            result = str(row.get('events', '') or '').strip()
+            if not result or result == 'nan': continue
+            pitch_name = str(row.get('pitch_name', '') or '').strip()
+            # Shorten pitch names
+            pitch_short = {
+                '4-Seam Fastball': '4-Seam',
+                'Sinker': 'Sinker',
+                'Slider': 'Slider',
+                'Sweeper': 'Sweeper',
+                'Changeup': 'Change',
+                'Curveball': 'Curve',
+                'Cutter': 'Cutter',
+                'Splitter': 'Split',
+                'Knuckle Curve': 'K-Curve',
+                'Fastball': 'FB',
+            }.get(pitch_name, pitch_name[:6] if pitch_name else '--')
+            events.append({
+                'date':       str(row.get('game_date', ''))[-5:],
+                'pitch_type': pitch_short,
+                'ev':         round(float(row['launch_speed']), 1),
+                'angle':      round(float(row['launch_angle']), 1) if pd.notna(row.get('launch_angle')) else 0,
+                'distance':   int(float(row['hit_distance_sc'])) if pd.notna(row.get('hit_distance_sc')) and float(row.get('hit_distance_sc', 0)) > 0 else 0,
+                'bat_speed':  round(float(row['bat_speed']), 1) if pd.notna(row.get('bat_speed')) and float(row.get('bat_speed', 0)) > 0 else 0,
+                'result':     result,
+            })
+        if events:
+            _contact_log[name.lower()] = events
+
     return pd.DataFrame(results)
 
 async def fetch_pitcher_ip(season=2026):
@@ -1687,6 +1725,15 @@ def get_batter_8d(name):
         "slg": slg, "avg": avg,
         "hr_rate": (hr / max(pa, 1)) * 600 if pa > 0 else 0,
     }
+
+def get_contact_log(name):
+    """Get last 8 batted ball events for a player from the contact log cache"""
+    nl = name.lower().strip()
+    if nl in _contact_log: return _contact_log[nl]
+    last = nl.split()[-1]
+    for k, v in _contact_log.items():
+        if last in k: return v
+    return []
 
 def get_batter_l5g(name):
     nl = name.lower().strip()
@@ -2960,6 +3007,7 @@ async def get_games(date: str = None, refresh: bool = False):
                 },
                 "dk_odds": fmt_odds(match_dk_odds(name, dk_props)),
                 "projected": is_proj, "platoon_tag": platoon_tag,
+                "contact_log": get_contact_log(name),
                 "breakdown": breakdown,
             })
 
