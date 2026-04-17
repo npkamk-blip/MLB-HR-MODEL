@@ -659,8 +659,15 @@ function buildBatDetail(b){
 
   // -- Model multipliers row --
   h+='<div class="dmodel-row">';
+  // Base rate breakdown tooltip
+  var hrSeason=bd.hr_season||0;
+  var paSeason=bd.pa_season||0;
+  var hrPerPa=paSeason>0?((hrSeason/paSeason)*100).toFixed(1):'--';
   var avgPa=b._full&&b._full.breakdown&&b._full.breakdown.avg_pa?b._full.breakdown.avg_pa:0;
-  h+='<div class="dmodel-block"><span class="dmodel-lbl">Base</span><span class="chip-val n">'+(bd.base_rate>0?bd.base_rate.toFixed(1)+'%':'--')+'</span>'+(avgPa>0?'<span style="font-size:9px;color:var(--muted2);margin-left:3px">('+avgPa.toFixed(1)+' PA)</span>':'')+'</div>';
+  var baseTooltip='HR/PA: '+hrSeason+'/'+paSeason+' = '+hrPerPa+'% per PA';
+  if(avgPa>0) baseTooltip+=' | Avg '+avgPa.toFixed(1)+' PA/game';
+  baseTooltip+=' | Relative ranking model — not literal per-game %';
+  h+='<div class="dmodel-block" title="'+baseTooltip+'" style="cursor:help"><span class="dmodel-lbl">Base</span><span class="chip-val n">'+(bd.base_rate>0?bd.base_rate.toFixed(1)+'%':'--')+'</span><span style="font-size:9px;color:var(--muted2);margin-left:3px">'+(paSeason>0?hrSeason+'/'+paSeason:'')+'</span></div>';
   h+='<div class="dmodel-block"><span class="dmodel-lbl">Barrel×</span><span class="chip-val '+(bd.barrel_mult>=1.5?'g':bd.barrel_mult>=1?'y':'r')+'">'+(bd.barrel_mult>0?bd.barrel_mult.toFixed(2)+'x':'--')+'</span></div>';
   h+='<div class="dmodel-block"><span class="dmodel-lbl">LA×</span><span class="chip-val '+(bd.la_mult>=1?'g':bd.la_mult>=0.9?'y':'r')+'">'+(bd.la_mult>0?bd.la_mult.toFixed(2)+'x':'--')+'</span></div>';
   h+='<div class="dmodel-block"><span class="dmodel-lbl">Pit×</span><span class="chip-val '+(bd.pit_vuln_mult>=1.3?'g':bd.pit_vuln_mult>=1?'y':'r')+'">'+(bd.pit_vuln_mult>0?bd.pit_vuln_mult.toFixed(2)+'x':'--')+'</span></div>';
