@@ -1083,14 +1083,7 @@ async def load_all_savant_data():
         else:
             print("bat_8d: 0 rows")
 
-        # Contact log — individual pitch rows for last 8 batted balls per player
-        await asyncio.sleep(2)
-        df_contact = await fetch_savant_csv(savant_contact_log_url(), client)
-        if not df_contact.empty:
-            _build_contact_log(df_contact)
-            print(f"contact_log: {len(_contact_log)} players")
-        else:
-            print("contact_log: 0 rows")
+        # Contact log fetched separately in refresh_8d to avoid startup timeout
 
         # Pitcher 2026
         df = await fetch_savant_csv(savant_pitcher_url(min_pa=5), client)
