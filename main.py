@@ -338,7 +338,7 @@ ROTATION_SCHEDULE = {
                    "pit_hard_hit_season","pitch_matchup_score",
                    "bullpen_vuln","bat_platoon_mult","pit_platoon_mult",
                    "park_factor","weather_mult","hot_cold_mult","k_pct_season",
-                   "avg_pa_per_game"],
+],
         "candidates": [],  # nothing new yet, establishing baseline
         "note": "Baseline round — establishing correlations for all core stats"
     },
@@ -1409,8 +1409,6 @@ async def save_daily_predictions():
                                 (pitch2.get("usage",0)/100 * (pitch2.get("batter_rv",0) - pitch2.get("pit_rv",0)) if pitch2 else 0), 2
                             ),
                             # ── OPPORTUNITY ──
-                            "avg_pa_per_game": pa_data.get("avg_pa_per_game",3.1),
-                            "avg_ab_per_game": pa_data.get("avg_ab_per_game",2.8),
                             "games_played": pa_data.get("games",0),
                             # ── ROTATION METADATA ──
                             "rotation_round": get_rotation_round(),
@@ -1975,11 +1973,6 @@ def compute_hr_prob_multiplicative(
     # base_rate = HR/PA blended between 2026 season and 2025 career
     # Output is a relative score — higher = more likely than others today
     # Not a literal per-game probability. Rankings matter more than absolute values.
-    pa_data = get_avg_pa_per_game(name)
-    avg_pa  = pa_data.get("avg_pa_per_game", 3.8)
-    if avg_pa < 2.0: avg_pa = 3.8
-    avg_pa  = min(avg_pa, 5.0)
-
     hr_season = bc.get("hr", 0)
     hr_career  = blend(bc.get("hr", 0), bp.get("hr", 0), bwc, bwp)
     pa_season  = max(pa_26, 1)
@@ -2178,7 +2171,6 @@ def compute_hr_prob_multiplicative(
 
     breakdown = {
         "base_rate": round(base_rate * 100, 2),
-        "avg_pa": round(avg_pa, 2),
         "barrel_use": round(barrel_use, 1), "barrel_season": round(barrel_season, 1),
         "barrel_l8d": round(barrel_l8d, 1), "barrel_mult": round(barrel_mult, 3),
         "la_use": round(la_use, 1), "la_season": round(la_season, 1),
