@@ -388,6 +388,20 @@ def current_season():
     # MLB season runs roughly March-November
     return today.year if today.month >= 3 else today.year - 1
 
+def savant_contact_log_url():
+    """Pitch-by-pitch URL for building contact log — individual batted ball events only.
+    Smaller than full statcast search — only batted balls (hfAB=) in last 8 days."""
+    cutoff = (date.today() - timedelta(days=8)).isoformat()
+    today_str = (date.today() + timedelta(days=1)).isoformat()
+    return (f"{SAVANT_BASE}/statcast_search/csv?all=true"
+            f"&hfPT=&hfAB=&hfGT=R%7C&hfPR=&hfZ=&hfStadium=&hfBBL=&hfNewZones=&hfPull="
+            f"&hfC=&hfSea={current_season()}%7C&hfSit=&player_type=batter&hfOuts=&hfOpponent="
+            f"&pitcher_throws=&batter_stands=&hfSA=&game_date_gt={cutoff}"
+            f"&game_date_lt={today_str}&hfMon=&hfInfield=&team=&position=&hfRO="
+            f"&home_road=&hfFlag=&metric_1=&hfInn=&min_pitches=0&min_results=3"
+            f"&group_by=pitch&sort_col=game_date&player_event_sort=api_p_release_speed"
+            f"&sort_order=desc&min_pas=0&type=details")
+
 def savant_8d_url():
     """Statcast pitch-by-pitch search — reliable date filtering, includes bat speed + xStats.
     We aggregate this ourselves rather than relying on the broken leaderboard date filter."""
@@ -680,43 +694,47 @@ def calc_statcast_8d(df: pd.DataFrame) -> pd.DataFrame:
     if not results:
         return pd.DataFrame()
 
-    # Build contact log — last 8 batted ball events per player for UI display
-    for name, grp in df.groupby('name'):
+    return pd.DataFrame(results)
+
+def _build_contact_log(df: pd.DataFrame):
+    """Build contact log from pitch-by-pitch Statcast CSV (group_by=pitch).
+    Stores last 8 batted ball events per player in _contact_log cache."""
+    if df is None or df.empty: return
+    df = df.copy()
+    if 'player_name' in df.columns:
+        df['name'] = df['player_name'].apply(lambda x: reverse_name(str(x)) if pd.notna(x) else "")
+    else:
+        return
+    PITCH_SHORT = {
+        '4-Seam Fastball': '4-Seam', 'Sinker': 'Sinker', 'Slider': 'Slider',
+        'Sweeper': 'Sweeper', 'Changeup': 'Change', 'Curveball': 'Curve',
+        'Cutter': 'Cutter', 'Splitter': 'Split', 'Knuckle Curve': 'K-Curve',
+        'Fastball': 'FB',
+    }
+    # Only keep batted ball events
+    contact = df[df['launch_speed'].notna() & (df['launch_speed'] > 0) & df['events'].notna()].copy()
+    for name, grp in contact.groupby('name'):
         if not name: continue
-        contact = grp[grp['launch_speed'].notna() & (grp['launch_speed'] > 0)].copy()
-        if contact.empty: continue
-        contact = contact.sort_values('game_date', ascending=False).head(8)
+        grp_sorted = grp.sort_values('game_date', ascending=False).head(8)
         events = []
-        for _, row in contact.iterrows():
+        for _, row in grp_sorted.iterrows():
             result = str(row.get('events', '') or '').strip()
             if not result or result == 'nan': continue
             pitch_name = str(row.get('pitch_name', '') or '').strip()
-            # Shorten pitch names
-            pitch_short = {
-                '4-Seam Fastball': '4-Seam',
-                'Sinker': 'Sinker',
-                'Slider': 'Slider',
-                'Sweeper': 'Sweeper',
-                'Changeup': 'Change',
-                'Curveball': 'Curve',
-                'Cutter': 'Cutter',
-                'Splitter': 'Split',
-                'Knuckle Curve': 'K-Curve',
-                'Fastball': 'FB',
-            }.get(pitch_name, pitch_name[:6] if pitch_name else '--')
-            events.append({
-                'date':       str(row.get('game_date', ''))[-5:],
-                'pitch_type': pitch_short,
-                'ev':         round(float(row['launch_speed']), 1),
-                'angle':      round(float(row['launch_angle']), 1) if pd.notna(row.get('launch_angle')) else 0,
-                'distance':   int(float(row['hit_distance_sc'])) if pd.notna(row.get('hit_distance_sc')) and float(row.get('hit_distance_sc', 0)) > 0 else 0,
-                'bat_speed':  round(float(row['bat_speed']), 1) if pd.notna(row.get('bat_speed')) and float(row.get('bat_speed', 0)) > 0 else 0,
-                'result':     result,
-            })
+            pitch_short = PITCH_SHORT.get(pitch_name, pitch_name[:6] if pitch_name else '--')
+            try:
+                events.append({
+                    'date':       str(row.get('game_date', ''))[-5:],
+                    'pitch_type': pitch_short,
+                    'ev':         round(float(row['launch_speed']), 1),
+                    'angle':      round(float(row['launch_angle']), 1) if pd.notna(row.get('launch_angle')) else 0,
+                    'distance':   int(float(row['hit_distance_sc'])) if pd.notna(row.get('hit_distance_sc')) and float(row.get('hit_distance_sc', 0) or 0) > 0 else 0,
+                    'bat_speed':  round(float(row['bat_speed']), 1) if pd.notna(row.get('bat_speed')) and float(row.get('bat_speed', 0) or 0) > 0 else 0,
+                    'result':     result,
+                })
+            except Exception: continue
         if events:
             _contact_log[name.lower()] = events
-
-    return pd.DataFrame(results)
 
 async def fetch_pitcher_ip(season=2026):
     """Fetch pitcher IP/HR9/ERA from MLB Stats API — /stats endpoint first to capture all pitchers"""
@@ -1057,13 +1075,22 @@ async def load_all_savant_data():
             _cache["bat_2025"] = calc_batter_stats(df)
             print(f"bat_2025: {len(_cache['bat_2025'])} rows")
 
-        # Batter 8d — pitch-by-pitch statcast search, aggregated per player
+        # Batter 8d — aggregated stats per player (group_by=name)
         df = await fetch_savant_csv(savant_8d_url(), client)
         if not df.empty:
             _cache["bat_8d"] = calc_statcast_8d(df)
-            print(f"bat_8d: {len(_cache['bat_8d'])} rows (statcast pitch-by-pitch)")
+            print(f"bat_8d: {len(_cache['bat_8d'])} rows")
         else:
             print("bat_8d: 0 rows")
+
+        # Contact log — individual pitch rows for last 8 batted balls per player
+        await asyncio.sleep(2)
+        df_contact = await fetch_savant_csv(savant_contact_log_url(), client)
+        if not df_contact.empty:
+            _build_contact_log(df_contact)
+            print(f"contact_log: {len(_contact_log)} players")
+        else:
+            print("contact_log: 0 rows")
 
         # Pitcher 2026
         df = await fetch_savant_csv(savant_pitcher_url(min_pa=5), client)
@@ -1125,14 +1152,19 @@ async def load_all_savant_data():
     await fetch_team_stats(current_season())
 
 async def refresh_8d():
-    """Refresh 8-day Statcast pitch-by-pitch data and last-5-games MLB API data"""
+    """Refresh 8-day data — aggregated stats + contact log"""
     async with httpx.AsyncClient(timeout=60) as client:
         df = await fetch_savant_csv(savant_8d_url(), client)
         if not df.empty:
             agg = calc_statcast_8d(df)
             if not agg.empty:
                 _cache["bat_8d"] = agg
-                print(f"bat_8d refreshed: {len(agg)} players from {len(df)} pitches")
+                print(f"bat_8d refreshed: {len(agg)} players")
+        await asyncio.sleep(2)
+        df_contact = await fetch_savant_csv(savant_contact_log_url(), client)
+        if not df_contact.empty:
+            _build_contact_log(df_contact)
+            print(f"contact_log refreshed: {len(_contact_log)} players")
     l5g_data = await fetch_last5_games_batting()
     if l5g_data:
         _cache["bat_l5g"] = l5g_data
