@@ -1965,7 +1965,10 @@ def calc_weather_multiplier(home_team, wind_speed, wind_direction, temperature, 
     else:
         hr_bearing = stadium.get("hr_bearing_R", stadium.get("hr_bearing", 305))
     open_factor = stadium.get("open_factor", 0.5)
-    diff = angle_diff(wind_direction, hr_bearing)
+    # Open-Meteo gives wind direction as where wind comes FROM (meteorological convention)
+    # We need where it's blowing TO — flip 180 degrees
+    wind_toward = (wind_direction + 180) % 360
+    diff = angle_diff(wind_toward, hr_bearing)
     alignment = math.cos(math.radians(diff))
     speed_factor = 0 if wind_speed < 5 else 0.3 if wind_speed < 10 else 0.7 if wind_speed < 16 else 1.0
     wind_mult = 1.0 + (alignment * speed_factor * 0.12 * open_factor)
