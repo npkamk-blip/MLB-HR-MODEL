@@ -1971,45 +1971,42 @@ def compute_hr_prob_multiplicative(
     has_8d = b8d.get("pa", 0) >= 3
     total_pa = pa_26 + pa_25
 
-    # ── Step 1: Base HR rate — true per-game probability ──
-    # Formula: 1 - (1 - hr_per_pa)^avg_pa_per_game
-    # This converts per-PA HR rate to probability of at least 1 HR in today's game
+    # ── Step 1: Base HR rate (per-PA, relative ranking model) ──
+    # base_rate = HR/PA blended between 2026 season and 2025 career
+    # Output is a relative score — higher = more likely than others today
+    # Not a literal per-game probability. Rankings matter more than absolute values.
     pa_data = get_avg_pa_per_game(name)
     avg_pa  = pa_data.get("avg_pa_per_game", 3.8)
-    if avg_pa < 2.0: avg_pa = 3.8   # fallback for new players with no games data
-    avg_pa  = min(avg_pa, 5.0)       # cap at 5 PA
+    if avg_pa < 2.0: avg_pa = 3.8
+    avg_pa  = min(avg_pa, 5.0)
 
     hr_season = bc.get("hr", 0)
     hr_career  = blend(bc.get("hr", 0), bp.get("hr", 0), bwc, bwp)
     pa_season  = max(pa_26, 1)
 
-    # HR/PA rates
     hr_per_pa_season = hr_season / pa_season if pa_season > 0 else 0
     hr_per_pa_career = hr_career / max(pa_25 + pa_26, 1) if (pa_25 + pa_26) > 0 else 0.028
 
-    # Blend season vs career by PA
+    # PA-weighted blend — 200+ PA = trust season fully
     if pa_26 >= 200:
-        hr_per_pa = hr_per_pa_season
+        base_rate = hr_per_pa_season
     elif pa_26 >= 150:
-        hr_per_pa = hr_per_pa_season * 0.80 + hr_per_pa_career * 0.20
+        base_rate = hr_per_pa_season * 0.80 + hr_per_pa_career * 0.20
     elif pa_26 >= 100:
-        hr_per_pa = hr_per_pa_season * 0.60 + hr_per_pa_career * 0.40
+        base_rate = hr_per_pa_season * 0.60 + hr_per_pa_career * 0.40
     elif pa_26 >= 50:
-        hr_per_pa = hr_per_pa_season * 0.30 + hr_per_pa_career * 0.70
+        base_rate = hr_per_pa_season * 0.30 + hr_per_pa_career * 0.70
     else:
-        hr_per_pa = hr_per_pa_career
+        base_rate = hr_per_pa_career
 
     # Floor: league avg HR/PA ~2.8%
-    if hr_per_pa <= 0:
-        hr_per_pa = 0.028
-    hr_per_pa = min(hr_per_pa, 0.12)  # cap per-PA rate at 12%
+    if base_rate <= 0:
+        base_rate = 0.028
+    base_rate = min(base_rate, 0.12)
 
     # Small sample confidence gate
-    if total_pa < 30:   hr_per_pa = hr_per_pa * 0.55 + 0.028 * 0.45
-    elif total_pa < 60: hr_per_pa = hr_per_pa * 0.75 + 0.028 * 0.25
-
-    # Convert to per-game probability
-    base_rate = 1 - (1 - hr_per_pa) ** avg_pa
+    if total_pa < 30:   base_rate = base_rate * 0.55 + 0.028 * 0.45
+    elif total_pa < 60: base_rate = base_rate * 0.75 + 0.028 * 0.25
 
     running = base_rate
 
