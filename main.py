@@ -2005,6 +2005,15 @@ def compute_hr_prob_multiplicative(
     if total_pa < 30:   base_rate = base_rate * 0.55 + 0.028 * 0.45
     elif total_pa < 60: base_rate = base_rate * 0.75 + 0.028 * 0.25
 
+    # ── PA opportunity adjustment ──
+    # Convert HR/PA rate to probability of hitting at least 1 HR in avg_pa_per_game PA
+    # P(at least 1 HR) = 1 - (1 - hr_per_pa)^n_pa
+    pa_data = get_avg_pa_per_game(name)
+    avg_pa = pa_data.get("avg_pa_per_game", 3.5)
+    if avg_pa < 2.0: avg_pa = 3.5   # fallback for new players with no games data
+    avg_pa = min(avg_pa, 5.0)        # cap at 5 PA — no one averages more
+    base_rate = 1 - (1 - base_rate) ** avg_pa
+
     running = base_rate
 
     # ── Step 2: Barrel% — season + L8D weighted separately via safe_mult ──
