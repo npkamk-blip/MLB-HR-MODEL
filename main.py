@@ -465,36 +465,39 @@ PARK_HR_FACTORS = {
 }
 
 STADIUMS = {
+    # hr_bearing_R = direction RHB pull HRs go (to LF, ~NW for most parks)
+    # hr_bearing_L = direction LHB pull HRs go (to RF, ~SE for most parks)
+    # open_factor = how much wind affects the park (1.0 = fully open like Wrigley)
     "Arizona Diamondbacks":  {"lat":33.4453,"lon":-112.0667,"dome":True},
-    "Atlanta Braves":        {"lat":33.8907,"lon":-84.4677,"dome":False,"hr_bearing":225,"open_factor":0.5},
-    "Baltimore Orioles":     {"lat":39.2838,"lon":-76.6217,"dome":False,"hr_bearing":180,"open_factor":0.6},
-    "Boston Red Sox":        {"lat":42.3467,"lon":-71.0972,"dome":False,"hr_bearing":270,"open_factor":0.7},
-    "Chicago Cubs":          {"lat":41.9484,"lon":-87.6553,"dome":False,"hr_bearing":225,"open_factor":1.0},
-    "Chicago White Sox":     {"lat":41.8299,"lon":-87.6338,"dome":False,"hr_bearing":315,"open_factor":0.5},
-    "Cincinnati Reds":       {"lat":39.0979,"lon":-84.5082,"dome":False,"hr_bearing":270,"open_factor":0.6},
-    "Cleveland Guardians":   {"lat":41.4954,"lon":-81.6854,"dome":False,"hr_bearing":225,"open_factor":0.6},
-    "Colorado Rockies":      {"lat":39.7559,"lon":-104.9942,"dome":False,"hr_bearing":270,"open_factor":0.7},
-    "Detroit Tigers":        {"lat":42.3390,"lon":-83.0485,"dome":False,"hr_bearing":135,"open_factor":0.5},
+    "Atlanta Braves":        {"lat":33.8907,"lon":-84.4677,"dome":False,"hr_bearing_R":300,"hr_bearing_L":130,"open_factor":0.5},
+    "Baltimore Orioles":     {"lat":39.2838,"lon":-76.6217,"dome":False,"hr_bearing_R":310,"hr_bearing_L":140,"open_factor":0.6},
+    "Boston Red Sox":        {"lat":42.3467,"lon":-71.0972,"dome":False,"hr_bearing_R":290,"hr_bearing_L":120,"open_factor":0.7},
+    "Chicago Cubs":          {"lat":41.9484,"lon":-87.6553,"dome":False,"hr_bearing_R":305,"hr_bearing_L":135,"open_factor":1.0},
+    "Chicago White Sox":     {"lat":41.8299,"lon":-87.6338,"dome":False,"hr_bearing_R":320,"hr_bearing_L":150,"open_factor":0.5},
+    "Cincinnati Reds":       {"lat":39.0979,"lon":-84.5082,"dome":False,"hr_bearing_R":300,"hr_bearing_L":130,"open_factor":0.6},
+    "Cleveland Guardians":   {"lat":41.4954,"lon":-81.6854,"dome":False,"hr_bearing_R":295,"hr_bearing_L":125,"open_factor":0.6},
+    "Colorado Rockies":      {"lat":39.7559,"lon":-104.9942,"dome":False,"hr_bearing_R":310,"hr_bearing_L":140,"open_factor":0.7},
+    "Detroit Tigers":        {"lat":42.3390,"lon":-83.0485,"dome":False,"hr_bearing_R":280,"hr_bearing_L":110,"open_factor":0.5},
     "Houston Astros":        {"lat":29.7573,"lon":-95.3555,"dome":True},
-    "Kansas City Royals":    {"lat":39.0517,"lon":-94.4803,"dome":False,"hr_bearing":180,"open_factor":0.6},
-    "Los Angeles Angels":    {"lat":33.8003,"lon":-117.8827,"dome":False,"hr_bearing":270,"open_factor":0.5},
-    "Los Angeles Dodgers":   {"lat":34.0739,"lon":-118.2400,"dome":False,"hr_bearing":315,"open_factor":0.5},
+    "Kansas City Royals":    {"lat":39.0517,"lon":-94.4803,"dome":False,"hr_bearing_R":315,"hr_bearing_L":145,"open_factor":0.6},
+    "Los Angeles Angels":    {"lat":33.8003,"lon":-117.8827,"dome":False,"hr_bearing_R":300,"hr_bearing_L":130,"open_factor":0.5},
+    "Los Angeles Dodgers":   {"lat":34.0739,"lon":-118.2400,"dome":False,"hr_bearing_R":315,"hr_bearing_L":145,"open_factor":0.5},
     "Miami Marlins":         {"lat":25.7781,"lon":-80.2197,"dome":True},
     "Milwaukee Brewers":     {"lat":43.0282,"lon":-87.9712,"dome":True},
-    "Minnesota Twins":       {"lat":44.9817,"lon":-93.2778,"dome":False,"hr_bearing":225,"open_factor":0.6},
-    "New York Mets":         {"lat":40.7571,"lon":-73.8458,"dome":False,"hr_bearing":270,"open_factor":0.5},
-    "New York Yankees":      {"lat":40.8296,"lon":-73.9262,"dome":False,"hr_bearing":270,"open_factor":0.6},
-    "Oakland Athletics":     {"lat":38.5726,"lon":-121.5088,"dome":False,"hr_bearing":270,"open_factor":0.5},
-    "Philadelphia Phillies": {"lat":39.9056,"lon":-75.1665,"dome":False,"hr_bearing":225,"open_factor":0.5},
-    "Pittsburgh Pirates":    {"lat":40.4469,"lon":-80.0057,"dome":False,"hr_bearing":270,"open_factor":0.6},
-    "San Diego Padres":      {"lat":32.7076,"lon":-117.1570,"dome":False,"hr_bearing":270,"open_factor":0.8},
-    "San Francisco Giants":  {"lat":37.7786,"lon":-122.3893,"dome":False,"hr_bearing":315,"open_factor":0.9},
+    "Minnesota Twins":       {"lat":44.9817,"lon":-93.2778,"dome":False,"hr_bearing_R":300,"hr_bearing_L":130,"open_factor":0.6},
+    "New York Mets":         {"lat":40.7571,"lon":-73.8458,"dome":False,"hr_bearing_R":310,"hr_bearing_L":140,"open_factor":0.5},
+    "New York Yankees":      {"lat":40.8296,"lon":-73.9262,"dome":False,"hr_bearing_R":290,"hr_bearing_L":120,"open_factor":0.6},
+    "Oakland Athletics":     {"lat":38.5726,"lon":-121.5088,"dome":False,"hr_bearing_R":305,"hr_bearing_L":135,"open_factor":0.5},
+    "Philadelphia Phillies": {"lat":39.9056,"lon":-75.1665,"dome":False,"hr_bearing_R":300,"hr_bearing_L":130,"open_factor":0.5},
+    "Pittsburgh Pirates":    {"lat":40.4469,"lon":-80.0057,"dome":False,"hr_bearing_R":310,"hr_bearing_L":140,"open_factor":0.6},
+    "San Diego Padres":      {"lat":32.7076,"lon":-117.1570,"dome":False,"hr_bearing_R":305,"hr_bearing_L":135,"open_factor":0.8},
+    "San Francisco Giants":  {"lat":37.7786,"lon":-122.3893,"dome":False,"hr_bearing_R":320,"hr_bearing_L":150,"open_factor":0.9},
     "Seattle Mariners":      {"lat":47.5914,"lon":-122.3325,"dome":True},
-    "St. Louis Cardinals":   {"lat":38.6226,"lon":-90.1928,"dome":False,"hr_bearing":225,"open_factor":0.5},
+    "St. Louis Cardinals":   {"lat":38.6226,"lon":-90.1928,"dome":False,"hr_bearing_R":295,"hr_bearing_L":125,"open_factor":0.5},
     "Tampa Bay Rays":        {"lat":27.7683,"lon":-82.6534,"dome":True},
     "Texas Rangers":         {"lat":32.7473,"lon":-97.0825,"dome":True},
     "Toronto Blue Jays":     {"lat":43.6414,"lon":-79.3894,"dome":True},
-    "Washington Nationals":  {"lat":38.8730,"lon":-77.0074,"dome":False,"hr_bearing":180,"open_factor":0.5},
+    "Washington Nationals":  {"lat":38.8730,"lon":-77.0074,"dome":False,"hr_bearing_R":300,"hr_bearing_L":130,"open_factor":0.5},
 }
 
 PITCH_TYPE_MAP = {
@@ -1955,20 +1958,29 @@ def calc_weather_multiplier(home_team, wind_speed, wind_direction, temperature, 
     stadium = STADIUMS.get(home_team)
     if not stadium: return 1.0, "Unknown"
     if stadium.get("dome"): return 1.0, "Dome"
-    hr_bearing = stadium.get("hr_bearing", 225)
+    # Use handedness-specific HR bearing
+    # RHB pull to LF (~NW), LHB pull to RF (~SE)
+    if batter_hand == "L":
+        hr_bearing = stadium.get("hr_bearing_L", stadium.get("hr_bearing", 135))
+    else:
+        hr_bearing = stadium.get("hr_bearing_R", stadium.get("hr_bearing", 305))
     open_factor = stadium.get("open_factor", 0.5)
     diff = angle_diff(wind_direction, hr_bearing)
     alignment = math.cos(math.radians(diff))
     speed_factor = 0 if wind_speed < 5 else 0.3 if wind_speed < 10 else 0.7 if wind_speed < 16 else 1.0
     wind_mult = 1.0 + (alignment * speed_factor * 0.12 * open_factor)
     temp_mult = 1.06 if temperature >= 80 else 1.02 if temperature >= 70 else 0.91 if temperature < 50 else 0.96 if temperature < 60 else 1.0
-    if abs(alignment) <= 0.5 and wind_speed >= 10:
-        cross_diff = (wind_direction - hr_bearing) % 360
-        direction_label = "Favors Lefties" if 45 < cross_diff < 225 else "Favors Righties"
-    elif alignment > 0.5 and wind_speed >= 10: direction_label = "Blowing Out"
-    elif alignment < -0.5 and wind_speed >= 10: direction_label = "Blowing In"
-    elif wind_speed < 5: direction_label = "Calm"
-    else: direction_label = "Crosswind"
+    # Direction label based on batter handedness
+    if wind_speed < 5:
+        direction_label = "Calm"
+    elif alignment > 0.5:
+        direction_label = "Blowing Out"
+    elif alignment < -0.5:
+        direction_label = "Blowing In"
+    elif abs(alignment) <= 0.5:
+        direction_label = "Favors Righties" if batter_hand == "R" and alignment > 0 else "Favors Lefties" if batter_hand == "L" and alignment > 0 else "Crosswind"
+    else:
+        direction_label = "Crosswind"
     return round(wind_mult * temp_mult, 3), direction_label
 
 def sigmoid_to_prob(raw_score):
@@ -2492,11 +2504,15 @@ def _compute_hr_probability_legacy(name, bat_hand, opp_p_name, opp_p_hand, park_
 # ── Weather ──
 async def fetch_weather(lat, lon, game_time_utc):
     try:
-        hour = 18
+        # Default to 1pm local (most common day game time)
+        local_hour = 13
         if game_time_utc:
             try:
                 dt = datetime.fromisoformat(game_time_utc.replace("Z", "+00:00"))
-                hour = dt.hour
+                # Convert UTC to ET (UTC-4 during EDT, UTC-5 during EST)
+                # April-November = EDT = UTC-4
+                et_offset = -4
+                local_hour = (dt.hour + et_offset) % 24
             except: pass
         url = (f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}"
                f"&hourly=temperature_2m,windspeed_10m,winddirection_10m"
@@ -2508,9 +2524,14 @@ async def fetch_weather(lat, lon, game_time_utc):
         temps = hourly.get("temperature_2m", [])
         speeds = hourly.get("windspeed_10m", [])
         dirs = hourly.get("winddirection_10m", [])
-        idx = min(hour, len(temps) - 1)
+        # Find the index matching the local game hour
+        idx = 0
         for i, t in enumerate(times):
-            if f"T{hour:02d}:" in t: idx = i; break
+            if f"T{local_hour:02d}:" in t:
+                idx = i
+                break
+        if idx == 0 and len(temps) > local_hour:
+            idx = local_hour  # fallback
         return (round(temps[idx]) if idx < len(temps) else 70,
                 round(speeds[idx]) if idx < len(speeds) else 0,
                 round(dirs[idx]) if idx < len(dirs) else 0)
