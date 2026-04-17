@@ -1521,10 +1521,10 @@ def get_batter_stats(name, year=2026):
     }
     return stats
 def get_batter_8d(name):
-    """Blend MLB API lastXGames=8 (reliable rolling window) with Savant 8d (barrel%, LA, EV only).
-    MLB API gives real ISO/SLG/AVG/K%/HR/PA. Savant gives Statcast contact metrics.
-    Savant date filtering is unreliable — never use its PA/HR/ISO/SLG."""
-    # ── MLB API data (reliable) ──
+    """Hybrid L8D: MLB API for counting stats (PA/HR/ISO/SLG/K%), Savant for Statcast (barrel%/LA/EV).
+    Savant date filtering returns season data for some players — detect and ignore those fields.
+    MLB API lastXGames=8 is always reliable for counting stats."""
+    # ── MLB API data (reliable counting stats) ──
     nl = name.lower().strip()
     mlb_data = _cache.get("bat_l8d_hr", {})
     mlb = mlb_data.get(nl)
@@ -1533,36 +1533,36 @@ def get_batter_8d(name):
         for k, v in mlb_data.items():
             if last in k: mlb = v; break
 
-    # ── Savant data (Statcast metrics only — barrel%, LA, EV, HH%) ──
+    # ── Savant data (Statcast metrics) ──
     df = _cache["bat_8d"]
     row = fuzzy_match(name, df)
+
+    # Validate Savant — if PA > 40 it returned season data, clear Statcast fields
     sav_barrel = sav_ev = sav_la = sav_hh = sav_pull = 0.0
-    sav_pa = 0
     if row is not None:
         sav_pa = int(gs(row, "pa"))
-        # Only trust Savant Statcast metrics if PA is in reasonable 8d range
-        if sav_pa <= 40:
+        if sav_pa <= 40:  # realistic 8-day PA ceiling
             sav_barrel = gs(row, "barrel_pct")
             sav_ev     = gs(row, "exit_velo")
             sav_la     = gs(row, "launch_angle")
             sav_hh     = gs(row, "hard_hit_pct")
             sav_pull   = gs(row, "pull_pct")
+        # If sav_pa > 40, Savant returned season data — don't use any of it
 
-    # ── Merge: use MLB API for counting/rate stats, Savant for Statcast metrics ──
-    if mlb:
-        pa  = mlb.get("pa", 0)
-        hr  = mlb.get("hr", 0)
-        iso = mlb.get("iso", 0.0)
-        slg = mlb.get("slg", 0.0)
-        avg = mlb.get("avg", 0.0)
+    # ── Counting stats: MLB API primary, Savant fallback ──
+    if mlb and mlb.get("pa", 0) > 0:
+        pa    = mlb.get("pa", 0)
+        hr    = mlb.get("hr", 0)
+        iso   = mlb.get("iso", 0.0)
+        slg   = mlb.get("slg", 0.0)
+        avg   = mlb.get("avg", 0.0)
         k_pct = mlb.get("k_pct", 0.0)
-    elif row is not None and sav_pa <= 40:
-        # Fallback to Savant if no MLB API data
-        pa  = sav_pa
-        hr  = gs(row, "hr")
-        slg = gs(row, "slg_percent")
-        avg = gs(row, "batting_avg")
-        iso = slg - avg if slg > 0 else 0
+    elif row is not None and int(gs(row, "pa")) <= 40:
+        pa    = int(gs(row, "pa"))
+        hr    = gs(row, "hr")
+        slg   = gs(row, "slg_percent")
+        avg   = gs(row, "batting_avg")
+        iso   = slg - avg if slg > 0 else 0
         k_pct = gs(row, "k_pct")
     else:
         return {}
@@ -1572,11 +1572,11 @@ def get_batter_8d(name):
 
     return {
         "pa": pa, "hr": hr,
-        "barrel_pct": sav_barrel,
-        "exit_velo":  sav_ev,
+        "barrel_pct":   sav_barrel,
+        "exit_velo":    sav_ev,
         "launch_angle": sav_la,
         "hard_hit_pct": sav_hh,
-        "pull_pct":   sav_pull,
+        "pull_pct":     sav_pull,
         "iso": iso, "k_pct": k_pct,
         "slg": slg, "avg": avg,
         "hr_rate": (hr / max(pa, 1)) * 600 if pa > 0 else 0,
