@@ -26,7 +26,7 @@ LEAGUE_CONSTANTS = {
     "lg_hr9":          1.10,   # league avg HR/9
     "lg_hard_hit":     38.0,   # league avg hard hit%
     "lg_bullpen_hr9":  1.20,   # league avg bullpen HR/9
-    "lg_hr_per_pa":    0.028,  # league avg HR/PA
+    "lg_hr_per_pa":    0.028,  # league avg HR/PA (~10% per game at 3.8 PA/game)
     "lg_era":          4.20,   # league avg ERA
     "max_hr_per_pa":   0.12,   # ceiling on any batter base rate
     "hr_prob_cap":     28.0,   # hard cap on model output %
@@ -1971,48 +1971,45 @@ def compute_hr_prob_multiplicative(
     has_8d = b8d.get("pa", 0) >= 3
     total_pa = pa_26 + pa_25
 
-    # ── Step 1: Base HR rate (career/season blend by PA) ──
-    # Blend weights: <150 PA → 30% season / 70% career; 150-300 → 60/40; 300+ → 85/15
+    # ── Step 1: Base HR rate — true per-game probability ──
+    # Formula: 1 - (1 - hr_per_pa)^avg_pa_per_game
+    # This converts per-PA HR rate to probability of at least 1 HR in today's game
+    pa_data = get_avg_pa_per_game(name)
+    avg_pa  = pa_data.get("avg_pa_per_game", 3.8)
+    if avg_pa < 2.0: avg_pa = 3.8   # fallback for new players with no games data
+    avg_pa  = min(avg_pa, 5.0)       # cap at 5 PA
+
     hr_season = bc.get("hr", 0)
     hr_career  = blend(bc.get("hr", 0), bp.get("hr", 0), bwc, bwp)
     pa_season  = max(pa_26, 1)
 
-    # HR/PA rate from season
+    # HR/PA rates
     hr_per_pa_season = hr_season / pa_season if pa_season > 0 else 0
+    hr_per_pa_career = hr_career / max(pa_25 + pa_26, 1) if (pa_25 + pa_26) > 0 else 0.028
 
-    # Career blend rate
-    total_pa_safe = max(total_pa, 1)
-    hr_per_pa_career = hr_career / max(pa_25 + pa_26, 1) if (pa_25 + pa_26) > 0 else 0.035
-
-    # PA-weighted blend — 200+ PA = trust season fully
+    # Blend season vs career by PA
     if pa_26 >= 200:
-        base_rate = hr_per_pa_season
+        hr_per_pa = hr_per_pa_season
     elif pa_26 >= 150:
-        base_rate = hr_per_pa_season * 0.80 + hr_per_pa_career * 0.20
+        hr_per_pa = hr_per_pa_season * 0.80 + hr_per_pa_career * 0.20
     elif pa_26 >= 100:
-        base_rate = hr_per_pa_season * 0.60 + hr_per_pa_career * 0.40
+        hr_per_pa = hr_per_pa_season * 0.60 + hr_per_pa_career * 0.40
     elif pa_26 >= 50:
-        base_rate = hr_per_pa_season * 0.30 + hr_per_pa_career * 0.70
+        hr_per_pa = hr_per_pa_season * 0.30 + hr_per_pa_career * 0.70
     else:
-        base_rate = hr_per_pa_career  # too early — use career only
+        hr_per_pa = hr_per_pa_career
 
-    # Floor: use league avg ~2.8% if no data
-    if base_rate <= 0:
-        base_rate = 0.028
-    base_rate = min(base_rate, 0.12)  # no single batter truly > 12% per PA
+    # Floor: league avg HR/PA ~2.8%
+    if hr_per_pa <= 0:
+        hr_per_pa = 0.028
+    hr_per_pa = min(hr_per_pa, 0.12)  # cap per-PA rate at 12%
 
-    # Small sample confidence gate (not a hard cut — just dampens)
-    if total_pa < 30:   base_rate = base_rate * 0.55 + 0.028 * 0.45
-    elif total_pa < 60: base_rate = base_rate * 0.75 + 0.028 * 0.25
+    # Small sample confidence gate
+    if total_pa < 30:   hr_per_pa = hr_per_pa * 0.55 + 0.028 * 0.45
+    elif total_pa < 60: hr_per_pa = hr_per_pa * 0.75 + 0.028 * 0.25
 
-    # ── PA opportunity adjustment ──
-    # Convert HR/PA rate to probability of hitting at least 1 HR in avg_pa_per_game PA
-    # P(at least 1 HR) = 1 - (1 - hr_per_pa)^n_pa
-    pa_data = get_avg_pa_per_game(name)
-    avg_pa = pa_data.get("avg_pa_per_game", 3.5)
-    if avg_pa < 2.0: avg_pa = 3.5   # fallback for new players with no games data
-    avg_pa = min(avg_pa, 5.0)        # cap at 5 PA — no one averages more
-    base_rate = 1 - (1 - base_rate) ** avg_pa
+    # Convert to per-game probability
+    base_rate = 1 - (1 - hr_per_pa) ** avg_pa
 
     running = base_rate
 
@@ -2184,6 +2181,7 @@ def compute_hr_prob_multiplicative(
 
     breakdown = {
         "base_rate": round(base_rate * 100, 2),
+        "avg_pa": round(avg_pa, 2),
         "barrel_use": round(barrel_use, 1), "barrel_season": round(barrel_season, 1),
         "barrel_l8d": round(barrel_l8d, 1), "barrel_mult": round(barrel_mult, 3),
         "la_use": round(la_use, 1), "la_season": round(la_season, 1),
