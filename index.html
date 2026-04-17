@@ -102,6 +102,23 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 .detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
 .detail-block{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:10px 12px}
 .detail-block-title{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.clog-wrap{background:var(--surface);border:1px solid var(--border2);border-radius:8px;overflow:hidden;margin-top:10px}
+.clog-title{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;padding:8px 12px;border-bottom:1px solid var(--border2)}
+.clog-table{width:100%;border-collapse:collapse;font-size:11px}
+.clog-table th{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;text-align:left;border-bottom:1px solid var(--border2)}
+.clog-table th.num{text-align:right}
+.clog-table td{padding:5px 10px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--fg);font-family:'Barlow Condensed',sans-serif;font-size:13px}
+.clog-table td.num{text-align:right}
+.clog-table tr:last-child td{border-bottom:none}
+.clog-hr td{background:rgba(0,255,100,.06)}
+.clog-xbh td{background:rgba(255,200,0,.04)}
+.clog-out td{opacity:.7}
+.clog-result-hr{color:var(--g);font-weight:700}
+.clog-result-xbh{color:var(--y);font-weight:600}
+.clog-result-out{color:var(--muted)}
+.clog-ev-hot{color:var(--g)}
+.clog-ev-warm{color:var(--y)}
+.clog-ev-cold{color:var(--muted)}
 .chip-row{display:flex;flex-wrap:wrap;gap:4px}
 .chip{display:inline-flex;flex-direction:column;align-items:center;background:#1a1a1a;border:1px solid var(--border2);border-radius:6px;padding:5px 8px;min-width:54px}
 .chip-lbl{font-size:8px;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
@@ -698,6 +715,39 @@ function buildBatDetail(b){
     h+='</div></div>';
   }
   h+='</div>';
+
+  // ── Contact Log ──
+  var clog=b.contact_log||[];
+  if(clog.length>0){
+    h+='<div class="clog-wrap">';
+    h+='<div class="clog-title">Last 8 Batted Balls</div>';
+    h+='<table class="clog-table">';
+    h+='<thead><tr>';
+    h+='<th>Date</th><th>Pitch</th><th class="num">EV</th><th class="num">Angle</th><th class="num">Dist</th><th class="num">Bat Spd</th><th>Result</th>';
+    h+='</tr></thead><tbody>';
+    clog.forEach(function(e){
+      var res=e.result||'';
+      var isHR=res==='home_run';
+      var isXBH=res==='double'||res==='triple';
+      var rowCls=isHR?'clog-hr':isXBH?'clog-xbh':'clog-out';
+      var resCls=isHR?'clog-result-hr':isXBH?'clog-result-xbh':'clog-result-out';
+      var resDisp=res.replace('_',' ');
+      var evCls=e.ev>=100?'clog-ev-hot':e.ev>=90?'clog-ev-warm':'clog-ev-cold';
+      var angleCls=(e.angle>=18&&e.angle<=35)?'sc-g':(e.angle>=10)?'sc-y':'sc-r';
+      h+='<tr class="'+rowCls+'">';
+      h+='<td style="color:var(--muted2);font-size:11px">'+e.date+'</td>';
+      h+='<td style="color:var(--muted);font-size:11px">'+e.pitch_type+'</td>';
+      h+='<td class="num '+evCls+'">'+(e.ev>0?e.ev.toFixed(1):'--')+'</td>';
+      h+='<td class="num" style="color:var(--'+angleCls.replace('sc-','')+')">'+(e.angle!==0?e.angle.toFixed(1)+'°':'--')+'</td>';
+      h+='<td class="num" style="color:var(--muted)">'+(e.distance>0?e.distance:'--')+'</td>';
+      h+='<td class="num" style="color:var(--muted2)">'+(e.bat_speed>0?e.bat_speed.toFixed(1):'--')+'</td>';
+      h+='<td class="'+resCls+'">'+resDisp+'</td>';
+      h+='</tr>';
+    });
+    h+='</tbody></table></div>';
+  } else {
+    h+='<div class="clog-wrap"><div class="clog-title" style="opacity:.5">No contact data available — updates after next data refresh</div></div>';
+  }
 
   h+='</div>'; // detail-wrap
   return h;
