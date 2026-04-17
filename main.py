@@ -2258,75 +2258,46 @@ def compute_hr_prob_multiplicative(
 
     breakdown = {
         "base_rate": round(base_rate * 100, 2),
-        "barrel_use": round(barrel_use, 1), "barrel_season": round(barrel_season, 1),
-        "barrel_l8d": round(barrel_l8d, 1), "barrel_mult": round(barrel_mult, 3),
-        "la_use": round(la_use, 1), "la_season": round(la_season, 1),
-        "la_l8d": round(la_l8d, 1), "la_mult": round(la_mult, 3),
-        "pit_hr9": round(pit_hr9_season, 2), "pit_hard": round(pit_hard, 1),
-        "pit_hr9_vs_hand": round(pit_hr9_vs_hand, 2),
+        "barrel_mult": round(barrel_mult, 3), "la_mult": round(la_mult, 3),
         "pit_vuln_mult": round(pit_vuln_mult, 3),
-        "bat_platoon_mult": round(bat_platoon_mult, 3),
-        "pit_platoon_mult": round(pit_platoon_mult, 3),
+        "bat_platoon_mult": round(bat_platoon_mult, 3), "pit_platoon_mult": round(pit_platoon_mult, 3),
+        "park_factor": round(park_factor, 3), "weather_mult": round(weather_mult, 3),
+        "hot_cold_mult": round(hot_cold_mult, 3), "k_mult": round(k_mult, 3),
         "iso_vs_hand": round(iso_vs_hand, 3), "iso_overall": round(iso_overall, 3),
+        "split_pa": split_pa, "split_ip_vs_bat": round(split_ip_vs_bat, 1),
         "slg_vs_bat": round(slg_vs_bat, 3) if split_ip_vs_bat >= 5 else 0,
-        "split_pa": split_pa,
-        "split_ip_vs_bat": round(split_ip_vs_bat, 1),
-        # Context
-        "park_factor": round(park_factor, 3),
-        "weather_mult": round(weather_mult, 3),
-        "hot_cold_mult": round(hot_cold_mult, 3),
-        "k_mult": round(k_mult, 3), "k_season": round(k_season, 1),
-        # Running
-        "hr_prob": hr_prob, "has_8d": has_8d,
-        "blend_note": blend_note,
-        "pit_blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025 ({ip_26:.0f} IP)",
-        # Legacy fields for Research tab compatibility
-        "barrel_s": round(barrel_use, 1), "s1_barrel": round(barrel_mult * 10, 2),
-        "iso_use": round(iso_vs_hand if iso_vs_hand > 0 else iso_overall, 3),
-        "la_s": round(la_use, 1), "s1_la": round(la_mult * 9, 2),
-        "pull_s": round(blend(bc.get("pull_pct", 0), bp.get("pull_pct", 0), bwc, bwp), 1),
-        "s1_pull": 0, "fb_s": 0, "s1_fb": 0, "s1_iso": 0,
-        "hr_rate_8d": round(b8d.get("hr", 0) / max(b8d.get("pa", 1), 1) * 600, 1) if has_8d else 0,
-        "s1_hr8d": round(hot_cold_mult, 3),
-        "batter_score": round(running * 100, 2),
-        "k_s": round(k_season, 1), "k_cap": round(k_mult, 3),
-        "pit_modifier": round(pit_vuln_mult, 3),
-        "platoon_magnitude": round((pit_platoon_mult - 1.0) * 100, 1),
-        "hr9_split": round(p_split_vs_bat.get("hr9", 0), 2),
-        "hr9_season": round(pit_hr9_season, 2),
-        "split_ip": round(split_ip_vs_bat, 1),
-        "split_brl": round(b_split_vs_hand.get("barrel_pct", 0), 1),
-        "split_iso": round(iso_vs_hand, 3),
+        "pit_slg_overall": round(slg_overall_pit, 3),
+        "split_hr": int(b_split_vs_hand.get("hr", 0)),
         "split_slg": round(b_split_vs_hand.get("slg", 0), 3),
         "split_woba": round(b_split_vs_hand.get("woba", 0), 3),
-        "split_hr": int(b_split_vs_hand.get("hr", 0)),
-        "split_pa": split_pa,
         "split_k_pct": round(b_split_vs_hand.get("k_pct", 0), 1),
-        "hr_season": int(bc.get("hr", 0)),
-        "pa_season": int(pa_26),
-        "pa_8d": int(b8d.get("pa", 0)),
-        "barrel_8d_raw": round(b8d.get("barrel_pct", 0), 1),
-        "iso_8d": round(b8d.get("iso", 0), 3),
-        "pull_8d": round(b8d.get("pull_pct", 0), 1),
-        "la_8d_raw": round(la_l8d, 1),
-        "pitch_bonus": pitch_bonus, "pitch_breakdown": pitch_details,
-        "after_k": round(running * 100, 1), "after_context": round(running * 100, 1),
+        "split_brl": round(b_split_vs_hand.get("barrel_pct", 0), 1),
+        "split_iso": round(iso_vs_hand, 3), "split_ip": round(split_ip_vs_bat, 1),
+        "hr9_split": round(p_split_vs_bat.get("hr9", 0), 2),
+        "hr9_season": round(pit_hr9_season, 2), "pit_hard": round(pit_hard, 1),
         "n_pit_components": n_components,
-        # ── Data confidence score — X/8 real stats ──
-        # Each of the 8 active model slots gets 1 point if it has real data (not a default)
+        "pit_blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025 ({ip_26:.0f} IP)",
+        "barrel_use": round(barrel_use, 1), "barrel_season": round(barrel_season, 1),
+        "la_use": round(la_use, 1), "la_season": round(la_season, 1),
+        "la_8d_raw": round(la_l8d, 1), "barrel_8d_raw": round(b8d.get("barrel_pct", 0), 1),
+        "hr_season": int(bc.get("hr", 0)), "pa_season": int(pa_26), "pa_8d": int(b8d.get("pa", 0)),
+        "has_8d": has_8d, "blend_note": blend_note, "k_season": round(k_season, 1),
+        "pitch_bonus": pitch_bonus, "pitch_breakdown": pitch_details,
         "data_conf": {
-            "barrel":       1 if barrel_season > 0 and pa_26 >= 20 else 0,
-            "la":           1 if la_season > 0 and pa_26 >= 20 else 0,
-            "pit_hr9":      1 if pit_hr9_season > 0 and total_ip >= 10 else 0,
+            "barrel": 1 if barrel_season > 0 and pa_26 >= 20 else 0,
+            "la": 1 if la_season > 0 and pa_26 >= 20 else 0,
+            "pit_hr9": 1 if pit_hr9_season > 0 and total_ip >= 10 else 0,
             "pit_hr9_hand": 1 if pit_hr9_vs_hand > 0 and pit_ip_vs_hand >= 5 else 0,
-            "iso_vs_hand":  1 if iso_vs_hand > 0 and split_pa >= 30 else 0,
-            "park":         1 if park_factor != 1.0 else 0,
-            "pitch_delta":  1 if pitch_bonus != 0 else 0,
-            "bat_platoon":  1 if bat_platoon_mult != 1.0 else 0,
+            "iso_vs_hand": 1 if iso_vs_hand > 0 and split_pa >= 30 else 0,
+            "park": 1 if park_factor != 1.0 else 0,
+            "pitch_delta": 1 if pitch_bonus != 0 else 0,
+            "bat_platoon": 1 if bat_platoon_mult != 1.0 else 0,
         },
-        "pit_slg_overall": round(slg_overall_pit, 3),
-        "bullpen_hr9": round(bullpen_hr9, 2),
-        "bullpen_vuln": round(bullpen_vuln, 3),
+        "bullpen_hr9": round(bullpen_hr9, 2), "bullpen_vuln": round(bullpen_vuln, 3),
+        "iso_use": round(iso_vs_hand if iso_vs_hand > 0 else iso_overall, 3),
+        "pull_s": round(blend(bc.get("pull_pct", 0), bp.get("pull_pct", 0), bwc, bwp), 1),
+        "pit_modifier": round(pit_vuln_mult, 3),
+        "hr_rate_8d": round(b8d.get("hr", 0) / max(b8d.get("pa", 1), 1) * 600, 1) if has_8d else 0,
     }
     return hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
@@ -2896,9 +2867,19 @@ def status():
 
 @app.post("/reload")
 async def reload_data():
-    _games_cache.clear()  # invalidate so next /games fetch is fresh
+    _games_cache.clear()
     threading.Thread(target=run_async, args=(load_all_savant_data(),), daemon=True).start()
+    asyncio.create_task(reload_contact_log())
     return {"status": "Reloading data from Baseball Savant"}
+
+async def reload_contact_log():
+    """Fetch contact log separately after a short delay so main data loads first"""
+    await asyncio.sleep(45)
+    async with httpx.AsyncClient(timeout=60) as client:
+        df = await fetch_savant_csv(savant_contact_log_url(), client)
+        if not df.empty:
+            _build_contact_log(df)
+            print(f"contact_log reloaded: {len(_contact_log)} players")
 
 @app.get("/games")
 async def get_games(date: str = None, refresh: bool = False):
