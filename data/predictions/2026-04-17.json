@@ -2550,7 +2550,7 @@
     "home_team": "Athletics",
     "lineup_source": "projected",
     "model_hr_pct": 11.0,
-    "hit_hr": "DNP",
+    "hit_hr": 1,
     "barrel_pct_season": 22.9,
     "la_season": 13.5,
     "ev_season": 93.7,
@@ -2615,6 +2615,6 @@
     "pit_era_diff": -2.48,
     "pit_hr_fb_pct": 0,
     "lineup_k_pct": 0,
-    "actual_ab": 0
+    "actual_ab": 5
   }
 ]
