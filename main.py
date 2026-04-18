@@ -2826,6 +2826,64 @@ async def manual_record_results(target_date: str = None):
     await record_results(d)
     return {"status": "done", "date": d}
 
+@app.get("/debug-results")
+async def debug_results(target_date: str = None):
+    """Show what the MLB API returned for a date vs what we predicted"""
+    d = target_date or (date.today() - timedelta(days=1)).isoformat()
+    try:
+        url = f"{MLB_API}/schedule?sportId=1&date={d}&gameType=R&hydrate=boxscore"
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(url)
+            sched = r.json()
+        hr_hitters = {}
+        all_players = {}
+        for game_date in sched.get("dates", []):
+            for game in game_date.get("games", []):
+                if game.get("status", {}).get("abstractGameState") != "Final": continue
+                gid = game["gamePk"]
+                away = game["teams"]["away"]["team"]["name"]
+                home = game["teams"]["home"]["team"]["name"]
+                async with httpx.AsyncClient(timeout=10) as client:
+                    r2 = await client.get(f"{MLB_API}/game/{gid}/boxscore")
+                    box = r2.json()
+                for side in ["away", "home"]:
+                    for _, p in box.get("teams", {}).get(side, {}).get("players", {}).items():
+                        stats = p.get("stats", {}).get("batting", {})
+                        name = p.get("person", {}).get("fullName", "")
+                        if not name: continue
+                        ab = int(stats.get("atBats", 0) or 0)
+                        hrs = int(stats.get("homeRuns", 0) or 0)
+                        all_players[name] = {"ab": ab, "hr": hrs, "game": f"{away}@{home}"}
+                        if hrs > 0:
+                            hr_hitters[name] = hrs
+        # Load predictions for that date
+        path = f"data/predictions/{d}.json"
+        records = await github_get_file(path)
+        pred_names = [r["name"] for r in records] if records else []
+        # Match predictions to API results
+        matches = []
+        misses = []
+        for name in pred_names:
+            nl = name.lower()
+            found = next((k for k in all_players if k.lower() == nl), None)
+            if not found:
+                last = nl.split()[-1]
+                found = next((k for k in all_players if last in k.lower()), None)
+            if found:
+                matches.append({"predicted": name, "api_name": found, "ab": all_players[found]["ab"], "hr": all_players[found]["hr"]})
+            else:
+                misses.append(name)
+        return {
+            "date": d,
+            "hr_hitters_in_api": hr_hitters,
+            "predicted_players": len(pred_names),
+            "matched": len(matches),
+            "missed": misses,
+            "matches": matches
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 @app.get("/")
 def root():
     return {
