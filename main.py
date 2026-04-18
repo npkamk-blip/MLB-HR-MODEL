@@ -2858,8 +2858,9 @@ async def debug_results(target_date: str = None):
                             hr_hitters[name] = hrs
         # Load predictions for that date
         path = f"data/predictions/{d}.json"
-        records = await github_get_file(path)
-        pred_names = [r["name"] for r in records] if records else []
+        raw, _ = await github_get_file(path)
+        records = json.loads(raw) if raw else []
+        pred_names = [r["name"] for r in records]
         # Match predictions to API results
         matches = []
         misses = []
