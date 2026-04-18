@@ -1,0 +1,43 @@
+{
+  "date": "2026-04-18",
+  "rotation_round": 1,
+  "rotation_day": 5,
+  "weights": {
+    "barrel_season_w": 1.0,
+    "barrel_l8d_w": 1.0,
+    "la_season_w": 1.0,
+    "la_l8d_w": 1.0,
+    "ev_season_w": 1.0,
+    "ev_l8d_w": 1.0,
+    "iso_season_w": 1.0,
+    "iso_vs_hand_w": 1.0,
+    "hard_hit_season_w": 1.0,
+    "hard_hit_l8d_w": 1.0,
+    "pit_hr9_season_w": 1.0,
+    "pit_hr9_vs_hand_w": 1.0,
+    "pit_slg_season_w": 1.0,
+    "pit_slg_vs_hand_w": 1.0,
+    "park_w": 1.0,
+    "weather_w": 1.0,
+    "bullpen_w": 1.0,
+    "bat_platoon_w": 1.0,
+    "pit_platoon_w": 1.0,
+    "pitch_delta_w": 1.0,
+    "k_pct_w": 1.0
+  },
+  "active_stats": [
+    "barrel_season",
+    "la_season",
+    "pit_hr9_vs_hand",
+    "iso_vs_hand",
+    "park",
+    "weather",
+    "pitch_delta",
+    "bat_platoon"
+  ],
+  "last_calibrated": null,
+  "records_used": 0,
+  "promoted_stats": [],
+  "dropped_stats": [],
+  "recent_changes": []
+}
