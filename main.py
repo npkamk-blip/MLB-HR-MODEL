@@ -1556,11 +1556,16 @@ async def record_results(target_date: str):
                             ab = v
                             break
                 if ab < 2:
-                    rec["hit_hr"] = "DNP"  # Did not play / not enough AB for ML
+                    rec["hit_hr"] = "DNP"
                     rec["actual_ab"] = ab
                     dnp_count += 1
                 else:
-                    rec["hit_hr"] = 1 if nl in hr_hitters else 0
+                    # Exact match first, then partial last name match for foreign players
+                    hit = nl in hr_hitters
+                    if not hit:
+                        last = nl.split()[-1]
+                        hit = any(last in k for k in hr_hitters)
+                    rec["hit_hr"] = 1 if hit else 0
                     rec["actual_ab"] = ab
                 updated += 1
         content_updated = json.dumps(records, indent=2)
