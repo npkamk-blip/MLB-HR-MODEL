@@ -615,20 +615,23 @@ function buildBatDetail(b){
     return diff<0?'🔥':'❄️';
   }
 
-  // ── Stat rows: [label, seasonVal, l8dVal, splitVal, splitLabel, higherBetter]
+  // ── Stat rows: [label, seasonVal, l8dVal, splitVal, higherBetter]
+  var xwoba_l8d = l.xwoba||bd.xwoba_l8d||0;
+  var xslg_l8d  = l.xslg||bd.xslg_l8d||0;
+  var bat_speed = l.bat_speed||bd.bat_speed_l8d||0;
   var statRows=[
     ['Hard Hit%',
-      fmtStat(s.hard_hit,1,'%'), fmtStat(l.hard_hit_pct,1,'%')+trendFlag(s.hard_hit,l.hard_hit_pct,true), '--', true],
+      fmtStat(s.hh,1,'%'), fmtStat(l.hh,1,'%')+trendFlag(s.hh,l.hh,true), '--', true],
     ['Barrel%',
-      fmtStat(s.barrel,1,'%'), fmtStat(l.barrel_pct,1,'%')+trendFlag(s.barrel,l.barrel_pct,true), '--', true],
+      fmtStat(s.barrel,1,'%'), fmtStat(l.barrel,1,'%')+trendFlag(s.barrel,l.barrel,true), '--', true],
     ['Exit Velo',
-      fmtStat(s.ev,1), fmtStat(l.exit_velo,1)+trendFlag(s.ev,l.exit_velo,true), '--', true],
+      fmtStat(s.ev,1), fmtStat(l.ev,1)+trendFlag(s.ev,l.ev,true), '--', true],
     ['xwOBA',
-      '--', fmtStat(l.xwoba,3)+trendFlag(0,l.xwoba,true), bd.split_woba>0?fmtStat(bd.split_woba,3):'--', true],
+      '--', xwoba_l8d>0?fmtStat(xwoba_l8d,3):'--', bd.split_woba>0?fmtStat(bd.split_woba,3):'--', true],
     ['xSLG',
-      '--', fmtStat(l.xslg,3)+trendFlag(0,l.xslg,true), '--', true],
+      '--', xslg_l8d>0?fmtStat(xslg_l8d,3):'--', '--', true],
     ['Bat Speed',
-      '--', fmtStat(l.bat_speed,1)+trendFlag(0,l.bat_speed,true), '--', true],
+      '--', bat_speed>0?fmtStat(bat_speed,1):'--', '--', true],
     ['ISO',
       fmtSlg(s.iso), fmtSlg(l.iso)+trendFlag(s.iso,l.iso,true), bd.iso_vs_hand>0?fmtSlg(bd.iso_vs_hand):'--', true],
     ['K%',
