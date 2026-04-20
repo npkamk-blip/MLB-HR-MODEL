@@ -487,10 +487,10 @@ PITCH_DISPLAY = {
 }
 
 # ── Data Loading ──
-async def fetch_savant_csv(url: str, session: httpx.AsyncClient) -> pd.DataFrame:
+async def fetch_savant_csv(url: str, session: httpx.AsyncClient, timeout: int = 120) -> pd.DataFrame:
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
     try:
-        r = await session.get(url, headers=headers, timeout=60, follow_redirects=True)
+        r = await session.get(url, headers=headers, timeout=timeout, follow_redirects=True)
         if not r.is_success:
             print(f"Savant fetch failed {r.status_code}: {url[:80]}")
             return pd.DataFrame()
@@ -1038,8 +1038,8 @@ async def load_all_savant_data():
         else:
             print("bat_8d: 0 rows")
 
-        # Contact log — separate 3-day window fetch (group_by=pitch)
-        df_contact = await fetch_savant_csv(savant_contact_log_url(), client)
+        # Contact log — separate 3-day window fetch (group_by=pitch, ~9MB)
+        df_contact = await fetch_savant_csv(savant_contact_log_url(), client, timeout=180)
         if not df_contact.empty:
             _build_contact_log(df_contact)
             print(f"contact_log: {len(_contact_log)} players")
@@ -1107,7 +1107,7 @@ async def load_all_savant_data():
 
 async def refresh_8d():
     """Refresh 8-day data — aggregated stats + contact log"""
-    async with httpx.AsyncClient(timeout=90) as client:
+    async with httpx.AsyncClient(timeout=200) as client:
         # 8d aggregated stats (group_by=name)
         df = await fetch_savant_csv(savant_8d_url(), client)
         if not df.empty:
@@ -1115,8 +1115,8 @@ async def refresh_8d():
             if not agg.empty:
                 _cache["bat_8d"] = agg
                 print(f"bat_8d refreshed: {len(agg)} players")
-        # Contact log — separate fetch with 3-day window (group_by=pitch)
-        df_contact = await fetch_savant_csv(savant_contact_log_url(), client)
+        # Contact log — separate fetch with 3-day window (~9MB, needs long timeout)
+        df_contact = await fetch_savant_csv(savant_contact_log_url(), client, timeout=180)
         if not df_contact.empty:
             _build_contact_log(df_contact)
             _games_cache.clear()
@@ -3219,10 +3219,10 @@ async def reload_data():
     return {"status": "Reloading data from Baseball Savant"}
 
 async def reload_contact_log():
-    """Reload contact log — uses 3-day window to keep size manageable"""
+    """Reload contact log — 9MB file needs 180s timeout"""
     await asyncio.sleep(5)
-    async with httpx.AsyncClient(timeout=120) as client:
-        df = await fetch_savant_csv(savant_contact_log_url(), client)
+    async with httpx.AsyncClient(timeout=200) as client:
+        df = await fetch_savant_csv(savant_contact_log_url(), client, timeout=180)
         if not df.empty:
             _build_contact_log(df)
             _games_cache.clear()
