@@ -2725,6 +2725,28 @@ async def get_history():
         print(f"History endpoint error: {e}")
         return {"error": str(e), "records": []}
 
+@app.get("/debug-contact")
+async def debug_contact(player: str = "Yordan Alvarez"):
+    """Debug contact log — check cache size, sample keys, and player lookup"""
+    nl = player.lower().strip()
+    last = nl.split()[-1]
+    # Direct match
+    direct = _contact_log.get(nl)
+    # Partial match
+    partial_keys = [k for k in _contact_log if last in k]
+    # Sample of what's in cache
+    sample_keys = list(_contact_log.keys())[:10]
+    return {
+        "cache_size": len(_contact_log),
+        "player_searched": player,
+        "direct_match": direct is not None,
+        "direct_events": len(direct) if direct else 0,
+        "partial_matches": partial_keys[:5],
+        "sample_cache_keys": sample_keys,
+        "contact_url": savant_contact_log_url(),
+        "events": direct or (list(_contact_log.values())[0] if _contact_log else []),
+    }
+
 @app.get("/debug-l8d")
 async def debug_l8d(player: str = "Murakami"):
     """Debug L8D data — check what Savant returns vs season stats"""
