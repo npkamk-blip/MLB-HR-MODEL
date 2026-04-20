@@ -302,7 +302,7 @@ async function reloadContact(){
   try{
     var r=await fetch(API+'/reload-contact');
     var d=await r.json();
-    alert(d.status+'\n\nHit Refresh in ~60 seconds to see contact data.');
+    alert(d.status+'\n\nHit Refresh in ~30 seconds to see contact data.');
   }catch(e){alert('Error: '+e.message);}
 }
 
