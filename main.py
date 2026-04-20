@@ -3195,7 +3195,14 @@ async def reload_contact_get():
 async def clear_cache():
     """Clear games cache — forces fresh rebuild on next /games call"""
     _games_cache.clear()
-    return {"status": "Games cache cleared", "contact_log_size": len(_contact_log)}
+    # Spot check — does Yordan have contact data right now?
+    test = get_contact_log("Yordan Alvarez")
+    return {
+        "status": "Games cache cleared",
+        "contact_log_size": len(_contact_log),
+        "yordan_events": len(test),
+        "yordan_sample": test[0] if test else None,
+    }
 
 @app.get("/debug-contact-fetch")
 async def debug_contact_fetch():
