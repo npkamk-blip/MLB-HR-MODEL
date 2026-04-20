@@ -3191,6 +3191,12 @@ async def reload_contact_get():
     asyncio.create_task(reload_contact_log())
     return {"status": "Contact log reloading — check back in 60 seconds"}
 
+@app.get("/clear-cache")
+async def clear_cache():
+    """Clear games cache — forces fresh rebuild on next /games call"""
+    _games_cache.clear()
+    return {"status": "Games cache cleared", "contact_log_size": len(_contact_log)}
+
 @app.get("/debug-contact-fetch")
 async def debug_contact_fetch():
     """Test whether the contact log CSV URL is reachable from Railway"""
