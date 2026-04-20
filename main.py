@@ -3171,12 +3171,13 @@ async def reload_data():
 
 async def reload_contact_log():
     """Fetch contact log separately after a short delay so main data loads first"""
-    await asyncio.sleep(45)
+    await asyncio.sleep(15)
     async with httpx.AsyncClient(timeout=120) as client:
         df = await fetch_savant_csv(savant_contact_log_url(), client)
         if not df.empty:
             _build_contact_log(df)
-            print(f"contact_log reloaded: {len(_contact_log)} players")
+            _games_cache.clear()  # force games to rebuild with new contact data
+            print(f"contact_log reloaded: {len(_contact_log)} players, games cache cleared")
 
 @app.get("/games")
 async def get_games(date: str = None, refresh: bool = False):
