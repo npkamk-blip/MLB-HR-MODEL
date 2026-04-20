@@ -343,15 +343,12 @@ def current_season():
     return today.year if today.month >= 3 else today.year - 1
 
 def savant_contact_log_url():
-    """Pitch-by-pitch URL — only batted ball contact events, minimal columns for speed."""
-    cutoff = (date.today() - timedelta(days=8)).isoformat()
+    """Pitch-by-pitch contact events — last 3 days only to keep size small and avoid timeout.
+    group_by=pitch returns individual rows needed for the contact log table."""
+    cutoff = (date.today() - timedelta(days=3)).isoformat()
     today_str = (date.today() + timedelta(days=1)).isoformat()
-    # hfAB=54 filters to balls in play only (no strikes/balls) — much smaller dataset
-    # Only request columns we need for contact log
-    # hfAB=54 = "in_play" filter — returns only batted ball events (~8k rows vs 25k)
-    # This reduces download from 16MB to ~5MB, preventing Railway timeout
     return (f"{SAVANT_BASE}/statcast_search/csv?all=true"
-            f"&hfPT=&hfAB=54%7C&hfGT=R%7C&hfPR=&hfZ=&hfStadium=&hfBBL=&hfNewZones=&hfPull="
+            f"&hfPT=&hfAB=&hfGT=R%7C&hfPR=&hfZ=&hfStadium=&hfBBL=&hfNewZones=&hfPull="
             f"&hfC=&hfSea={current_season()}%7C&hfSit=&player_type=batter&hfOuts=&hfOpponent="
             f"&pitcher_throws=&batter_stands=&hfSA=&game_date_gt={cutoff}"
             f"&game_date_lt={today_str}&hfMon=&hfInfield=&team=&position=&hfRO="
@@ -1038,11 +1035,16 @@ async def load_all_savant_data():
         if not df.empty:
             _cache["bat_8d"] = calc_statcast_8d(df)
             print(f"bat_8d: {len(_cache['bat_8d'])} rows")
-            # Build contact log from same raw df — no extra fetch needed
-            _build_contact_log(df)
-            print(f"contact_log: {len(_contact_log)} players")
         else:
             print("bat_8d: 0 rows")
+
+        # Contact log — separate 3-day window fetch (group_by=pitch)
+        df_contact = await fetch_savant_csv(savant_contact_log_url(), client)
+        if not df_contact.empty:
+            _build_contact_log(df_contact)
+            print(f"contact_log: {len(_contact_log)} players")
+        else:
+            print("contact_log: 0 players (will retry on next refresh)")
 
         # Pitcher 2026
         df = await fetch_savant_csv(savant_pitcher_url(min_pa=5), client)
@@ -1104,19 +1106,23 @@ async def load_all_savant_data():
     await fetch_team_stats(current_season())
 
 async def refresh_8d():
-    """Refresh 8-day data — aggregated stats + contact log built from same raw fetch"""
-    async with httpx.AsyncClient(timeout=60) as client:
+    """Refresh 8-day data — aggregated stats + contact log"""
+    async with httpx.AsyncClient(timeout=90) as client:
+        # 8d aggregated stats (group_by=name)
         df = await fetch_savant_csv(savant_8d_url(), client)
         if not df.empty:
-            # Build aggregated 8d stats
             agg = calc_statcast_8d(df)
             if not agg.empty:
                 _cache["bat_8d"] = agg
                 print(f"bat_8d refreshed: {len(agg)} players")
-            # Build contact log from same raw df — no second fetch needed
-            _build_contact_log(df)
+        # Contact log — separate fetch with 3-day window (group_by=pitch)
+        df_contact = await fetch_savant_csv(savant_contact_log_url(), client)
+        if not df_contact.empty:
+            _build_contact_log(df_contact)
             _games_cache.clear()
-            print(f"contact_log built from 8d: {len(_contact_log)} players")
+            print(f"contact_log refreshed: {len(_contact_log)} players")
+        else:
+            print("contact_log: CSV empty — will retry next refresh")
     l5g_data = await fetch_last5_games_batting()
     if l5g_data:
         _cache["bat_l5g"] = l5g_data
@@ -3185,6 +3191,26 @@ async def reload_contact_get():
     asyncio.create_task(reload_contact_log())
     return {"status": "Contact log reloading — check back in 60 seconds"}
 
+@app.get("/debug-contact-fetch")
+async def debug_contact_fetch():
+    """Test whether the contact log CSV URL is reachable from Railway"""
+    url = savant_contact_log_url()
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+            r = await client.get(url, headers=headers, follow_redirects=True)
+            text = r.text[:500] if r.text else ""
+            return {
+                "status_code": r.status_code,
+                "content_length": len(r.text),
+                "first_500_chars": text,
+                "is_csv": text.startswith("pitch_type") or "player_name" in text[:200],
+                "url": url,
+                "deny_reason": r.headers.get("x-deny-reason", "none"),
+            }
+    except Exception as e:
+        return {"error": str(e), "url": url}
+
 @app.post("/reload")
 async def reload_data():
     _games_cache.clear()
@@ -3193,16 +3219,16 @@ async def reload_data():
     return {"status": "Reloading data from Baseball Savant"}
 
 async def reload_contact_log():
-    """Reload contact log using 8d raw CSV — the separate contact log URL was failing"""
+    """Reload contact log — uses 3-day window to keep size manageable"""
     await asyncio.sleep(5)
     async with httpx.AsyncClient(timeout=120) as client:
-        df = await fetch_savant_csv(savant_8d_url(), client)
+        df = await fetch_savant_csv(savant_contact_log_url(), client)
         if not df.empty:
             _build_contact_log(df)
             _games_cache.clear()
-            print(f"contact_log reloaded: {len(_contact_log)} players, games cache cleared")
+            print(f"contact_log reloaded: {len(_contact_log)} players")
         else:
-            print("contact_log reload failed — 8d CSV returned empty")
+            print("contact_log reload failed — CSV empty")
 
 @app.get("/games")
 async def get_games(date: str = None, refresh: bool = False):
