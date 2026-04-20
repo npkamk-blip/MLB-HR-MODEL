@@ -1,6 +1,6 @@
 {
   "date": "2026-04-20",
-  "rotation_round": 2,
+  "rotation_round": 3,
   "rotation_day": 0,
   "weights": {
     "barrel_season_w": 1.403,
@@ -13,29 +13,31 @@
     "iso_vs_hand_w": 1.238,
     "hard_hit_season_w": 1.461,
     "hard_hit_l8d_w": 1.043,
+    "xwoba_l8d_w": 1.416,
+    "xslg_l8d_w": 1.41,
+    "bat_speed_l8d_w": 1.344,
+    "slg_l8d_w": 1.282,
+    "xslg_gap_l8d_w": 1.314,
+    "l8d_hr_w": 0.849,
+    "fb_pct_season_w": 1.0,
+    "pull_pct_season_w": 1.034,
+    "k_pct_l8d_w": 1.09,
+    "hot_cold_mult_w": 0.81,
     "pit_hr9_season_w": 0.678,
     "pit_hr9_vs_hand_w": 0.804,
     "pit_slg_season_w": 1.0,
     "pit_slg_vs_hand_w": 0.832,
+    "pit_hard_hit_w": 0.837,
+    "pit_fb_pct_w": 1.0,
+    "pit_era_diff_w": 0.771,
+    "pit_k9_season_w": 0.955,
     "park_w": 1.112,
     "weather_w": 0.834,
     "bullpen_w": 1.055,
     "bat_platoon_w": 0.966,
     "pit_platoon_w": 0.843,
     "pitch_delta_w": 1.098,
-    "k_pct_w": 1.098,
-    "pull_pct_season_w": 1.034,
-    "k_pct_l8d_w": 1.09,
-    "pit_era_diff_w": 0.771,
-    "pit_k9_season_w": 0.955,
-    "xwoba_l8d_w": 1.416,
-    "xslg_l8d_w": 1.41,
-    "bat_speed_l8d_w": 1.344,
-    "slg_l8d_w": 1.282,
-    "xslg_gap_l8d_w": 1.314,
-    "pit_hard_hit_w": 0.837,
-    "hot_cold_mult_w": 0.81,
-    "l8d_hr_w": 0.849
+    "k_pct_w": 1.098
   },
   "active_stats": [
     "hard_hit_season",
@@ -49,28 +51,7 @@
   ],
   "last_calibrated": "2026-04-20",
   "records_used": 251,
-  "promoted_stats": [
-    "xwoba_l8d",
-    "xslg_l8d",
-    "bat_speed_l8d",
-    "xslg_gap_l8d"
-  ],
-  "dropped_stats": [
-    "iso_season",
-    "iso_vs_hand",
-    "pit_hr9_vs_hand",
-    "ev_l8d"
-  ],
-  "recent_changes": [
-    "k_pct_l8d: 1.00 -> 1.09 (up)",
-    "pit_era_diff: 1.00 -> 0.77 (down)",
-    "xwoba_l8d: 1.00 -> 1.42 (up)",
-    "xslg_l8d: 1.00 -> 1.41 (up)",
-    "bat_speed_l8d: 1.00 -> 1.34 (up)",
-    "slg_l8d: 1.00 -> 1.28 (up)",
-    "xslg_gap_l8d: 1.00 -> 1.31 (up)",
-    "pit_hard_hit: 1.00 -> 0.84 (down)",
-    "hot_cold_mult: 1.00 -> 0.81 (down)",
-    "l8d_hr: 1.00 -> 0.85 (down)"
-  ]
+  "promoted_stats": [],
+  "dropped_stats": [],
+  "recent_changes": []
 }
