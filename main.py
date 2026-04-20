@@ -2886,6 +2886,139 @@ async def debug_results(target_date: str = None):
     except Exception as e:
         return {"error": str(e)}
 
+@app.get("/debug/scores")
+async def debug_score_distribution():
+    """
+    Return raw score distribution BEFORE sigmoid is applied.
+    Used to diagnose whether score compression is upstream (batter scoring)
+    or downstream (sigmoid curve too flat).
+    Pulls today's saved predictions from GitHub and extracts model_hr_pct values,
+    then back-calculates the raw score using the inverse sigmoid.
+    Also computes live raw scores for today's active batters if predictions are loaded.
+    """
+    import json, math, statistics
+
+    # ── Pull today's saved predictions ──
+    today = date.today().isoformat()
+    path = f"data/predictions/{today}.json"
+    content, _ = await github_get_file(path)
+
+    if not content:
+        return {"error": f"No predictions found for {today} — run /save-predictions first"}
+
+    try:
+        records = json.loads(content)
+    except Exception as e:
+        return {"error": f"Failed to parse predictions: {e}"}
+
+    # Filter to records with a model_hr_pct value
+    pcts = [r["model_hr_pct"] for r in records if r.get("model_hr_pct") is not None]
+    if not pcts:
+        return {"error": "No model_hr_pct values found in today's predictions"}
+
+    # ── Back-calculate raw score from sigmoid output ──
+    # sigmoid_to_prob: prob = 0.02 + sigmoid(centered) * 0.25
+    # So: sigmoid(centered) = (prob/100 - 0.02) / 0.25
+    # centered = logit(sigmoid_val) = ln(s / (1-s))
+    # raw = centered * 18 + 50
+    raw_scores = []
+    for pct in pcts:
+        try:
+            p = pct / 100.0
+            s = (p - 0.02) / 0.25  # invert the linear scaling
+            s = max(0.001, min(0.999, s))  # clamp to avoid log(0)
+            centered = math.log(s / (1 - s))  # logit
+            raw = centered * 18.0 + 50.0
+            raw_scores.append(round(raw, 2))
+        except Exception:
+            pass
+
+    if not raw_scores:
+        return {"error": "Could not back-calculate raw scores"}
+
+    raw_scores_sorted = sorted(raw_scores)
+    n = len(raw_scores)
+
+    def percentile(lst, p):
+        idx = int(len(lst) * p / 100)
+        return lst[min(idx, len(lst)-1)]
+
+    mean_raw   = round(statistics.mean(raw_scores), 2)
+    median_raw = round(statistics.median(raw_scores), 2)
+    std_raw    = round(statistics.stdev(raw_scores) if n > 1 else 0, 2)
+    min_raw    = round(raw_scores_sorted[0], 2)
+    max_raw    = round(raw_scores_sorted[-1], 2)
+    p25        = round(percentile(raw_scores_sorted, 25), 2)
+    p75        = round(percentile(raw_scores_sorted, 75), 2)
+    p90        = round(percentile(raw_scores_sorted, 90), 2)
+
+    # ── Diagnosis ──
+    diagnosis = []
+    if std_raw < 8:
+        diagnosis.append(f"COMPRESSION: std_dev={std_raw} — scores are bunching tight. Problem is UPSTREAM (batter scoring formula), not sigmoid.")
+    elif std_raw > 15:
+        diagnosis.append(f"SPREAD: std_dev={std_raw} — scores spreading well. If model% gap is still thin, SIGMOID may need widening.")
+    else:
+        diagnosis.append(f"MODERATE spread: std_dev={std_raw} — borderline. Watch as sample grows.")
+
+    if mean_raw < 44:
+        diagnosis.append(f"SKEW LOW: mean={mean_raw} — base scores are conservative. Most batters scoring below 50 (neutral). Consider raising base rate floor.")
+    elif mean_raw > 56:
+        diagnosis.append(f"SKEW HIGH: mean={mean_raw} — scores inflated. Multipliers may be stacking too aggressively.")
+    else:
+        diagnosis.append(f"CENTERED: mean={mean_raw} — scores centered well around 50 (neutral point).")
+
+    # ── Per-player breakdown (top 15 and bottom 5) ──
+    player_scores = []
+    for r in records:
+        pct = r.get("model_hr_pct")
+        if pct is None: continue
+        try:
+            p = pct / 100.0
+            s = max(0.001, min(0.999, (p - 0.02) / 0.25))
+            centered = math.log(s / (1 - s))
+            raw = round(centered * 18.0 + 50.0, 2)
+            player_scores.append({
+                "name": r.get("name"),
+                "team": r.get("team"),
+                "pitcher": r.get("opp_pitcher"),
+                "model_pct": pct,
+                "raw_score": raw,
+            })
+        except Exception:
+            pass
+
+    player_scores.sort(key=lambda x: x["raw_score"], reverse=True)
+
+    return {
+        "date": today,
+        "n_predictions": n,
+        "raw_score_distribution": {
+            "min": min_raw,
+            "max": max_raw,
+            "mean": mean_raw,
+            "median": median_raw,
+            "std_dev": std_raw,
+            "range": round(max_raw - min_raw, 2),
+            "percentiles": {
+                "25th": p25,
+                "75th": p75,
+                "90th": p90,
+            }
+        },
+        "sigmoid_config": {
+            "center": 50,
+            "divisor": 18,
+            "output_min": "2%",
+            "output_max": "25%",
+            "formula": "0.02 + sigmoid((raw-50)/18) * 0.25"
+        },
+        "diagnosis": diagnosis,
+        "top_15": player_scores[:15],
+        "bottom_5": player_scores[-5:],
+    }
+
+
 @app.get("/")
 def root():
     return {
