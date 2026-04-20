@@ -1237,6 +1237,19 @@ async function load(forceRefresh){
   btn.disabled=false;
 }
 document.getElementById('dateLbl').textContent=fmtDateLabel(selectedDate);
+// Load history in background on startup so percentile colors are ready
+(async function(){
+  try{
+    var r=await fetch(API+'/history');
+    var d=await r.json();
+    historyData=d;
+    if(d.records&&d.records.length>0){
+      computePercentiles(d.records);
+      // Rebuild batter table with colors if already rendered
+      if(allGames.length>0) buildBatterTable(allGames);
+    }
+  }catch(e){console.log('History preload failed:',e.message);}
+})();
 load();
 </script>
 </body>
