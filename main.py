@@ -1038,10 +1038,11 @@ async def load_all_savant_data():
         if not df.empty:
             _cache["bat_8d"] = calc_statcast_8d(df)
             print(f"bat_8d: {len(_cache['bat_8d'])} rows")
+            # Build contact log from same raw df — no extra fetch needed
+            _build_contact_log(df)
+            print(f"contact_log: {len(_contact_log)} players")
         else:
             print("bat_8d: 0 rows")
-
-        # Contact log fetched separately in refresh_8d to avoid startup timeout
 
         # Pitcher 2026
         df = await fetch_savant_csv(savant_pitcher_url(min_pa=5), client)
@@ -1103,19 +1104,19 @@ async def load_all_savant_data():
     await fetch_team_stats(current_season())
 
 async def refresh_8d():
-    """Refresh 8-day data — aggregated stats + contact log"""
+    """Refresh 8-day data — aggregated stats + contact log built from same raw fetch"""
     async with httpx.AsyncClient(timeout=60) as client:
         df = await fetch_savant_csv(savant_8d_url(), client)
         if not df.empty:
+            # Build aggregated 8d stats
             agg = calc_statcast_8d(df)
             if not agg.empty:
                 _cache["bat_8d"] = agg
                 print(f"bat_8d refreshed: {len(agg)} players")
-        await asyncio.sleep(2)
-        df_contact = await fetch_savant_csv(savant_contact_log_url(), client)
-        if not df_contact.empty:
-            _build_contact_log(df_contact)
-            print(f"contact_log refreshed: {len(_contact_log)} players")
+            # Build contact log from same raw df — no second fetch needed
+            _build_contact_log(df)
+            _games_cache.clear()
+            print(f"contact_log built from 8d: {len(_contact_log)} players")
     l5g_data = await fetch_last5_games_batting()
     if l5g_data:
         _cache["bat_l5g"] = l5g_data
@@ -3192,14 +3193,16 @@ async def reload_data():
     return {"status": "Reloading data from Baseball Savant"}
 
 async def reload_contact_log():
-    """Fetch contact log separately after a short delay so main data loads first"""
-    await asyncio.sleep(15)
+    """Reload contact log using 8d raw CSV — the separate contact log URL was failing"""
+    await asyncio.sleep(5)
     async with httpx.AsyncClient(timeout=120) as client:
-        df = await fetch_savant_csv(savant_contact_log_url(), client)
+        df = await fetch_savant_csv(savant_8d_url(), client)
         if not df.empty:
             _build_contact_log(df)
-            _games_cache.clear()  # force games to rebuild with new contact data
+            _games_cache.clear()
             print(f"contact_log reloaded: {len(_contact_log)} players, games cache cleared")
+        else:
+            print("contact_log reload failed — 8d CSV returned empty")
 
 @app.get("/games")
 async def get_games(date: str = None, refresh: bool = False):
