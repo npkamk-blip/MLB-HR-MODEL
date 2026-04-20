@@ -38,7 +38,7 @@ LEAGUE_CONSTANTS = {
 # weight > 1.0 = stat matters MORE than assumed
 # weight < 1.0 = stat matters LESS than assumed
 DEFAULT_WEIGHTS = {
-    # Batter contact quality
+    # Batter contact quality — season
     "barrel_season_w":    1.0,
     "barrel_l8d_w":       1.0,
     "la_season_w":        1.0,
@@ -49,11 +49,27 @@ DEFAULT_WEIGHTS = {
     "iso_vs_hand_w":      1.0,
     "hard_hit_season_w":  1.0,
     "hard_hit_l8d_w":     1.0,
+    # Batter L8D advanced
+    "xwoba_l8d_w":        1.0,
+    "xslg_l8d_w":         1.0,
+    "bat_speed_l8d_w":    1.0,
+    "slg_l8d_w":          1.0,
+    "xslg_gap_l8d_w":     1.0,
+    "l8d_hr_w":           1.0,
+    # Batter other
+    "fb_pct_season_w":    1.0,
+    "pull_pct_season_w":  1.0,
+    "k_pct_l8d_w":        1.0,
+    "hot_cold_mult_w":    1.0,
     # Pitcher vulnerability
     "pit_hr9_season_w":   1.0,
     "pit_hr9_vs_hand_w":  1.0,
     "pit_slg_season_w":   1.0,
     "pit_slg_vs_hand_w":  1.0,
+    "pit_hard_hit_w":     1.0,
+    "pit_fb_pct_w":       1.0,
+    "pit_era_diff_w":     1.0,
+    "pit_k9_season_w":    1.0,
     # Context
     "park_w":             1.0,
     "weather_w":          1.0,
@@ -232,7 +248,8 @@ async def recalibrate_model():
 
     # ── Convert correlations to weights ──
     # weight = 1.0 + (correlation * 2.0), clamped 0.3 - 2.5
-    new_weights = _model_weights.copy()
+    # Start from DEFAULT_WEIGHTS merged with current — ensures all keys exist
+    new_weights = {**DEFAULT_WEIGHTS, **_model_weights}
     changes = []
     old_active = _model_weights.get("active_stats", DEFAULT_WEIGHTS["active_stats"])
 
