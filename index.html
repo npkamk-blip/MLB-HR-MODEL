@@ -601,9 +601,130 @@ function buildBatDetail(b){
   var oppHand=b.opp_hand||b._full.opp_p_hand||'R';
   var splitLabel='vs '+oppHand+'HP';
   var hasL8D=l.pa>0;
-  var hasSplit=bd.split_pa>0;
   var l8dHR=b.l8d_hr||b._full.l8d_hr_count||0;
-  var bc_pa=b._full.breakdown&&b._full.breakdown.pa_season||0;
+  var bc_pa=bd.pa_season||0;
+  var clog=b.contact_log||[];
+
+  function fmtStat(val,dec,suffix){return (val!=null&&val!==0&&val!=='')?(+val).toFixed(dec)+(suffix||''):'--';}
+  function fmtSlg(val){return val>0?'.'+String(Math.round(val*1000)).padStart(3,'0'):'--';}
+  function trendFlag(sVal,lVal,higherBetter){
+    if(!hasL8D||!sVal||!lVal)return '';
+    var diff=lVal-sVal,pct=Math.abs(diff)/Math.max(Math.abs(sVal),0.001);
+    if(pct<0.20)return '';
+    if(higherBetter)return diff>0?'🔥':'❄️';
+    return diff<0?'🔥':'❄️';
+  }
+
+  // ── Stat rows: [label, seasonVal, l8dVal, splitVal, splitLabel, higherBetter]
+  var statRows=[
+    ['Hard Hit%',
+      fmtStat(s.hard_hit,1,'%'), fmtStat(l.hard_hit_pct,1,'%')+trendFlag(s.hard_hit,l.hard_hit_pct,true), '--', true],
+    ['Barrel%',
+      fmtStat(s.barrel,1,'%'), fmtStat(l.barrel_pct,1,'%')+trendFlag(s.barrel,l.barrel_pct,true), '--', true],
+    ['Exit Velo',
+      fmtStat(s.ev,1), fmtStat(l.exit_velo,1)+trendFlag(s.ev,l.exit_velo,true), '--', true],
+    ['xwOBA',
+      '--', fmtStat(l.xwoba,3)+trendFlag(0,l.xwoba,true), bd.split_woba>0?fmtStat(bd.split_woba,3):'--', true],
+    ['xSLG',
+      '--', fmtStat(l.xslg,3)+trendFlag(0,l.xslg,true), '--', true],
+    ['Bat Speed',
+      '--', fmtStat(l.bat_speed,1)+trendFlag(0,l.bat_speed,true), '--', true],
+    ['ISO',
+      fmtSlg(s.iso), fmtSlg(l.iso)+trendFlag(s.iso,l.iso,true), bd.iso_vs_hand>0?fmtSlg(bd.iso_vs_hand):'--', true],
+    ['K%',
+      fmtStat(s.k,1,'%'), fmtStat(l.k_pct,1,'%')+trendFlag(s.k,l.k_pct,false), bd.split_k_pct>0?fmtStat(bd.split_k_pct,1,'%'):'--', false],
+    ['HR',
+      (s.hr||0)+(bc_pa>0?' <span style="font-size:9px;color:var(--muted2)">('+bc_pa+' PA)</span>':''),
+      String(l8dHR), bd.split_hr>0?String(bd.split_hr)+(bd.split_pa>0?' <span style="font-size:9px;color:var(--muted2)">('+bd.split_pa+')</span>':''):'--', true],
+    ['SLG',
+      fmtSlg(s.slg), fmtSlg(l.slg)+trendFlag(s.slg,l.slg,true), bd.split_slg>0&&bd.split_pa>=20?fmtSlg(bd.split_slg):'--', true],
+  ];
+
+  // ── Contact log HTML ──
+  var clogH='';
+  if(clog.length>0){
+    clogH+='<div class="clog-title" style="padding:0 0 6px 0;margin-bottom:6px;border-bottom:1px solid var(--border2)">Last '+clog.length+' Batted Balls</div>';
+    clogH+='<table class="clog-table" style="width:100%">';
+    clogH+='<thead><tr>';
+    clogH+='<th>Date</th><th>Pitcher</th><th>Pitch</th><th class="num">EV</th><th class="num">Angle</th><th class="num">Dist</th><th class="num">Bat Spd</th><th>Result</th>';
+    clogH+='</tr></thead><tbody>';
+    clog.forEach(function(e){
+      var res=e.result||'';
+      var isHR=res==='home_run';
+      var isXBH=res==='double'||res==='triple';
+      var rowCls=isHR?'clog-hr':isXBH?'clog-xbh':'clog-out';
+      var resCls=isHR?'clog-result-hr':isXBH?'clog-result-xbh':'clog-result-out';
+      var resDisp=res.replace(/_/g,' ');
+      var evCls=e.ev>=100?'clog-ev-hot':e.ev>=90?'clog-ev-warm':'clog-ev-cold';
+      var angleCls=(e.angle>=18&&e.angle<=35)?'sc-g':(e.angle>=10)?'sc-y':'sc-r';
+      clogH+='<tr class="'+rowCls+'">';
+      clogH+='<td style="color:var(--muted2);font-size:10px;white-space:nowrap">'+(e.date||'').replace('2026-','')+'</td>';
+      clogH+='<td style="color:var(--muted);font-size:10px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(e.pitcher||e.pitch_type||'')+'</td>';
+      clogH+='<td style="color:var(--muted2);font-size:10px">'+(e.pitch_type||'')+'</td>';
+      clogH+='<td class="num '+evCls+'">'+(e.ev>0?e.ev.toFixed(1):'--')+'</td>';
+      clogH+='<td class="num" style="color:var(--'+angleCls.replace('sc-','')+');white-space:nowrap">'+(e.angle!==0?e.angle.toFixed(1)+'°':'--')+'</td>';
+      clogH+='<td class="num" style="color:var(--muted)">'+(e.distance>0?e.distance:'--')+'</td>';
+      clogH+='<td class="num" style="color:var(--muted2)">'+(e.bat_speed>0?e.bat_speed.toFixed(1):'--')+'</td>';
+      clogH+='<td class="'+resCls+'" style="white-space:nowrap">'+resDisp+'</td>';
+      clogH+='</tr>';
+    });
+    clogH+='</tbody></table>';
+  } else {
+    clogH+='<div style="color:var(--muted2);font-size:11px;padding:20px 0;text-align:center">No contact data — updates after next refresh</div>';
+  }
+
+  // ── Build layout ──
+  var h='<div class="detail-wrap">';
+
+  // Side-by-side: stats left, contact log right
+  h+='<div style="display:grid;grid-template-columns:1fr 1.6fr;gap:12px;align-items:start">';
+
+  // LEFT — stat table
+  h+='<div>';
+  h+='<div class="dstat-wrap">';
+  h+='<div class="drow drow-hdr"><div class="drow-lbl"></div><div class="drow-s">Season</div><div class="drow-l">L8D</div><div class="drow-sp">'+splitLabel+'</div></div>';
+  statRows.forEach(function(r){
+    var lbl=r[0],sVal=r[1],lVal=r[2],spVal=r[3];
+    var row='<div class="drow">';
+    row+='<div class="drow-lbl">'+lbl+'</div>';
+    row+='<div class="drow-s"><span class="chip-val n">'+sVal+'</span></div>';
+    row+='<div class="drow-l"><span class="chip-val n">'+(hasL8D?lVal:'--')+'</span></div>';
+    row+='<div class="drow-sp"><span class="chip-val n">'+spVal+'</span></div>';
+    row+='</div>';
+    h+=row;
+  });
+  h+='</div>'; // dstat-wrap
+
+  // Pitcher + pitch matchup below stats
+  if(pitP&&pitP.name){
+    h+='<div class="detail-block" style="margin-top:8px"><div class="detail-block-title">'+pitP.name+' ('+pitP.hand+'HP)</div><div class="chip-row">';
+    h+=chip('ERA',pitP.era?pitP.era.toFixed(2):'--',pitP.era>=4.5?'r':pitP.era>=3.5?'y':'g');
+    h+=chip('HR/9',pitP.hr9?pitP.hr9.toFixed(2):'--',pitP.hr9>=1.4?'g':pitP.hr9>=1?'y':'r');
+    h+=chip('HH%',pitP.hard_hit_pct?pitP.hard_hit_pct+'%':'--',pitP.hard_hit_pct>=42?'r':pitP.hard_hit_pct>=36?'y':'g');
+    var slgKey='vs_'+(b.hand==='L'?'L':'R')+'_slg';
+    var pitSlgV=pitP[slgKey];
+    h+=chip('SLG vs '+b.hand,pitSlgV&&bd.split_ip_vs_bat>=5?fmtSlg(pitSlgV):'--','n');
+    h+='</div></div>';
+  }
+  if(bd.pitch_breakdown&&bd.pitch_breakdown.length){
+    h+='<div class="detail-block" style="margin-top:8px"><div class="detail-block-title">Pitch Matchup</div><div class="chip-row">';
+    bd.pitch_breakdown.forEach(function(p){
+      var rv=p.bat_rv||0;var rvc=rv>=2?'g':rv<=-2?'r':'n';
+      h+=chip(p.name+' '+p.usage+'%',(rv>0?'+':'')+rv,rvc);
+    });
+    h+='</div></div>';
+  }
+  h+='</div>'; // left col
+
+  // RIGHT — contact log
+  h+='<div style="background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;overflow-x:auto">';
+  h+=clogH;
+  h+='</div>'; // right col
+
+  h+='</div>'; // grid
+  h+='</div>'; // detail-wrap
+  return h;
+}
 
   // Stat row helper: label | season | l8d | split
   function statRow(lbl, sVal, sCls, l8dVal, l8dCls, spVal, spCls, note){
