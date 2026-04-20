@@ -682,6 +682,7 @@ def _build_contact_log(df: pd.DataFrame):
             try:
                 events.append({
                     'date':       str(row.get('game_date', ''))[-5:],
+                    'pitcher':    reverse_name(str(row.get('pitcher_name', '') or '').strip()),
                     'pitch_type': pitch_short,
                     'ev':         round(float(row['launch_speed']), 1),
                     'angle':      round(float(row['launch_angle']), 1) if pd.notna(row.get('launch_angle')) else 0,
