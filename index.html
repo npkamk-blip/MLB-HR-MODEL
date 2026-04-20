@@ -4,16 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>Sharp - MLB Model</title>
+<title>8-Ball - MLB Model</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0a0a;--surface:#111;--s2:#161616;--s3:#0e0e0e;--card2:#131313;
-  --border:#252525;--border2:#1a1a1a;
-  --accent:#c8f135;--blue:#4da6ff;--text:#f0f0f0;
-  --muted:#888;--muted2:#555;--danger:#ff4d4d;--warn:#ffaa33;--purple:#c084fc;
+  --bg:#060a12;--surface:#0d1420;--s2:#111927;--s3:#0a1019;--card2:#0f1822;
+  --border:#1a2840;--border2:#132030;
+  --accent:#4da6ff;--blue:#4da6ff;--text:#e8f0fe;
+  --muted:#6b8cad;--muted2:#3d5a7a;--danger:#ff4d6d;--warn:#ffaa33;--purple:#c084fc;
   --g:#39d353;--y:#ffaa33;--r:#ff4d4d;
+  /* Blue gradient for stat coloring */
+  --b10:#4da6ff;--b25:#3d84d4;--b50:#2d62a0;--b75:#1e4070;
 }
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px}
 header{border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;background:var(--bg)}
@@ -217,7 +219,7 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 <body>
 <header>
   <div style="display:flex;align-items:center;gap:12px">
-    <div class="logo">Sharp</div>
+    <div class="logo">8-Ball</div>
     <div class="logo-sub">MLB Model</div>
   </div>
   <div class="hdr-r">
@@ -227,6 +229,7 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
       <button class="date-btn" onclick="changeDate(1)">&#8250;</button>
     </div>
     <button class="refresh-btn" id="refreshBtn" onclick="load(true)">Refresh</button>
+    <button class="refresh-btn" style="background:var(--s2);color:var(--accent);border:1px solid var(--accent)" onclick="reloadContact()">⚡ Contact</button>
     <span class="upd" id="upd"></span>
   </div>
 </header>
@@ -295,6 +298,14 @@ function switchTab(id,btn){
   if(id==='model') loadModelTab();
 }
 
+async function reloadContact(){
+  try{
+    var r=await fetch(API+'/reload-contact');
+    var d=await r.json();
+    alert(d.status+'\n\nHit Refresh in ~60 seconds to see contact data.');
+  }catch(e){alert('Error: '+e.message);}
+}
+
 function probCls(p){return p>=20?'p-elite':p>=15?'p-high':p>=10?'p-mid':'p-low';}
 var modelWeightsData = null;
 async function loadModelTab() {
@@ -303,7 +314,7 @@ async function loadModelTab() {
   try {
     var r = await fetch(API + '/model-weights');
     modelWeightsData = await r.json();
-    if (!historyData) { var hr = await fetch(API + '/history'); historyData = await hr.json(); }
+    if (!historyData) { var hr = await fetch(API + '/history'); historyData = await hr.json(); if(historyData.records&&historyData.records.length>0)computePercentiles(historyData.records); }
     renderModelTab(modelWeightsData, historyData);
   } catch(e) { el.innerHTML = '<div class="err">Failed to load: ' + e.message + '</div>'; }
 }
@@ -619,29 +630,22 @@ function buildBatDetail(b){
   var xwoba_l8d = l.xwoba||bd.xwoba_l8d||0;
   var xslg_l8d  = l.xslg||bd.xslg_l8d||0;
   var bat_speed = l.bat_speed||bd.bat_speed_l8d||0;
-  var statRows=[
-    ['Hard Hit%',
-      fmtStat(s.hh,1,'%'), fmtStat(l.hh,1,'%')+trendFlag(s.hh,l.hh,true), '--', true],
-    ['Barrel%',
-      fmtStat(s.barrel,1,'%'), fmtStat(l.barrel,1,'%')+trendFlag(s.barrel,l.barrel,true), '--', true],
-    ['Exit Velo',
-      fmtStat(s.ev,1), fmtStat(l.ev,1)+trendFlag(s.ev,l.ev,true), '--', true],
-    ['xwOBA',
-      '--', xwoba_l8d>0?fmtStat(xwoba_l8d,3):'--', bd.split_woba>0?fmtStat(bd.split_woba,3):'--', true],
-    ['xSLG',
-      '--', xslg_l8d>0?fmtStat(xslg_l8d,3):'--', '--', true],
-    ['Bat Speed',
-      '--', bat_speed>0?fmtStat(bat_speed,1):'--', '--', true],
-    ['ISO',
-      fmtSlg(s.iso), fmtSlg(l.iso)+trendFlag(s.iso,l.iso,true), bd.iso_vs_hand>0?fmtSlg(bd.iso_vs_hand):'--', true],
-    ['K%',
-      fmtStat(s.k,1,'%'), fmtStat(l.k_pct,1,'%')+trendFlag(s.k,l.k_pct,false), bd.split_k_pct>0?fmtStat(bd.split_k_pct,1,'%'):'--', false],
-    ['HR',
-      (s.hr||0)+(bc_pa>0?' <span style="font-size:9px;color:var(--muted2)">('+bc_pa+' PA)</span>':''),
-      String(l8dHR), bd.split_hr>0?String(bd.split_hr)+(bd.split_pa>0?' <span style="font-size:9px;color:var(--muted2)">('+bd.split_pa+')</span>':''):'--', true],
-    ['SLG',
-      fmtSlg(s.slg), fmtSlg(l.slg)+trendFlag(s.slg,l.slg,true), bd.split_slg>0&&bd.split_pa>=20?fmtSlg(bd.split_slg):'--', true],
-  ];
+
+  // stat row builder with percentile coloring
+  function pRow(lbl, sVal, sNum, sField, lVal, lNum, lField, spVal, spNum, spField, invertField){
+    var sStyle=sNum>0?pctColor(sNum,sField,invertField):'color:var(--muted)';
+    var lStyle=lNum>0?pctColor(lNum,lField||sField,invertField):'color:var(--muted)';
+    var spStyle=spNum>0?pctColor(spNum,spField||sField,invertField):'color:var(--muted)';
+    var r='<div class="drow">';
+    r+='<div class="drow-lbl">'+lbl+'</div>';
+    r+='<div class="drow-s"><span class="chip-val" style="'+sStyle+'">'+sVal+'</span></div>';
+    r+='<div class="drow-l"><span class="chip-val" style="'+(hasL8D?lStyle:'color:var(--muted2)')+'">'+(hasL8D?lVal:'--')+'</span></div>';
+    r+='<div class="drow-sp"><span class="chip-val" style="'+spStyle+'">'+spVal+'</span></div>';
+    r+='</div>';
+    return r;
+  }
+
+  var statRows=null; // using pRow directly below
 
   // ── Contact log HTML ──
   var clogH='';
@@ -686,16 +690,16 @@ function buildBatDetail(b){
   h+='<div>';
   h+='<div class="dstat-wrap">';
   h+='<div class="drow drow-hdr"><div class="drow-lbl"></div><div class="drow-s">Season</div><div class="drow-l">L8D</div><div class="drow-sp">'+splitLabel+'</div></div>';
-  statRows.forEach(function(r){
-    var lbl=r[0],sVal=r[1],lVal=r[2],spVal=r[3];
-    var row='<div class="drow">';
-    row+='<div class="drow-lbl">'+lbl+'</div>';
-    row+='<div class="drow-s"><span class="chip-val n">'+sVal+'</span></div>';
-    row+='<div class="drow-l"><span class="chip-val n">'+(hasL8D?lVal:'--')+'</span></div>';
-    row+='<div class="drow-sp"><span class="chip-val n">'+spVal+'</span></div>';
-    row+='</div>';
-    h+=row;
-  });
+  h+=pRow('Hard Hit%', fmtStat(s.hh,1,'%'),s.hh,'hard_hit_season', fmtStat(l.hh,1,'%')+trendFlag(s.hh,l.hh,true),l.hh,'hard_hit_l8d', '--',0,'', false);
+  h+=pRow('Barrel%', fmtStat(s.barrel,1,'%'),s.barrel,'barrel_pct_season', fmtStat(l.barrel,1,'%')+trendFlag(s.barrel,l.barrel,true),l.barrel,'barrel_pct_l8d', '--',0,'', false);
+  h+=pRow('Exit Velo', fmtStat(s.ev,1),s.ev,'ev_season', fmtStat(l.ev,1)+trendFlag(s.ev,l.ev,true),l.ev,'ev_l8d', '--',0,'', false);
+  h+=pRow('xwOBA', '--',0,'', xwoba_l8d>0?fmtStat(xwoba_l8d,3):'--',xwoba_l8d,'xwoba_l8d', bd.split_woba>0?fmtStat(bd.split_woba,3):'--',bd.split_woba,'xwoba_l8d', false);
+  h+=pRow('xSLG', '--',0,'', xslg_l8d>0?fmtStat(xslg_l8d,3):'--',xslg_l8d,'xslg_l8d', '--',0,'', false);
+  h+=pRow('Bat Speed', '--',0,'', bat_speed>0?fmtStat(bat_speed,1):'--',bat_speed,'bat_speed_l8d', '--',0,'', false);
+  h+=pRow('ISO', fmtSlg(s.iso),s.iso,'iso_season', fmtSlg(l.iso)+trendFlag(s.iso,l.iso,true),l.iso,'iso_season', bd.iso_vs_hand>0?fmtSlg(bd.iso_vs_hand):'--',bd.iso_vs_hand,'iso_vs_hand', false);
+  h+=pRow('K%', fmtStat(s.k,1,'%'),s.k,'k_pct_season', fmtStat(l.k_pct,1,'%')+trendFlag(s.k,l.k_pct,false),l.k_pct,'k_pct_season', bd.split_k_pct>0?fmtStat(bd.split_k_pct,1,'%'):'--',bd.split_k_pct,'k_pct_season', true);
+  h+=pRow('HR', (s.hr||0)+(bc_pa>0?' <span style="font-size:9px;color:var(--muted2)">('+bc_pa+' PA)</span>':''),s.hr,'', String(l8dHR),l8dHR,'', bd.split_hr>0?String(bd.split_hr)+(bd.split_pa>0?' <span style="font-size:9px;color:var(--muted2)">('+bd.split_pa+')</span>':''):'--',bd.split_hr,'', false);
+  h+=pRow('SLG', fmtSlg(s.slg),s.slg,'', fmtSlg(l.slg)+trendFlag(s.slg,l.slg,true),l.slg,'slg_l8d', bd.split_slg>0&&bd.split_pa>=20?fmtSlg(bd.split_slg):'--',bd.split_slg,'', false);
   h+='</div>'; // dstat-wrap
 
   // Pitcher + pitch matchup below stats
@@ -916,6 +920,58 @@ function rchip(lbl,val){return '<div class="r-chip"><div class="r-chip-lbl">'+lb
 // -- HISTORY --
 var historyData = null;
 var selectedHistDate = null;
+var _statPercentiles = {}; // computed from history records
+var _percentileMode = 'all_predicted'; // switches to 'hr_hitters' at 200+ HR records
+
+function computePercentiles(records) {
+  // Compute 10th, 25th, 50th, 75th percentile for each stat field
+  // Uses all predicted records OR hr_hitters only depending on mode
+  var hrHitters = records.filter(function(r){return r.hit_hr===1;});
+  var pool = (hrHitters.length >= 200) ? hrHitters : records;
+  _percentileMode = (hrHitters.length >= 200) ? 'hr_hitters' : 'all_predicted';
+
+  var fields = [
+    'barrel_pct_season','hard_hit_season','ev_season','iso_season',
+    'iso_vs_hand','xwoba_l8d','xslg_l8d','bat_speed_l8d',
+    'hard_hit_l8d','barrel_pct_l8d','ev_l8d','slg_l8d',
+    'k_pct_season','pit_hr9_season','pit_hr9_vs_hand',
+  ];
+  _statPercentiles = {};
+  fields.forEach(function(f){
+    var vals = pool.map(function(r){return parseFloat(r[f])||0;})
+                   .filter(function(v){return v>0;})
+                   .sort(function(a,b){return a-b;});
+    if(vals.length < 10){_statPercentiles[f]=null;return;}
+    var n=vals.length;
+    _statPercentiles[f]={
+      p10: vals[Math.floor(n*0.10)],
+      p25: vals[Math.floor(n*0.25)],
+      p50: vals[Math.floor(n*0.50)],
+      p75: vals[Math.floor(n*0.75)],
+      mode: _percentileMode,
+      n: n,
+    };
+  });
+}
+
+function pctColor(val, field, invert) {
+  // Returns inline style color based on percentile rank
+  // invert=true for stats where lower is better (K%)
+  if(!val||val===0||!_statPercentiles[field])return'color:var(--muted)';
+  var p=_statPercentiles[field];
+  var rank = invert ? (p.p75 - val) / (p.p75 - p.p10 + 0.001) : (val - p.p10) / (p.p75 - p.p10 + 0.001);
+  if(invert){
+    // for K%: lower is better, flip thresholds
+    if(val<=p.p10)return'color:var(--b10);font-weight:700';
+    if(val<=p.p25)return'color:var(--b25)';
+    if(val<=p.p50)return'color:var(--b50)';
+    return'color:var(--b75)';
+  }
+  if(val>=p.p75)return'color:var(--b10);font-weight:700';
+  if(val>=p.p50)return'color:var(--b25)';
+  if(val>=p.p25)return'color:var(--b50)';
+  return'color:var(--b75)';
+}
 
 async function loadHistory() {
   var el = document.getElementById('history-main');
@@ -924,6 +980,8 @@ async function loadHistory() {
     var resp = await fetch(API + '/history');
     var data = await resp.json();
     historyData = data;
+    // Compute percentiles from history records
+    if(data.records && data.records.length > 0) computePercentiles(data.records);
     renderHistory(data);
   } catch(e) {
     el.innerHTML = '<div class="err">'+e.message+'</div>';
@@ -1155,7 +1213,7 @@ async function manualRecord() {
 async function load(forceRefresh){
   var btn=document.getElementById('refreshBtn'),upd=document.getElementById('upd');
   btn.disabled=true;
-  document.getElementById('batter-main').innerHTML='<div class="loading">Loading Sharp Data<div class="dots"><span></span><span></span><span></span></div></div>';
+  document.getElementById('batter-main').innerHTML='<div class="loading">Loading 8-Ball Data<div class="dots"><span></span><span></span><span></span></div></div>';
   document.getElementById('pitcher-main').innerHTML='<div class="no-data">Loading...</div>';
   document.getElementById('game-main').innerHTML='<div class="no-data">Loading...</div>';
   try{
