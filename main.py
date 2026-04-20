@@ -3156,6 +3156,12 @@ def status():
         "model_day": get_rotation_day(),
     }
 
+@app.get("/reload-contact")
+async def reload_contact_get():
+    """GET endpoint to trigger contact log reload — browser friendly"""
+    asyncio.create_task(reload_contact_log())
+    return {"status": "Contact log reloading — check back in 60 seconds"}
+
 @app.post("/reload")
 async def reload_data():
     _games_cache.clear()
