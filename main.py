@@ -299,8 +299,7 @@ def get_rotation_day():
 ROTATION_DAYS = 0
 ROTATION_SCHEDULE = {}
 
-
-
+SAVANT_BASE = "https://baseballsavant.mlb.com"
 
 def savant_batter_url(year=None, min_pa=10, extra=""):
     yr = year or current_season()
