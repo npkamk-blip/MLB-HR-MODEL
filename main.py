@@ -2016,9 +2016,12 @@ def calc_weather_multiplier(home_team, wind_speed, wind_direction, temperature, 
     return round(wind_mult * temp_mult, 3), direction_label
 
 def sigmoid_to_prob(raw_score):
-    centered = (raw_score - 50) / 18.0
-    sigmoid = 1 / (1 + math.exp(-centered))
-    return round(min(max(0.02 + sigmoid * 0.25, 0.02), 0.25) * 100, 1)
+    """
+    Sigmoid removed April 2026 — was compressing all outputs into 5-14% band.
+    Scores clustered 14-47, never reaching the sigmoid center of 50.
+    Now direct pass-through with hard floor/cap only.
+    """
+    return round(min(max(raw_score, 2.0), 28.0), 1)
 
 def safe_mult(value, lg_avg, weight_key="", sample=None, min_sample=0, cap_high=2.50, cap_low=0.30):
     """
@@ -2885,6 +2888,142 @@ async def debug_results(target_date: str = None):
         }
     except Exception as e:
         return {"error": str(e)}
+
+@app.get("/debug/model-state")
+async def debug_model_state():
+    """
+    Show exactly what the model is doing after recalibration:
+    - Which 8 stats are active and their weights
+    - What data source each stat reads from
+    - What changed from defaults
+    - Sample sizes used in last calibration
+    - Correlation values per stat
+    """
+    import json
+
+    # ── Data source map — where each stat comes from ──
+    DATA_SOURCES = {
+        "barrel_season":     "Baseball Savant — season Statcast (barrel_batted_rate)",
+        "barrel_l8d":        "Baseball Savant — rolling 8-day Statcast window",
+        "la_season":         "Baseball Savant — season launch_angle_avg",
+        "la_l8d":            "Baseball Savant — rolling 8-day launch angle",
+        "ev_season":         "Baseball Savant — season exit_velocity_avg",
+        "ev_l8d":            "Baseball Savant — rolling 8-day exit velocity",
+        "iso_season":        "Baseball Savant — season SLG minus AVG",
+        "iso_vs_hand":       "Baseball Savant — batter split vs pitcher hand (ISO)",
+        "hard_hit_season":   "Baseball Savant — season hard_hit_percent",
+        "hard_hit_l8d":      "Baseball Savant — rolling 8-day hard hit%",
+        "pit_hr9_season":    "MLB Stats API — pitcher HR/9 from game logs",
+        "pit_hr9_vs_hand":   "Baseball Savant — pitcher splits vs batter hand (HR/9)",
+        "pit_slg_season":    "Baseball Savant — pitcher season SLG allowed",
+        "pit_slg_vs_hand":   "Baseball Savant — pitcher splits vs batter hand (SLG)",
+        "park":              "Static park HR factors table (hand-adjusted)",
+        "weather":           "Open-Meteo API — wind speed/direction/temperature",
+        "bullpen":           "MLB Stats API — team bullpen HR/9",
+        "bat_platoon":       "Baseball Savant — batter ISO vs hand / ISO overall ratio",
+        "pit_platoon":       "Baseball Savant — pitcher SLG vs hand / SLG overall ratio",
+        "pitch_delta":       "Baseball Savant — batter + pitcher pitch run values (arsenal)",
+        "k_pct":             "Baseball Savant — batter K% (penalty gate)",
+        "fb_pct_season":     "Baseball Savant — batter fly ball% (Round 2 candidate)",
+        "pull_pct_season":   "Baseball Savant — batter pull% (Round 2 candidate)",
+        "pit_fb_pct_allowed":"Baseball Savant — pitcher fly ball% allowed (Round 2 candidate)",
+        "hard_hit_l8d":      "Baseball Savant — rolling 8-day hard hit% (Round 2 candidate)",
+        "k_pct_l8d":         "Baseball Savant — rolling 8-day K% (Round 2 candidate)",
+        "pit_era_diff":      "MLB Stats API — pitcher ERA vs league avg (Round 3 candidate)",
+        "pit_k9_season":     "MLB Stats API — pitcher K/9 (Round 4 candidate)",
+        "xwoba_l8d":         "Baseball Savant — rolling 8-day xwOBA (stored, not yet active)",
+        "xslg_l8d":          "Baseball Savant — rolling 8-day xSLG (stored, not yet active)",
+        "bat_speed_l8d":     "Baseball Savant — rolling 8-day bat speed (stored, not yet active)",
+        "slg_l8d":           "Baseball Savant — rolling 8-day SLG (stored, not yet active)",
+    }
+
+    weights = _model_weights
+    active_stats = weights.get("active_stats", DEFAULT_WEIGHTS["active_stats"])
+    default_stats = DEFAULT_WEIGHTS["active_stats"]
+
+    # ── Build active stat details ──
+    active_details = []
+    for stat in active_stats:
+        w_key = stat + "_w"
+        current_w = round(float(weights.get(w_key, 1.0)), 3)
+        default_w = round(float(DEFAULT_WEIGHTS.get(w_key, 1.0)), 3)
+        changed = abs(current_w - default_w) >= 0.05
+        was_default = stat in default_stats
+        source = DATA_SOURCES.get(stat, "Unknown source")
+        active_details.append({
+            "stat": stat,
+            "weight": current_w,
+            "default_weight": default_w,
+            "weight_changed": changed,
+            "direction": "up" if current_w > default_w else "down" if current_w < default_w else "unchanged",
+            "was_in_default_model": was_default,
+            "promoted": not was_default,
+            "data_source": source,
+        })
+
+    # Sort by weight descending
+    active_details.sort(key=lambda x: x["weight"], reverse=True)
+
+    # ── Stats that were dropped vs defaults ──
+    dropped_from_default = [s for s in default_stats if s not in active_stats]
+    newly_promoted = [s for s in active_stats if s not in default_stats]
+
+    # ── All weight changes from defaults ──
+    all_changes = []
+    for key in DEFAULT_WEIGHTS:
+        if not key.endswith("_w"): continue
+        old_w = round(float(DEFAULT_WEIGHTS[key]), 3)
+        new_w = round(float(weights.get(key, 1.0)), 3)
+        if abs(new_w - old_w) >= 0.05:
+            stat_name = key.replace("_w", "")
+            all_changes.append({
+                "stat": stat_name,
+                "before": old_w,
+                "after": new_w,
+                "delta": round(new_w - old_w, 3),
+                "direction": "up" if new_w > old_w else "down",
+                "data_source": DATA_SOURCES.get(stat_name, "Unknown"),
+            })
+    all_changes.sort(key=lambda x: abs(x["delta"]), reverse=True)
+
+    # ── Calibration metadata ──
+    meta = {
+        "last_calibrated": weights.get("last_calibrated"),
+        "records_used": weights.get("records_used", 0),
+        "calibration_round": weights.get("calibration_round", 0),
+        "promoted_stats": weights.get("promoted_stats", []),
+        "dropped_stats": weights.get("dropped_stats", []),
+        "recent_changes": weights.get("recent_changes", []),
+    }
+
+    # ── Sigmoid status ──
+    sigmoid_status = {
+        "status": "REMOVED — April 2026",
+        "reason": "Scores clustered 14-47, never reaching sigmoid center of 50. All outputs compressed to 5-14% band.",
+        "current_output": "direct: running * 100, floor 2%, cap 28%",
+        "previous_formula": "0.02 + sigmoid((raw-50)/18) * 0.25",
+    }
+
+    return {
+        "calibration_meta": meta,
+        "active_model": {
+            "count": len(active_details),
+            "stats": active_details,
+        },
+        "changes_from_default": {
+            "dropped": dropped_from_default,
+            "promoted": newly_promoted,
+            "weight_changes": all_changes,
+        },
+        "sigmoid": sigmoid_status,
+        "rotation": {
+            "round": get_rotation_round(),
+            "day": get_rotation_day(),
+            "next_candidate_rotation_in_days": ROTATION_DAYS - get_rotation_day(),
+        },
+        "data_source_legend": DATA_SOURCES,
+    }
+
 
 @app.get("/debug/scores")
 async def debug_score_distribution():
