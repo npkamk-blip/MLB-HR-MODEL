@@ -181,188 +181,126 @@ async def recalibrate_model():
         if dx*dy == 0: return None
         return round(num/(dx*dy), 4)
 
-    # All stats to evaluate
-    all_stats = [
-        # Active model stats
-        "barrel_season_w",   "barrel_l8d_w",
-        "la_season_w",       "la_l8d_w",
-        "ev_season_w",       "ev_l8d_w",
-        "iso_season_w",      "iso_vs_hand_w",
-        "hard_hit_season_w", "hard_hit_l8d_w",
-        "pit_hr9_season_w",  "pit_hr9_vs_hand_w",
-        "pit_slg_season_w",  "pit_slg_vs_hand_w",
-        "park_w",            "weather_w",
-        "bullpen_w",         "bat_platoon_w",
-        "pit_platoon_w",     "pitch_delta_w",
-        "k_pct_w",
-        # Round 2 candidates
-        "fb_pct_season",     "pull_pct_season",
-        "pit_fb_pct_allowed","hard_hit_l8d",
-        "k_pct_l8d",
-        # Round 3 candidates
-        "pit_era_diff",
-        # Round 4 candidates
-        "pit_k9_season",
-    ]
+    # ── Flat open competition — ALL stored fields compete for top 8 ──
+    # No rounds, no gates, no artificial promotion thresholds.
+    # Every field saved in prediction records is a candidate from day 1.
+    # The data decides entirely.
 
-    # Map weight keys to stored field names
-    stat_field_map = {
-        "barrel_season_w": "barrel_pct_season",
-        "barrel_l8d_w": "barrel_pct_l8d",
-        "la_season_w": "la_season",
-        "la_l8d_w": "la_l8d",
-        "ev_season_w": "ev_season",
-        "ev_l8d_w": "ev_l8d",
-        "iso_season_w": "iso_season",
-        "iso_vs_hand_w": "iso_vs_hand",
+    STAT_FIELD_MAP = {
+        "barrel_season_w":   "barrel_pct_season",
+        "barrel_l8d_w":      "barrel_pct_l8d",
+        "la_season_w":       "la_season",
+        "la_l8d_w":          "la_l8d",
+        "ev_season_w":       "ev_season",
+        "ev_l8d_w":          "ev_l8d",
+        "iso_season_w":      "iso_season",
+        "iso_vs_hand_w":     "iso_vs_hand",
         "hard_hit_season_w": "hard_hit_season",
-        "hard_hit_l8d_w": "hard_hit_l8d",
-        "pit_hr9_season_w": "pit_hr9_season",
+        "hard_hit_l8d_w":    "hard_hit_l8d",
+        "pit_hr9_season_w":  "pit_hr9_season",
         "pit_hr9_vs_hand_w": "pit_hr9_vs_hand",
-        "pit_slg_season_w": "pit_slg_season",
+        "pit_slg_season_w":  "pit_slg_season",
         "pit_slg_vs_hand_w": "pit_slg_vs_hand",
-        "park_w": "park_factor",
-        "weather_w": "weather_mult",
-        "bullpen_w": "bullpen_vuln",
-        "bat_platoon_w": "bat_platoon_mult",
-        "pit_platoon_w": "pit_platoon_mult",
-        "pitch_delta_w": "combined_pitch_delta",
-        "k_pct_w": "k_pct_season",
-        "fb_pct_season": "fb_pct_season",
-        "pull_pct_season": "pull_pct_season",
-        "pit_fb_pct_allowed": "pit_fb_pct_allowed",
-        "k_pct_l8d": "k_pct_l8d",
-        "pit_era_diff": "pit_era_diff",
-        "pit_hr_fb_pct": "pit_hr_fb_pct",
-        "pit_k9_season": "pit_k9_season",
+        "park_w":            "park_factor",
+        "weather_w":         "weather_mult",
+        "bullpen_w":         "bullpen_vuln",
+        "bat_platoon_w":     "bat_platoon_mult",
+        "pit_platoon_w":     "pit_platoon_mult",
+        "pitch_delta_w":     "combined_pitch_delta",
+        "k_pct_w":           "k_pct_season",
+        "fb_pct_season_w":   "fb_pct_season",
+        "pull_pct_season_w": "pull_pct_season",
+        "pit_fb_pct_w":      "pit_fb_pct_allowed",
+        "k_pct_l8d_w":       "k_pct_l8d",
+        "pit_era_diff_w":    "pit_era_diff",
+        "pit_k9_season_w":   "pit_k9_season",
+        "xwoba_l8d_w":       "xwoba_l8d",
+        "xslg_l8d_w":        "xslg_l8d",
+        "bat_speed_l8d_w":   "bat_speed_l8d",
+        "slg_l8d_w":         "slg_l8d",
+        "xslg_gap_l8d_w":    "xslg_gap_l8d",
+        "pit_hard_hit_w":    "pit_hard_hit_season",
+        "hot_cold_mult_w":   "hot_cold_mult",
+        "l8d_hr_w":          "l8d_hr",
     }
 
     correlations = {}
-    for stat_key in all_stats:
-        field = stat_field_map.get(stat_key, stat_key)
+    for w_key, field in STAT_FIELD_MAP.items():
         corr = correlate(completed, field)
         if corr is not None:
-            correlations[stat_key] = corr
+            correlations[w_key] = corr
 
     # ── Convert correlations to weights ──
-    # New weight = 1.0 + (correlation * 2.0) clamped to 0.3 - 2.5
+    # weight = 1.0 + (correlation * 2.0), clamped 0.3 - 2.5
     new_weights = _model_weights.copy()
     changes = []
-    for stat_key, corr in correlations.items():
-        if not stat_key.endswith("_w"): continue
-        old_w = W(stat_key)
+    old_active = _model_weights.get("active_stats", DEFAULT_WEIGHTS["active_stats"])
+
+    for w_key, corr in correlations.items():
+        old_w = float(new_weights.get(w_key, 1.0))
         new_w = round(max(0.3, min(2.5, 1.0 + corr * 2.0)), 3)
-        new_weights[stat_key] = new_w
+        new_weights[w_key] = new_w
         if abs(new_w - old_w) >= 0.05:
+            stat_name = w_key.replace("_w", "")
             direction = "up" if new_w > old_w else "down"
-            changes.append(f"{stat_key}: {old_w:.2f} -> {new_w:.2f} ({direction})")
+            changes.append(f"{stat_name}: {old_w:.2f} -> {new_w:.2f} ({direction})")
 
-    # ── Determine active 8 stats ──
-    # Rank all stats by correlation, keep top 8, enforce cap
-    ranked = sorted(
-        [(k, v) for k, v in correlations.items() if k.endswith("_w")],
-        key=lambda x: abs(x[1]), reverse=True
-    )
-    new_active = [k.replace("_w","") for k,v in ranked[:8]]
+    # ── Select top 8 by absolute correlation ──
+    ranked = sorted(correlations.items(), key=lambda x: abs(x[1]), reverse=True)
+    new_active = [k.replace("_w", "") for k, v in ranked[:8]]
 
-    # ── Auto-promote candidates with corr > 0.15 ──
-    promoted = []
-    dropped = []
-    candidates = {k: v for k, v in correlations.items() if not k.endswith("_w") and abs(v) >= 0.15}
-    current_active = _model_weights.get("active_stats", DEFAULT_WEIGHTS["active_stats"])
+    # Track what changed vs previous active set
+    promoted = [s for s in new_active if s not in old_active]
+    dropped   = [s for s in old_active if s not in new_active]
 
-    for cand_key, cand_corr in sorted(candidates.items(), key=lambda x: abs(x[1]), reverse=True):
-        if len(new_active) >= 8:
-            # Find weakest active stat to displace
-            weakest = min(
-                [(k, correlations.get(k+"_w", 0)) for k in new_active],
-                key=lambda x: abs(x[1])
-            )
-            if abs(cand_corr) > abs(weakest[1]):
-                dropped.append(weakest[0])
-                new_active.remove(weakest[0])
-                new_active.append(cand_key)
-                promoted.append(cand_key)
-                # Add weight for newly promoted stat
-                new_weights[cand_key + "_w"] = round(max(0.3, min(2.5, 1.0 + cand_corr * 2.0)), 3)
-        else:
-            new_active.append(cand_key)
-            promoted.append(cand_key)
-
-    # ── Save updated weights ──
-    new_weights["active_stats"] = new_active
-    new_weights["last_calibrated"] = date.today().isoformat()
-    new_weights["records_used"] = n
-    new_weights["calibration_round"] = get_rotation_round()
-    new_weights["promoted_stats"] = promoted
-    new_weights["dropped_stats"] = dropped
-    new_weights["recent_changes"] = changes[:20]
+    # ── Save ──
+    new_weights["active_stats"]      = new_active
+    new_weights["last_calibrated"]   = date.today().isoformat()
+    new_weights["records_used"]      = n
+    new_weights["calibration_round"] = new_weights.get("calibration_round", 0) + 1
+    new_weights["promoted_stats"]    = promoted
+    new_weights["dropped_stats"]     = dropped
+    new_weights["recent_changes"]    = changes[:20]
+    new_weights["all_correlations"]  = {
+        k.replace("_w", ""): round(v, 4) for k, v in ranked
+    }
 
     _model_weights = new_weights
-
     await save_model_weights(new_weights)
     await save_model_log(new_weights)
 
-    print(f"Recalibration complete — {len(changes)} weight changes, {len(promoted)} promotions, {len(dropped)} drops")
+    print(f"Recalibration complete — {len(correlations)} stats evaluated, {len(changes)} weight changes")
+    print(f"  New active 8: {new_active}")
+    print(f"  Promoted: {promoted} | Dropped: {dropped}")
+
     return {
-        "records_used": n,
-        "weight_changes": len(changes),
-        "promoted": promoted,
-        "dropped": dropped,
-        "top_predictors": [k for k,v in ranked[:5]],
-        "changes": changes[:10],
+        "records_used":            n,
+        "stats_evaluated":         len(correlations),
+        "weight_changes":          len(changes),
+        "new_active_8":            new_active,
+        "promoted":                promoted,
+        "dropped":                 dropped,
+        "top_10_by_correlation":   [
+            {"stat": k.replace("_w",""), "correlation": round(v, 4)}
+            for k, v in ranked[:10]
+        ],
+        "changes": changes[:15],
     }
 
 
-# Every 45 days we rotate candidate stats in/out to find what actually predicts HRs
-# Round start date: April 13, 2026 (first day of data collection)
-ROTATION_START = date(2026, 4, 13)
-ROTATION_DAYS  = 45
-
 def get_rotation_round():
-    """Return current rotation round number (1-based)"""
-    delta = (date.today() - ROTATION_START).days
-    return max(1, delta // ROTATION_DAYS + 1)
+    """Rotation system removed — returns calibration round from weights instead"""
+    return int(_model_weights.get("calibration_round", 1))
 
 def get_rotation_day():
-    """Return days into current rotation round"""
-    delta = (date.today() - ROTATION_START).days
-    return delta % ROTATION_DAYS
+    """Rotation system removed — returns 0"""
+    return 0
 
-# Stats being evaluated per round
-ROTATION_SCHEDULE = {
-    1: {
-        "active": ["barrel_pct_season","barrel_pct_l8d","la_season","la_l8d",
-                   "ev_season","iso_vs_hand","iso_season","l8d_hr",
-                   "pit_hr9_vs_hand","pit_hr9_season","pit_slg_vs_hand",
-                   "pit_hard_hit_season","pitch_matchup_score",
-                   "bullpen_vuln","bat_platoon_mult","pit_platoon_mult",
-                   "park_factor","weather_mult","hot_cold_mult","k_pct_season",
-],
-        "candidates": [],  # nothing new yet, establishing baseline
-        "note": "Baseline round — establishing correlations for all core stats"
-    },
-    2: {
-        "active": [],  # filled after round 1 correlation analysis
-        "candidates": ["fb_pct_season","pull_pct_season","pit_fb_pct_allowed",
-                       "hard_hit_l8d","k_pct_l8d"],
-        "note": "Testing flyball%, pull%, pitcher flyball% allowed"
-    },
-    3: {
-        "active": [],
-        "candidates": ["hard_hit_l8d", "k_pct_l8d", "pit_hr_fb_pct"],
-        "note": "Testing Hard Hit% L8D, K% L8D, Pitcher HR/FB%"
-    },
-    4: {
-        "active": [],
-        "candidates": ["batter_vs_pit_career_ab","batter_vs_pit_career_hr",
-                       "pit_days_rest","game_time_hour"],
-        "note": "Testing H2H career history, days rest, game time"
-    },
-}
+ROTATION_DAYS = 0
+ROTATION_SCHEDULE = {}
 
 
-SAVANT_BASE = "https://baseballsavant.mlb.com"
+
 
 def savant_batter_url(year=None, min_pa=10, extra=""):
     yr = year or current_season()
@@ -1194,10 +1132,11 @@ async def daily_refresh_loop():
                 await record_results(yesterday)
             except Exception as e:
                 print(f"Result recording error: {e}")
-        # Auto-recalibrate on Day 45 of each rotation round at 3am ET
-        if now.hour == 3 and get_rotation_day() == 0 and get_rotation_round() > 1:
+        # Auto-recalibrate every Sunday at 3am ET
+        if now.hour == 3 and now.weekday() == 6:
             try:
-                print(f"Auto-recalibrating — Round {get_rotation_round()} Day 0")
+                records_available = int(_model_weights.get("records_used", 0))
+                print(f"Weekly auto-recalibrate — {records_available} records available")
                 await recalibrate_model()
             except Exception as e:
                 print(f"Auto-recalibrate error: {e}")
@@ -2799,20 +2738,18 @@ async def manual_recalibrate():
 
 @app.get("/model-weights")
 async def get_model_weights():
-    """Return current model weights, rotation status, and model log"""
-    rotation_start = date(2026, 4, 13)
-    days_since_start = (date.today() - rotation_start).days
-    days_left = ROTATION_DAYS - get_rotation_day()
+    """Return current model weights and calibration status"""
+    season_start = date(2026, 4, 13)
+    days_since_start = (date.today() - season_start).days
     return {
         "weights": _model_weights,
-        "rotation": {
+        "calibration": {
             "round": get_rotation_round(),
-            "day": get_rotation_day(),
-            "days_left": days_left,
-            "rotation_start": rotation_start.isoformat(),
-            "days_since_start": days_since_start,
+            "last_calibrated": _model_weights.get("last_calibrated"),
+            "records_used": _model_weights.get("records_used", 0),
+            "days_since_season_start": days_since_start,
+            "auto_recalibrate": "Every Sunday 3am ET",
         },
-        "rotation_schedule": ROTATION_SCHEDULE,
         "league_constants": LEAGUE_CONSTANTS,
     }
 
@@ -3016,10 +2953,11 @@ async def debug_model_state():
             "weight_changes": all_changes,
         },
         "sigmoid": sigmoid_status,
-        "rotation": {
+        "calibration": {
             "round": get_rotation_round(),
-            "day": get_rotation_day(),
-            "next_candidate_rotation_in_days": ROTATION_DAYS - get_rotation_day(),
+            "last_calibrated": _model_weights.get("last_calibrated"),
+            "records_used": _model_weights.get("records_used", 0),
+            "auto_recalibrate": "Every Sunday 3am ET",
         },
         "data_source_legend": DATA_SOURCES,
     }
