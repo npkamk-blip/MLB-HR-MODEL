@@ -614,7 +614,8 @@ function buildBatDetail(b){
   var hasL8D=l.pa>0;
   var l8dHR=b.l8d_hr||b._full.l8d_hr_count||0;
   var bc_pa=bd.pa_season||0;
-  var clog=b.contact_log||[];
+  var clog=b._full.contact_log||b.contact_log||[];
+  if(clog.length===0)console.log('No contact log for',b.name,'keys:',Object.keys(b._full||{}));
 
   function fmtStat(val,dec,suffix){return (val!=null&&val!==0&&val!=='')?(+val).toFixed(dec)+(suffix||''):'--';}
   function fmtSlg(val){return val>0?'.'+String(Math.round(val*1000)).padStart(3,'0'):'--';}
