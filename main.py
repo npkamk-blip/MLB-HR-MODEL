@@ -223,7 +223,7 @@ async def recalibrate_model():
         "bat_platoon_w":     "bat_platoon_mult",
         "pit_platoon_w":     "pit_platoon_mult",
         "pitch_delta_w":     "combined_pitch_delta",
-        "k_pct_w":           "k_pct_season",
+        "k_pct_w":           "k_pct_season",  # stored field name in predictions
         "fb_pct_season_w":   "fb_pct_season",
         "pull_pct_season_w": "pull_pct_season",
         "pit_fb_pct_w":      "pit_fb_pct_allowed",
@@ -2204,9 +2204,41 @@ def compute_hr_prob_multiplicative(
             return park_factor, 1, 1.0, True, 2.0, 0.5
         if stat == "weather":
             return weather_mult, 1, 1.0, True, 1.5, 0.7
-        if stat == "k_pct_season":
+        if stat == "k_pct_season" or stat == "k_pct":
             v = blend(bc.get("k_pct",0), bp.get("k_pct",0), bwc, bwp)
             return v, pa_26, 22.0, False, 1.3, 0.7  # higher K% = bad for batter
+        if stat == "la_l8d":
+            v = b8d.get("launch_angle", 0) if has_8d else 0
+            barrel = b8d.get("barrel_pct", 0) if has_8d else 0
+            barrel_buf = min(max((barrel - 8) / 20.0, 0), 0.15)
+            if not v or v <= 0: return 1.0, 0, 1.0, True, 1.1, 0.9
+            if 25 <= v <= 35:   raw = min(1.00 + barrel_buf, 1.10)
+            elif 20 <= v < 25:  raw = 0.92 + barrel_buf
+            elif 35 < v <= 40:  raw = 0.92 + barrel_buf
+            elif 18 <= v < 20:  raw = 0.85 + barrel_buf
+            elif 40 < v <= 45:  raw = 0.85 + barrel_buf
+            elif 15 <= v < 18:  raw = 0.82 + barrel_buf
+            else:               raw = 0.80 + barrel_buf
+            return raw, pa_8d, 1.0, True, 1.15, 0.75
+        if stat == "pit_slg_season":
+            v = blend(pc.get("slg_percent", 0), pp2.get("slg_percent", 0), pwc, pwp) if pc else 0
+            return v, total_ip, 0.390, True, 1.6, 0.5
+        if stat == "bullpen":
+            bp_data = _cache.get("team_bullpen", {}).get(home_team, {})
+            v = bp_data.get("hr9", LEAGUE_CONSTANTS["lg_bullpen_hr9"])
+            return v, 1, LEAGUE_CONSTANTS["lg_bullpen_hr9"], True, 1.5, 0.6
+        if stat == "fb_pct_season":
+            v = blend(bc.get("fb_pct",0), bp.get("fb_pct",0), bwc, bwp)
+            return v, pa_26, 36.0, True, 1.4, 0.7
+        if stat == "pull_pct_season":
+            v = blend(bc.get("pull_pct",0), bp.get("pull_pct",0), bwc, bwp)
+            return v, pa_26, 40.0, True, 1.4, 0.7
+        if stat == "pit_fb_pct":
+            v = blend(pc.get("fb_pct",0), pp2.get("fb_pct",0), pwc, pwp) if pc else 0
+            return v, total_ip, 36.0, True, 1.4, 0.7
+        if stat == "k_pct_l8d":
+            v = b8d.get("k_pct", 0) if has_8d else 0
+            return v, pa_8d, 22.0, False, 1.3, 0.7  # higher K% = bad for batter
         # Unknown stat — neutral
         return 1.0, 0, 1.0, True, 1.5, 0.6
 
