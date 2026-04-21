@@ -2010,12 +2010,404 @@ def safe_mult(value, lg_avg, weight_key="", sample=None, min_sample=0, cap_high=
 def compute_hr_prob_multiplicative(
         name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
     """
-    Multiplicative HR probability model — rebuilt April 2026.
-    Now uses all active 8 stats dynamically from _model_weights.
-    Fixes: Hard Hit% in chain, xwOBA L8D in chain, EV in chain,
-           pitch matchup connected, base rate uses HR/PA not raw count,
-           bullpen reduced to 10%, HR prob cap raised to 35%.
+    Fully dynamic HR probability model — driven by active_stats from _model_weights.
+    On recalibration day the active 8 stats change and this function automatically
+    uses the new set. Zero hardcoding of which stats matter.
+
+    Architecture:
+    1. Base rate — HR/PA blended 2026/2025
+    2. Dynamic multiplier loop — for each stat in active_stats, resolve value,
+       compute multiplier via safe_mult, apply to running
+    3. Always-on context — park, weather, K% penalty, bullpen (these are
+       structural not learned stats)
+    4. Output: running * 100, floor 2%, cap 35%
     """
+    # ── Data fetch ──
+    bc  = get_batter_stats(name, 2026)
+    bp  = get_batter_stats(name, 2025)
+    b8d = get_batter_8d(name)
+    b_split_vs_hand = get_batter_split(name, opp_p_hand)
+    b_split_opp     = get_batter_split(name, "R" if opp_p_hand == "L" else "L")
+    p_split_vs_bat  = get_pitcher_split(opp_p_name, bat_hand)
+    pc  = get_pitcher_stats(opp_p_name, 2026)
+    pp2 = get_pitcher_stats(opp_p_name, 2025)
+
+    pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
+    bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
+    ip_26 = pc.get("ip", 0)
+    pwc, pwp = get_pitcher_blend_weights(ip_26, pp2.get("ip", 0))
+    has_8d   = b8d.get("pa", 0) >= 3
+    total_pa = pa_26 + pa_25
+    total_ip = ip_26 + pp2.get("ip", 0)
+    pa_8d    = b8d.get("pa", 0) if has_8d else 0
+    pit_ip_vs_hand = p_split_vs_bat.get("ip", 0)
+
+    # ── Step 1: Base HR rate — HR/PA blended correctly ──
+    hr_per_pa_26 = (bc.get("hr", 0) / max(pa_26, 1)) if pa_26 > 0 else 0
+    hr_per_pa_25 = (bp.get("hr", 0) / max(pa_25, 1)) if pa_25 > 0 else 0
+
+    if pa_26 >= 200:   base_rate = hr_per_pa_26
+    elif pa_26 >= 150: base_rate = hr_per_pa_26 * 0.80 + hr_per_pa_25 * 0.20
+    elif pa_26 >= 100: base_rate = hr_per_pa_26 * 0.60 + hr_per_pa_25 * 0.40
+    elif pa_26 >= 50:  base_rate = hr_per_pa_26 * 0.30 + hr_per_pa_25 * 0.70
+    else:              base_rate = hr_per_pa_25 if hr_per_pa_25 > 0 else 0.028
+
+    if base_rate <= 0: base_rate = 0.028
+    base_rate = min(base_rate, 0.12)
+    if total_pa < 30:   base_rate = base_rate * 0.55 + 0.028 * 0.45
+    elif total_pa < 60: base_rate = base_rate * 0.75 + 0.028 * 0.25
+
+    running = base_rate
+
+    # ── League averages for normalization ──
+    LG = {
+        "barrel_pct":      LEAGUE_CONSTANTS["lg_barrel_pct"],    # 8.0
+        "hard_hit_pct":    LEAGUE_CONSTANTS["lg_hard_hit"],       # 38.0
+        "exit_velo":       88.5,
+        "launch_angle":    12.0,
+        "bat_speed":       70.0,
+        "xwoba":           0.310,
+        "xslg":            0.420,
+        "xslg_gap":        0.020,
+        "slg":             0.390,
+        "iso":             0.145,
+        "iso_vs_hand":     0.145,
+        "pit_hr9_season":  LEAGUE_CONSTANTS["lg_hr9"],            # 1.10
+        "pit_hr9_vs_hand": LEAGUE_CONSTANTS["lg_hr9"],
+        "pit_slg_vs_hand": 0.390,
+        "pit_hard_hit":    LEAGUE_CONSTANTS["lg_hard_hit"],
+        "park_factor":     1.0,
+        "weather_mult":    1.0,
+        "bat_platoon_mult":1.0,
+        "pit_platoon_mult":1.0,
+        "combined_pitch_delta": 0.0,
+        "hot_cold_mult":   1.0,
+        "l8d_hr":          0.5,
+        "k_pct_season":    22.0,
+        "ev_l8d":          88.5,
+        "hard_hit_l8d":    38.0,
+        "barrel_pct_l8d":  8.0,
+    }
+
+    # ── Stat resolver — maps stat name → (value, sample_size, higher_is_better) ──
+    def resolve_stat(stat):
+        """Return (value, sample, lg_avg, higher_is_better, cap_high, cap_low)"""
+        # Batter season stats
+        if stat == "barrel_season":
+            v = blend(bc.get("barrel_pct",0), bp.get("barrel_pct",0), bwc, bwp)
+            return v, pa_26, LG["barrel_pct"], True, 2.5, 0.4
+        if stat == "hard_hit_season":
+            v = blend(bc.get("hard_hit_pct",0), bp.get("hard_hit_pct",0), bwc, bwp)
+            return v, pa_26, LG["hard_hit_pct"], True, 1.8, 0.5
+        if stat == "ev_season":
+            v = blend(bc.get("exit_velo",0), bp.get("exit_velo",0), bwc, bwp)
+            return v, pa_26, LG["exit_velo"], True, 1.4, 0.7
+        if stat == "la_season":
+            # LA uses sweet spot logic not simple ratio
+            v = blend(bc.get("launch_angle",0), bp.get("launch_angle",0), bwc, bwp)
+            barrel = blend(bc.get("barrel_pct",0), bp.get("barrel_pct",0), bwc, bwp)
+            barrel_buf = min(max((barrel - 8) / 20.0, 0), 0.15)
+            if not v or v <= 0: return 1.0, 0, 1.0, True, 1.1, 0.9  # neutral if missing
+            if 25 <= v <= 35:   raw = min(1.00 + barrel_buf, 1.10)
+            elif 20 <= v < 25:  raw = 0.92 + barrel_buf
+            elif 35 < v <= 40:  raw = 0.92 + barrel_buf
+            elif 18 <= v < 20:  raw = 0.85 + barrel_buf
+            elif 40 < v <= 45:  raw = 0.85 + barrel_buf
+            elif 15 <= v < 18:  raw = 0.82 + barrel_buf
+            else:               raw = 0.80 + barrel_buf
+            # Return already-converted ratio vs lg avg of 1.0
+            return raw, pa_26, 1.0, True, 1.15, 0.75
+        if stat == "iso_season":
+            v = blend(bc.get("iso",0), bp.get("iso",0), bwc, bwp)
+            return v, pa_26, LG["iso"], True, 2.0, 0.4
+        if stat == "iso_vs_hand":
+            v = b_split_vs_hand.get("iso", 0)
+            return v, b_split_vs_hand.get("pa",0), LG["iso_vs_hand"], True, 2.0, 0.4
+        # Batter L8D stats
+        if stat == "xwoba_l8d":
+            v = b8d.get("xwoba", 0) if has_8d else 0
+            return v, pa_8d, LG["xwoba"], True, 1.8, 0.5
+        if stat == "xslg_l8d":
+            v = b8d.get("xslg", 0) if has_8d else 0
+            return v, pa_8d, LG["xslg"], True, 1.8, 0.5
+        if stat == "xslg_gap_l8d":
+            v = (b8d.get("xslg",0) - b8d.get("slg",0)) if has_8d else 0
+            return v + LG["xslg_gap"], pa_8d, LG["xslg_gap"] + LG["xslg_gap"], True, 1.5, 0.6
+        if stat == "bat_speed_l8d":
+            v = b8d.get("bat_speed", 0) if has_8d else 0
+            return v, pa_8d, LG["bat_speed"], True, 1.5, 0.6
+        if stat == "hard_hit_l8d":
+            v = b8d.get("hard_hit_pct", 0) if has_8d else 0
+            return v, pa_8d, LG["hard_hit_lad"] if "hard_hit_lad" in LG else 38.0, True, 1.8, 0.5
+        if stat == "barrel_l8d":
+            v = b8d.get("barrel_pct", 0) if has_8d else 0
+            return v, pa_8d, LG["barrel_pct"], True, 2.5, 0.4
+        if stat == "ev_l8d":
+            v = b8d.get("exit_velo", 0) if has_8d else 0
+            return v, pa_8d, LG["exit_velo"], True, 1.4, 0.7
+        if stat == "slg_l8d":
+            v = b8d.get("slg", 0) if has_8d else 0
+            return v, pa_8d, LG["slg"], True, 1.8, 0.5
+        if stat == "l8d_hr":
+            v = get_l8d_hr(name)
+            # Convert to rate vs league avg
+            rate = (v / max(pa_8d, 1)) * 600 if pa_8d > 0 else 0
+            return rate, pa_8d, 28.0, True, 1.5, 0.6  # 28 HR/600PA = avg power hitter
+        if stat == "hot_cold_mult":
+            if not has_8d or pa_8d < 8: return 1.0, 0, 1.0, True, 1.2, 0.85
+            hr_8d_rate = get_l8d_hr(name) / pa_8d
+            ratio = hr_8d_rate / base_rate if base_rate > 0 else 1.0
+            return max(min(ratio, 1.20), 0.85), pa_8d, 1.0, True, 1.2, 0.85
+        # Pitcher stats
+        if stat == "pit_hr9_season":
+            v = blend(pc.get("hr9",0), pp2.get("hr9",0), pwc, pwp)
+            return v, total_ip, LG["pit_hr9_season"], True, 1.8, 0.5  # higher HR9 = good for batter
+        if stat == "pit_hr9_vs_hand":
+            v = p_split_vs_bat.get("hr9", 0)
+            return v, pit_ip_vs_hand, LG["pit_hr9_vs_hand"], True, 1.8, 0.5
+        if stat == "pit_slg_vs_hand":
+            v = p_split_vs_bat.get("slg", 0)
+            return v, pit_ip_vs_hand, LG["pit_slg_vs_hand"], True, 1.6, 0.5
+        if stat == "pit_hard_hit":
+            v = blend(pc.get("hard_hit_pct",0), pp2.get("hard_hit_pct",0), pwc, pwp)
+            return v, total_ip, LG["pit_hard_hit"], True, 1.5, 0.6
+        if stat == "pit_era_diff":
+            era = blend(pc.get("era",0), pp2.get("era",0), pwc, pwp)
+            if era <= 0: return 1.0, 0, 1.0, True, 1.3, 0.7
+            diff = era - LEAGUE_CONSTANTS["lg_era"]
+            return 1.0 + (diff / LEAGUE_CONSTANTS["lg_era"] * 0.3), total_ip, 1.0, True, 1.3, 0.7
+        if stat == "pit_k9_season":
+            v = blend(pc.get("k9",0), pp2.get("k9",0), pwc, pwp)
+            return v, total_ip, 8.5, False, 1.3, 0.7  # higher K9 = bad for batter
+        # Platoon/context
+        if stat == "bat_platoon":
+            iso_vh = b_split_vs_hand.get("iso", 0)
+            iso_ov = blend(bc.get("iso",0), bp.get("iso",0), bwc, bwp)
+            sp = b_split_vs_hand.get("pa", 0)
+            if iso_ov > 0 and iso_vh > 0 and sp >= 30:
+                return iso_vh / iso_ov, sp, 1.0, True, 1.6, 0.6
+            return 1.0, 0, 1.0, True, 1.6, 0.6
+        if stat == "pit_platoon":
+            slg_vb = p_split_vs_bat.get("slg", 0)
+            slg_op = b_split_opp.get("slg", 0) if hasattr(b_split_opp, 'get') else 0
+            slg_ov = (slg_vb + slg_op) / 2 if slg_vb > 0 and slg_op > 0 else slg_vb
+            if slg_ov > 0 and slg_vb > 0 and pit_ip_vs_hand >= 5:
+                return slg_vb / slg_ov, pit_ip_vs_hand, 1.0, True, 1.6, 0.6
+            return 1.0, 0, 1.0, True, 1.6, 0.6
+        if stat == "pitch_delta":
+            bonus, _ = compute_pitch_matchup(opp_p_name, name)
+            if bonus == 0: return 1.0, 1, 1.0, True, 1.15, 0.85
+            return 1.0 + (bonus / 80.0), 1, 1.0, True, 1.15, 0.85
+        if stat == "park":
+            return park_factor, 1, 1.0, True, 2.0, 0.5
+        if stat == "weather":
+            return weather_mult, 1, 1.0, True, 1.5, 0.7
+        if stat == "k_pct_season":
+            v = blend(bc.get("k_pct",0), bp.get("k_pct",0), bwc, bwp)
+            return v, pa_26, 22.0, False, 1.3, 0.7  # higher K% = bad for batter
+        # Unknown stat — neutral
+        return 1.0, 0, 1.0, True, 1.5, 0.6
+
+    # ── Step 2: Dynamic multiplier loop — active 8 stats ──
+    active_stats = _model_weights.get("active_stats", DEFAULT_WEIGHTS["active_stats"])
+    stat_mults = {}
+    correlated_groups = [
+        {"barrel_season", "hard_hit_season", "ev_season"},   # contact quality — use geometric mean
+        {"xwoba_l8d", "xslg_l8d", "slg_l8d"},               # L8D production — use geometric mean
+        {"pit_hr9_season", "pit_hr9_vs_hand", "pit_hard_hit"}, # pitcher vuln — use arithmetic mean
+        {"bat_platoon", "pit_platoon"},                        # platoon — independent, ok to multiply
+    ]
+
+    def in_same_group(s1, s2):
+        for g in correlated_groups:
+            if s1 in g and s2 in g: return True
+        return False
+
+    # Compute all multipliers first
+    raw_mults = {}
+    for stat in active_stats:
+        val, sample, lg_avg, higher_good, cap_hi, cap_lo = resolve_stat(stat)
+        w_key = stat + "_w"
+        if val == 0 or val is None:
+            raw_mults[stat] = 1.0
+            continue
+        # For stats already pre-converted to a ratio (la_season, bat_platoon, etc.)
+        if lg_avg == 1.0:
+            w = W(w_key)
+            m = (float(val) ** w) if higher_good else ((1.0 / max(float(val), 0.01)) ** w)
+            raw_mults[stat] = max(min(m, cap_hi), cap_lo)
+        else:
+            # Standard safe_mult
+            min_sample = 20 if "season" in stat else 8
+            raw_mults[stat] = safe_mult(val, lg_avg, w_key, sample, min_sample, cap_hi, cap_lo)
+            # For inverse stats (higher is bad for batter)
+            if not higher_good and raw_mults[stat] != 1.0:
+                raw_mults[stat] = 1.0 / max(raw_mults[stat], 0.1)
+                raw_mults[stat] = max(min(raw_mults[stat], cap_hi), cap_lo)
+
+    # Apply multipliers — use geometric mean within correlated groups
+    applied = set()
+    for stat in active_stats:
+        if stat in applied: continue
+        # Find group mates that are also active
+        group_mates = [s for s in active_stats if s != stat and in_same_group(stat, s)]
+        if group_mates:
+            # Apply geometric mean of the group
+            group = [stat] + group_mates
+            group_mult = 1.0
+            for s in group:
+                group_mult *= raw_mults.get(s, 1.0)
+            group_mult = group_mult ** (1.0 / len(group))
+            running *= group_mult
+            stat_mults[f"group_{stat}"] = round(group_mult, 3)
+            for s in group: applied.add(s)
+        else:
+            running *= raw_mults.get(stat, 1.0)
+            stat_mults[stat] = round(raw_mults.get(stat, 1.0), 3)
+            applied.add(stat)
+
+    # ── Step 3: Always-on context (not in active_stats — structural) ──
+    # Park and weather if not already in active_stats
+    if "park" not in active_stats:
+        park_mult_applied = park_factor ** W("park_w") if park_factor > 0 else 1.0
+        running *= park_mult_applied
+    else:
+        park_mult_applied = stat_mults.get("park", 1.0)
+
+    if "weather" not in active_stats:
+        weather_mult_applied = weather_mult ** W("weather_w") if weather_mult > 0 else 1.0
+        running *= weather_mult_applied
+    else:
+        weather_mult_applied = stat_mults.get("weather", 1.0)
+
+    # K% penalty — always applied as a gate regardless of active stats
+    if "k_pct_season" not in active_stats:
+        k_season = blend(bc.get("k_pct",0), bp.get("k_pct",0), bwc, bwp)
+        k_w = W("k_pct_w")
+        if k_season >= 35:   k_mult = 0.88 ** k_w
+        elif k_season >= 30: k_mult = 0.94 ** k_w
+        elif k_season >= 25: k_mult = 0.97 ** k_w
+        else:                k_mult = 1.0
+        if k_season == 0:    k_mult = 1.0
+        running *= k_mult
+    else:
+        k_season = blend(bc.get("k_pct",0), bp.get("k_pct",0), bwc, bwp)
+        k_mult = stat_mults.get("k_pct_season", 1.0)
+
+    # Bullpen — 10% blend, always structural
+    LG_BULLPEN_HR9 = LEAGUE_CONSTANTS["lg_bullpen_hr9"]
+    bullpen_data = _cache.get("team_bullpen", {}).get(home_team, {})
+    bullpen_hr9  = bullpen_data.get("hr9", LG_BULLPEN_HR9)
+    bullpen_vuln = safe_mult(bullpen_hr9, LG_BULLPEN_HR9, "bullpen_w", cap_high=1.80, cap_low=0.50)
+    bullpen_component = base_rate * bullpen_vuln * (park_factor ** W("park_w")) * (weather_mult ** W("weather_w"))
+    running = (running * 0.90) + (bullpen_component * 0.10)
+
+    hr_prob = round(min(max(running * 100, 2.0), 35.0), 1)
+
+    # ── Build supporting data for breakdown/frontend ──
+    pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
+    barrel_season = blend(bc.get("barrel_pct",0), bp.get("barrel_pct",0), bwc, bwp)
+    iso_overall   = blend(bc.get("iso",0), bp.get("iso",0), bwc, bwp)
+    iso_vs_hand   = b_split_vs_hand.get("iso", 0)
+    split_pa      = b_split_vs_hand.get("pa", 0)
+    pit_hr9_season = blend(pc.get("hr9",0), pp2.get("hr9",0), pwc, pwp)
+    pit_hard       = blend(pc.get("hard_hit_pct",0), pp2.get("hard_hit_pct",0), pwc, pwp)
+    pit_ip_vs_hand = p_split_vs_bat.get("ip", 0)
+    pit_hr9_vs_hand= p_split_vs_bat.get("hr9", 0)
+    slg_vs_bat     = p_split_vs_bat.get("slg", 0)
+    la_season      = blend(bc.get("launch_angle",0), bp.get("launch_angle",0), bwc, bwp)
+    k_season_disp  = blend(bc.get("k_pct",0), bp.get("k_pct",0), bwc, bwp)
+    hh_season      = blend(bc.get("hard_hit_pct",0), bp.get("hard_hit_pct",0), bwc, bwp)
+    ev_season      = blend(bc.get("exit_velo",0), bp.get("exit_velo",0), bwc, bwp)
+    xwoba_l8d      = b8d.get("xwoba", 0) if has_8d else 0
+    xslg_l8d       = b8d.get("xslg", 0) if has_8d else 0
+
+    pit_signals = []
+    if total_ip >= 10 and pit_hr9_season > 0: pit_signals.append(1)
+    if pit_ip_vs_hand >= 5 and pit_hr9_vs_hand > 0: pit_signals.append(1)
+    if total_ip >= 10 and pit_hard > 0: pit_signals.append(1)
+    n_components = len(pit_signals)
+
+    archetype = get_archetype(barrel_season, k_season_disp,
+                              blend(bc.get("fb_pct",0), bp.get("fb_pct",0), bwc, bwp),
+                              iso_overall if iso_overall else blend(bc.get("iso",0), bp.get("iso",0), bwc, bwp))
+    trend = get_trend(b8d, bc)
+
+    reasons = []
+    if barrel_season >= 12:   reasons.append(f"Barrel {barrel_season:.1f}%")
+    if hh_season >= 42:       reasons.append(f"Hard Hit {hh_season:.1f}%")
+    if iso_vs_hand > 0.220:   reasons.append(f"ISO vs hand .{int(iso_vs_hand*1000):03d}")
+    if pit_hr9_season > 1.3:  reasons.append(f"SP {pit_hr9_season:.1f} HR/9")
+    if park_factor >= 1.15:   reasons.append("HR-friendly park")
+    elif park_factor <= 0.90: reasons.append("Pitcher-friendly park")
+    if xwoba_l8d >= 0.400:    reasons.append(f"xwOBA L8D {xwoba_l8d:.3f}")
+
+    bat_platoon_mult = stat_mults.get("bat_platoon", raw_mults.get("bat_platoon", 1.0))
+    pit_platoon_mult = stat_mults.get("pit_platoon", raw_mults.get("pit_platoon", 1.0))
+    pit_vuln_mult    = raw_mults.get("pit_hr9_season", raw_mults.get("pit_hr9_vs_hand", 1.0))
+    barrel_mult      = raw_mults.get("barrel_season", raw_mults.get("group_barrel_season", 1.0))
+    la_mult          = raw_mults.get("la_season", 1.0)
+
+    platoon_tag = None
+    if bat_platoon_mult >= 1.20:
+        platoon_tag = f"Batter strong vs {opp_p_hand}HP"
+    if pit_platoon_mult >= 1.20:
+        platoon_tag = (platoon_tag + " + " if platoon_tag else "") + f"SP weak vs {bat_hand}HB"
+
+    conf = "High" if n_components >= 2 and pa_26 >= 50 else "Medium" if n_components >= 1 else "Low"
+    blend_note = f"{int(bwc*100)}% 2026/{int(bwp*100)}% 2025" + (" + 8d" if has_8d else "")
+
+    breakdown = {
+        "base_rate": round(base_rate * 100, 2),
+        "active_stats": active_stats,
+        "stat_mults": stat_mults,
+        "barrel_mult": round(barrel_mult, 3), "la_mult": round(la_mult, 3),
+        "pit_vuln_mult": round(pit_vuln_mult, 3),
+        "bat_platoon_mult": round(bat_platoon_mult, 3),
+        "pit_platoon_mult": round(pit_platoon_mult, 3),
+        "park_factor": round(park_factor, 3), "weather_mult": round(weather_mult, 3),
+        "hot_cold_mult": 1.0, "k_mult": round(k_mult, 3),
+        "iso_vs_hand": round(iso_vs_hand, 3), "iso_overall": round(iso_overall, 3),
+        "split_pa": split_pa, "split_ip_vs_bat": round(pit_ip_vs_hand, 1),
+        "slg_vs_bat": round(slg_vs_bat, 3) if pit_ip_vs_hand >= 5 else 0,
+        "pit_slg_overall": 0,
+        "split_hr": int(b_split_vs_hand.get("hr", 0)),
+        "split_slg": round(b_split_vs_hand.get("slg", 0), 3),
+        "split_woba": round(b_split_vs_hand.get("woba", 0), 3),
+        "split_k_pct": round(b_split_vs_hand.get("k_pct", 0), 1),
+        "split_brl": round(b_split_vs_hand.get("barrel_pct", 0), 1),
+        "split_iso": round(iso_vs_hand, 3), "split_ip": round(pit_ip_vs_hand, 1),
+        "hr9_split": round(pit_hr9_vs_hand, 2),
+        "hr9_season": round(pit_hr9_season, 2), "pit_hard": round(pit_hard, 1),
+        "n_pit_components": n_components,
+        "pit_blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025 ({ip_26:.0f} IP)",
+        "barrel_use": round(barrel_season, 1), "barrel_season": round(barrel_season, 1),
+        "la_use": round(la_season, 1), "la_season": round(la_season, 1),
+        "la_8d_raw": round(b8d.get("launch_angle",0), 1),
+        "barrel_8d_raw": round(b8d.get("barrel_pct",0), 1),
+        "hr_season": int(bc.get("hr",0)), "pa_season": int(pa_26),
+        "pa_8d": int(b8d.get("pa",0)), "has_8d": has_8d,
+        "blend_note": blend_note, "k_season": round(k_season_disp, 1),
+        "pitch_bonus": pitch_bonus, "pitch_breakdown": pitch_details,
+        "xwoba_l8d": round(xwoba_l8d, 3), "xslg_l8d": round(xslg_l8d, 3),
+        "hh_season": round(hh_season, 1), "ev_season": round(ev_season, 1),
+        "bullpen_hr9": round(bullpen_hr9, 2), "bullpen_vuln": round(bullpen_vuln, 3),
+        "iso_use": round(iso_vs_hand if iso_vs_hand > 0 else iso_overall, 3),
+        "pull_s": round(blend(bc.get("pull_pct",0), bp.get("pull_pct",0), bwc, bwp), 1),
+        "pit_modifier": round(pit_vuln_mult, 3),
+        "hr_rate_8d": round(b8d.get("hr",0) / max(b8d.get("pa",1),1) * 600, 1) if has_8d else 0,
+        "data_conf": {
+            "barrel":      1 if barrel_season > 0 and pa_26 >= 20 else 0,
+            "hard_hit":    1 if hh_season > 0 and pa_26 >= 20 else 0,
+            "ev":          1 if ev_season > 0 and pa_26 >= 20 else 0,
+            "xwoba_l8d":   1 if xwoba_l8d > 0 and has_8d else 0,
+            "pit_hr9":     1 if pit_hr9_season > 0 and total_ip >= 10 else 0,
+            "pit_hr9_hand":1 if pit_hr9_vs_hand > 0 and pit_ip_vs_hand >= 5 else 0,
+            "park":        1 if park_factor != 1.0 else 0,
+            "pitch_delta": 1 if pitch_bonus != 0 else 0,
+        },
+    }
+    return hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
     # ── Data fetch ──
     bc  = get_batter_stats(name, 2026)
     bp  = get_batter_stats(name, 2025)
