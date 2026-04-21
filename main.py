@@ -1144,7 +1144,7 @@ async def daily_refresh_loop():
             except Exception as e:
                 print(f"Daily refresh error: {e}")
         # Save predictions at 1pm ET (18:00 UTC) — lineups mostly confirmed
-        if now.hour == 11:
+        if now.hour == 18:
             try:
                 await save_daily_predictions()
             except Exception as e:
@@ -1263,55 +1263,61 @@ async def save_daily_predictions():
                 if not stadium.get("dome") and stadium.get("lat"):
                     temp, wind_speed, wind_dir = await fetch_weather(stadium["lat"], stadium["lon"], gtime)
 
-                # Try confirmed lineup first, fall back to projected
-                lineup_away, lineup_home = [], []
-                try:
-                    async with httpx.AsyncClient(timeout=15) as client:
-                        r2 = await client.get(f"{MLB_API}/game/{gid}/boxscore")
-                        box = r2.json()
-                    teams = box.get("teams", {})
-                    def extract(side):
-                        players = teams.get(side, {}).get("players", {})
-                        return sorted([p for p in players.values() if p.get("battingOrder") and int(p["battingOrder"]) <= 900],
-                                      key=lambda x: int(x["battingOrder"]))[:9]
-                    ca, ch = extract("away"), extract("home")
-                    if ca: lineup_away = ca
-                    if ch: lineup_home = ch
-                except Exception: pass
+                # ── Get all batters with recent ABs for each team ──
+                # Pull active roster from MLB API, cross-reference with bat_8d
+                # Anyone with PA in last 8 days gets processed — DNP tag handles non-starters
 
-                lineup_away_source = "confirmed"
-                lineup_home_source = "confirmed"
-                if not lineup_away:
+                async def get_team_active_batters(team_id, team_name):
+                    """Get roster players who have recent 8d data"""
+                    try:
+                        async with httpx.AsyncClient(timeout=10) as rc:
+                            r3 = await rc.get(f"{MLB_API}/teams/{team_id}/roster?rosterType=active&season={current_season()}")
+                            roster = r3.json().get("roster", [])
+                        players = []
+                        for p in roster:
+                            pos = p.get("position", {}).get("type", "")
+                            if pos == "Pitcher": continue  # skip pitchers
+                            name = p.get("person", {}).get("fullName", "")
+                            if not name: continue
+                            b8d = get_batter_8d(name)
+                            if b8d.get("pa", 0) >= 1:
+                                players.append(name)
+                        return players if players else []
+                    except Exception:
+                        return []
+
+                away_players = await get_team_active_batters(away_team_id, away_team)
+                home_players = await get_team_active_batters(home_team_id, home_team)
+
+                # Fall back to projected lineup if roster fetch fails
+                if not away_players:
                     proj, _ = await fetch_projected_lineup(away_team_id, away_team)
-                    lineup_away = proj
-                    lineup_away_source = "projected"
-                if not lineup_home:
+                    away_players = [p.get("name","") or p.get("person",{}).get("fullName","") for p in proj]
+                    away_players = [n for n in away_players if n]
+                if not home_players:
                     proj, _ = await fetch_projected_lineup(home_team_id, home_team)
-                    lineup_home = proj
-                    lineup_home_source = "projected"
+                    home_players = [p.get("name","") or p.get("person",{}).get("fullName","") for p in proj]
+                    home_players = [n for n in home_players if n]
 
-                for batters, team, opp_p_name, opp_p_hand, lineup_src in [
-                    (lineup_away, away_team, home_p.get("fullName","TBD"), home_p_hand, lineup_away_source),
-                    (lineup_home, home_team, away_p.get("fullName","TBD"), away_p_hand, lineup_home_source),
+                lineup_src = "bat_8d_roster"
+
+                for player_list, team, opp_p_name, opp_p_hand in [
+                    (away_players, away_team, home_p.get("fullName","TBD"), home_p_hand),
+                    (home_players, home_team, away_p.get("fullName","TBD"), away_p_hand),
                 ]:
-                    for batter in batters:
-                        if "person" in batter:
-                            name = batter.get("person", {}).get("fullName", "")
-                            pid = batter.get("person", {}).get("id")
-                        else:
-                            name = batter.get("name", "")
-                            pid = batter.get("id")
+                    for name in player_list:
                         if not name: continue
                         bat_hand = "R"
-                        if pid:
-                            info = await fetch_player_hand(pid)
-                            bat_hand = info.get("bat_side", "R")
+                        nl = name.lower().strip()
+                        cached_hand = _cache.get("player_hands", {}).get(nl, {})
+                        if cached_hand:
+                            bat_hand = cached_hand.get("bat_side", "R")
                         if bat_hand == "S": bat_hand = "L" if opp_p_hand == "R" else "R"
                         park_factor = get_park_hr_factor(home_team, bat_hand)
                         wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
                         hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(
                             name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult, home_team)
-                        if hr_prob < 5: continue
+                        if hr_prob < 3: continue
                         top_pitches = get_pitcher_top_pitches(opp_p_name)[:2]
                         pitch1 = top_pitches[0] if len(top_pitches) > 0 else {}
                         pitch2 = top_pitches[1] if len(top_pitches) > 1 else {}
@@ -3012,16 +3018,11 @@ async def debug_model_state():
 @app.get("/debug/scores")
 async def debug_score_distribution():
     """
-    Return raw score distribution BEFORE sigmoid is applied.
-    Used to diagnose whether score compression is upstream (batter scoring)
-    or downstream (sigmoid curve too flat).
-    Pulls today's saved predictions from GitHub and extracts model_hr_pct values,
-    then back-calculates the raw score using the inverse sigmoid.
-    Also computes live raw scores for today's active batters if predictions are loaded.
+    Return model% distribution for today's predictions.
+    Sigmoid removed April 2026 — model_hr_pct is now the direct output.
     """
-    import json, math, statistics
+    import json, statistics
 
-    # ── Pull today's saved predictions ──
     today = date.today().isoformat()
     path = f"data/predictions/{today}.json"
     content, _ = await github_get_file(path)
@@ -3034,111 +3035,63 @@ async def debug_score_distribution():
     except Exception as e:
         return {"error": f"Failed to parse predictions: {e}"}
 
-    # Filter to records with a model_hr_pct value
     pcts = [r["model_hr_pct"] for r in records if r.get("model_hr_pct") is not None]
     if not pcts:
-        return {"error": "No model_hr_pct values found in today's predictions"}
+        return {"error": "No model_hr_pct values found"}
 
-    # ── Back-calculate raw score from sigmoid output ──
-    # sigmoid_to_prob: prob = 0.02 + sigmoid(centered) * 0.25
-    # So: sigmoid(centered) = (prob/100 - 0.02) / 0.25
-    # centered = logit(sigmoid_val) = ln(s / (1-s))
-    # raw = centered * 18 + 50
-    raw_scores = []
-    for pct in pcts:
-        try:
-            p = pct / 100.0
-            s = (p - 0.02) / 0.25  # invert the linear scaling
-            s = max(0.001, min(0.999, s))  # clamp to avoid log(0)
-            centered = math.log(s / (1 - s))  # logit
-            raw = centered * 18.0 + 50.0
-            raw_scores.append(round(raw, 2))
-        except Exception:
-            pass
-
-    if not raw_scores:
-        return {"error": "Could not back-calculate raw scores"}
-
-    raw_scores_sorted = sorted(raw_scores)
-    n = len(raw_scores)
+    pcts_sorted = sorted(pcts)
+    n = len(pcts)
 
     def percentile(lst, p):
         idx = int(len(lst) * p / 100)
         return lst[min(idx, len(lst)-1)]
 
-    mean_raw   = round(statistics.mean(raw_scores), 2)
-    median_raw = round(statistics.median(raw_scores), 2)
-    std_raw    = round(statistics.stdev(raw_scores) if n > 1 else 0, 2)
-    min_raw    = round(raw_scores_sorted[0], 2)
-    max_raw    = round(raw_scores_sorted[-1], 2)
-    p25        = round(percentile(raw_scores_sorted, 25), 2)
-    p75        = round(percentile(raw_scores_sorted, 75), 2)
-    p90        = round(percentile(raw_scores_sorted, 90), 2)
+    mean_pct   = round(statistics.mean(pcts), 2)
+    median_pct = round(statistics.median(pcts), 2)
+    std_pct    = round(statistics.stdev(pcts) if n > 1 else 0, 2)
 
-    # ── Diagnosis ──
     diagnosis = []
-    if std_raw < 8:
-        diagnosis.append(f"COMPRESSION: std_dev={std_raw} — scores are bunching tight. Problem is UPSTREAM (batter scoring formula), not sigmoid.")
-    elif std_raw > 15:
-        diagnosis.append(f"SPREAD: std_dev={std_raw} — scores spreading well. If model% gap is still thin, SIGMOID may need widening.")
+    above_8  = len([p for p in pcts if p >= 8])
+    above_10 = len([p for p in pcts if p >= 10])
+    above_15 = len([p for p in pcts if p >= 15])
+
+    if mean_pct < 6:
+        diagnosis.append(f"SKEW LOW: mean={mean_pct}% — base rates too conservative, most batters below 8% threshold")
+    elif mean_pct > 12:
+        diagnosis.append(f"SKEW HIGH: mean={mean_pct}% — outputs may be inflated")
     else:
-        diagnosis.append(f"MODERATE spread: std_dev={std_raw} — borderline. Watch as sample grows.")
+        diagnosis.append(f"HEALTHY: mean={mean_pct}% — reasonable distribution")
 
-    if mean_raw < 44:
-        diagnosis.append(f"SKEW LOW: mean={mean_raw} — base scores are conservative. Most batters scoring below 50 (neutral). Consider raising base rate floor.")
-    elif mean_raw > 56:
-        diagnosis.append(f"SKEW HIGH: mean={mean_raw} — scores inflated. Multipliers may be stacking too aggressively.")
-    else:
-        diagnosis.append(f"CENTERED: mean={mean_raw} — scores centered well around 50 (neutral point).")
+    diagnosis.append(f"Above 8%: {above_8}/{n} batters showing on board")
+    diagnosis.append(f"Above 10%: {above_10}/{n} | Above 15%: {above_15}/{n}")
 
-    # ── Per-player breakdown (top 15 and bottom 5) ──
-    player_scores = []
-    for r in records:
-        pct = r.get("model_hr_pct")
-        if pct is None: continue
-        try:
-            p = pct / 100.0
-            s = max(0.001, min(0.999, (p - 0.02) / 0.25))
-            centered = math.log(s / (1 - s))
-            raw = round(centered * 18.0 + 50.0, 2)
-            player_scores.append({
-                "name": r.get("name"),
-                "team": r.get("team"),
-                "pitcher": r.get("opp_pitcher"),
-                "model_pct": pct,
-                "raw_score": raw,
-            })
-        except Exception:
-            pass
-
-    player_scores.sort(key=lambda x: x["raw_score"], reverse=True)
+    player_scores = sorted([
+        {"name": r.get("name"), "team": r.get("team"),
+         "pitcher": r.get("opp_pitcher"), "model_pct": r.get("model_hr_pct")}
+        for r in records if r.get("model_hr_pct") is not None
+    ], key=lambda x: x["model_pct"], reverse=True)
 
     return {
         "date": today,
         "n_predictions": n,
-        "raw_score_distribution": {
-            "min": min_raw,
-            "max": max_raw,
-            "mean": mean_raw,
-            "median": median_raw,
-            "std_dev": std_raw,
-            "range": round(max_raw - min_raw, 2),
-            "percentiles": {
-                "25th": p25,
-                "75th": p75,
-                "90th": p90,
-            }
+        "distribution": {
+            "min": pcts_sorted[0],
+            "max": pcts_sorted[-1],
+            "mean": mean_pct,
+            "median": median_pct,
+            "std_dev": std_pct,
+            "p25": round(percentile(pcts_sorted, 25), 2),
+            "p75": round(percentile(pcts_sorted, 75), 2),
+            "p90": round(percentile(pcts_sorted, 90), 2),
         },
-        "sigmoid_config": {
-            "center": 50,
-            "divisor": 18,
-            "output_min": "2%",
-            "output_max": "25%",
-            "formula": "0.02 + sigmoid((raw-50)/18) * 0.25"
+        "threshold_counts": {
+            "above_5pct": len([p for p in pcts if p >= 5]),
+            "above_8pct": above_8,
+            "above_10pct": above_10,
+            "above_15pct": above_15,
         },
         "diagnosis": diagnosis,
-        "top_15": player_scores[:15],
-        "bottom_5": player_scores[-5:],
+        "all_players": player_scores,
     }
 
 
