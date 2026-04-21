@@ -29,7 +29,7 @@ LEAGUE_CONSTANTS = {
     "lg_hr_per_pa":    0.028,  # league avg HR/PA (~10% per game at 3.8 PA/game)
     "lg_era":          4.20,   # league avg ERA
     "max_hr_per_pa":   0.12,   # ceiling on any batter base rate
-    "hr_prob_cap":     28.0,   # hard cap on model output %
+    "hr_prob_cap":     35.0,   # raised from 28% — let elite matchups express fully
 }
 
 # ── Model Weights (learned from ML, updated every 45 days) ──
@@ -2010,69 +2010,48 @@ def safe_mult(value, lg_avg, weight_key="", sample=None, min_sample=0, cap_high=
 def compute_hr_prob_multiplicative(
         name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
     """
-    Multiplicative HR probability model.
-    P(HR) = Base Rate × Barrel% × LA × Pitcher Vuln × Batter Platoon ×
-            Pitcher Platoon × Park × Weather × Hot/Cold × K% penalty
-    Hard cap: 28%
+    Multiplicative HR probability model — rebuilt April 2026.
+    Now uses all active 8 stats dynamically from _model_weights.
+    Fixes: Hard Hit% in chain, xwOBA L8D in chain, EV in chain,
+           pitch matchup connected, base rate uses HR/PA not raw count,
+           bullpen reduced to 10%, HR prob cap raised to 35%.
     """
     # ── Data fetch ──
     bc  = get_batter_stats(name, 2026)
     bp  = get_batter_stats(name, 2025)
     b8d = get_batter_8d(name)
-    b_split_vs_hand = get_batter_split(name, opp_p_hand)   # batter vs pitcher hand
-    b_split_opp     = get_batter_split(name, "R" if opp_p_hand == "L" else "L")  # vs opposite hand
-    p_split_vs_bat  = get_pitcher_split(opp_p_name, bat_hand)  # pitcher vs batter hand
+    b_split_vs_hand = get_batter_split(name, opp_p_hand)
+    b_split_opp     = get_batter_split(name, "R" if opp_p_hand == "L" else "L")
+    p_split_vs_bat  = get_pitcher_split(opp_p_name, bat_hand)
 
     pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
     bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
-    # For brand new MLB players (under 60 PA, no 2025 data), Savant's game_date_gt
-    # filter sometimes returns full season stats instead of true L8D window.
-    # If L8D PA matches season PA exactly, it's bogus — clear it.
-
     has_8d = b8d.get("pa", 0) >= 3
     total_pa = pa_26 + pa_25
 
-    # ── Step 1: Base HR rate (per-PA, relative ranking model) ──
-    # base_rate = HR/PA blended between 2026 season and 2025 career
-    # Output is a relative score — higher = more likely than others today
-    # Not a literal per-game probability. Rankings matter more than absolute values.
-    hr_season = bc.get("hr", 0)
-    hr_career  = blend(bc.get("hr", 0), bp.get("hr", 0), bwc, bwp)
-    pa_season  = max(pa_26, 1)
+    # ── Step 1: Base HR rate — FIX #3: use HR/PA not raw HR count ──
+    hr_per_pa_season = (bc.get("hr", 0) / max(pa_26, 1)) if pa_26 > 0 else 0
+    hr_per_pa_25     = (bp.get("hr", 0) / max(pa_25, 1)) if pa_25 > 0 else 0
 
-    hr_per_pa_season = hr_season / pa_season if pa_season > 0 else 0
-    hr_per_pa_career = hr_career / max(pa_25 + pa_26, 1) if (pa_25 + pa_26) > 0 else 0.028
+    if pa_26 >= 200:   base_rate = hr_per_pa_season
+    elif pa_26 >= 150: base_rate = hr_per_pa_season * 0.80 + hr_per_pa_25 * 0.20
+    elif pa_26 >= 100: base_rate = hr_per_pa_season * 0.60 + hr_per_pa_25 * 0.40
+    elif pa_26 >= 50:  base_rate = hr_per_pa_season * 0.30 + hr_per_pa_25 * 0.70
+    else:              base_rate = hr_per_pa_25 if hr_per_pa_25 > 0 else 0.028
 
-    # PA-weighted blend — 200+ PA = trust season fully
-    if pa_26 >= 200:
-        base_rate = hr_per_pa_season
-    elif pa_26 >= 150:
-        base_rate = hr_per_pa_season * 0.80 + hr_per_pa_career * 0.20
-    elif pa_26 >= 100:
-        base_rate = hr_per_pa_season * 0.60 + hr_per_pa_career * 0.40
-    elif pa_26 >= 50:
-        base_rate = hr_per_pa_season * 0.30 + hr_per_pa_career * 0.70
-    else:
-        base_rate = hr_per_pa_career
-
-    # Floor: league avg HR/PA ~2.8%
-    if base_rate <= 0:
-        base_rate = 0.028
+    if base_rate <= 0: base_rate = 0.028
     base_rate = min(base_rate, 0.12)
-
-    # Small sample confidence gate
     if total_pa < 30:   base_rate = base_rate * 0.55 + 0.028 * 0.45
     elif total_pa < 60: base_rate = base_rate * 0.75 + 0.028 * 0.25
 
     running = base_rate
 
-    # ── Step 2: Barrel% — season + L8D weighted separately via safe_mult ──
+    # ── Step 2: Barrel% season + L8D ──
     LG_BARREL = LEAGUE_CONSTANTS["lg_barrel_pct"]
     barrel_season = blend(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), bwc, bwp)
     barrel_l8d    = b8d.get("barrel_pct", 0) if has_8d else 0
     barrel_season_mult = safe_mult(barrel_season, LG_BARREL, "barrel_season_w", pa_26, 20)
-    barrel_l8d_mult    = safe_mult(barrel_l8d, LG_BARREL, "barrel_l8d_w",
-                                   b8d.get("pa", 0) if has_8d else 0, 8)
+    barrel_l8d_mult    = safe_mult(barrel_l8d, LG_BARREL, "barrel_l8d_w", b8d.get("pa",0) if has_8d else 0, 8)
     if has_8d and b8d.get("pa", 0) >= 8:
         barrel_mult = barrel_season_mult * 0.60 + barrel_l8d_mult * 0.40
     else:
@@ -2080,22 +2059,61 @@ def compute_hr_prob_multiplicative(
     barrel_use = barrel_season if barrel_season > 0 else LG_BARREL
     running *= barrel_mult
 
-    # ── Step 3: Launch angle — season + L8D weighted separately via safe_mult ──
+    # ── Step 3: Hard Hit% — FIX #1: now in computation chain ──
+    LG_HH = LEAGUE_CONSTANTS["lg_hard_hit"]
+    hh_season = blend(bc.get("hard_hit_pct", 0), bp.get("hard_hit_pct", 0), bwc, bwp)
+    hh_l8d    = b8d.get("hard_hit_pct", 0) if has_8d else 0
+    hh_season_mult = safe_mult(hh_season, LG_HH, "hard_hit_season_w", pa_26, 20)
+    hh_l8d_mult    = safe_mult(hh_l8d, LG_HH, "hard_hit_l8d_w", b8d.get("pa",0) if has_8d else 0, 8)
+    if has_8d and b8d.get("pa", 0) >= 8 and hh_l8d > 0:
+        hh_mult = hh_season_mult * 0.60 + hh_l8d_mult * 0.40
+    else:
+        hh_mult = hh_season_mult
+    # Blend with barrel — correlated stats, don't full multiply, use geometric mean
+    contact_quality_mult = (barrel_mult * hh_mult) ** 0.5
+    # Replace barrel_mult with combined contact quality
+    running = running / barrel_mult * contact_quality_mult
+
+    # ── Step 4: Exit Velocity — FIX #7: now in computation chain ──
+    LG_EV = 88.5  # league avg exit velocity
+    ev_season = blend(bc.get("exit_velo", 0), bp.get("exit_velo", 0), bwc, bwp)
+    ev_l8d    = b8d.get("exit_velo", 0) if has_8d else 0
+    ev_season_mult = safe_mult(ev_season, LG_EV, "ev_season_w", pa_26, 20, cap_high=1.40, cap_low=0.70)
+    ev_l8d_mult    = safe_mult(ev_l8d, LG_EV, "ev_l8d_w", b8d.get("pa",0) if has_8d else 0, 8, cap_high=1.40, cap_low=0.70)
+    if has_8d and b8d.get("pa", 0) >= 8 and ev_l8d > 0:
+        ev_mult = ev_season_mult * 0.60 + ev_l8d_mult * 0.40
+    else:
+        ev_mult = ev_season_mult
+    running *= ev_mult
+
+    # ── Step 5: xwOBA L8D — FIX #1: now in computation chain ──
+    LG_XWOBA = 0.310  # league avg xwOBA
+    xwoba_l8d = b8d.get("xwoba", 0) if has_8d else 0
+    xslg_l8d  = b8d.get("xslg", 0) if has_8d else 0
+    if xwoba_l8d > 0 and has_8d and b8d.get("pa", 0) >= 8:
+        xwoba_mult = safe_mult(xwoba_l8d, LG_XWOBA, "xwoba_l8d_w", b8d.get("pa",0), 8, cap_high=1.60, cap_low=0.60)
+        running *= xwoba_mult
+    else:
+        xwoba_mult = 1.0
+
+    # ── Step 6: Launch angle — FIX #2: less harsh penalty, defer to barrel/EV when LA is low ──
     la_season = blend(bc.get("launch_angle", 0), bp.get("launch_angle", 0), bwc, bwp)
     la_l8d    = b8d.get("launch_angle", 0) if has_8d else 0
 
-    def la_to_raw(la):
+    def la_to_raw(la, barrel_pct=0):
         if not la or la <= 0: return None
-        if 25 <= la <= 35:   return 1.00
-        elif 20 <= la < 25:  return 0.90
-        elif 35 < la <= 40:  return 0.90
-        elif 18 <= la < 20:  return 0.80
-        elif 40 < la <= 45:  return 0.80
-        else:                return 0.75
+        # FIX: if barrel% is high, LA penalty is reduced — elite contact can overcome low angle
+        barrel_bonus = min(max((barrel_pct - 8) / 20.0, 0), 0.15) if barrel_pct > 8 else 0
+        if 25 <= la <= 35:   return min(1.00 + barrel_bonus, 1.10)
+        elif 20 <= la < 25:  return 0.92 + barrel_bonus
+        elif 35 < la <= 40:  return 0.92 + barrel_bonus
+        elif 18 <= la < 20:  return 0.85 + barrel_bonus
+        elif 40 < la <= 45:  return 0.85 + barrel_bonus
+        elif 15 <= la < 18:  return 0.82 + barrel_bonus  # less harsh than before
+        else:                return 0.80 + barrel_bonus  # was 0.75, now 0.80
 
-    la_s_raw = la_to_raw(la_season)
-    la_l_raw = la_to_raw(la_l8d)
-    # Apply weights as exponent on the raw LA multiplier
+    la_s_raw = la_to_raw(la_season, barrel_season)
+    la_l_raw = la_to_raw(la_l8d, barrel_l8d)
     la_season_mult = (la_s_raw ** W("la_season_w")) if la_s_raw else 1.0
     la_l8d_mult    = (la_l_raw ** W("la_l8d_w")) if la_l_raw and has_8d and b8d.get("pa",0) >= 8 else 1.0
     if has_8d and b8d.get("pa", 0) >= 8 and la_l_raw:
@@ -2105,14 +2123,13 @@ def compute_hr_prob_multiplicative(
     la_use = la_season if la_season > 0 else 20.0
     running *= la_mult
 
-    # ── Step 4: Pitcher vulnerability — season + vs-hand via safe_mult ──
+    # ── Step 7: Pitcher vulnerability ──
     pc = get_pitcher_stats(opp_p_name, 2026)
     pp2 = get_pitcher_stats(opp_p_name, 2025)
     ip_26 = pc.get("ip", 0)
     pwc, pwp = get_pitcher_blend_weights(ip_26, pp2.get("ip", 0))
 
     LG_HR9 = LEAGUE_CONSTANTS["lg_hr9"]
-    LG_HH  = LEAGUE_CONSTANTS["lg_hard_hit"]
     pit_hr9_season  = blend(pc.get("hr9", 0), pp2.get("hr9", 0), pwc, pwp)
     pit_hr9_vs_hand = p_split_vs_bat.get("hr9", 0)
     pit_hard        = blend(pc.get("hard_hit_pct", 0), pp2.get("hard_hit_pct", 0), pwc, pwp)
@@ -2123,29 +2140,37 @@ def compute_hr_prob_multiplicative(
     m_hr9_vs = safe_mult(pit_hr9_vs_hand, LG_HR9, "pit_hr9_vs_hand_w", pit_ip_vs_hand, 5)
     m_hard   = safe_mult(pit_hard, LG_HH, "", total_ip, 10)
 
-    # Combine: average of available signals (don't multiply — correlated stats)
     pit_signals = []
-    if total_ip >= 10 and pit_hr9_season > 0:  pit_signals.append(m_hr9_s)
+    if total_ip >= 10 and pit_hr9_season > 0:       pit_signals.append(m_hr9_s)
     if pit_ip_vs_hand >= 5 and pit_hr9_vs_hand > 0: pit_signals.append(m_hr9_vs)
-    if total_ip >= 10 and pit_hard > 0:         pit_signals.append(m_hard)
+    if total_ip >= 10 and pit_hard > 0:             pit_signals.append(m_hard)
     pit_vuln_mult = sum(pit_signals) / len(pit_signals) if pit_signals else 1.0
     pit_vuln_mult = max(min(pit_vuln_mult, 1.80), 0.50)
     running *= pit_vuln_mult
 
-    # ── Step 5: Batter platoon — ISO vs hand via safe_mult ──
+    # ── Step 8: Pitch matchup — FIX #5: now connected to running ──
+    pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
+    if pitch_bonus != 0:
+        # Convert pitch bonus (-8 to +8 pts) to a multiplier centered on 1.0
+        pitch_mult = 1.0 + (pitch_bonus / 80.0)  # max ±10% effect
+        pitch_mult = max(min(pitch_mult * W("pitch_delta_w"), 1.15), 0.85)
+        running *= pitch_mult
+    else:
+        pitch_mult = 1.0
+
+    # ── Step 9: Batter platoon — ISO vs hand ──
     iso_vs_hand   = b_split_vs_hand.get("iso", 0)
     iso_overall   = blend(bc.get("iso", 0), bp.get("iso", 0), bwc, bwp)
     split_pa      = b_split_vs_hand.get("pa", 0)
-    # Need both iso_vs_hand and iso_overall as ratio — use safe_mult on ratio
     if iso_overall > 0 and iso_vs_hand > 0 and split_pa >= 30:
-        bat_platoon_raw = iso_vs_hand / iso_overall
+        bat_platoon_raw  = iso_vs_hand / iso_overall
         bat_platoon_mult = safe_mult(bat_platoon_raw, 1.0, "bat_platoon_w",
                                      split_pa, 30, cap_high=1.60, cap_low=0.60)
     else:
         bat_platoon_mult = 1.0
     running *= bat_platoon_mult
 
-    # ── Step 6: Pitcher platoon — SLG vs hand via safe_mult ──
+    # ── Step 10: Pitcher platoon — SLG vs hand ──
     slg_vs_bat      = p_split_vs_bat.get("slg", 0)
     p_split_opp     = get_pitcher_split(opp_p_name, "L" if bat_hand == "R" else "R")
     split_ip_vs_bat = p_split_vs_bat.get("ip", 0)
@@ -2159,56 +2184,40 @@ def compute_hr_prob_multiplicative(
         pit_platoon_mult = 1.0
     running *= pit_platoon_mult
 
-    # ── Step 7: Park multiplier ──
+    # ── Step 11: Park multiplier ──
     park_w = W("park_w")
     park_mult_applied = park_factor ** park_w if park_factor > 0 else 1.0
     running *= park_mult_applied
 
-    # ── Step 8: Weather multiplier ──
+    # ── Step 12: Weather multiplier ──
     weather_w = W("weather_w")
     weather_mult_applied = weather_mult ** weather_w if weather_mult > 0 else 1.0
     running *= weather_mult_applied
 
-    # ── Step 9: Hot/cold — display signal only, NOT in model ──
-    # Removed from calculation — L8D HR count is shown on the table as a visual signal
-    # ML will determine if it actually matters. Keeping calc for breakdown display only.
-    hot_cold_mult = 1.0
-    if has_8d and b8d.get("pa", 0) >= 8:
-        pa_8d = b8d.get("pa", 0)
-        hr_8d_count = get_l8d_hr(name)
-        hr_8d_rate  = hr_8d_count / pa_8d
-        if base_rate > 0:
-            ratio = hr_8d_rate / base_rate
-            hot_cold_mult = max(min(ratio, 1.20), 0.85)
-    # NOT applied to running — hot_cold_mult stored for ML analysis only
-    # running *= hot_cold_mult  <-- removed
-
-    # ── Step 10: K% penalty — safe_mult aware ──
+    # ── Step 13: K% penalty ──
     k_season = blend(bc.get("k_pct", 0), bp.get("k_pct", 0), bwc, bwp)
     k_w = W("k_pct_w")
     if k_season >= 35:   k_mult = 0.88 ** k_w
     elif k_season >= 30: k_mult = 0.94 ** k_w
     elif k_season >= 25: k_mult = 0.97 ** k_w
     else:                k_mult = 1.0
-    if k_season == 0:    k_mult = 1.0  # missing K% — neutral
+    if k_season == 0:    k_mult = 1.0
     running *= k_mult
 
-    # ── Hard cap + bullpen blend ──
+    # ── Step 14: Bullpen blend — FIX #4: reduced to 10% from 25% ──
     LG_BULLPEN_HR9 = LEAGUE_CONSTANTS["lg_bullpen_hr9"]
     bullpen_data   = _cache.get("team_bullpen", {}).get(home_team, {})
     bullpen_hr9    = bullpen_data.get("hr9", LG_BULLPEN_HR9)
-    bullpen_vuln   = safe_mult(bullpen_hr9, LG_BULLPEN_HR9, "bullpen_w",
-                               cap_high=1.80, cap_low=0.50)
-    # Bullpen component — uses batter skill + context + bullpen vuln
-    bullpen_component = (base_rate * barrel_mult * la_mult * bat_platoon_mult *
+    bullpen_vuln   = safe_mult(bullpen_hr9, LG_BULLPEN_HR9, "bullpen_w", cap_high=1.80, cap_low=0.50)
+    bullpen_component = (base_rate * contact_quality_mult * ev_mult * bat_platoon_mult *
                          park_mult_applied * weather_mult_applied * k_mult * bullpen_vuln)
-    bullpen_w_blend = W("bullpen_w") if W("bullpen_w") != 1.0 else 0.25
-    running = (running * (1 - bullpen_w_blend)) + (bullpen_component * bullpen_w_blend)
+    running = (running * 0.90) + (bullpen_component * 0.10)
 
-    hr_prob = round(min(running * 100, LEAGUE_CONSTANTS["hr_prob_cap"]), 1)
+    # ── FIX #8: raise cap from 28% to 35% ──
+    hr_prob = round(min(running * 100, 35.0), 1)
+    hr_prob = max(hr_prob, 2.0)
 
     # ── Build breakdown for frontend ──
-    pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
     archetype = get_archetype(barrel_season, k_season,
                               blend(bc.get("fb_pct", 0), bp.get("fb_pct", 0), bwc, bwp),
                               iso_overall if iso_overall else blend(bc.get("iso",0), bp.get("iso",0), bwc, bwp))
@@ -2216,11 +2225,13 @@ def compute_hr_prob_multiplicative(
 
     reasons = []
     if barrel_season >= 12: reasons.append(f"Barrel {barrel_season:.1f}%")
+    if hh_season >= 42:     reasons.append(f"Hard Hit {hh_season:.1f}%")
     if iso_vs_hand > 0.220: reasons.append(f"ISO vs hand .{int(iso_vs_hand*1000):03d}")
     if pit_hr9_season > 1.3: reasons.append(f"SP {pit_hr9_season:.1f} HR/9")
-    if pit_hard > 40: reasons.append(f"SP {pit_hard:.1f}% HH")
+    if pit_hard > 40:       reasons.append(f"SP {pit_hard:.1f}% HH")
     if park_factor >= 1.15: reasons.append("HR-friendly park")
     elif park_factor <= 0.90: reasons.append("Pitcher-friendly park")
+    if xwoba_l8d >= 0.400:  reasons.append(f"xwOBA L8D {xwoba_l8d:.3f}")
 
     platoon_tag = None
     if bat_platoon_mult >= 1.20:
@@ -2235,10 +2246,13 @@ def compute_hr_prob_multiplicative(
     breakdown = {
         "base_rate": round(base_rate * 100, 2),
         "barrel_mult": round(barrel_mult, 3), "la_mult": round(la_mult, 3),
+        "hh_mult": round(hh_mult, 3), "ev_mult": round(ev_mult, 3),
+        "xwoba_mult": round(xwoba_mult, 3), "pitch_mult": round(pitch_mult, 3),
+        "contact_quality_mult": round(contact_quality_mult, 3),
         "pit_vuln_mult": round(pit_vuln_mult, 3),
         "bat_platoon_mult": round(bat_platoon_mult, 3), "pit_platoon_mult": round(pit_platoon_mult, 3),
         "park_factor": round(park_factor, 3), "weather_mult": round(weather_mult, 3),
-        "hot_cold_mult": round(hot_cold_mult, 3), "k_mult": round(k_mult, 3),
+        "hot_cold_mult": 1.0, "k_mult": round(k_mult, 3),
         "iso_vs_hand": round(iso_vs_hand, 3), "iso_overall": round(iso_overall, 3),
         "split_pa": split_pa, "split_ip_vs_bat": round(split_ip_vs_bat, 1),
         "slg_vs_bat": round(slg_vs_bat, 3) if split_ip_vs_bat >= 5 else 0,
@@ -2259,15 +2273,17 @@ def compute_hr_prob_multiplicative(
         "hr_season": int(bc.get("hr", 0)), "pa_season": int(pa_26), "pa_8d": int(b8d.get("pa", 0)),
         "has_8d": has_8d, "blend_note": blend_note, "k_season": round(k_season, 1),
         "pitch_bonus": pitch_bonus, "pitch_breakdown": pitch_details,
+        "xwoba_l8d": round(xwoba_l8d, 3), "xslg_l8d": round(xslg_l8d, 3),
+        "hh_season": round(hh_season, 1), "ev_season": round(ev_season, 1),
         "data_conf": {
             "barrel": 1 if barrel_season > 0 and pa_26 >= 20 else 0,
-            "la": 1 if la_season > 0 and pa_26 >= 20 else 0,
+            "hard_hit": 1 if hh_season > 0 and pa_26 >= 20 else 0,
+            "ev": 1 if ev_season > 0 and pa_26 >= 20 else 0,
+            "xwoba_l8d": 1 if xwoba_l8d > 0 and has_8d else 0,
             "pit_hr9": 1 if pit_hr9_season > 0 and total_ip >= 10 else 0,
             "pit_hr9_hand": 1 if pit_hr9_vs_hand > 0 and pit_ip_vs_hand >= 5 else 0,
-            "iso_vs_hand": 1 if iso_vs_hand > 0 and split_pa >= 30 else 0,
             "park": 1 if park_factor != 1.0 else 0,
             "pitch_delta": 1 if pitch_bonus != 0 else 0,
-            "bat_platoon": 1 if bat_platoon_mult != 1.0 else 0,
         },
         "bullpen_hr9": round(bullpen_hr9, 2), "bullpen_vuln": round(bullpen_vuln, 3),
         "iso_use": round(iso_vs_hand if iso_vs_hand > 0 else iso_overall, 3),
