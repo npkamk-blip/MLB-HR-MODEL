@@ -1505,38 +1505,61 @@ async def record_results(target_date: str):
                             stats = p.get("stats", {}).get("batting", {})
                             name = p.get("person", {}).get("fullName", "")
                             if not name: continue
+                            nl = name.lower().strip()
                             ab = int(stats.get("atBats", 0) or 0)
-                            actual_ab[name.lower()] = ab
+                            actual_ab[nl] = ab
                             if int(stats.get("homeRuns", 0) or 0) > 0:
-                                hr_hitters.add(name.lower())
+                                hr_hitters.add(nl)
+                                # Also add normalized version without accents for matching
+                                import unicodedata
+                                normalized = unicodedata.normalize('NFD', nl)
+                                normalized = ''.join(c for c in normalized if unicodedata.category(c) != 'Mn')
+                                hr_hitters.add(normalized)
+                                actual_ab[normalized] = ab
                 except Exception: continue
-        # Update records with actual results — DNP if fewer than 2 AB
+        # Update records with actual results
+        # DNP only if player has 0 AB AND is not in hr_hitters (truly didn't play)
         updated = 0
         dnp_count = 0
         for rec in records:
             if rec.get("hit_hr") is None:
-                nl = rec["name"].lower()
-                ab = actual_ab.get(nl, 0)
-                # Check partial name match too
-                if ab == 0:
+                nl = rec["name"].lower().strip()
+                # Try exact match first
+                ab = actual_ab.get(nl, -1)
+                hit = nl in hr_hitters
+                # Try last name match
+                if ab == -1:
                     last = nl.split()[-1]
                     for k, v in actual_ab.items():
-                        if last in k:
+                        if k == nl or k.endswith(last) or last in k.split():
                             ab = v
+                            if k in hr_hitters:
+                                hit = True
                             break
-                if ab < 2:
+                # Try first + last initial match for accented names
+                if ab == -1:
+                    parts = nl.split()
+                    if len(parts) >= 2:
+                        for k, v in actual_ab.items():
+                            kparts = k.split()
+                            if len(kparts) >= 2 and kparts[-1] == parts[-1]:
+                                ab = v
+                                if k in hr_hitters:
+                                    hit = True
+                                break
+                if ab == -1:
+                    ab = 0  # truly not found — assume DNP
+
+                # Only mark DNP if 0 AB and not a known HR hitter
+                # (HR hitter with 0 AB lookup = name mismatch, not DNP)
+                if ab == 0 and not hit:
                     rec["hit_hr"] = "DNP"
-                    rec["actual_ab"] = ab
+                    rec["actual_ab"] = 0
                     dnp_count += 1
                 else:
-                    # Exact match first, then partial last name match for foreign players
-                    hit = nl in hr_hitters
-                    if not hit:
-                        last = nl.split()[-1]
-                        hit = any(last in k for k in hr_hitters)
                     rec["hit_hr"] = 1 if hit else 0
-                    rec["actual_ab"] = ab
-                updated += 1
+                    rec["actual_ab"] = max(ab, 0)
+                    updated += 1
         content_updated = json.dumps(records, indent=2)
         await github_put_file(path, content_updated, f"results: {target_date} ({len(hr_hitters)} HRs, {dnp_count} DNP)", sha)
         print(f"Recorded results for {target_date}: {len(hr_hitters)} HR hitters, {dnp_count} DNP, {updated} records updated")
