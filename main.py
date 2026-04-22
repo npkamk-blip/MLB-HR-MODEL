@@ -1144,9 +1144,12 @@ async def daily_refresh_loop():
     - 4am  — save model log
     """
     while True:
-        now = datetime.now()
         await asyncio.sleep(3600)  # check every hour
-        et_hour = (now.utcnow().hour - 4) % 24  # UTC → ET
+        now = datetime.utcnow()  # Railway runs UTC
+        et_hour = (now.hour - 4) % 24  # UTC → ET (EDT, Apr-Nov)
+        # For weekday check use ET date not UTC date
+        et_now = now - timedelta(hours=4)
+        is_sunday = et_now.weekday() == 6
 
         # 9am ET — full Savant season data refresh
         if et_hour == 9:
@@ -1181,7 +1184,7 @@ async def daily_refresh_loop():
                 print(f"Result recording error: {e}")
 
         # 3am ET — auto-recalibrate (Sundays only)
-        if et_hour == 3 and now.weekday() == 6:
+        if et_hour == 3 and is_sunday:
             try:
                 print(f"Sunday auto-recalibrate — {_model_weights.get('records_used',0)} records")
                 await recalibrate_model()
