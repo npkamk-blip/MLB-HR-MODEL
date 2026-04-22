@@ -1134,38 +1134,62 @@ async def refresh_8d():
     _cache["last_8d_update"] = datetime.now().isoformat()
 
 async def daily_refresh_loop():
-    """Run in background — check every hour for scheduled tasks"""
+    """Run in background — check every hour for scheduled tasks.
+    Schedule (all ET):
+    - 9am  — full Savant data refresh (season stats, splits, arsenal)
+    - 11am — bat_8d refresh (Savant fully updated by now with last night's games)
+    - 12pm — save daily predictions (uses fresh 11am L8D data, locked for the day)
+    - 2am  — record results (all games finished)
+    - 3am  — auto-recalibrate (Sundays only)
+    - 4am  — save model log
+    """
     while True:
         now = datetime.now()
         await asyncio.sleep(3600)  # check every hour
-        if now.hour == 7:
+        et_hour = (now.utcnow().hour - 4) % 24  # UTC → ET
+
+        # 9am ET — full Savant season data refresh
+        if et_hour == 9:
             try:
                 await load_all_savant_data()
+                print("9am ET: Full Savant refresh complete")
             except Exception as e:
                 print(f"Daily refresh error: {e}")
-        # Save predictions at 1pm ET (18:00 UTC) — lineups mostly confirmed
-        if now.hour == 18:
+
+        # 11am ET — bat_8d refresh only (Savant fully updated, lock stats for the day)
+        if et_hour == 11:
+            try:
+                await refresh_8d()
+                print("11am ET: bat_8d locked for the day")
+            except Exception as e:
+                print(f"8d refresh error: {e}")
+
+        # 12pm ET — save predictions using locked 11am L8D data
+        if et_hour == 12:
             try:
                 await save_daily_predictions()
+                print("12pm ET: Predictions saved with locked L8D data")
             except Exception as e:
                 print(f"Prediction save error: {e}")
-        # Record results at 2am ET — all games finished
-        if now.hour == 2:
+
+        # 2am ET — record results
+        if et_hour == 2:
             try:
                 yesterday = (date.today() - timedelta(days=1)).isoformat()
                 await record_results(yesterday)
             except Exception as e:
                 print(f"Result recording error: {e}")
-        # Auto-recalibrate every Sunday at 3am ET
-        if now.hour == 3 and now.weekday() == 6:
+
+        # 3am ET — auto-recalibrate (Sundays only)
+        if et_hour == 3 and now.weekday() == 6:
             try:
-                records_available = int(_model_weights.get("records_used", 0))
-                print(f"Weekly auto-recalibrate — {records_available} records available")
+                print(f"Sunday auto-recalibrate — {_model_weights.get('records_used',0)} records")
                 await recalibrate_model()
             except Exception as e:
                 print(f"Auto-recalibrate error: {e}")
-        # Save daily model log at 4am ET
-        if now.hour == 4:
+
+        # 4am ET — save model log
+        if et_hour == 4:
             try:
                 await save_model_log(_model_weights)
             except Exception as e:
