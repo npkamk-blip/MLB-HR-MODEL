@@ -2881,7 +2881,7 @@ async def rerecord_all_results():
 
 @app.get("/verify-results")
 async def verify_results():
-    """Show DNP/HR/miss breakdown for all prediction dates — spot bad DNP records"""
+    """Show DNP/HR/miss breakdown for all prediction dates with tiered hit rates"""
     import json
     try:
         async with httpx.AsyncClient(timeout=15) as client:
@@ -2891,6 +2891,8 @@ async def verify_results():
             )
             files = r.json()
         summary = []
+        # Aggregate across all dates for overall tier analysis
+        all_recs = []
         for f in sorted(files, key=lambda x: x["name"], reverse=True):
             fname = f["name"]
             if not fname.endswith(".json"): continue
@@ -2904,8 +2906,20 @@ async def verify_results():
                 misses = sum(1 for r in recs if r.get("hit_hr") == 0)
                 dnps   = sum(1 for r in recs if r.get("hit_hr") == "DNP")
                 nulls  = sum(1 for r in recs if r.get("hit_hr") is None)
-                hr_rate = round(hrs / max(hrs + misses, 1) * 100, 1)
-                # Flag suspicious days — high DNP % suggests bad matching
+
+                # Tier breakdown — only count non-DNP, non-null
+                def tier_hr(recs, lo, hi):
+                    t = [r for r in recs if r.get("hit_hr") in (0,1)
+                         and lo <= (r.get("model_hr_pct") or 0) < hi]
+                    h = sum(1 for r in t if r.get("hit_hr") == 1)
+                    return h, len(t)
+
+                h20, n20 = tier_hr(recs, 20, 999)
+                h15, n15 = tier_hr(recs, 15, 20)
+                h10, n10 = tier_hr(recs, 10, 15)
+                h8,  n8  = tier_hr(recs, 8,  10)
+                h5,  n5  = tier_hr(recs, 5,   8)
+
                 suspicious = dnps > total * 0.3
                 summary.append({
                     "date": d,
@@ -2914,17 +2928,50 @@ async def verify_results():
                     "misses": misses,
                     "dnp": dnps,
                     "null": nulls,
-                    "hr_rate": f"{hr_rate}%",
+                    "overall_hr_rate": f"{round(hrs/max(hrs+misses,1)*100,1)}%",
                     "dnp_pct": f"{round(dnps/max(total,1)*100,1)}%",
                     "suspicious": suspicious,
+                    "tiers": {
+                        "20pct_plus":  {"hrs": h20, "total": n20, "hit_rate": f"{round(h20/max(n20,1)*100,1)}%"},
+                        "15_to_20":    {"hrs": h15, "total": n15, "hit_rate": f"{round(h15/max(n15,1)*100,1)}%"},
+                        "10_to_15":    {"hrs": h10, "total": n10, "hit_rate": f"{round(h10/max(n10,1)*100,1)}%"},
+                        "8_to_10":     {"hrs": h8,  "total": n8,  "hit_rate": f"{round(h8/max(n8,1)*100,1)}%"},
+                        "5_to_8":      {"hrs": h5,  "total": n5,  "hit_rate": f"{round(h5/max(n5,1)*100,1)}%"},
+                    }
                 })
+                all_recs.extend([r for r in recs if r.get("hit_hr") in (0,1)])
             except Exception:
                 continue
-        return {"dates": summary}
+
+        # Overall cumulative tier analysis
+        def cum_tier(recs, lo, hi):
+            t = [r for r in recs if lo <= (r.get("model_hr_pct") or 0) < hi]
+            h = sum(1 for r in t if r.get("hit_hr") == 1)
+            return h, len(t), round(h/max(len(t),1)*100,1)
+
+        ch20, cn20, cr20 = cum_tier(all_recs, 20, 999)
+        ch15, cn15, cr15 = cum_tier(all_recs, 15, 20)
+        ch10, cn10, cr10 = cum_tier(all_recs, 10, 15)
+        ch8,  cn8,  cr8  = cum_tier(all_recs, 8,  10)
+        ch5,  cn5,  cr5  = cum_tier(all_recs, 5,   8)
+
+        return {
+            "cumulative_tier_analysis": {
+                "20pct_plus": {"hrs": ch20, "total": cn20, "hit_rate": f"{cr20}%",
+                               "note": "Your top betting tier"},
+                "15_to_20":  {"hrs": ch15, "total": cn15, "hit_rate": f"{cr15}%",
+                               "note": "Strong plays"},
+                "10_to_15":  {"hrs": ch10, "total": cn10, "hit_rate": f"{cr10}%",
+                               "note": "Watchlist"},
+                "8_to_10":   {"hrs": ch8,  "total": cn8,  "hit_rate": f"{cr8}%",
+                               "note": "Marginal"},
+                "5_to_8":    {"hrs": ch5,  "total": cn5,  "hit_rate": f"{cr5}%",
+                               "note": "Data only — never bet"},
+            },
+            "dates": summary
+        }
     except Exception as e:
         return {"error": str(e)}
-
-@app.get("/debug-results")
 async def debug_results(target_date: str = None):
     """Show what the MLB API returned for a date vs what we predicted"""
     d = target_date or (date.today() - timedelta(days=1)).isoformat()
