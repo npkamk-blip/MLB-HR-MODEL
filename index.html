@@ -413,6 +413,7 @@ function renderModelTab(md,hd){
     h+='</div>';
   }
   h+='<div class="model-layout">';
+  h+='<div style="display:flex;flex-direction:column;gap:12px">';
   h+='<div class="model-card">';
   h+='<div class="model-card-title"><span>Active Model ('+(activeObjs.length)+'/8)</span><span style="font-weight:400">weight / corr</span></div>';
   if(!activeObjs.length)h+='<div style="font-size:11px;color:var(--muted);padding:8px 0">Using defaults (1.0x). Run recalibration once you have 50+ records.</div>';
@@ -433,6 +434,48 @@ function renderModelTab(md,hd){
     h+='</div>';
   }
   h+='</div>';
+
+  // ── Tier Performance Panel — below active model ──
+  h+='<div class="model-card" style="margin-top:12px">';
+  h+='<div class="model-card-title"><span>Hit Rate by Tier</span><span style="font-weight:400;color:var(--muted2);font-size:10px">NON-DNP only</span></div>';
+
+  var tiers=[
+    {label:'20%+',   lo:20, hi:999, note:'Bet tier',    color:'var(--g)'},
+    {label:'15–20%', lo:15, hi:20,  note:'Strong',      color:'var(--accent)'},
+    {label:'10–15%', lo:10, hi:15,  note:'Watchlist',   color:'var(--y)'},
+    {label:'8–10%',  lo:8,  hi:10,  note:'Marginal',    color:'var(--muted)'},
+    {label:'5–8%',   lo:5,  hi:8,   note:'Data only',   color:'var(--muted2)'},
+  ];
+
+  tiers.forEach(function(t){
+    var tierRecs = completed.filter(function(r){
+      var p = r.model_hr_pct||0;
+      return p >= t.lo && p < t.hi;
+    });
+    var tierHits = tierRecs.filter(function(r){return r.hit_hr===1;});
+    var n = tierRecs.length;
+    var hits = tierHits.length;
+    var rate = n > 0 ? (hits/n*100).toFixed(1) : '--';
+    var barW = n > 0 ? Math.min((hits/n)*100*3, 100) : 0; // 3x scale so 33% = full bar
+    var rateColor = n===0?'var(--muted2)':
+                    hits/n >= 0.25?'var(--g)':
+                    hits/n >= 0.15?'var(--accent)':
+                    hits/n >= 0.10?'var(--y)':'var(--muted)';
+    h+='<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border2)">';
+    h+='<div style="width:52px;font-size:11px;font-weight:600;color:'+t.color+'">'+t.label+'</div>';
+    h+='<div style="width:55px;font-size:10px;color:var(--muted2)">'+t.note+'</div>';
+    h+='<div style="flex:1;height:5px;background:var(--border2);border-radius:3px;overflow:hidden">';
+    h+='<div style="width:'+barW+'%;height:100%;background:'+rateColor+';border-radius:3px;transition:width .3s"></div></div>';
+    h+='<div style="width:38px;text-align:right;font-size:12px;font-weight:700;color:'+rateColor+'">'+rate+'%</div>';
+    h+='<div style="width:40px;text-align:right;font-size:10px;color:var(--muted2)">'+hits+'/'+n+'</div>';
+    h+='</div>';
+  });
+
+  if(completed.length < 20){
+    h+='<div style="font-size:10px;color:var(--muted2);margin-top:8px;text-align:center">Need more data — rates stabilize at 200+ records</div>';
+  }
+  h+='</div>'; // close tier panel card
+  h+='</div>'; // close left column wrapper
   h+='<div class="model-card">';
   h+='<div class="model-card-title"><span>All Stats Ranked</span><span style="font-weight:400">'+(completed.length>=10?completed.length+' records':'need 10+')+'</span></div>';
   statCorrs.forEach(function(s,i){
