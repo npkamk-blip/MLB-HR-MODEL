@@ -728,7 +728,7 @@
     "bat_hand": "R",
     "home_team": "New York Yankees",
     "model_hr_pct": 6.0,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct": 33.3,
     "launch_angle": 21.4,
     "exit_velocity": 90.7,
