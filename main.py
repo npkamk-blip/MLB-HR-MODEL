@@ -1472,7 +1472,7 @@ async def save_daily_predictions():
         print(f"save_daily_predictions error: {e}")
         import traceback; traceback.print_exc()
 
-async def record_results(target_date: str):
+async def record_results(target_date: str, force: bool = False):
     """Fetch actual HR results for target_date and update the predictions file"""
     if not GITHUB_TOKEN: return
     path = f"data/predictions/{target_date}.json"
@@ -1510,48 +1510,45 @@ async def record_results(target_date: str):
                             actual_ab[nl] = ab
                             if int(stats.get("homeRuns", 0) or 0) > 0:
                                 hr_hitters.add(nl)
-                                # Also add normalized version without accents for matching
                                 import unicodedata
                                 normalized = unicodedata.normalize('NFD', nl)
                                 normalized = ''.join(c for c in normalized if unicodedata.category(c) != 'Mn')
                                 hr_hitters.add(normalized)
                                 actual_ab[normalized] = ab
                 except Exception: continue
-        # Update records with actual results
-        # DNP only if player has 0 AB AND is not in hr_hitters (truly didn't play)
+
         updated = 0
         dnp_count = 0
+        hr_count = 0
         for rec in records:
-            if rec.get("hit_hr") is None:
+            # Process if null OR if force=True and currently DNP (may be wrong)
+            if rec.get("hit_hr") is None or (force and rec.get("hit_hr") == "DNP"):
                 nl = rec["name"].lower().strip()
-                # Try exact match first
-                ab = actual_ab.get(nl, -1)
-                hit = nl in hr_hitters
+                # Normalize accented chars for matching
+                import unicodedata
+                nl_norm = unicodedata.normalize('NFD', nl)
+                nl_norm = ''.join(c for c in nl_norm if unicodedata.category(c) != 'Mn')
+
+                # Try exact match
+                ab = actual_ab.get(nl, actual_ab.get(nl_norm, -1))
+                hit = nl in hr_hitters or nl_norm in hr_hitters
+
                 # Try last name match
                 if ab == -1:
                     last = nl.split()[-1]
+                    last_norm = nl_norm.split()[-1]
                     for k, v in actual_ab.items():
-                        if k == nl or k.endswith(last) or last in k.split():
+                        k_parts = k.split()
+                        if k_parts and (k_parts[-1] == last or k_parts[-1] == last_norm):
                             ab = v
                             if k in hr_hitters:
                                 hit = True
                             break
-                # Try first + last initial match for accented names
-                if ab == -1:
-                    parts = nl.split()
-                    if len(parts) >= 2:
-                        for k, v in actual_ab.items():
-                            kparts = k.split()
-                            if len(kparts) >= 2 and kparts[-1] == parts[-1]:
-                                ab = v
-                                if k in hr_hitters:
-                                    hit = True
-                                break
-                if ab == -1:
-                    ab = 0  # truly not found — assume DNP
 
-                # Only mark DNP if 0 AB and not a known HR hitter
-                # (HR hitter with 0 AB lookup = name mismatch, not DNP)
+                if ab == -1:
+                    ab = 0
+
+                # Only mark DNP if truly 0 AB and not a known HR hitter
                 if ab == 0 and not hit:
                     rec["hit_hr"] = "DNP"
                     rec["actual_ab"] = 0
@@ -1559,10 +1556,14 @@ async def record_results(target_date: str):
                 else:
                     rec["hit_hr"] = 1 if hit else 0
                     rec["actual_ab"] = max(ab, 0)
+                    if hit: hr_count += 1
                     updated += 1
+
         content_updated = json.dumps(records, indent=2)
-        await github_put_file(path, content_updated, f"results: {target_date} ({len(hr_hitters)} HRs, {dnp_count} DNP)", sha)
-        print(f"Recorded results for {target_date}: {len(hr_hitters)} HR hitters, {dnp_count} DNP, {updated} records updated")
+        await github_put_file(path, content_updated,
+            f"results: {target_date} ({len(hr_hitters)} HRs, {dnp_count} DNP, force={force})", sha)
+        print(f"Recorded results for {target_date}: {len(hr_hitters)} HR hitters, "
+              f"{dnp_count} DNP, {updated} updated, {hr_count} HRs confirmed")
     except Exception as e:
         print(f"record_results error: {e}")
         import traceback; traceback.print_exc()
@@ -2836,11 +2837,11 @@ async def manual_save_predictions():
     return {"status": "done", "date": date.today().isoformat()}
 
 @app.get("/record-results")
-async def manual_record_results(target_date: str = None):
-    """Manually trigger recording results for a date"""
+async def manual_record_results(target_date: str = None, force: bool = True):
+    """Manually trigger recording results for a date. force=True re-checks DNP records."""
     d = target_date or (date.today() - timedelta(days=1)).isoformat()
-    await record_results(d)
-    return {"status": "done", "date": d}
+    await record_results(d, force=force)
+    return {"status": "done", "date": d, "force": force}
 
 @app.get("/rerecord-all")
 async def rerecord_all_results():
@@ -2868,10 +2869,10 @@ async def rerecord_all_results():
                 bad_dnp = sum(1 for r in recs if r.get("hit_hr") == "DNP")
                 nulls   = sum(1 for r in recs if r.get("hit_hr") is None)
                 results.append({"date": d, "total": total, "dnp": bad_dnp, "null": nulls})
-                # Re-record if has DNP or null records
+                # Re-record with force=True to fix bad DNP records
                 if bad_dnp > 0 or nulls > 0:
-                    await record_results(d)
-                    print(f"Re-recorded {d}: {bad_dnp} DNP fixed, {nulls} nulls filled")
+                    await record_results(d, force=True)
+                    print(f"Re-recorded {d} (force=True): {bad_dnp} DNP re-checked, {nulls} nulls filled")
             except Exception as e:
                 results.append({"date": d, "error": str(e)})
         return {"status": "complete", "dates_processed": results}
