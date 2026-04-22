@@ -2806,7 +2806,7 @@ async def debug_l8d(player: str = "Murakami"):
         "same_as_season": b8d.get("barrel_pct") == bc.get("barrel_pct"),
     }
 
-@app.post("/recalibrate")
+@app.get("/recalibrate")
 async def manual_recalibrate():
     """Manually trigger model recalibration — requires 50+ completed records"""
     result = await recalibrate_model()
@@ -2829,18 +2829,99 @@ async def get_model_weights():
         "league_constants": LEAGUE_CONSTANTS,
     }
 
-@app.post("/save-predictions")
+@app.get("/save-predictions")
 async def manual_save_predictions():
     """Manually trigger saving today's predictions"""
     await save_daily_predictions()
     return {"status": "done", "date": date.today().isoformat()}
 
-@app.post("/record-results")
+@app.get("/record-results")
 async def manual_record_results(target_date: str = None):
     """Manually trigger recording results for a date"""
     d = target_date or (date.today() - timedelta(days=1)).isoformat()
     await record_results(d)
     return {"status": "done", "date": d}
+
+@app.get("/rerecord-all")
+async def rerecord_all_results():
+    """Re-run record_results for all prediction files — fixes bad DNP records"""
+    import json
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(
+                f"https://api.github.com/repos/{GITHUB_REPO}/contents/data/predictions",
+                headers={"Authorization": f"token {GITHUB_TOKEN}"}
+            )
+            files = r.json()
+        results = []
+        for f in sorted(files, key=lambda x: x["name"]):
+            fname = f["name"]
+            if not fname.endswith(".json"): continue
+            d = fname.replace(".json", "")
+            # Skip today — games not finished
+            if d == date.today().isoformat(): continue
+            content, _ = await github_get_file(f"data/predictions/{fname}")
+            if not content: continue
+            try:
+                recs = json.loads(content)
+                total = len(recs)
+                bad_dnp = sum(1 for r in recs if r.get("hit_hr") == "DNP")
+                nulls   = sum(1 for r in recs if r.get("hit_hr") is None)
+                results.append({"date": d, "total": total, "dnp": bad_dnp, "null": nulls})
+                # Re-record if has DNP or null records
+                if bad_dnp > 0 or nulls > 0:
+                    await record_results(d)
+                    print(f"Re-recorded {d}: {bad_dnp} DNP fixed, {nulls} nulls filled")
+            except Exception as e:
+                results.append({"date": d, "error": str(e)})
+        return {"status": "complete", "dates_processed": results}
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/verify-results")
+async def verify_results():
+    """Show DNP/HR/miss breakdown for all prediction dates — spot bad DNP records"""
+    import json
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(
+                f"https://api.github.com/repos/{GITHUB_REPO}/contents/data/predictions",
+                headers={"Authorization": f"token {GITHUB_TOKEN}"}
+            )
+            files = r.json()
+        summary = []
+        for f in sorted(files, key=lambda x: x["name"], reverse=True):
+            fname = f["name"]
+            if not fname.endswith(".json"): continue
+            d = fname.replace(".json", "")
+            content, _ = await github_get_file(f"data/predictions/{fname}")
+            if not content: continue
+            try:
+                recs = json.loads(content)
+                total  = len(recs)
+                hrs    = sum(1 for r in recs if r.get("hit_hr") == 1)
+                misses = sum(1 for r in recs if r.get("hit_hr") == 0)
+                dnps   = sum(1 for r in recs if r.get("hit_hr") == "DNP")
+                nulls  = sum(1 for r in recs if r.get("hit_hr") is None)
+                hr_rate = round(hrs / max(hrs + misses, 1) * 100, 1)
+                # Flag suspicious days — high DNP % suggests bad matching
+                suspicious = dnps > total * 0.3
+                summary.append({
+                    "date": d,
+                    "total": total,
+                    "hrs": hrs,
+                    "misses": misses,
+                    "dnp": dnps,
+                    "null": nulls,
+                    "hr_rate": f"{hr_rate}%",
+                    "dnp_pct": f"{round(dnps/max(total,1)*100,1)}%",
+                    "suspicious": suspicious,
+                })
+            except Exception:
+                continue
+        return {"dates": summary}
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.get("/debug-results")
 async def debug_results(target_date: str = None):
