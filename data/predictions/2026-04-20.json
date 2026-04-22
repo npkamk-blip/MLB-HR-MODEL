@@ -1087,7 +1087,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "projected",
     "model_hr_pct": 6.9,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 16.6,
     "la_season": 17.9,
     "ev_season": 91.3,
@@ -1549,7 +1549,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "projected",
     "model_hr_pct": 5.8,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 21.9,
     "la_season": 21.2,
     "ev_season": 92.1,
@@ -1614,6 +1614,6 @@
     "pit_era_diff": -2.46,
     "pit_hr_fb_pct": 0,
     "lineup_k_pct": 0,
-    "actual_ab": 0
+    "actual_ab": 4
   }
 ]
