@@ -2319,7 +2319,7 @@
     "home_team": "Philadelphia Phillies",
     "lineup_source": "projected",
     "model_hr_pct": 5.2,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 8.6,
     "la_season": 21.3,
     "ev_season": 84.8,
@@ -2473,7 +2473,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "projected",
     "model_hr_pct": 6.3,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 11.8,
     "la_season": 17.9,
     "ev_season": 90.3,
@@ -3320,7 +3320,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "projected",
     "model_hr_pct": 6.5,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 14.8,
     "la_season": 13.2,
     "ev_season": 90.1,
@@ -3385,7 +3385,7 @@
     "pit_era_diff": 3.3,
     "pit_hr_fb_pct": 0,
     "lineup_k_pct": 0,
-    "actual_ab": 0
+    "actual_ab": 4
   },
   {
     "date": "2026-04-18",
@@ -3397,7 +3397,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "projected",
     "model_hr_pct": 12.5,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 19.9,
     "la_season": 19.4,
     "ev_season": 91.8,
@@ -3462,7 +3462,7 @@
     "pit_era_diff": 1.34,
     "pit_hr_fb_pct": 0,
     "lineup_k_pct": 0,
-    "actual_ab": 0
+    "actual_ab": 4
   },
   {
     "date": "2026-04-18",
@@ -3551,7 +3551,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "projected",
     "model_hr_pct": 5.7,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 12.1,
     "la_season": 13.1,
     "ev_season": 89.7,
@@ -3616,6 +3616,6 @@
     "pit_era_diff": 1.34,
     "pit_hr_fb_pct": 0,
     "lineup_k_pct": 0,
-    "actual_ab": 0
+    "actual_ab": 4
   }
 ]
