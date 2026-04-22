@@ -2319,7 +2319,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "projected",
     "model_hr_pct": 10.6,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 19.9,
     "la_season": 19.4,
     "ev_season": 91.8,
@@ -2384,7 +2384,7 @@
     "pit_era_diff": 0,
     "pit_hr_fb_pct": 0,
     "lineup_k_pct": 0,
-    "actual_ab": 0
+    "actual_ab": 3
   },
   {
     "date": "2026-04-17",
@@ -2396,7 +2396,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "projected",
     "model_hr_pct": 5.0,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 15.9,
     "la_season": 12.8,
     "ev_season": 92.0,
@@ -2461,7 +2461,7 @@
     "pit_era_diff": -0.02,
     "pit_hr_fb_pct": 0,
     "lineup_k_pct": 0,
-    "actual_ab": 0
+    "actual_ab": 4
   },
   {
     "date": "2026-04-17",
@@ -2473,7 +2473,7 @@
     "home_team": "Arizona Diamondbacks",
     "lineup_source": "projected",
     "model_hr_pct": 6.3,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 12.2,
     "la_season": 12.7,
     "ev_season": 91.3,
@@ -2538,7 +2538,7 @@
     "pit_era_diff": -3.27,
     "pit_hr_fb_pct": 0,
     "lineup_k_pct": 0,
-    "actual_ab": 1
+    "actual_ab": 5
   },
   {
     "date": "2026-04-17",
