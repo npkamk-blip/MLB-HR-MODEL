@@ -505,7 +505,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "projected",
     "model_hr_pct": 5.2,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 13.2,
     "la_season": 22.5,
     "ev_season": 90.2,
@@ -3109,7 +3109,7 @@
     "home_team": "Athletics",
     "lineup_source": "projected",
     "model_hr_pct": 5.7,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 15.7,
     "la_season": 12.8,
     "ev_season": 92.8,
@@ -3159,7 +3159,7 @@
     "avg_pa_per_game": 4.38,
     "avg_ab_per_game": 3.62,
     "games_played": 16,
-    "actual_ab": 0
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -3171,7 +3171,7 @@
     "home_team": "Athletics",
     "lineup_source": "projected",
     "model_hr_pct": 6.7,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 17.9,
     "la_season": 15.2,
     "ev_season": 93.5,
@@ -3221,7 +3221,7 @@
     "avg_pa_per_game": 4.47,
     "avg_ab_per_game": 3.47,
     "games_played": 15,
-    "actual_ab": 0
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
@@ -3233,7 +3233,7 @@
     "home_team": "Athletics",
     "lineup_source": "projected",
     "model_hr_pct": 5.9,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 11.3,
     "la_season": 17.6,
     "ev_season": 91.2,
@@ -3283,7 +3283,7 @@
     "avg_pa_per_game": 4.33,
     "avg_ab_per_game": 4.13,
     "games_played": 15,
-    "actual_ab": 0
+    "actual_ab": 2
   },
   {
     "date": "2026-04-14",
@@ -3295,7 +3295,7 @@
     "home_team": "Athletics",
     "lineup_source": "projected",
     "model_hr_pct": 9.7,
-    "hit_hr": "DNP",
+    "hit_hr": 0,
     "barrel_pct_season": 12.9,
     "la_season": 18.1,
     "ev_season": 87.5,
@@ -3345,7 +3345,7 @@
     "avg_pa_per_game": 2.0,
     "avg_ab_per_game": 1.8,
     "games_played": 5,
-    "actual_ab": 0
+    "actual_ab": 3
   },
   {
     "date": "2026-04-14",
