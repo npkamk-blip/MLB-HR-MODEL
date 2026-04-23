@@ -1,7 +1,7 @@
 fastapi
 uvicorn
 httpx
-pybaseball
 pandas
-requests
-openpyxl
+pybaseball
+scikit-learn
+numpy
