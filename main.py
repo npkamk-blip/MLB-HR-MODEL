@@ -4004,24 +4004,36 @@ async def debug_score(batter: str, pitcher: str = "TBD", bat_hand: str = None, p
     }
 
     # Build per-stat breakdown
+    # stat_mults stores individual stats OR group keys (group_{stat}) for correlated groups
+    # Need to check both to find the right multiplier
     batter_stats = []
     matchup_stats = []
 
     for stat in active_stats:
-        mult = sm.get(stat) or sm.get(f"group_{stat}") or 1.0
+        # Check direct key first, then group key, then raw_mults via group scan
+        mult = sm.get(stat)
+        if mult is None:
+            # Check if this stat was absorbed into a correlated group
+            # Groups are stored as group_{first_stat_in_group}
+            for key, val in sm.items():
+                if key.startswith("group_") and key != "group_batter_score" and key != "group_matchup_score":
+                    mult = val
+                    break
+            if mult is None:
+                mult = 1.0
         entry = {
             "stat": stat,
-            "multiplier": round(mult, 3),
-            "direction": "boost" if mult > 1.0 else "suppress" if mult < 1.0 else "neutral"
+            "multiplier": round(float(mult), 3),
+            "direction": "boost" if float(mult) > 1.05 else "suppress" if float(mult) < 0.95 else "neutral"
         }
         if stat in BATTER_POOL:
             batter_stats.append(entry)
         elif stat in MATCHUP_POOL:
             matchup_stats.append(entry)
 
-    # Compute the scores from the active stats
-    batter_score = breakdown.get("batter_score", 1.0)
-    matchup_score = breakdown.get("matchup_score", 1.0)
+    # Get actual scores computed by the model
+    batter_score = sm.get("batter_score") or breakdown.get("batter_score") or 1.0
+    matchup_score = sm.get("matchup_score") or breakdown.get("matchup_score") or 1.0
 
     # Always-on multipliers (not in active_stats)
     always_on = {
@@ -4032,30 +4044,37 @@ async def debug_score(batter: str, pitcher: str = "TBD", bat_hand: str = None, p
         "bat_platoon": round(breakdown.get("bat_platoon_mult", 1.0), 3),
     }
 
+    base = breakdown.get("base_rate", 0)
+    k_pen = always_on["k_penalty"]
+
     return {
         "batter": batter,
         "pitcher": pitcher,
         "bat_hand": bat_hand,
         "pit_hand": pit_hand,
         "hr_prob": round(hr_prob, 1),
-        "base_rate": breakdown.get("base_rate", 0),
         "batter_score": {
-            "total": round(batter_score, 3),
+            "total": round(float(batter_score), 3),
             "active_stats": batter_stats,
             "formula": " × ".join([f"{s['stat']} {s['multiplier']}x" for s in batter_stats])
         },
         "matchup_score": {
-            "total": round(matchup_score, 3),
+            "total": round(float(matchup_score), 3),
             "active_stats": matchup_stats,
             "formula": " × ".join([f"{s['stat']} {s['multiplier']}x" for s in matchup_stats])
         },
         "always_on_multipliers": always_on,
         "active_stats_all": active_stats,
-        "final_check": {
-            "base_rate": breakdown.get("base_rate", 0),
-            "× batter_score": round(batter_score, 3),
-            "× matchup_score": round(matchup_score, 3),
-            "= hr_prob": round(hr_prob, 1)
+        "final_math": {
+            "base_rate": round(base, 2),
+            "× batter_score": round(float(batter_score), 3),
+            "× matchup_score": round(float(matchup_score), 3),
+            "× k_penalty": round(k_pen, 3),
+            "× park": always_on["park_factor"],
+            "× weather": always_on["weather_mult"],
+            "= expected": round(base * float(batter_score) * float(matchup_score) * k_pen, 1),
+            "= actual_hr_prob": round(hr_prob, 1),
+            "note": "expected vs actual differ if sigmoid or always-on caps applied"
         }
     }
 
