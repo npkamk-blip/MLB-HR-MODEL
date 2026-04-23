@@ -80,6 +80,9 @@ DEFAULT_WEIGHTS = {
     "pitch_delta_w":      1.0,
     # K% penalty
     "k_pct_w":            1.0,
+    # New stats
+    "chase_rate_w":       1.0,   # batter chase rate — lower = better discipline
+    "pit_stuff_plus_w":   1.0,   # pitcher Stuff+ — higher = harder to hit
     # Active stats list (which 8 are in the model)
     "active_stats": [
         "barrel_season", "la_season", "pit_hr9_vs_hand",
@@ -188,6 +191,7 @@ async def recalibrate_model():
         "batter_season": [
             "barrel_pct_season", "hard_hit_season", "ev_season",
             "iso_season", "la_season", "pull_pct_season", "fb_pct_season",
+            "chase_rate_season",  # lower chase rate = more disciplined = better counts
         ],
         "batter_recent": [
             "barrel_pct_l8d", "hard_hit_l8d", "ev_l8d", "bat_speed_l8d",
@@ -202,6 +206,7 @@ async def recalibrate_model():
             "pit_hr9_season", "pit_hr9_vs_hand", "pit_slg_vs_hand",
             "pit_hard_hit_season", "pit_era_diff", "pit_k9_season",
             "pit_slg_season", "pit_fb_pct_allowed", "pit_platoon_mult",
+            "pit_stuff_plus",  # composite pitch quality — high Stuff+ = harder to hit
         ],
     }
 
@@ -247,6 +252,8 @@ async def recalibrate_model():
         "pit_hard_hit_w":    "pit_hard_hit_season",
         "hot_cold_mult_w":   "hot_cold_mult",
         "l8d_hr_w":          "l8d_hr",
+        "chase_rate_w":      "chase_rate_season",   # batter chase rate — lower = better
+        "pit_stuff_plus_w":  "pit_stuff_plus",      # pitcher Stuff+ — higher = better pitcher
     }
 
     # ── Logistic Regression — learns weights from all stats simultaneously ──
@@ -487,13 +494,17 @@ def savant_batter_url(year=None, min_pa=10, extra=""):
     return (f"{SAVANT_BASE}/leaderboard/custom?year={yr}&type=batter&filter=&sort=4"
             f"&sortDir=desc&min={min_pa}&selections=pa,ab,hit,home_run,strikeout,"
             f"k_percent,slg_percent,batting_avg,barrel_batted_rate,exit_velocity_avg,"
-            f"launch_angle_avg,hard_hit_percent,pull_percent,n_fb_percent{extra}&csv=true")
+            f"launch_angle_avg,hard_hit_percent,pull_percent,n_fb_percent,"
+            f"oz_swing_percent{extra}&csv=true")
+            # oz_swing_percent = chase rate (swing% on pitches outside zone)
 
 def savant_pitcher_url(year=None, min_pa=5, extra=""):
     yr = year or current_season()
     return (f"{SAVANT_BASE}/leaderboard/custom?year={yr}&type=pitcher&filter=&sort=4"
             f"&sortDir=desc&min={min_pa}&selections=pa,home_run,barrel_batted_rate,"
-            f"exit_velocity_avg,hard_hit_percent,k_percent,p_era,n_fb_percent{extra}&csv=true")
+            f"exit_velocity_avg,hard_hit_percent,k_percent,p_era,n_fb_percent,"
+            f"p_stuff_plus{extra}&csv=true")
+            # p_stuff_plus = Stuff+ composite pitch quality metric
 
 def savant_pitch_arsenal_url(ptype="pitcher", year=None, min_pa=1):
     yr = year or current_season()
@@ -713,6 +724,7 @@ def calc_batter_stats(df: pd.DataFrame) -> pd.DataFrame:
         'n_fb_percent': 'fb_pct',
         'k_percent': 'k_pct',
         'home_run': 'hr',
+        'oz_swing_percent': 'chase_rate',  # swing% on pitches outside zone
     }
     df = df.rename(columns={k: v for k, v in rename.items() if k in df.columns})
     return df
@@ -728,6 +740,7 @@ def calc_pitcher_stats(df: pd.DataFrame) -> pd.DataFrame:
         'k_percent': 'k_pct',
         'p_era': 'era',
         'home_run': 'hr',
+        'p_stuff_plus': 'stuff_plus',  # composite pitch quality — 100 = avg, higher = better
     }
     df = df.rename(columns={k: v for k, v in rename.items() if k in df.columns})
     return df
@@ -1644,6 +1657,9 @@ async def save_daily_predictions():
                             "pit_fb_pct_allowed": round(blend(pc2.get("fb_pct",0), pp2b.get("fb_pct",0), pwc2, pwp2), 1),
                             "hard_hit_l8d": hh_l8d,
                             "k_pct_l8d": round(b8d2.get("k_pct",0), 1),
+                            # ── NEW STATS ──
+                            "chase_rate_season": round(blend(bc2.get("chase_rate",0), bp2.get("chase_rate",0), bwc2, bwp2), 1),
+                            "pit_stuff_plus": round(blend(pc2.get("stuff_plus",100), pp2b.get("stuff_plus",100), pwc2, pwp2), 1),
                             # ── ROUND 3 CANDIDATES ──
                             "pit_era_season": pit_era_s,
                             "pit_era_diff": round(pit_era_s - 4.20, 2) if pit_era_s > 0 else 0,
@@ -2454,6 +2470,15 @@ def compute_hr_prob_multiplicative(
         if stat == "k_pct_l8d":
             v = b8d.get("k_pct", 0) if has_8d else 0
             return v, pa_8d, 22.0, False, 1.3, 0.7  # higher K% = bad for batter
+        if stat == "chase_rate_season":
+            v = blend(bc.get("chase_rate", 0), bp.get("chase_rate", 0), bwc, bwp)
+            # Lower chase rate = better (more disciplined = better counts = more HRs)
+            return v, pa_26, 30.0, False, 1.3, 0.7
+        if stat == "pit_stuff_plus":
+            v = blend(pc.get("stuff_plus", 100), pp2.get("stuff_plus", 100), pwc, pwp)
+            if v == 0: v = 100  # default to league average if missing
+            # Higher Stuff+ = better pitcher = worse for batter
+            return v, total_ip, 100.0, False, 1.4, 0.6
         # Unknown stat — neutral
         return 1.0, 0, 1.0, True, 1.5, 0.6
 
