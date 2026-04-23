@@ -580,6 +580,7 @@ function buildBatterTable(games){
         name:b.name,team:b.team,hand:b.bat_hand||'R',
         opp:b.opp_pitcher||'TBD',opp_hand:b.opp_p_hand||'R',
         pitcher_name:pitP.name||b.opp_pitcher||'TBD',
+        pitcher_is_new:b._full.pitcher_is_new||false,
         barrel_s:b.season?b.season.barrel||0:0,
         barrel_8d:b.l8d?b.l8d.barrel||0:0,
         la_s:b.season?b.season.la||0:0,
@@ -629,7 +630,7 @@ function buildBatterTable(games){
     h+='<tr onclick="toggleBatRow('+i+')">';
     h+='<td><div class="player-name">'+b.name+'</div><div class="player-sub">'+b.team+'</div></td>';
     h+='<td>'+handTag+'</td>';
-    h+='<td><div class="player-name">'+(b.pitcher_name||'TBD')+'</div><div class="player-sub">'+(b.opp_hand||'R')+'HP</div></td>';
+    h+='<td><div class="player-name">'+(b.pitcher_name||'TBD')+(b.pitcher_is_new?'<span style="font-size:9px;background:var(--warn);color:#000;border-radius:3px;padding:1px 4px;margin-left:4px;font-weight:700">NEW</span>':'')+'</div><div class="player-sub">'+(b.opp_hand||'R')+'HP</div></td>';
     // Matchup column - two dots side by side, double green = screaming spot
     var matchupTitle='Batter ISO vs hand: '+(b.iso_vs_hand>0?fmtIso(b.iso_vs_hand):'--')+' | Pit SLG allowed: '+(b.slg_vs_bat>0?b.slg_vs_bat.toFixed(3):'--')+' | HR/9: '+(b.hr9_vs_bat>0?b.hr9_vs_bat.toFixed(2):'--');
     var doubleGreen=batDot==='g'&&pitDot==='g';
