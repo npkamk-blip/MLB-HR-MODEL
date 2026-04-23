@@ -3961,6 +3961,104 @@ async def get_games(date: str = None, refresh: bool = False):
     _games_cache[today] = {"data": result, "ts": datetime.now()}
     return result
 
+
+@app.get("/debug-score")
+async def debug_score(batter: str, pitcher: str = "TBD", bat_hand: str = None, pit_hand: str = "R", home_team: str = ""):
+    """
+    Show exactly how batter score and matchup score are computed for a player.
+    Example: /debug-score?batter=Munetaka+Murakami&pitcher=Michael+Soroka&pit_hand=R
+    """
+    if not _cache["ready"]:
+        return {"error": "Cache not ready"}
+
+    # Resolve bat hand if not provided
+    if not bat_hand:
+        cached = _cache.get("player_hands", {}).get(batter.lower().strip(), {})
+        bat_hand = cached.get("bat_side", "R")
+        if bat_hand == "S": bat_hand = "L" if pit_hand == "R" else "R"
+
+    park_factor = get_park_hr_factor(home_team or "Unknown", bat_hand)
+    wx_mult = 1.0
+
+    hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf = compute_hr_probability(
+        batter, bat_hand, pitcher, pit_hand, park_factor, wx_mult, home_team
+    )
+
+    sm = breakdown.get("stat_mults", {})
+    active_stats = breakdown.get("active_stats", [])
+
+    # Pool definitions (mirrors scoring function)
+    BATTER_POOL = {
+        "barrel_season", "hard_hit_season", "ev_season", "iso_season",
+        "la_season", "pull_pct_season", "fb_pct_season", "chase_rate_season",
+        "barrel_l8d", "hard_hit_l8d", "ev_l8d", "bat_speed_l8d",
+        "xwoba_l8d", "xslg_l8d", "slg_l8d", "xslg_gap_l8d",
+        "iso_l8d", "k_pct_l8d", "la_l8d",
+    }
+    MATCHUP_POOL = {
+        "park", "weather", "iso_vs_hand", "bat_platoon", "pit_platoon",
+        "bullpen", "pitch_delta",
+        "pit_hr9_season", "pit_hr9_vs_hand", "pit_slg_vs_hand",
+        "pit_hard_hit_season", "pit_era_diff", "pit_k9_season",
+        "pit_slg_season", "pit_fb_pct", "pit_stuff_plus",
+    }
+
+    # Build per-stat breakdown
+    batter_stats = []
+    matchup_stats = []
+
+    for stat in active_stats:
+        mult = sm.get(stat) or sm.get(f"group_{stat}") or 1.0
+        entry = {
+            "stat": stat,
+            "multiplier": round(mult, 3),
+            "direction": "boost" if mult > 1.0 else "suppress" if mult < 1.0 else "neutral"
+        }
+        if stat in BATTER_POOL:
+            batter_stats.append(entry)
+        elif stat in MATCHUP_POOL:
+            matchup_stats.append(entry)
+
+    # Compute the scores from the active stats
+    batter_score = breakdown.get("batter_score", 1.0)
+    matchup_score = breakdown.get("matchup_score", 1.0)
+
+    # Always-on multipliers (not in active_stats)
+    always_on = {
+        "park_factor": round(breakdown.get("park_factor", 1.0), 3),
+        "weather_mult": round(breakdown.get("weather_mult", 1.0), 3),
+        "k_penalty": round(breakdown.get("k_mult", 1.0), 3),
+        "pit_platoon": round(breakdown.get("pit_platoon_mult", 1.0), 3),
+        "bat_platoon": round(breakdown.get("bat_platoon_mult", 1.0), 3),
+    }
+
+    return {
+        "batter": batter,
+        "pitcher": pitcher,
+        "bat_hand": bat_hand,
+        "pit_hand": pit_hand,
+        "hr_prob": round(hr_prob, 1),
+        "base_rate": breakdown.get("base_rate", 0),
+        "batter_score": {
+            "total": round(batter_score, 3),
+            "active_stats": batter_stats,
+            "formula": " × ".join([f"{s['stat']} {s['multiplier']}x" for s in batter_stats])
+        },
+        "matchup_score": {
+            "total": round(matchup_score, 3),
+            "active_stats": matchup_stats,
+            "formula": " × ".join([f"{s['stat']} {s['multiplier']}x" for s in matchup_stats])
+        },
+        "always_on_multipliers": always_on,
+        "active_stats_all": active_stats,
+        "final_check": {
+            "base_rate": breakdown.get("base_rate", 0),
+            "× batter_score": round(batter_score, 3),
+            "× matchup_score": round(matchup_score, 3),
+            "= hr_prob": round(hr_prob, 1)
+        }
+    }
+
 @app.get("/research")
 async def research(player: str, date: str = None):
     from datetime import date as date_cls
