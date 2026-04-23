@@ -184,25 +184,33 @@ def get_tree_depth(n_records):
     if n_records < 10000: return 7, 10
     return 8, 5
 
-def get_calibration_factor(dataset_hr_rate, true_hr_rate=2.8):
+def get_calibration_factor(dataset_hr_rate, n_records, true_hr_rate=2.8):
     """
-    Platt scaling — corrects for biased training population.
-    When dataset HR rate > true league rate, tree outputs are inflated.
-    Factor shrinks toward 1.0 as dataset approaches true distribution.
+    Calibration corrects for biased training population early on.
     
-    Auto-removes itself:
-    - dataset_hr_rate > 8%  → full calibration applied
-    - dataset_hr_rate 4-8%  → partial calibration (linear blend)
-    - dataset_hr_rate < 4%  → no calibration needed, factor = 1.0
+    Removal strategy (Option 2 — let data fix itself):
+    - Below 3000 records: dataset is still filling in, apply calibration
+    - 3000+ records: dataset HR rate has stabilized and reflects true
+      deployment population — tree outputs are already correct, factor = 1.0
+    
+    Between 1500-3000: linear blend from calibrated to raw
+    so the transition is smooth not a sudden jump.
     """
-    if dataset_hr_rate <= 4.0:
-        return 1.0  # dataset close enough to true population — no correction
-    if dataset_hr_rate >= 8.0:
-        return true_hr_rate / dataset_hr_rate  # full correction
-    # Linear blend between 4% and 8%
-    blend = (dataset_hr_rate - 4.0) / (8.0 - 4.0)
-    factor = true_hr_rate / dataset_hr_rate
-    return 1.0 - blend * (1.0 - factor)
+    # Above 3000 records — tree trained on stable population, no correction needed
+    if n_records >= 3000:
+        return 1.0
+
+    # Below 1500 records — full calibration
+    if n_records < 1500:
+        if dataset_hr_rate <= 0:
+            return 1.0
+        return true_hr_rate / dataset_hr_rate
+
+    # 1500-3000 records — linear blend toward 1.0
+    # At 1500: full calibration. At 3000: factor = 1.0
+    blend = (n_records - 1500) / (3000 - 1500)  # 0.0 at 1500, 1.0 at 3000
+    full_factor = true_hr_rate / dataset_hr_rate if dataset_hr_rate > 0 else 1.0
+    return full_factor + blend * (1.0 - full_factor)
 
 def clean_feature_value(rec, stat, medians, pit_ip_season=0, pit_ip_vs_hand=0):
     """Return clean float value for a stat from a record, using medians for missing."""
@@ -337,7 +345,7 @@ async def recalibrate_model():
 
     # ── Compute calibration factor ──
     dataset_hr_rate = round(sum(y_vals) / len(y_vals) * 100, 1)
-    cal_factor = get_calibration_factor(dataset_hr_rate)
+    cal_factor = get_calibration_factor(dataset_hr_rate, n)
     print(f"Dataset HR rate: {dataset_hr_rate}% → calibration factor: {cal_factor:.3f}")
 
     # ── Store tree globally ──
