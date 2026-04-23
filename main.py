@@ -178,11 +178,31 @@ ZERO_DOMINANT = {
 
 def get_tree_depth(n_records):
     """Auto-scale tree depth based on record count."""
-    if n_records < 1500:  return 4, 30   # depth 4, need 30+ per leaf — prevents overfitting at 600 records
+    if n_records < 1500:  return 4, 30
     if n_records < 2500:  return 5, 20
     if n_records < 5000:  return 6, 15
     if n_records < 10000: return 7, 10
     return 8, 5
+
+def get_calibration_factor(dataset_hr_rate, true_hr_rate=2.8):
+    """
+    Platt scaling — corrects for biased training population.
+    When dataset HR rate > true league rate, tree outputs are inflated.
+    Factor shrinks toward 1.0 as dataset approaches true distribution.
+    
+    Auto-removes itself:
+    - dataset_hr_rate > 8%  → full calibration applied
+    - dataset_hr_rate 4-8%  → partial calibration (linear blend)
+    - dataset_hr_rate < 4%  → no calibration needed, factor = 1.0
+    """
+    if dataset_hr_rate <= 4.0:
+        return 1.0  # dataset close enough to true population — no correction
+    if dataset_hr_rate >= 8.0:
+        return true_hr_rate / dataset_hr_rate  # full correction
+    # Linear blend between 4% and 8%
+    blend = (dataset_hr_rate - 4.0) / (8.0 - 4.0)
+    factor = true_hr_rate / dataset_hr_rate
+    return 1.0 - blend * (1.0 - factor)
 
 def clean_feature_value(rec, stat, medians, pit_ip_season=0, pit_ip_vs_hand=0):
     """Return clean float value for a stat from a record, using medians for missing."""
@@ -315,13 +335,17 @@ async def recalibrate_model():
             hr_rate = round(vals[1] / total * 100, 1) if total > 0 else 0
             hr_rates_at_leaves.append(hr_rate)
 
+    # ── Compute calibration factor ──
+    dataset_hr_rate = round(sum(y_vals) / len(y_vals) * 100, 1)
+    cal_factor = get_calibration_factor(dataset_hr_rate)
+    print(f"Dataset HR rate: {dataset_hr_rate}% → calibration factor: {cal_factor:.3f}")
+
     # ── Store tree globally ──
     _dt_model = tree
     _dt_features = features
     _dt_medians = medians
 
-    # ── Save metadata to GitHub (tree itself can't be saved as JSON easily) ──
-    # Store feature importances and medians so they survive redeploy
+    # ── Save metadata to GitHub ──
     new_weights = {
         **_model_weights,
         "calibration_round": _model_weights.get("calibration_round", 0) + 1,
@@ -333,9 +357,16 @@ async def recalibrate_model():
         "tree_n_leaves": n_leaves,
         "feature_importances": importances,
         "feature_medians": {k: round(v, 4) for k, v in medians.items()},
-        "active_stats": list(importances.keys())[:10],  # top 10 by importance
+        "active_stats": list(importances.keys())[:10],
         "hr_rates_at_leaves": sorted(hr_rates_at_leaves),
-        "tree_hr_rate": round(sum(y_vals) / len(y_vals) * 100, 1),
+        "tree_hr_rate": dataset_hr_rate,
+        "calibration_factor": round(cal_factor, 4),
+        "next_depth_upgrade": (
+            1500 if n < 1500 else
+            2500 if n < 2500 else
+            5000 if n < 5000 else
+            10000 if n < 10000 else "random_forest"
+        ),
     }
     _model_weights = new_weights
     await save_model_weights(new_weights)
@@ -1253,6 +1284,22 @@ async def daily_refresh_loop():
                 mark_ran("3am_recal")
             except Exception as e:
                 print(f"Auto-recalibrate error: {e}")
+
+        # Auto-retrain when record count crosses a depth threshold
+        # Checks daily at 3am — if records crossed 1500/2500/5000/10000 since last train
+        if et_hour == 3 and not already_ran("3am_depth_check"):
+            try:
+                mark_ran("3am_depth_check")
+                current_records = _model_weights.get("records_used", 0)
+                next_upgrade = _model_weights.get("next_depth_upgrade", 1500)
+                if isinstance(next_upgrade, int) and current_records >= next_upgrade:
+                    print(f"Auto depth upgrade: {current_records} records >= {next_upgrade} threshold")
+                    result = await recalibrate_model()
+                    new_depth = _model_weights.get("tree_depth", 4)
+                    cal = _model_weights.get("calibration_factor", 1.0)
+                    print(f"Depth upgraded to {new_depth}, cal_factor={cal:.3f}")
+            except Exception as e:
+                print(f"Depth upgrade check error: {e}")
 
         # 4am ET — save model log (window: 4:00–4:59)
         if et_hour == 4 and not already_ran("4am_log"):
@@ -2242,8 +2289,17 @@ def compute_hr_prob_multiplicative(
     if _dt_model is not None and _dt_features:
         feat_vec = np.array([[fv(stat) for stat in _dt_features]])
         proba = _dt_model.predict_proba(feat_vec)[0]
-        # proba[1] = P(HR=1)
-        hr_prob = round(min(max(proba[1] * 100, 2.0), 15.0), 1)
+        raw_prob = proba[1] * 100
+
+        # Apply calibration factor — corrects for biased training population
+        # Factor auto-removes as dataset HR rate approaches true league rate (~2.8%)
+        cal_factor = _model_weights.get("calibration_factor", 1.0)
+        calibrated = raw_prob * cal_factor
+
+        # Floor 2%, cap 15%
+        hr_prob = round(min(max(calibrated, 2.0), 15.0), 1)
+
+        print(f"DT: raw={raw_prob:.1f}% × cal={cal_factor:.3f} → {hr_prob}%") if raw_prob > 10 else None
     else:
         # ── Fallback: simple rule-based estimate until tree is trained ──
         barrel = fv("barrel_pct_season") or fv("barrel_pct_l8d")
