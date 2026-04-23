@@ -178,10 +178,10 @@ ZERO_DOMINANT = {
 
 def get_tree_depth(n_records):
     """Auto-scale tree depth based on record count."""
-    if n_records < 1500:  return 4, 20
-    if n_records < 2500:  return 5, 15
-    if n_records < 5000:  return 6, 12
-    if n_records < 10000: return 7, 8
+    if n_records < 1500:  return 4, 30   # depth 4, need 30+ per leaf — prevents overfitting at 600 records
+    if n_records < 2500:  return 5, 20
+    if n_records < 5000:  return 6, 15
+    if n_records < 10000: return 7, 10
     return 8, 5
 
 def clean_feature_value(rec, stat, medians, pit_ip_season=0, pit_ip_vs_hand=0):
@@ -1409,7 +1409,7 @@ async def save_daily_predictions(force: bool = False):
                         wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
                         hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(
                             name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult, home_team)
-                        if hr_prob < 3: continue
+                        if hr_prob < 2: continue  # save near-everything for full tree training population
                         top_pitches = get_pitcher_top_pitches(opp_p_name)[:2]
                         pitch1 = top_pitches[0] if len(top_pitches) > 0 else {}
                         pitch2 = top_pitches[1] if len(top_pitches) > 1 else {}
