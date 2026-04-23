@@ -1289,6 +1289,20 @@ async function load(forceRefresh){
       ['batter-main','pitcher-main','game-main'].forEach(function(id){document.getElementById(id).innerHTML=nm;});
       btn.disabled=false;return;
     }
+    // Check tree status — show banner if still training
+    try {
+      var stResp = await fetch(API+'/status');
+      var stData = await stResp.json();
+      if(!stData.tree_trained) {
+        document.getElementById('batter-main').innerHTML =
+          '<div class="err" style="background:rgba(255,200,0,0.1);border-color:var(--y);color:var(--y)">' +
+          'Model training on startup — refresh in 15 seconds for full predictions.' +
+          '</div>';
+        btn.disabled=false;
+        setTimeout(function(){ load(true); }, 15000);
+        return;
+      }
+    } catch(e) {}
     buildBatterTable(allGames);
     buildPitcherTable(allGames);
     buildGameTable(allGames);
