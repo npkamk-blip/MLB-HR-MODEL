@@ -34,6 +34,8 @@
   "pit_platoon_w": 0.952,
   "pitch_delta_w": 1.017,
   "k_pct_w": 1.196,
+  "chase_rate_w": 1.0,
+  "pit_stuff_plus_w": 1.0,
   "active_stats": [
     "barrel_season",
     "bat_speed_l8d",
@@ -46,17 +48,9 @@
   ],
   "last_calibrated": "2026-04-23",
   "records_used": 600,
-  "calibration_round": 6,
-  "promoted_stats": [
-    "pit_hr9_season",
-    "bullpen",
-    "pit_k9_season"
-  ],
-  "dropped_stats": [
-    "iso_season",
-    "ev_season",
-    "ev_l8d"
-  ],
+  "calibration_round": 7,
+  "promoted_stats": [],
+  "dropped_stats": [],
   "recent_changes": [],
   "all_correlations": {
     "barrel_season": 0.2339,
