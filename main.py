@@ -1730,20 +1730,29 @@ async def startup_event():
     asyncio.create_task(startup_train_tree())
 
 async def startup_train_tree():
-    """Train Decision Tree on startup using saved records — restores tree after redeploy."""
-    global _dt_model, _dt_features, _dt_medians
-    await asyncio.sleep(15)  # only needs GitHub records, not Savant data
+    """Train Decision Tree on startup — waits for Savant data to fully load first."""
+    # Wait for cache to be ready before training tree
+    # Polls every 10 seconds, gives up after 5 minutes
+    for _ in range(30):
+        await asyncio.sleep(10)
+        if _cache.get("ready"):
+            break
+    else:
+        print("Startup tree: cache never became ready — skipping tree training")
+        return
     try:
-        print("Startup: training Decision Tree from saved records...")
+        print("Startup: cache ready, training Decision Tree...")
         result = await recalibrate_model()
         if isinstance(result, dict) and result.get("status") == "done":
-            print(f"Startup tree trained: depth={result.get('tree_depth')}, "
+            print(f"Startup tree OK: depth={result.get('tree_depth')}, "
                   f"leaves={result.get('n_leaves')}, "
                   f"cal={_model_weights.get('calibration_factor', 1.0):.3f}")
         else:
-            print(f"Startup tree training result: {result}")
+            print(f"Startup tree result: {result}")
     except Exception as e:
-        print(f"Startup tree training error: {e}")
+        import traceback
+        print(f"Startup tree training failed (non-fatal): {e}")
+        traceback.print_exc()
 
 async def startup_catchup():
     """On startup:
