@@ -2611,13 +2611,17 @@ def compute_hr_prob_multiplicative(
         k_season = blend(bc.get("k_pct",0), bp.get("k_pct",0), bwc, bwp)
         k_mult = stat_mults.get("k_pct_season", 1.0)
 
-    # Bullpen — 10% blend, always structural
+    # Bullpen — 10% structural blend
+    # Only apply if bullpen not already in active_stats (matchup_score)
     LG_BULLPEN_HR9 = LEAGUE_CONSTANTS["lg_bullpen_hr9"]
     bullpen_data = _cache.get("team_bullpen", {}).get(home_team, {})
     bullpen_hr9  = bullpen_data.get("hr9", LG_BULLPEN_HR9)
     bullpen_vuln = safe_mult(bullpen_hr9, LG_BULLPEN_HR9, "bullpen_w", cap_high=1.80, cap_low=0.50)
-    bullpen_component = base_rate * bullpen_vuln * (park_factor ** W("park_w")) * (weather_mult ** W("weather_w"))
-    running = (running * 0.90) + (bullpen_component * 0.10)
+    if "bullpen" not in active_stats:
+        # Bullpen component uses base_rate only — park/weather already applied above
+        bullpen_component = base_rate * bullpen_vuln
+        running = (running * 0.90) + (bullpen_component * 0.10)
+    # If bullpen is in active_stats it already applied inside matchup_score — skip blend
 
     hr_prob = round(min(max(running * 100, 2.0), 28.0), 1)
 
