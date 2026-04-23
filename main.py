@@ -29,7 +29,7 @@ LEAGUE_CONSTANTS = {
     "lg_hr_per_pa":    0.028,  # league avg HR/PA (~10% per game at 3.8 PA/game)
     "lg_era":          4.20,   # league avg ERA
     "max_hr_per_pa":   0.12,   # ceiling on any batter base rate
-    "hr_prob_cap":     35.0,   # raised from 28% — let elite matchups express fully
+    "hr_prob_cap":     28.0,   # hard cap — prevents runaway multiplier stacking
 }
 
 # ── Model Weights (learned from ML, updated every 45 days) ──
@@ -183,24 +183,33 @@ async def recalibrate_model():
 
     print(f"Recalibrating on {n} completed records")
 
-    # ── Point-biserial correlation for each stat ──
-    def correlate(records, key):
-        vals = [(r[key], r["hit_hr"]) for r in records if r.get(key) is not None and r.get(key) != 0]
-        if len(vals) < 20: return None
-        xs = [v[0] for v in vals]
-        ys = [v[1] for v in vals]
-        n2 = len(xs)
-        mx = sum(xs)/n2; my = sum(ys)/n2
-        num = sum((x-mx)*(y-my) for x,y in zip(xs,ys))
-        dx = math.sqrt(sum((x-mx)**2 for x in xs))
-        dy = math.sqrt(sum((y-my)**2 for y in ys))
-        if dx*dy == 0: return None
-        return round(num/(dx*dy), 4)
+    # ── 4 pools — stat belongs to exactly one pool ──
+    POOLS = {
+        "batter_season": [
+            "barrel_pct_season", "hard_hit_season", "ev_season",
+            "iso_season", "la_season", "pull_pct_season", "fb_pct_season",
+        ],
+        "batter_recent": [
+            "barrel_pct_l8d", "hard_hit_l8d", "ev_l8d", "bat_speed_l8d",
+            "xwoba_l8d", "xslg_l8d", "slg_l8d", "xslg_gap_l8d",
+            "iso_l8d", "k_pct_l8d", "la_l8d",
+        ],
+        "context": [
+            "park_factor", "weather_mult", "iso_vs_hand",
+            "bat_platoon_mult", "bullpen_vuln", "combined_pitch_delta",
+        ],
+        "pitcher": [
+            "pit_hr9_season", "pit_hr9_vs_hand", "pit_slg_vs_hand",
+            "pit_hard_hit_season", "pit_era_diff", "pit_k9_season",
+            "pit_slg_season", "pit_fb_pct_allowed", "pit_platoon_mult",
+        ],
+    }
 
-    # ── Flat open competition — ALL stored fields compete for top 8 ──
-    # No rounds, no gates, no artificial promotion thresholds.
-    # Every field saved in prediction records is a candidate from day 1.
-    # The data decides entirely.
+    # Reverse map: field → pool
+    FIELD_TO_POOL = {}
+    for pool, fields in POOLS.items():
+        for f in fields:
+            FIELD_TO_POOL[f] = pool
 
     STAT_FIELD_MAP = {
         "barrel_season_w":   "barrel_pct_season",
@@ -223,7 +232,7 @@ async def recalibrate_model():
         "bat_platoon_w":     "bat_platoon_mult",
         "pit_platoon_w":     "pit_platoon_mult",
         "pitch_delta_w":     "combined_pitch_delta",
-        "k_pct_w":           "k_pct_season",  # stored field name in predictions
+        "k_pct_w":           "k_pct_season",
         "fb_pct_season_w":   "fb_pct_season",
         "pull_pct_season_w": "pull_pct_season",
         "pit_fb_pct_w":      "pit_fb_pct_allowed",
@@ -240,31 +249,186 @@ async def recalibrate_model():
         "l8d_hr_w":          "l8d_hr",
     }
 
-    correlations = {}
-    for w_key, field in STAT_FIELD_MAP.items():
-        corr = correlate(completed, field)
-        if corr is not None:
-            correlations[w_key] = corr
+    # ── Logistic Regression — learns weights from all stats simultaneously ──
+    # Captures interaction effects that point-biserial misses
+    # e.g. barrel% matters MORE when pitcher HR/9 is high
+    try:
+        from sklearn.linear_model import LogisticRegression
+        from sklearn.preprocessing import StandardScaler
+        import numpy as np
 
-    # ── Convert correlations to weights ──
-    # weight = 1.0 + (correlation * 2.0), clamped 0.3 - 2.5
-    # Start from DEFAULT_WEIGHTS merged with current — ensures all keys exist
+        # Build feature matrix — only use stats with enough data
+        feature_fields = list(STAT_FIELD_MAP.values())
+        valid_fields = []
+        for field in feature_fields:
+            vals = [r.get(field) for r in completed if r.get(field) is not None and r.get(field) != 0]
+            if len(vals) >= 20:
+                valid_fields.append(field)
+
+        # Build X matrix and y vector
+        X_rows = []
+        y_vals = []
+        for rec in completed:
+            row = []
+            for field in valid_fields:
+                v = rec.get(field)
+                row.append(float(v) if v is not None else 0.0)
+            X_rows.append(row)
+            y_vals.append(int(rec["hit_hr"]))
+
+        X = np.array(X_rows)
+        y = np.array(y_vals)
+
+        # Scale features — logistic regression needs normalized inputs
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
+
+        # Fit logistic regression with L2 regularization
+        # C parameter controls regularization — lower C = more regularization
+        # At 600 records use strong regularization (C=0.5) to prevent overfitting
+        # As records grow regularization can relax
+        C_value = min(2.0, max(0.3, n / 1000))
+        lr_model = LogisticRegression(
+            C=C_value,
+            max_iter=1000,
+            random_state=42,
+            class_weight='balanced'  # handles HR imbalance (HRs are rare)
+        )
+        lr_model.fit(X_scaled, y)
+
+        # Extract coefficients — these are the learned weights
+        # Positive coef = stat increases HR probability
+        # Negative coef = stat decreases HR probability
+        coef_map = {}
+        for i, field in enumerate(valid_fields):
+            coef_map[field] = float(lr_model.coef_[0][i])
+
+        print(f"Logistic regression trained — C={C_value:.2f}, {len(valid_fields)} features, {n} records")
+
+        # Convert LR coefficients to model weights
+        # Map field → weight_key, compute weight from coefficient
+        correlations = {}
+        for w_key, field in STAT_FIELD_MAP.items():
+            if field in coef_map:
+                coef = coef_map[field]
+                # Normalize: coef range is roughly -2 to +2
+                # Map to weight range 0.3 - 2.5 centered at 1.0
+                # weight = 1.0 + (coef / max_coef * 1.5)
+                correlations[w_key] = coef
+
+        use_lr = True
+        print(f"Using logistic regression weights")
+
+    except Exception as e:
+        print(f"Logistic regression failed ({e}) — falling back to point-biserial")
+        use_lr = False
+
+        # ── Fallback: Point-biserial correlation ──
+        def correlate(records, key):
+            vals = [(r[key], r["hit_hr"]) for r in records
+                    if r.get(key) is not None and r.get(key) != 0]
+            if len(vals) < 20: return None
+            xs = [v[0] for v in vals]
+            ys = [v[1] for v in vals]
+            n2 = len(xs)
+            mx = sum(xs)/n2; my = sum(ys)/n2
+            num = sum((x-mx)*(y-my) for x,y in zip(xs,ys))
+            dx = math.sqrt(sum((x-mx)**2 for x in xs))
+            dy = math.sqrt(sum((y-my)**2 for y in ys))
+            if dx*dy == 0: return None
+            return round(num/(dx*dy), 4)
+
+        correlations = {}
+        for w_key, field in STAT_FIELD_MAP.items():
+            corr = correlate(completed, field)
+            if corr is not None:
+                correlations[w_key] = corr
+
+    # ── Convert to weights ──
     new_weights = {**DEFAULT_WEIGHTS, **_model_weights}
     changes = []
     old_active = _model_weights.get("active_stats", DEFAULT_WEIGHTS["active_stats"])
 
-    for w_key, corr in correlations.items():
-        old_w = float(new_weights.get(w_key, 1.0))
-        new_w = round(max(0.3, min(2.5, 1.0 + corr * 2.0)), 3)
-        new_weights[w_key] = new_w
-        if abs(new_w - old_w) >= 0.05:
-            stat_name = w_key.replace("_w", "")
-            direction = "up" if new_w > old_w else "down"
-            changes.append(f"{stat_name}: {old_w:.2f} -> {new_w:.2f} ({direction})")
+    if use_lr:
+        # Normalize LR coefficients to weight range
+        coef_vals = [abs(v) for v in correlations.values() if v != 0]
+        max_coef = max(coef_vals) if coef_vals else 1.0
+        for w_key, coef in correlations.items():
+            old_w = float(new_weights.get(w_key, 1.0))
+            # Scale: max coef → 1.5x boost/suppression
+            new_w = round(max(0.3, min(2.5, 1.0 + (coef / max_coef) * 1.5)), 3)
+            new_weights[w_key] = new_w
+            if abs(new_w - old_w) >= 0.05:
+                stat_name = w_key.replace("_w", "")
+                direction = "up" if new_w > old_w else "down"
+                changes.append(f"{stat_name}: {old_w:.2f} -> {new_w:.2f} ({direction})")
+    else:
+        for w_key, corr in correlations.items():
+            old_w = float(new_weights.get(w_key, 1.0))
+            new_w = round(max(0.3, min(2.5, 1.0 + corr * 2.0)), 3)
+            new_weights[w_key] = new_w
+            if abs(new_w - old_w) >= 0.05:
+                stat_name = w_key.replace("_w", "")
+                direction = "up" if new_w > old_w else "down"
+                changes.append(f"{stat_name}: {old_w:.2f} -> {new_w:.2f} ({direction})")
 
-    # ── Select top 8 by absolute correlation ──
+    # ── 4-Pool active stat selection ──
+    # Pool slot constraints — prevents all-batter-stat domination
+    # Batter season: max 2, Batter recent: max 2,
+    # Context: min 1 guaranteed, Pitcher: min 1 guaranteed
+    # Remaining 2: open competition across all pools
+    POOL_SLOTS = {
+        "batter_season": {"min": 1, "max": 2},
+        "batter_recent": {"min": 1, "max": 2},
+        "context":       {"min": 1, "max": 2},
+        "pitcher":       {"min": 1, "max": 2},
+    }
+
     ranked = sorted(correlations.items(), key=lambda x: abs(x[1]), reverse=True)
-    new_active = [k.replace("_w", "") for k, v in ranked[:8]]
+
+    # Group ranked stats by pool
+    pool_ranked = {pool: [] for pool in POOLS}
+    for w_key, score in ranked:
+        field = STAT_FIELD_MAP.get(w_key)
+        if not field: continue
+        pool = FIELD_TO_POOL.get(field)
+        if pool:
+            pool_ranked[pool].append(w_key.replace("_w", ""))
+
+    # First pass — fill minimum guaranteed slots from each pool
+    new_active = []
+    pool_counts = {pool: 0 for pool in POOLS}
+
+    for pool, constraints in POOL_SLOTS.items():
+        candidates = pool_ranked.get(pool, [])
+        min_slots = constraints["min"]
+        filled = 0
+        for stat in candidates:
+            if filled >= min_slots: break
+            if stat not in new_active:
+                new_active.append(stat)
+                pool_counts[pool] += 1
+                filled += 1
+
+    # Second pass — fill remaining slots (8 total) with best remaining stats
+    # respecting max constraints per pool
+    remaining_slots = 8 - len(new_active)
+    for w_key, score in ranked:
+        if remaining_slots <= 0: break
+        stat = w_key.replace("_w", "")
+        if stat in new_active: continue
+        field = STAT_FIELD_MAP.get(w_key)
+        if not field: continue
+        pool = FIELD_TO_POOL.get(field)
+        if not pool: continue
+        max_slots = POOL_SLOTS.get(pool, {}).get("max", 2)
+        if pool_counts.get(pool, 0) >= max_slots: continue
+        new_active.append(stat)
+        pool_counts[pool] = pool_counts.get(pool, 0) + 1
+        remaining_slots -= 1
+
+    print(f"  Active 8 by pool: {pool_counts}")
+    print(f"  Active stats: {new_active}")
 
     # Track what changed vs previous active set
     promoted = [s for s in new_active if s not in old_active]
@@ -2296,11 +2460,20 @@ def compute_hr_prob_multiplicative(
     # ── Step 2: Dynamic multiplier loop — active 8 stats ──
     active_stats = _model_weights.get("active_stats", DEFAULT_WEIGHTS["active_stats"])
     stat_mults = {}
+    # Correlated groups — stats measuring the same underlying thing
+    # When multiple stats from same group are active, use geometric mean
+    # to avoid double/triple counting the same signal
     correlated_groups = [
-        {"barrel_season", "hard_hit_season", "ev_season"},   # contact quality — use geometric mean
-        {"xwoba_l8d", "xslg_l8d", "slg_l8d"},               # L8D production — use geometric mean
-        {"pit_hr9_season", "pit_hr9_vs_hand", "pit_hard_hit"}, # pitcher vuln — use arithmetic mean
-        {"bat_platoon", "pit_platoon"},                        # platoon — independent, ok to multiply
+        # Season contact quality — all measure same thing (power contact)
+        {"barrel_season", "hard_hit_season", "ev_season", "iso_season"},
+        # L8D contact quality — recent form signals
+        {"xwoba_l8d", "xslg_l8d", "slg_l8d", "ev_l8d", "hard_hit_l8d", "barrel_l8d", "bat_speed_l8d"},
+        # Platoon/split signals
+        {"iso_vs_hand", "bat_platoon", "slg_vs_hand"},
+        # Pitcher vulnerability
+        {"pit_hr9_season", "pit_hr9_vs_hand", "pit_hard_hit", "pit_slg_vs_hand"},
+        # Pitcher context
+        {"pit_platoon", "pit_era_diff"},
     ]
 
     def in_same_group(s1, s2):
@@ -2387,7 +2560,7 @@ def compute_hr_prob_multiplicative(
     bullpen_component = base_rate * bullpen_vuln * (park_factor ** W("park_w")) * (weather_mult ** W("weather_w"))
     running = (running * 0.90) + (bullpen_component * 0.10)
 
-    hr_prob = round(min(max(running * 100, 2.0), 35.0), 1)
+    hr_prob = round(min(max(running * 100, 2.0), 28.0), 1)
 
     # ── Build supporting data for breakdown/frontend ──
     pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
