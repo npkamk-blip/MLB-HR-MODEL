@@ -2254,11 +2254,12 @@ def calc_weather_multiplier(home_team, wind_speed, wind_direction, temperature, 
 
 def sigmoid_to_prob(raw_score):
     """
-    Sigmoid removed April 2026 — was compressing all outputs into 5-14% band.
-    Scores clustered 14-47, never reaching the sigmoid center of 50.
-    Now direct pass-through with hard floor/cap only.
+    No sigmoid — direct pass-through with floor and cap.
+    base_rate × batter_score × matchup_score × always_on = hr_prob
+    Floor: 2%, Cap: 15%
+    Transparent math — every output is fully traceable.
     """
-    return round(min(max(raw_score, 2.0), 28.0), 1)
+    return round(min(max(raw_score, 2.0), 15.0), 1)
 
 def safe_mult(value, lg_avg, weight_key="", sample=None, min_sample=0, cap_high=2.50, cap_low=0.30):
     """
@@ -2307,14 +2308,20 @@ def compute_hr_prob_multiplicative(
     pit_ip_vs_hand = p_split_vs_bat.get("ip", 0)
     pitcher_is_new = pc.get("is_new", False)
 
-    # ── Step 1: Base HR rate — 2026 only ──
+    # ── Step 1: Base HR rate — blended toward league avg ──
+    # Player's own HR rate is used as a SMALL nudge, not the foundation.
+    # Batter score and matchup score do the heavy lifting.
+    # Using pure player rate as base = double-counting (elite hitters hit cap before matchup runs)
+    LG_HR_PA = 0.028
     hr_per_pa_26 = (bc.get("hr", 0) / max(pa_26, 1)) if pa_26 > 0 else 0
-    if pa_26 >= 1:  base_rate = hr_per_pa_26
-    else:           base_rate = 0.028  # league avg placeholder — no 2026 PA yet
-    if base_rate <= 0: base_rate = 0.028
-    base_rate = min(base_rate, 0.12)
-    # Small sample dampening — only for truly new players (<15 PA in 2026)
-    if pa_26 < 15: base_rate = base_rate * 0.50 + 0.028 * 0.50
+    if pa_26 >= 15:
+        # Scale player weight 0-45% as PA grows from 15 to 200
+        blend = min((pa_26 - 15) / (200 - 15), 1.0) * 0.45
+        base_rate = LG_HR_PA * (1 - blend) + hr_per_pa_26 * blend
+    else:
+        base_rate = LG_HR_PA  # too few PA — pure league avg
+    if base_rate <= 0: base_rate = LG_HR_PA
+    base_rate = min(base_rate, 0.06)  # hard cap on base — sigmoid handles the rest
 
     running = base_rate
 
@@ -3961,6 +3968,117 @@ async def get_games(date: str = None, refresh: bool = False):
     _games_cache[today] = {"data": result, "ts": datetime.now()}
     return result
 
+
+
+@app.get("/coverage-check")
+async def coverage_check():
+    """
+    Check what % of saved prediction records have real (non-zero) values for each stat.
+    Use this to decide which stats are worth feeding into the Decision Tree.
+    """
+    import json
+    if not GITHUB_TOKEN:
+        return {"error": "No GitHub token"}
+
+    # Load all prediction files
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(
+                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
+                headers={"Authorization": f"token {GITHUB_TOKEN}"}
+            )
+            files = r.json()
+    except Exception as e:
+        return {"error": str(e)}
+
+    all_records = []
+    for f in sorted(files, key=lambda x: x["name"]):
+        if not f["name"].endswith(".json"): continue
+        content_raw, _ = await github_get_file(f"data/predictions/{f['name']}")
+        if not content_raw: continue
+        try:
+            recs = json.loads(content_raw)
+            # Only completed records (hit_hr is 0 or 1)
+            completed = [r for r in recs if r.get("hit_hr") in [0, 1]]
+            all_records.extend(completed)
+        except:
+            continue
+
+    if not all_records:
+        return {"error": "No completed records found"}
+
+    total = len(all_records)
+    hr_count = sum(1 for r in all_records if r.get("hit_hr") == 1)
+
+    # Every stat we might feed to Decision Tree
+    CANDIDATE_STATS = [
+        # Batter season
+        "barrel_pct_season", "hard_hit_season", "ev_season", "iso_season",
+        "la_season", "pull_pct_season", "chase_rate_season",
+        # Batter L8D
+        "barrel_pct_l8d", "hard_hit_l8d", "ev_l8d", "bat_speed_l8d",
+        "xwoba_l8d", "xslg_l8d", "slg_l8d", "iso_l8d", "k_pct_l8d", "la_l8d",
+        "pa_l8d",
+        # Batter splits
+        "iso_vs_hand", "slg_vs_hand", "pa_vs_hand",
+        # Pitcher season
+        "pit_hr9_season", "pit_era_season", "pit_hard_hit_season",
+        "pit_k9_season", "pit_ip_season",
+        # Pitcher vs hand
+        "pit_hr9_vs_hand", "pit_slg_vs_hand", "pit_ip_vs_hand",
+        # Context
+        "park_factor", "weather_mult", "bullpen_hr9",
+        # Model multipliers (may still be useful as features)
+        "bat_platoon_mult", "pit_platoon_mult",
+        # Pitch matchup
+        "pitch_matchup_score",
+    ]
+
+    coverage = {}
+    for stat in CANDIDATE_STATS:
+        real_vals = [r for r in all_records
+                    if r.get(stat) is not None and r.get(stat) != 0]
+        pct = round(len(real_vals) / total * 100, 1)
+        if real_vals:
+            vals = [float(r[stat]) for r in real_vals]
+            avg = round(sum(vals) / len(vals), 3)
+            # HR rate for records with this stat vs without
+            hr_with = sum(1 for r in real_vals if r.get("hit_hr") == 1)
+            hr_without = sum(1 for r in all_records
+                           if (r.get(stat) is None or r.get(stat) == 0)
+                           and r.get("hit_hr") == 1)
+            n_without = total - len(real_vals)
+            hr_rate_with    = round(hr_with / len(real_vals) * 100, 1) if real_vals else 0
+            hr_rate_without = round(hr_without / n_without * 100, 1) if n_without > 0 else 0
+        else:
+            avg = 0
+            hr_rate_with = 0
+            hr_rate_without = 0
+
+        coverage[stat] = {
+            "coverage_pct": pct,
+            "real_records": len(real_vals),
+            "avg_value": avg,
+            "hr_rate_when_present": hr_rate_with,
+            "usable": pct >= 60  # flag stats with enough coverage for DT
+        }
+
+    # Sort by coverage
+    sorted_coverage = dict(sorted(coverage.items(),
+                                  key=lambda x: x[1]["coverage_pct"],
+                                  reverse=True))
+
+    usable = [s for s, v in coverage.items() if v["usable"]]
+    unusable = [s for s, v in coverage.items() if not v["usable"]]
+
+    return {
+        "total_records": total,
+        "hr_records": hr_count,
+        "hr_rate": round(hr_count / total * 100, 1),
+        "usable_stats": usable,
+        "unusable_stats": unusable,
+        "coverage_detail": sorted_coverage
+    }
 
 @app.get("/debug-score")
 async def debug_score(batter: str, pitcher: str = "TBD", bat_hand: str = None, pit_hand: str = "R", home_team: str = ""):
