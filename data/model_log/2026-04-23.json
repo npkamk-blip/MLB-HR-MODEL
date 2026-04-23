@@ -1,6 +1,6 @@
 {
   "date": "2026-04-23",
-  "rotation_round": 13,
+  "rotation_round": 14,
   "rotation_day": 0,
   "weights": {
     "barrel_season_w": 2.071,
@@ -49,8 +49,7 @@
     "iso_l8d",
     "pit_hr9_season",
     "barrel_pct_season",
-    "iso_season",
-    "barrel_pct_l8d"
+    "pitch_matchup_score"
   ],
   "last_calibrated": "2026-04-23",
   "records_used": 600,
