@@ -1,6 +1,6 @@
 {
   "date": "2026-04-23",
-  "rotation_round": 10,
+  "rotation_round": 11,
   "rotation_day": 0,
   "weights": {
     "barrel_season_w": 2.071,
@@ -53,38 +53,7 @@
   ],
   "last_calibrated": "2026-04-23",
   "records_used": 600,
-  "promoted_stats": [
-    "la_l8d",
-    "pit_era_diff",
-    "iso_vs_hand",
-    "bat_platoon"
-  ],
-  "dropped_stats": [
-    "pit_hr9_season",
-    "ev_season",
-    "hard_hit_season",
-    "barrel_l8d"
-  ],
-  "recent_changes": [
-    "barrel_season: 1.55 -> 2.07 (up)",
-    "hard_hit_season: 1.50 -> 1.87 (up)",
-    "ev_season: 0.30 -> 0.92 (up)",
-    "iso_season: 1.20 -> 1.86 (up)",
-    "la_season: 1.19 -> 1.35 (up)",
-    "pull_pct_season: 1.07 -> 0.95 (down)",
-    "barrel_l8d: 1.26 -> 0.98 (down)",
-    "hard_hit_l8d: 1.09 -> 1.21 (up)",
-    "ev_l8d: 0.96 -> 2.06 (up)",
-    "bat_speed_l8d: 1.48 -> 2.35 (up)",
-    "xwoba_l8d: 0.58 -> 0.30 (down)",
-    "xslg_l8d: 1.07 -> 1.68 (up)",
-    "slg_l8d: 1.02 -> 1.76 (up)",
-    "k_pct_l8d: 1.07 -> 1.42 (up)",
-    "la_l8d: 1.23 -> 2.08 (up)",
-    "pit_hr9_season: 1.33 -> 0.68 (down)",
-    "pit_hr9_vs_hand: 0.99 -> 1.22 (up)",
-    "pit_hard_hit: 1.07 -> 1.16 (up)",
-    "pit_era_diff: 0.77 -> 0.59 (down)",
-    "pit_k9_season: 1.05 -> 0.97 (down)"
-  ]
+  "promoted_stats": [],
+  "dropped_stats": [],
+  "recent_changes": []
 }
