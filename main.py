@@ -1413,14 +1413,15 @@ async def github_put_file(path: str, content: str, message: str, sha: str = None
         print(f"GitHub put error: {e}")
         return False
 
-async def save_daily_predictions():
+async def save_daily_predictions(force: bool = False):
     """Save today's predictions to GitHub — uses same data as /games endpoint for consistency"""
     if not _cache["ready"]: return
     today = date.today().isoformat()
     path = f"data/predictions/{today}.json"
     existing, sha = await github_get_file(path)
     # Allow overwrite if hit_hr is still null (predictions not yet recorded)
-    if existing:
+    # force=True (manual save) always overwrites unless results already recorded
+    if existing and not force:
         import json
         try:
             ex_recs = json.loads(existing)
@@ -1428,6 +1429,16 @@ async def save_daily_predictions():
                 print(f"Predictions already recorded for {today} — skipping")
                 return
             print(f"Overwriting pending predictions for {today}")
+        except Exception:
+            pass
+    elif existing and force:
+        import json
+        try:
+            ex_recs = json.loads(existing)
+            if any(r.get("hit_hr") is not None for r in ex_recs):
+                print(f"Manual save: {today} has recorded results — skipping to protect data")
+                return
+            print(f"Manual save: force-overwriting today's predictions for {today}")
         except Exception:
             pass
     try:
@@ -1578,7 +1589,7 @@ async def save_daily_predictions():
                             "hard_hit_season": hh_s,
                             "k_pct_season": k_s,
                             "hr_season": int(bc2.get("hr",0)),
-                            "pa_season": pa26,
+                            "pa_season": int(bc2.get("pa", 0)),
                             # ── BATTER L8D ──
                             "barrel_pct_l8d": barrel_l8d,
                             "la_l8d": la_l8d,
@@ -3073,8 +3084,8 @@ async def get_model_weights():
 
 @app.get("/save-predictions")
 async def manual_save_predictions():
-    """Manually trigger saving today's predictions"""
-    await save_daily_predictions()
+    """Manually trigger saving today's predictions — always force-overwrites today"""
+    await save_daily_predictions(force=True)
     return {"status": "done", "date": date.today().isoformat()}
 
 @app.get("/record-results")
