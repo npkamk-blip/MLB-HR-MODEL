@@ -1253,7 +1253,7 @@ function pointBiserial(records, key) {
 
 async function manualSave() {
   try {
-    var r = await fetch(API+'/save-predictions', {method:'POST'});
+    var r = await fetch(API+'/save-predictions', {method:'GET'});
     var d = await r.json();
     alert('Saved predictions for '+d.date);
     loadHistory();
@@ -1262,7 +1262,7 @@ async function manualSave() {
 
 async function manualRecord() {
   try {
-    var r = await fetch(API+'/record-results', {method:'POST'});
+    var r = await fetch(API+'/record-results', {method:'GET'});
     var d = await r.json();
     alert('Recorded results for '+d.date);
     loadHistory();
