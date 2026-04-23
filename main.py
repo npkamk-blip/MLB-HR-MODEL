@@ -145,19 +145,80 @@ async def save_model_log(weights_dict):
     existing, sha = await github_get_file(path)
     await github_put_file(path, json.dumps(log, indent=2), f"model log: {today}", sha)
 
+# ── Decision Tree model storage ──
+_dt_model = None        # trained sklearn DecisionTreeClassifier
+_dt_features = []       # ordered feature list the tree was trained on
+_dt_medians = {}        # per-feature medians for missing value imputation
+
+TREE_STATS = [
+    # Batter season
+    "barrel_pct_season", "hard_hit_season", "ev_season", "iso_season",
+    "la_season", "pull_pct_season",
+    # Batter L8D
+    "barrel_pct_l8d", "hard_hit_l8d", "ev_l8d", "bat_speed_l8d",
+    "xwoba_l8d", "xslg_l8d", "slg_l8d", "iso_l8d", "k_pct_l8d", "la_l8d",
+    # Batter splits
+    "iso_vs_hand", "slg_vs_hand",
+    # Pitcher season
+    "pit_hr9_season", "pit_era_season", "pit_hard_hit_season", "pit_k9_season",
+    # Pitcher vs hand
+    "pit_hr9_vs_hand", "pit_slg_vs_hand",
+    # Context
+    "park_factor", "weather_mult", "bullpen_hr9",
+    "bat_platoon_mult", "pit_platoon_mult",
+    "pitch_matchup_score",
+]
+
+# Stats where zero = genuinely dominant (not missing) IF companion IP > 0
+ZERO_DOMINANT = {
+    "pit_hr9_season":  "pit_ip_season",
+    "pit_hr9_vs_hand": "pit_ip_vs_hand",
+    "pit_slg_vs_hand": "pit_ip_vs_hand",
+}
+
+def get_tree_depth(n_records):
+    """Auto-scale tree depth based on record count."""
+    if n_records < 1500:  return 4, 20
+    if n_records < 2500:  return 5, 15
+    if n_records < 5000:  return 6, 12
+    if n_records < 10000: return 7, 8
+    return 8, 5
+
+def clean_feature_value(rec, stat, medians, pit_ip_season=0, pit_ip_vs_hand=0):
+    """Return clean float value for a stat from a record, using medians for missing."""
+    v = rec.get(stat)
+    # Handle zero-means-dominant stats
+    if stat in ZERO_DOMINANT:
+        ip_field = ZERO_DOMINANT[stat]
+        ip = rec.get(ip_field, 0) or 0
+        min_ip = 5 if "vs_hand" in stat else 1
+        if ip >= min_ip:
+            # Real data — zero IS a signal (dominant pitcher)
+            return float(v) if v is not None else 0.0
+        else:
+            # No IP = no data — use season HR9 as fallback
+            fallback = rec.get("pit_hr9_season", medians.get(stat, 1.1))
+            return float(fallback) if fallback else medians.get(stat, 1.1)
+    # Regular stats — zero means missing
+    if v is None or v == 0:
+        return medians.get(stat, 0.0)
+    return float(v)
+
 async def recalibrate_model():
     """
-    Run logistic regression on all history records.
-    Update the 22 weights. Auto-promote candidates with correlation > 0.15.
-    Enforce 8 stat hard cap — weakest gets replaced by strong candidate.
-    Save updated weights + model log to GitHub.
+    Train Decision Tree on all completed prediction records.
+    Tree depth scales automatically with record count.
+    Missing values filled with per-stat medians from real data.
+    Saves tree parameters to GitHub for persistence across redeploys.
     """
-    global _model_weights
-    import json, math
-    # Pull all history files
+    global _model_weights, _dt_model, _dt_features, _dt_medians
+    import json
+
+    # ── Load all completed records ──
     all_records = []
     try:
-        if not GITHUB_TOKEN: return {"error": "No GitHub token"}
+        if not GITHUB_TOKEN:
+            return {"error": "No GitHub token"}
         async with httpx.AsyncClient(timeout=30) as client:
             r = await client.get(
                 f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
@@ -166,11 +227,9 @@ async def recalibrate_model():
             if not r.is_success:
                 return {"error": f"GitHub API error: {r.status_code}"}
             files = r.json()
-            if not isinstance(files, list):
-                return {"error": "GitHub API returned unexpected format"}
         for f in files:
             if not isinstance(f, dict): continue
-            if not f.get("name","").endswith(".json"): continue
+            if not f.get("name", "").endswith(".json"): continue
             content, _ = await github_get_file(f"data/predictions/{f['name']}")
             if content:
                 try:
@@ -181,328 +240,121 @@ async def recalibrate_model():
         print(f"Recalibration data load error: {e}")
         return {"error": str(e)}
 
-    # Filter to completed non-DNP records
     completed = [r for r in all_records if r.get("hit_hr") in [0, 1]]
     n = len(completed)
     if n < 50:
-        return {"error": f"Not enough data — need 50+ records, have {n}"}
+        return {"error": f"Not enough data — need 50+, have {n}"}
 
-    print(f"Recalibrating on {n} completed records")
+    print(f"Decision Tree training on {n} records")
 
-    # ── 4 pools — stat belongs to exactly one pool ──
-    POOLS = {
-        "batter_season": [
-            "barrel_pct_season", "hard_hit_season", "ev_season",
-            "iso_season", "la_season", "pull_pct_season", "fb_pct_season",
-            "chase_rate_season",  # lower chase rate = more disciplined = better counts
-        ],
-        "batter_recent": [
-            "barrel_pct_l8d", "hard_hit_l8d", "ev_l8d", "bat_speed_l8d",
-            "xwoba_l8d", "xslg_l8d", "slg_l8d", "xslg_gap_l8d",
-            "iso_l8d", "k_pct_l8d", "la_l8d",
-        ],
-        "context": [
-            "park_factor", "weather_mult", "iso_vs_hand",
-            "bat_platoon_mult", "bullpen_vuln", "combined_pitch_delta",
-            # Note: combined_pitch_delta is stored field, pitch_delta is weight key
-        ],
-        "pitcher": [
-            "pit_hr9_season", "pit_hr9_vs_hand", "pit_slg_vs_hand",
-            "pit_hard_hit_season", "pit_era_diff", "pit_k9_season",
-            "pit_slg_season", "pit_fb_pct_allowed", "pit_platoon_mult",
-            "pit_stuff_plus",  # composite pitch quality — high Stuff+ = harder to hit
-        ],
+    # ── Compute per-stat medians from real non-zero values ──
+    medians = {}
+    for stat in TREE_STATS:
+        if stat in ZERO_DOMINANT:
+            # For dominant stats, median of all records with real IP
+            ip_field = ZERO_DOMINANT[stat]
+            min_ip = 5 if "vs_hand" in stat else 1
+            real = [float(r[stat]) for r in completed
+                    if r.get(stat) is not None
+                    and (r.get(ip_field, 0) or 0) >= min_ip]
+        else:
+            real = [float(r[stat]) for r in completed
+                    if r.get(stat) is not None and r.get(stat) != 0]
+        if real:
+            real.sort()
+            medians[stat] = real[len(real) // 2]
+        else:
+            medians[stat] = 0.0
+
+    # ── Build feature matrix ──
+    features = TREE_STATS  # all 30 stats
+    X_rows = []
+    y_vals = []
+    for rec in completed:
+        pit_ip_s  = rec.get("pit_ip_season", 0) or 0
+        pit_ip_vh = rec.get("pit_ip_vs_hand", 0) or 0
+        row = [clean_feature_value(rec, stat, medians, pit_ip_s, pit_ip_vh)
+               for stat in features]
+        X_rows.append(row)
+        y_vals.append(int(rec["hit_hr"]))
+
+    import numpy as np
+    from sklearn.tree import DecisionTreeClassifier
+
+    X = np.array(X_rows)
+    y = np.array(y_vals)
+
+    depth, min_leaf = get_tree_depth(n)
+    print(f"Tree params: max_depth={depth}, min_samples_leaf={min_leaf}")
+
+    tree = DecisionTreeClassifier(
+        max_depth=depth,
+        min_samples_leaf=min_leaf,
+        max_features="sqrt",       # √30 ≈ 5-6 features per split — prevents one stat dominating
+        class_weight="balanced",   # corrects HR/non-HR imbalance
+        random_state=42
+    )
+    tree.fit(X, y)
+
+    # ── Extract feature importance ──
+    importances = {
+        features[i]: round(float(tree.feature_importances_[i]), 4)
+        for i in range(len(features))
+        if tree.feature_importances_[i] > 0
     }
+    importances = dict(sorted(importances.items(), key=lambda x: x[1], reverse=True))
 
-    # Reverse map: field → pool
-    FIELD_TO_POOL = {}
-    for pool, fields in POOLS.items():
-        for f in fields:
-            FIELD_TO_POOL[f] = pool
-    # Add aliases for stats where weight key name differs from stored field name
-    FIELD_TO_POOL["pitch_delta"] = "context"        # weight key strips to pitch_delta
-    FIELD_TO_POOL["pit_hard_hit"] = "pitcher"        # old name alias
-    FIELD_TO_POOL["bat_platoon"] = "context"         # weight key strips to bat_platoon
-    FIELD_TO_POOL["pit_platoon"] = "pitcher"         # weight key strips to pit_platoon
-    FIELD_TO_POOL["bullpen"] = "context"             # weight key strips to bullpen
+    # ── Extract tree structure for display ──
+    tree_info = tree.tree_
+    n_leaves = tree_info.n_node_samples[tree_info.children_left == -1].shape[0]
+    hr_rates_at_leaves = []
+    for i in range(tree_info.node_count):
+        if tree_info.children_left[i] == -1:  # leaf
+            vals = tree_info.value[i][0]
+            total = sum(vals)
+            hr_rate = round(vals[1] / total * 100, 1) if total > 0 else 0
+            hr_rates_at_leaves.append(hr_rate)
 
-    STAT_FIELD_MAP = {
-        "barrel_season_w":   "barrel_pct_season",
-        "barrel_l8d_w":      "barrel_pct_l8d",
-        "la_season_w":       "la_season",
-        "la_l8d_w":          "la_l8d",
-        "ev_season_w":       "ev_season",
-        "ev_l8d_w":          "ev_l8d",
-        "iso_season_w":      "iso_season",
-        "iso_vs_hand_w":     "iso_vs_hand",
-        "hard_hit_season_w": "hard_hit_season",
-        "hard_hit_l8d_w":    "hard_hit_l8d",
-        "pit_hr9_season_w":  "pit_hr9_season",
-        "pit_hr9_vs_hand_w": "pit_hr9_vs_hand",
-        "pit_slg_season_w":  "pit_slg_season",
-        "pit_slg_vs_hand_w": "pit_slg_vs_hand",
-        "park_w":            "park_factor",
-        "weather_w":         "weather_mult",
-        "bullpen_w":         "bullpen_vuln",
-        "bat_platoon_w":     "bat_platoon_mult",
-        "pit_platoon_w":     "pit_platoon_mult",
-        "pitch_delta_w":     "combined_pitch_delta",
-        "k_pct_w":           "k_pct_season",
-        "fb_pct_season_w":   "fb_pct_season",
-        "pull_pct_season_w": "pull_pct_season",
-        "pit_fb_pct_w":      "pit_fb_pct_allowed",
-        "k_pct_l8d_w":       "k_pct_l8d",
-        "pit_era_diff_w":    "pit_era_diff",
-        "pit_k9_season_w":   "pit_k9_season",
-        "xwoba_l8d_w":       "xwoba_l8d",
-        "xslg_l8d_w":        "xslg_l8d",
-        "bat_speed_l8d_w":   "bat_speed_l8d",
-        "slg_l8d_w":         "slg_l8d",
-        "xslg_gap_l8d_w":    "xslg_gap_l8d",
-        "pit_hard_hit_w":    "pit_hard_hit_season",
-        # hot_cold_mult and l8d_hr excluded — circular prediction (predicting HRs using recent HRs)
-        "chase_rate_w":      "chase_rate_season",
-        "pit_stuff_plus_w":  "pit_stuff_plus",
+    # ── Store tree globally ──
+    _dt_model = tree
+    _dt_features = features
+    _dt_medians = medians
+
+    # ── Save metadata to GitHub (tree itself can't be saved as JSON easily) ──
+    # Store feature importances and medians so they survive redeploy
+    new_weights = {
+        **_model_weights,
+        "calibration_round": _model_weights.get("calibration_round", 0) + 1,
+        "last_calibrated": date.today().isoformat(),
+        "records_used": n,
+        "model_type": "decision_tree",
+        "tree_depth": depth,
+        "tree_min_leaf": min_leaf,
+        "tree_n_leaves": n_leaves,
+        "feature_importances": importances,
+        "feature_medians": {k: round(v, 4) for k, v in medians.items()},
+        "active_stats": list(importances.keys())[:10],  # top 10 by importance
+        "hr_rates_at_leaves": sorted(hr_rates_at_leaves),
+        "tree_hr_rate": round(sum(y_vals) / len(y_vals) * 100, 1),
     }
-
-    # ── Logistic Regression — learns weights from all stats simultaneously ──
-    # Captures interaction effects that point-biserial misses
-    # e.g. barrel% matters MORE when pitcher HR/9 is high
-    try:
-        from sklearn.linear_model import LogisticRegression
-        from sklearn.preprocessing import StandardScaler
-        import numpy as np
-
-        # Build feature matrix per pool
-        # Each pool is trained on records that have real data for that pool's stats
-        # This avoids two problems:
-        #   1. Imputing fake values (corrupts LR signal)
-        #   2. Requiring ALL fields have data (loses too many records)
-        # EV with 0 never enters the matrix — only real EV values train on EV
-
-        POOL_FIELDS = {
-            "batter_season": ["barrel_pct_season", "hard_hit_season", "ev_season",
-                              "iso_season", "la_season", "pull_pct_season", "chase_rate_season"],
-            "batter_recent": ["barrel_pct_l8d", "hard_hit_l8d", "ev_l8d", "bat_speed_l8d",
-                              "xwoba_l8d", "xslg_l8d", "slg_l8d", "iso_l8d", "k_pct_l8d", "la_l8d"],
-            "pitcher":       ["pit_hr9_season", "pit_hr9_vs_hand", "pit_slg_vs_hand",
-                              "pit_hard_hit_season", "pit_era_diff", "pit_k9_season", "pit_stuff_plus"],
-            "context":       ["park_factor", "weather_mult", "iso_vs_hand",
-                              "bat_platoon_mult", "bullpen_vuln", "combined_pitch_delta"],
-        }
-
-        # Reverse map field -> weight key
-        FIELD_TO_WKEY = {v: k for k, v in STAT_FIELD_MAP.items()}
-
-        correlations = {}
-        for pool_name, pool_fields in POOL_FIELDS.items():
-            # Find fields with enough real data in this pool
-            pool_valid = []
-            for field in pool_fields:
-                real = [r for r in completed if r.get(field) is not None and r.get(field) != 0]
-                if len(real) >= 20:
-                    pool_valid.append(field)
-            if not pool_valid:
-                continue
-
-            # Records that have real data for ALL fields in this pool
-            pool_records = [r for r in completed
-                           if all(r.get(f) is not None and r.get(f) != 0 for f in pool_valid)]
-            if len(pool_records) < 20:
-                print(f"  Pool {pool_name}: only {len(pool_records)} complete records — skipping")
-                continue
-
-            print(f"  Pool {pool_name}: {len(pool_valid)} fields, {len(pool_records)} records")
-
-            X_pool = np.array([[float(r[f]) for f in pool_valid] for r in pool_records])
-            y_pool = np.array([int(r["hit_hr"]) for r in pool_records])
-
-            scaler_pool = StandardScaler()
-            X_pool_scaled = scaler_pool.fit_transform(X_pool)
-
-            C_pool = min(2.0, max(0.3, len(pool_records) / 1000))
-            lr_pool = LogisticRegression(C=C_pool, max_iter=1000, random_state=42, class_weight="balanced")
-            lr_pool.fit(X_pool_scaled, y_pool)
-
-            coef_vals_pool = [abs(c) for c in lr_pool.coef_[0]]
-            max_coef_pool = max(coef_vals_pool) if coef_vals_pool else 1.0
-            for i, field in enumerate(pool_valid):
-                w_key = FIELD_TO_WKEY.get(field)
-                if w_key:
-                    correlations[w_key] = lr_pool.coef_[0][i]
-
-        if not correlations:
-            raise ValueError("No pools produced valid correlations")
-
-        valid_fields = list(FIELD_TO_WKEY.get(f, f) for pool in POOL_FIELDS.values() for f in pool)
-        print(f"LR per-pool complete: {len(correlations)} stat correlations")
-
-        use_lr = True
-        print(f"Per-pool LR complete: {len(correlations)} correlations learned")
-
-    except Exception as e:
-        print(f"Logistic regression failed ({e}) — falling back to point-biserial")
-        use_lr = False
-
-        # ── Fallback: Point-biserial correlation ──
-        def correlate(records, key):
-            vals = [(r[key], r["hit_hr"]) for r in records
-                    if r.get(key) is not None and r.get(key) != 0]
-            if len(vals) < 20: return None
-            xs = [v[0] for v in vals]
-            ys = [v[1] for v in vals]
-            n2 = len(xs)
-            mx = sum(xs)/n2; my = sum(ys)/n2
-            num = sum((x-mx)*(y-my) for x,y in zip(xs,ys))
-            dx = math.sqrt(sum((x-mx)**2 for x in xs))
-            dy = math.sqrt(sum((y-my)**2 for y in ys))
-            if dx*dy == 0: return None
-            return round(num/(dx*dy), 4)
-
-        correlations = {}
-        for w_key, field in STAT_FIELD_MAP.items():
-            corr = correlate(completed, field)
-            if corr is not None:
-                correlations[w_key] = corr
-
-    # ── Convert to weights ──
-    new_weights = {**DEFAULT_WEIGHTS, **_model_weights}
-    changes = []
-    old_active = _model_weights.get("active_stats", DEFAULT_WEIGHTS["active_stats"])
-
-    if use_lr:
-        # Normalize LR coefficients to weight range
-        coef_vals = [abs(v) for v in correlations.values() if v != 0]
-        max_coef = max(coef_vals) if coef_vals else 1.0
-        for w_key, coef in correlations.items():
-            old_w = float(new_weights.get(w_key, 1.0))
-            # Scale: max coef → 1.5x boost/suppression
-            new_w = round(max(0.3, min(2.5, 1.0 + (coef / max_coef) * 1.5)), 3)
-            new_weights[w_key] = new_w
-            if abs(new_w - old_w) >= 0.05:
-                stat_name = w_key.replace("_w", "")
-                direction = "up" if new_w > old_w else "down"
-                changes.append(f"{stat_name}: {old_w:.2f} -> {new_w:.2f} ({direction})")
-    else:
-        for w_key, corr in correlations.items():
-            old_w = float(new_weights.get(w_key, 1.0))
-            new_w = round(max(0.3, min(2.5, 1.0 + corr * 2.0)), 3)
-            new_weights[w_key] = new_w
-            if abs(new_w - old_w) >= 0.05:
-                stat_name = w_key.replace("_w", "")
-                direction = "up" if new_w > old_w else "down"
-                changes.append(f"{stat_name}: {old_w:.2f} -> {new_w:.2f} ({direction})")
-
-    # ── Active stat selection ──
-    # Architecture:
-    #   BATTER SCORE  — batter_season + batter_recent compete freely (best N win)
-    #   MATCHUP SCORE — min 1 pitcher guaranteed + min 1 context guaranteed
-    #                   remaining open slots go to best pitcher/context by correlation
-    #
-    # Total active = BATTER_ACTIVE_SLOTS + MATCHUP_ACTIVE_SLOTS = 4 + 4 = 8
-    BATTER_ACTIVE_SLOTS  = 4   # top 4 batter stats (season + L8D compete freely)
-    MATCHUP_ACTIVE_SLOTS = 4   # top 4 matchup stats (min 1 pitcher + min 1 context)
-
-    ranked = sorted(correlations.items(), key=lambda x: abs(x[1]), reverse=True)
-
-    # Bucket every ranked stat into its pool
-    pool_ranked = {"batter_season": [], "batter_recent": [], "pitcher": [], "context": []}
-    for w_key, score in ranked:
-        field = STAT_FIELD_MAP.get(w_key)
-        if not field: continue
-        pool = FIELD_TO_POOL.get(field)
-        if pool and pool in pool_ranked:
-            pool_ranked[pool].append(w_key.replace("_w", ""))
-
-    # ── Batter score slots: top BATTER_ACTIVE_SLOTS from season+recent combined ──
-    batter_candidates = []
-    for w_key, score in ranked:
-        field = STAT_FIELD_MAP.get(w_key)
-        if not field: continue
-        pool = FIELD_TO_POOL.get(field)
-        if pool in ("batter_season", "batter_recent"):
-            stat = w_key.replace("_w", "")
-            if stat not in batter_candidates:
-                batter_candidates.append(stat)
-    new_active_batter = batter_candidates[:BATTER_ACTIVE_SLOTS]
-
-    # ── Matchup score slots: min 1 pitcher + min 1 context + remaining open ──
-    matchup_candidates = []
-    for w_key, score in ranked:
-        field = STAT_FIELD_MAP.get(w_key)
-        if not field: continue
-        pool = FIELD_TO_POOL.get(field)
-        if pool in ("pitcher", "context"):
-            stat = w_key.replace("_w", "")
-            if stat not in matchup_candidates:
-                matchup_candidates.append(stat)
-
-    new_active_matchup = []
-    # Guarantee 1 pitcher
-    for stat in pool_ranked["pitcher"]:
-        if stat not in new_active_matchup:
-            new_active_matchup.append(stat)
-            break
-    # Guarantee 1 context
-    for stat in pool_ranked["context"]:
-        if stat not in new_active_matchup:
-            new_active_matchup.append(stat)
-            break
-    # Fill remaining matchup slots with best remaining pitcher/context
-    for stat in matchup_candidates:
-        if len(new_active_matchup) >= MATCHUP_ACTIVE_SLOTS: break
-        if stat not in new_active_matchup:
-            new_active_matchup.append(stat)
-
-    new_active = new_active_batter + new_active_matchup
-
-    pool_counts = {
-        "batter_season": sum(1 for s in new_active_batter if s in pool_ranked["batter_season"]),
-        "batter_recent": sum(1 for s in new_active_batter if s in pool_ranked["batter_recent"]),
-        "pitcher":       sum(1 for s in new_active_matchup if s in pool_ranked["pitcher"]),
-        "context":       sum(1 for s in new_active_matchup if s in pool_ranked["context"]),
-    }
-    print(f"  Batter score stats ({len(new_active_batter)}): {new_active_batter}")
-    print(f"  Matchup score stats ({len(new_active_matchup)}): {new_active_matchup}")
-    print(f"  Active 8 by pool: {pool_counts}")
-    print(f"  Active stats: {new_active}")
-
-    # Track what changed vs previous active set
-    promoted = [s for s in new_active if s not in old_active]
-    dropped   = [s for s in old_active if s not in new_active]
-
-    # ── Save ──
-    new_weights["active_stats"]      = new_active
-    new_weights["last_calibrated"]   = date.today().isoformat()
-    new_weights["records_used"]      = n
-    new_weights["calibration_round"] = new_weights.get("calibration_round", 0) + 1
-    new_weights["promoted_stats"]    = promoted
-    new_weights["dropped_stats"]     = dropped
-    new_weights["recent_changes"]    = changes[:20]
-    new_weights["all_correlations"]  = {
-        k.replace("_w", ""): round(v, 4) for k, v in ranked
-    }
-
     _model_weights = new_weights
     await save_model_weights(new_weights)
     await save_model_log(new_weights)
 
-    print(f"Recalibration complete — {len(correlations)} stats evaluated, {len(changes)} weight changes")
-    print(f"  New active 8: {new_active}")
-    print(f"  Promoted: {promoted} | Dropped: {dropped}")
+    top_features = list(importances.items())[:8]
+    print(f"Tree trained — depth={depth}, {n_leaves} leaves")
+    print(f"Top features: {top_features}")
 
     return {
-        "records_used":            n,
-        "stats_evaluated":         len(correlations),
-        "weight_changes":          len(changes),
-        "new_active_8":            new_active,
-        "promoted":                promoted,
-        "dropped":                 dropped,
-        "top_10_by_correlation":   [
-            {"stat": k.replace("_w",""), "correlation": round(v, 4)}
-            for k, v in ranked[:10]
-        ],
-        "changes": changes[:15],
+        "status": "done",
+        "records_used": n,
+        "model_type": "decision_tree",
+        "tree_depth": depth,
+        "min_samples_leaf": min_leaf,
+        "n_leaves": n_leaves,
+        "top_features": top_features,
+        "leaf_hr_rates": sorted(hr_rates_at_leaves),
+        "feature_importances": importances,
     }
 
 
@@ -2276,518 +2128,229 @@ def safe_mult(value, lg_avg, weight_key="", sample=None, min_sample=0, cap_high=
     raw = (float(value) / float(lg_avg)) ** w
     return max(min(raw, cap_high), cap_low)
 
+def get_bullpen_hr9(home_team):
+    """Get bullpen HR/9 for home team from cache."""
+    bullpen = _cache.get("team_bullpen", {})
+    return bullpen.get(home_team, {}).get("hr9", 1.2)
+
+def get_bat_platoon(bat_hand, pit_hand):
+    """Platoon multiplier for batter vs pitcher hand."""
+    # L vs R and R vs L are favorable platoon matchups
+    if bat_hand == "L" and pit_hand == "R": return 1.08
+    if bat_hand == "R" and pit_hand == "L": return 1.08
+    return 0.94  # same hand = unfavorable
+
+def get_pit_platoon(pit_hand, bat_hand):
+    """Platoon multiplier for pitcher vs batter hand."""
+    if pit_hand == "R" and bat_hand == "L": return 0.94
+    if pit_hand == "L" and bat_hand == "R": return 0.94
+    return 1.06  # same hand = pitcher advantage
+
+
 def compute_hr_prob_multiplicative(
         name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
     """
-    Fully dynamic HR probability model — driven by active_stats from _model_weights.
-    On recalibration day the active 8 stats change and this function automatically
-    uses the new set. Zero hardcoding of which stats matter.
-
-    Architecture:
-    1. Base rate — HR/PA blended 2026/2025
-    2. Dynamic multiplier loop — for each stat in active_stats, resolve value,
-       compute multiplier via safe_mult, apply to running
-    3. Always-on context — park, weather, K% penalty, bullpen (these are
-       structural not learned stats)
-    4. Output: running * 100, floor 2%, cap 35%
+    Decision Tree HR probability.
+    Builds a feature vector for this batter+matchup and runs it through
+    the trained tree. Falls back to a simple rule-based estimate if tree
+    not trained yet.
+    Returns: (hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf)
     """
-    # ── Data fetch — 2026 season + L8D only ──
-    bc  = get_batter_stats(name, 2026)
-    b8d = get_batter_8d(name)
-    b_split_vs_hand = get_batter_split(name, opp_p_hand)
-    b_split_opp     = get_batter_split(name, "R" if opp_p_hand == "L" else "L")
-    p_split_vs_bat  = get_pitcher_split(opp_p_name, bat_hand)
-    pc  = get_pitcher_stats(opp_p_name, 2026)
+    import numpy as np
 
-    pa_26 = bc.get("pa", 0)
-    ip_26 = pc.get("ip", 0)
-    has_8d   = b8d.get("pa", 0) >= 3
-    total_pa = pa_26
-    total_ip = ip_26
-    pa_8d    = b8d.get("pa", 0) if has_8d else 0
-    pit_ip_vs_hand = p_split_vs_bat.get("ip", 0)
-    pitcher_is_new = pc.get("is_new", False)
+    # ── Gather all stats ──
+    bc   = get_batter_stats(name, 2026)
+    b8d  = get_batter_8d(name)
+    pc   = get_pitcher_stats(opp_p_name, 2026)
+    b_split = get_batter_split(name, opp_p_hand)
+    p_split = get_pitcher_split(opp_p_name, bat_hand)
 
-    # ── Step 1: Base HR rate — blended toward league avg ──
-    # Player's own HR rate is used as a SMALL nudge, not the foundation.
-    # Batter score and matchup score do the heavy lifting.
-    # Using pure player rate as base = double-counting (elite hitters hit cap before matchup runs)
-    LG_HR_PA = 0.028
-    hr_per_pa_26 = (bc.get("hr", 0) / max(pa_26, 1)) if pa_26 > 0 else 0
-    if pa_26 >= 15:
-        # Scale player weight 0-45% as PA grows from 15 to 200
-        blend = min((pa_26 - 15) / (200 - 15), 1.0) * 0.45
-        base_rate = LG_HR_PA * (1 - blend) + hr_per_pa_26 * blend
-    else:
-        base_rate = LG_HR_PA  # too few PA — pure league avg
-    if base_rate <= 0: base_rate = LG_HR_PA
-    base_rate = min(base_rate, 0.06)  # hard cap on base — sigmoid handles the rest
+    pa_26       = bc.get("pa", 0)
+    has_8d      = b8d.get("pa", 0) >= 5
+    pit_ip_s    = pc.get("ip", 0) or 0
+    pit_ip_vh   = p_split.get("ip", 0) or 0
 
-    running = base_rate
+    # ── Build feature vector ──
+    def fv(stat):
+        """Get clean feature value for this batter+matchup."""
+        # Map stat name to data source
+        batter_season = {
+            "barrel_pct_season": bc.get("barrel_pct", 0),
+            "hard_hit_season":   bc.get("hard_hit_pct", 0),
+            "ev_season":         bc.get("exit_velo", 0),
+            "iso_season":        bc.get("iso", 0),
+            "la_season":         bc.get("launch_angle", 0),
+            "pull_pct_season":   bc.get("pull_pct", 0),
+        }
+        batter_l8d = {
+            "barrel_pct_l8d":  b8d.get("barrel_pct", 0),
+            "hard_hit_l8d":    b8d.get("hard_hit_pct", 0),
+            "ev_l8d":          b8d.get("exit_velo", 0),
+            "bat_speed_l8d":   b8d.get("bat_speed", 0),
+            "xwoba_l8d":       b8d.get("xwoba", 0),
+            "xslg_l8d":        b8d.get("xslg", 0),
+            "slg_l8d":         b8d.get("slg", 0),
+            "iso_l8d":         b8d.get("iso", 0),
+            "k_pct_l8d":       b8d.get("k_pct", 0),
+            "la_l8d":          b8d.get("launch_angle", 0),
+        }
+        batter_splits = {
+            "iso_vs_hand":  b_split.get("iso", 0),
+            "slg_vs_hand":  b_split.get("slg", 0),
+        }
+        pitcher = {
+            "pit_hr9_season":      pc.get("hr9", 0),
+            "pit_era_season":      pc.get("era", 4.2),
+            "pit_hard_hit_season": pc.get("hard_hit_pct", 0),
+            "pit_k9_season":       pc.get("k9", 0),
+            "pit_hr9_vs_hand":     p_split.get("hr9", 0),
+            "pit_slg_vs_hand":     p_split.get("slg", 0),
+        }
+        context = {
+            "park_factor":       park_factor,
+            "weather_mult":      weather_mult,
+            "bullpen_hr9":       get_bullpen_hr9(home_team),
+            "bat_platoon_mult":  get_bat_platoon(bat_hand, opp_p_hand),
+            "pit_platoon_mult":  get_pit_platoon(opp_p_hand, bat_hand),
+            "pitch_matchup_score": compute_pitch_matchup(opp_p_name, name)[0],
+        }
+        all_vals = {**batter_season, **batter_l8d, **batter_splits,
+                    **pitcher, **context}
+        raw = all_vals.get(stat, 0)
 
-    # ── League averages for normalization ──
-    LG = {
-        "barrel_pct":      LEAGUE_CONSTANTS["lg_barrel_pct"],    # 8.0
-        "hard_hit_pct":    LEAGUE_CONSTANTS["lg_hard_hit"],       # 38.0
-        "exit_velo":       88.5,
-        "launch_angle":    12.0,
-        "bat_speed":       70.0,
-        "xwoba":           0.310,
-        "xslg":            0.420,
-        "xslg_gap":        0.020,
-        "slg":             0.390,
-        "iso":             0.145,
-        "iso_vs_hand":     0.145,
-        "pit_hr9_season":  LEAGUE_CONSTANTS["lg_hr9"],            # 1.10
-        "pit_hr9_vs_hand": LEAGUE_CONSTANTS["lg_hr9"],
-        "pit_slg_vs_hand": 0.390,
-        "pit_hard_hit":    LEAGUE_CONSTANTS["lg_hard_hit"],
-        "park_factor":     1.0,
-        "weather_mult":    1.0,
-        "bat_platoon_mult":1.0,
-        "pit_platoon_mult":1.0,
-        "combined_pitch_delta": 0.0,
-        "hot_cold_mult":   1.0,
-        "l8d_hr":          0.5,
-        "k_pct_season":    22.0,
-        "ev_l8d":          88.5,
-        "hard_hit_l8d":    38.0,
-        "barrel_pct_l8d":  8.0,
-    }
-
-    # ── Stat resolver — maps stat name → (value, sample_size, higher_is_better) ──
-    def resolve_stat(stat):
-        """Return (value, sample, lg_avg, higher_is_better, cap_high, cap_low)"""
-        # Batter season stats
-        if stat == "barrel_season":
-            v = bc.get("barrel_pct",0)
-            return v, pa_26, LG["barrel_pct"], True, 2.5, 0.4
-        if stat == "hard_hit_season":
-            v = bc.get("hard_hit_pct",0)
-            return v, pa_26, LG["hard_hit_pct"], True, 1.8, 0.5
-        if stat == "ev_season":
-            v = bc.get("exit_velo",0)
-            return v, pa_26, LG["exit_velo"], True, 1.4, 0.7
-        if stat == "la_season":
-            # LA uses sweet spot logic not simple ratio
-            v = bc.get("launch_angle",0)
-            barrel = bc.get("barrel_pct",0)
-            barrel_buf = min(max((barrel - 8) / 20.0, 0), 0.15)
-            if not v or v <= 0: return 1.0, 0, 1.0, True, 1.1, 0.9
-            if 25 <= v <= 35:   raw = min(1.00 + barrel_buf, 1.10)
-            elif 20 <= v < 25:  raw = 0.92 + barrel_buf
-            elif 35 < v <= 40:  raw = 0.92 + barrel_buf
-            elif 18 <= v < 20:  raw = 0.85 + barrel_buf
-            elif 40 < v <= 45:  raw = 0.85 + barrel_buf
-            elif 15 <= v < 18:  raw = 0.82 + barrel_buf
-            else:               raw = 0.80 + barrel_buf
-            return raw, pa_26, 1.0, True, 1.15, 0.75
-        if stat == "iso_season":
-            v = bc.get("iso",0)
-            return v, pa_26, LG["iso"], True, 2.0, 0.4
-        if stat == "iso_vs_hand":
-            v = b_split_vs_hand.get("iso", 0)
-            return v, b_split_vs_hand.get("pa",0), LG["iso_vs_hand"], True, 2.0, 0.4
-        # Batter L8D stats
-        if stat == "xwoba_l8d":
-            v = b8d.get("xwoba", 0) if has_8d else 0
-            return v, pa_8d, LG["xwoba"], True, 1.8, 0.5
-        if stat == "xslg_l8d":
-            v = b8d.get("xslg", 0) if has_8d else 0
-            return v, pa_8d, LG["xslg"], True, 1.8, 0.5
-        if stat == "xslg_gap_l8d":
-            xslg = b8d.get("xslg", 0) if has_8d else 0
-            slg  = b8d.get("slg", 0) if has_8d else 0
-            v = xslg - slg  # positive = outperforming contact, negative = regressing
-            # Shift so league avg gap (~0.02) maps to 1.0
-            return 1.0 + (v - 0.02), pa_8d, 1.0, True, 1.4, 0.7
-        if stat == "bat_speed_l8d":
-            v = b8d.get("bat_speed", 0) if has_8d else 0
-            return v, pa_8d, LG["bat_speed"], True, 1.5, 0.6
-        if stat == "hard_hit_l8d":
-            v = b8d.get("hard_hit_pct", 0) if has_8d else 0
-            return v, pa_8d, 38.0, True, 1.8, 0.5
-        if stat == "barrel_l8d":
-            v = b8d.get("barrel_pct", 0) if has_8d else 0
-            return v, pa_8d, LG["barrel_pct"], True, 2.5, 0.4
-        if stat == "ev_l8d":
-            v = b8d.get("exit_velo", 0) if has_8d else 0
-            return v, pa_8d, LG["exit_velo"], True, 1.4, 0.7
-        if stat == "slg_l8d":
-            v = b8d.get("slg", 0) if has_8d else 0
-            return v, pa_8d, LG["slg"], True, 1.8, 0.5
-        if stat == "l8d_hr":
-            v = get_l8d_hr(name)
-            # Convert to rate vs league avg
-            rate = (v / max(pa_8d, 1)) * 600 if pa_8d > 0 else 0
-            return rate, pa_8d, 28.0, True, 1.5, 0.6  # 28 HR/600PA = avg power hitter
-        if stat == "hot_cold_mult":
-            if not has_8d or pa_8d < 8: return 1.0, 0, 1.0, True, 1.2, 0.85
-            hr_8d_rate = get_l8d_hr(name) / pa_8d
-            ratio = hr_8d_rate / base_rate if base_rate > 0 else 1.0
-            return max(min(ratio, 1.20), 0.85), pa_8d, 1.0, True, 1.2, 0.85
-        # Pitcher stats
-        if stat == "pit_hr9_season":
-            v = pc.get("hr9",0)
-            return v, total_ip, LG["pit_hr9_season"], True, 1.8, 0.5  # higher HR9 = good for batter
-        if stat == "pit_hr9_vs_hand":
-            v = p_split_vs_bat.get("hr9", 0)
-            return v, pit_ip_vs_hand, LG["pit_hr9_vs_hand"], True, 1.8, 0.5
-        if stat == "pit_slg_vs_hand":
-            v = p_split_vs_bat.get("slg", 0)
-            return v, pit_ip_vs_hand, LG["pit_slg_vs_hand"], True, 1.6, 0.5
-        if stat == "pit_hard_hit" or stat == "pit_hard_hit_season":
-            v = pc.get("hard_hit_pct",0)
-            return v, total_ip, LG["pit_hard_hit"], True, 1.5, 0.6
-        if stat == "pit_era_diff":
-            era = pc.get("era",0)
-            if era <= 0: return 1.0, 0, 1.0, True, 1.3, 0.7
-            diff = era - LEAGUE_CONSTANTS["lg_era"]
-            return 1.0 + (diff / LEAGUE_CONSTANTS["lg_era"] * 0.3), total_ip, 1.0, True, 1.3, 0.7
-        if stat == "pit_k9_season":
-            v = pc.get("k9",0)
-            return v, total_ip, 8.5, False, 1.3, 0.7  # higher K9 = bad for batter
-        # Platoon/context
-        if stat == "bat_platoon":
-            iso_vh = b_split_vs_hand.get("iso", 0)
-            iso_ov = bc.get("iso",0)
-            sp = b_split_vs_hand.get("pa", 0)
-            if iso_ov > 0 and iso_vh > 0 and sp >= 30:
-                return iso_vh / iso_ov, sp, 1.0, True, 1.6, 0.6
-            return 1.0, 0, 1.0, True, 1.6, 0.6
-        if stat == "pit_platoon":
-            slg_vb = p_split_vs_bat.get("slg", 0)
-            slg_op = b_split_opp.get("slg", 0) if hasattr(b_split_opp, 'get') else 0
-            slg_ov = (slg_vb + slg_op) / 2 if slg_vb > 0 and slg_op > 0 else slg_vb
-            if slg_ov > 0 and slg_vb > 0 and pit_ip_vs_hand >= 5:
-                return slg_vb / slg_ov, pit_ip_vs_hand, 1.0, True, 1.6, 0.6
-            return 1.0, 0, 1.0, True, 1.6, 0.6
-        if stat == "pitch_delta":
-            bonus, _ = compute_pitch_matchup(opp_p_name, name)
-            if bonus == 0: return 1.0, 1, 1.0, True, 1.15, 0.85
-            return 1.0 + (bonus / 80.0), 1, 1.0, True, 1.15, 0.85
-        if stat == "park":
-            return park_factor, 1, 1.0, True, 2.0, 0.5
-        if stat == "weather":
-            return weather_mult, 1, 1.0, True, 1.5, 0.7
-        if stat == "k_pct_season" or stat == "k_pct":
-            v = bc.get("k_pct",0)
-            return v, pa_26, 22.0, False, 1.3, 0.7  # higher K% = bad for batter
-        if stat == "la_l8d":
-            v = b8d.get("launch_angle", 0) if has_8d else 0
-            barrel = b8d.get("barrel_pct", 0) if has_8d else 0
-            barrel_buf = min(max((barrel - 8) / 20.0, 0), 0.15)
-            if not v or v <= 0: return 1.0, 0, 1.0, True, 1.1, 0.9
-            if 25 <= v <= 35:   raw = min(1.00 + barrel_buf, 1.10)
-            elif 20 <= v < 25:  raw = 0.92 + barrel_buf
-            elif 35 < v <= 40:  raw = 0.92 + barrel_buf
-            elif 18 <= v < 20:  raw = 0.85 + barrel_buf
-            elif 40 < v <= 45:  raw = 0.85 + barrel_buf
-            elif 15 <= v < 18:  raw = 0.82 + barrel_buf
-            else:               raw = 0.80 + barrel_buf
-            return raw, pa_8d, 1.0, True, 1.15, 0.75
-        if stat == "pit_slg_season":
-            v = pc.get("slg_percent", 0) if pc else 0
-            return v, total_ip, 0.390, True, 1.6, 0.5
-        if stat == "bullpen":
-            bp_data = _cache.get("team_bullpen", {}).get(home_team, {})
-            v = bp_data.get("hr9", LEAGUE_CONSTANTS["lg_bullpen_hr9"])
-            return v, 1, LEAGUE_CONSTANTS["lg_bullpen_hr9"], True, 1.5, 0.6
-        if stat == "fb_pct_season":
-            v = bc.get("fb_pct",0)
-            return v, pa_26, 36.0, True, 1.4, 0.7
-        if stat == "pull_pct_season":
-            v = bc.get("pull_pct",0)
-            return v, pa_26, 40.0, True, 1.4, 0.7
-        if stat == "pit_fb_pct":
-            v = pc.get("fb_pct",0) if pc else 0
-            return v, total_ip, 36.0, True, 1.4, 0.7
-        if stat == "k_pct_l8d":
-            v = b8d.get("k_pct", 0) if has_8d else 0
-            return v, pa_8d, 22.0, False, 1.3, 0.7  # higher K% = bad for batter
-        if stat == "chase_rate_season":
-            v = bc.get("chase_rate", 0)
-            # Lower chase rate = better (more disciplined = better counts = more HRs)
-            return v, pa_26, 30.0, False, 1.3, 0.7
-        if stat == "pit_stuff_plus":
-            v = pc.get("stuff_plus", 100)
-            if v == 0: v = 100  # default to league average if missing
-            # Higher Stuff+ = better pitcher = worse for batter
-            return v, total_ip, 100.0, False, 1.4, 0.6
-        # Unknown stat — neutral
-        return 1.0, 0, 1.0, True, 1.5, 0.6
-
-    # ── Step 2: Dynamic multiplier loop — active 8 stats ──
-    active_stats = _model_weights.get("active_stats", DEFAULT_WEIGHTS["active_stats"])
-    stat_mults = {}
-
-    # ── Pool definitions — which stats belong to batter vs matchup score ──
-    BATTER_POOL = {
-        "barrel_season", "hard_hit_season", "ev_season", "iso_season",
-        "la_season", "pull_pct_season", "fb_pct_season", "chase_rate_season",
-        "barrel_l8d", "hard_hit_l8d", "ev_l8d", "bat_speed_l8d",
-        "xwoba_l8d", "xslg_l8d", "slg_l8d", "xslg_gap_l8d",
-        "iso_l8d", "k_pct_l8d", "la_l8d",
-        # Note: k_pct_season intentionally excluded — permanent damper in always-on
-        # Note: hot_cold_mult excluded — circular prediction problem
-        # Note: l8d_hr excluded — circular prediction problem
-    }
-    MATCHUP_POOL = {
-        "park", "weather", "iso_vs_hand", "bat_platoon", "pit_platoon",
-        "bullpen", "pitch_delta",           # pitch_delta is the weight key name
-        "pit_hr9_season", "pit_hr9_vs_hand", "pit_slg_vs_hand",
-        "pit_hard_hit_season",              # fixed: was pit_hard_hit
-        "pit_era_diff", "pit_k9_season",
-        "pit_slg_season", "pit_fb_pct", "pit_stuff_plus",
-    }
-
-    # Correlated groups — use geometric mean to avoid double counting
-    correlated_groups = [
-        {"barrel_season", "hard_hit_season", "ev_season", "iso_season"},
-        {"xwoba_l8d", "xslg_l8d", "slg_l8d", "ev_l8d", "hard_hit_l8d", "barrel_l8d", "bat_speed_l8d"},
-        {"iso_vs_hand", "bat_platoon"},
-        {"pit_hr9_season", "pit_hr9_vs_hand", "pit_hard_hit_season", "pit_slg_vs_hand"},  # fixed naming
-        {"pit_platoon", "pit_era_diff"},
-    ]
-
-    def in_same_group(s1, s2):
-        for g in correlated_groups:
-            if s1 in g and s2 in g: return True
-        return False
-
-    # Compute raw multiplier for each active stat
-    raw_mults = {}
-    for stat in active_stats:
-        val, sample, lg_avg, higher_good, cap_hi, cap_lo = resolve_stat(stat)
-        w_key = stat + "_w"
-        if val == 0 or val is None:
-            raw_mults[stat] = 1.0
-            continue
-        if lg_avg == 1.0:
-            w = W(w_key)
-            m = (float(val) ** w) if higher_good else ((1.0 / max(float(val), 0.01)) ** w)
-            raw_mults[stat] = max(min(m, cap_hi), cap_lo)
-        else:
-            min_sample = 20 if "season" in stat else 8
-            raw_mults[stat] = safe_mult(val, lg_avg, w_key, sample, min_sample, cap_hi, cap_lo)
-            if not higher_good and raw_mults[stat] != 1.0:
-                raw_mults[stat] = 1.0 / max(raw_mults[stat], 0.1)
-                raw_mults[stat] = max(min(raw_mults[stat], cap_hi), cap_lo)
-
-    # ── Build Batter Score and Matchup Score separately ──
-    def apply_pool_stats(stats_in_pool):
-        """Apply multipliers for a set of stats using geometric mean for correlated groups"""
-        score = 1.0
-        applied = set()
-        for stat in stats_in_pool:
-            if stat in applied: continue
-            group_mates = [s for s in stats_in_pool if s != stat and in_same_group(stat, s)]
-            if group_mates:
-                group = [stat] + group_mates
-                group_mult = 1.0
-                for s in group:
-                    group_mult *= raw_mults.get(s, 1.0)
-                group_mult = group_mult ** (1.0 / len(group))
-                score *= group_mult
-                stat_mults[f"group_{stat}"] = round(group_mult, 3)
-                for s in group: applied.add(s)
+        # Zero disambiguation
+        if stat in ZERO_DOMINANT:
+            ip_field_map = {
+                "pit_hr9_season":  pit_ip_s,
+                "pit_hr9_vs_hand": pit_ip_vh,
+                "pit_slg_vs_hand": pit_ip_vh,
+            }
+            ip = ip_field_map.get(stat, 0)
+            min_ip = 5 if "vs_hand" in stat else 1
+            if ip >= min_ip:
+                return float(raw) if raw is not None else 0.0
             else:
-                score *= raw_mults.get(stat, 1.0)
-                stat_mults[stat] = round(raw_mults.get(stat, 1.0), 3)
-                applied.add(stat)
-        return score
+                fallback = pc.get("hr9", _dt_medians.get(stat, 1.1))
+                return float(fallback)
 
-    batter_stats_active = [s for s in active_stats if s in BATTER_POOL]
-    matchup_stats_active = [s for s in active_stats if s in MATCHUP_POOL]
+        # Regular stats — zero means missing, use median
+        if raw is None or raw == 0:
+            return _dt_medians.get(stat, 0.0)
+        return float(raw)
 
-    batter_score  = apply_pool_stats(batter_stats_active)
-    matchup_score = apply_pool_stats(matchup_stats_active)
-
-    # Store for breakdown display
-    stat_mults["batter_score"]  = round(batter_score, 3)
-    stat_mults["matchup_score"] = round(matchup_score, 3)
-
-    # ── Combine: HR% = Base Rate × Batter Score × Matchup Score ──
-    running *= batter_score * matchup_score
-
-    # ── Step 3: Always-on context (not in active_stats — structural) ──
-    # Park and weather if not already in active_stats
-    if "park" not in active_stats:
-        park_mult_applied = park_factor ** W("park_w") if park_factor > 0 else 1.0
-        running *= park_mult_applied
+    # ── Run Decision Tree if trained ──
+    if _dt_model is not None and _dt_features:
+        feat_vec = np.array([[fv(stat) for stat in _dt_features]])
+        proba = _dt_model.predict_proba(feat_vec)[0]
+        # proba[1] = P(HR=1)
+        hr_prob = round(min(max(proba[1] * 100, 2.0), 15.0), 1)
     else:
-        park_mult_applied = stat_mults.get("park", 1.0)
+        # ── Fallback: simple rule-based estimate until tree is trained ──
+        barrel = fv("barrel_pct_season") or fv("barrel_pct_l8d")
+        pit_hr9 = fv("pit_hr9_season")
+        base = 2.8
+        if barrel > 15:   base += 3.0
+        elif barrel > 10: base += 1.5
+        if pit_hr9 > 1.5: base += 1.5
+        elif pit_hr9 < 0.8: base -= 1.0
+        hr_prob = round(min(max(base * park_factor * weather_mult, 2.0), 15.0), 1)
 
-    if "weather" not in active_stats:
-        weather_mult_applied = weather_mult ** W("weather_w") if weather_mult > 0 else 1.0
-        running *= weather_mult_applied
-    else:
-        weather_mult_applied = stat_mults.get("weather", 1.0)
+    # ── Build breakdown for display ──
+    importances = _model_weights.get("feature_importances", {})
+    top_stats = list(importances.items())[:6]
 
-    # K% penalty — always applied as a gate regardless of active stats
-    if "k_pct_season" not in active_stats:
-        k_season = bc.get("k_pct",0)
-        k_w = W("k_pct_w")
-        if k_season >= 35:   k_mult = 0.88 ** k_w
-        elif k_season >= 30: k_mult = 0.94 ** k_w
-        elif k_season >= 25: k_mult = 0.97 ** k_w
-        else:                k_mult = 1.0
-        if k_season == 0:    k_mult = 1.0
-        running *= k_mult
-    else:
-        k_season = bc.get("k_pct",0)
-        k_mult = stat_mults.get("k_pct_season", 1.0)
+    # Archetype
+    barrel_s = fv("barrel_pct_season")
+    iso_s    = fv("iso_season")
+    ev_s     = fv("ev_season")
+    if barrel_s > 15 and iso_s > 0.250:   archetype = "Power Hitter"
+    elif barrel_s > 10 and ev_s > 90:     archetype = "Line Drive Power"
+    elif iso_s < 0.120:                   archetype = "Contact Hitter"
+    else:                                 archetype = "Balanced"
 
-    # Bullpen — 10% structural blend
-    # Only apply if bullpen not already in active_stats (matchup_score)
-    LG_BULLPEN_HR9 = LEAGUE_CONSTANTS["lg_bullpen_hr9"]
-    bullpen_data = _cache.get("team_bullpen", {}).get(home_team, {})
-    bullpen_hr9  = bullpen_data.get("hr9", LG_BULLPEN_HR9)
-    bullpen_vuln = safe_mult(bullpen_hr9, LG_BULLPEN_HR9, "bullpen_w", cap_high=1.80, cap_low=0.50)
-    if "bullpen" not in active_stats:
-        # Bullpen component uses base_rate only — park/weather already applied above
-        bullpen_component = base_rate * bullpen_vuln
-        running = (running * 0.90) + (bullpen_component * 0.10)
-    # If bullpen is in active_stats it already applied inside matchup_score — skip blend
+    # Trend
+    barrel_l8d = fv("barrel_pct_l8d")
+    iso_l8d    = fv("iso_l8d")
+    if barrel_l8d > barrel_s * 1.2 or iso_l8d > iso_s * 1.2: trend = "hot"
+    elif barrel_l8d < barrel_s * 0.8:                          trend = "cold"
+    else:                                                       trend = "neutral"
 
-    hr_prob = round(min(max(running * 100, 2.0), 28.0), 1)
-
-    # ── Build supporting data for breakdown/frontend ──
-    pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
-    barrel_season = bc.get("barrel_pct",0)
-    iso_overall   = bc.get("iso",0)
-    iso_vs_hand   = b_split_vs_hand.get("iso", 0)
-    split_pa      = b_split_vs_hand.get("pa", 0)
-    pit_hr9_season = pc.get("hr9",0)
-    pit_hard       = pc.get("hard_hit_pct",0)
-    pit_ip_vs_hand = p_split_vs_bat.get("ip", 0)
-    pit_hr9_vs_hand= p_split_vs_bat.get("hr9", 0)
-    slg_vs_bat     = p_split_vs_bat.get("slg", 0)
-    la_season      = bc.get("launch_angle",0)
-    k_season_disp  = bc.get("k_pct",0)
-    hh_season      = bc.get("hard_hit_pct",0)
-    ev_season      = bc.get("exit_velo",0)
-    xwoba_l8d      = b8d.get("xwoba", 0) if has_8d else 0
-    xslg_l8d       = b8d.get("xslg", 0) if has_8d else 0
-
-    pit_signals = []
-    if total_ip >= 10 and pit_hr9_season > 0: pit_signals.append(1)
-    if pit_ip_vs_hand >= 5 and pit_hr9_vs_hand > 0: pit_signals.append(1)
-    if total_ip >= 10 and pit_hard > 0: pit_signals.append(1)
-    n_components = len(pit_signals)
-
-    archetype = get_archetype(barrel_season, k_season_disp,
-                              bc.get("fb_pct",0),
-                              iso_overall if iso_overall else bc.get("iso",0))
-    trend = get_trend(b8d, bc)
-
+    # Reasons
     reasons = []
-    if barrel_season >= 12:   reasons.append(f"Barrel {barrel_season:.1f}%")
-    if hh_season >= 42:       reasons.append(f"Hard Hit {hh_season:.1f}%")
-    if iso_vs_hand > 0.220:   reasons.append(f"ISO vs hand .{int(iso_vs_hand*1000):03d}")
-    if pit_hr9_season > 1.3:  reasons.append(f"SP {pit_hr9_season:.1f} HR/9")
-    if park_factor >= 1.15:   reasons.append("HR-friendly park")
-    elif park_factor <= 0.90: reasons.append("Pitcher-friendly park")
-    if xwoba_l8d >= 0.400:    reasons.append(f"xwOBA L8D {xwoba_l8d:.3f}")
+    if barrel_s > 15:   reasons.append(f"Barrel% {barrel_s:.1f}%")
+    if iso_s > 0.250:   reasons.append(f"ISO .{int(iso_s*1000):03d}")
+    pit_hr9 = fv("pit_hr9_season")
+    if pit_hr9 > 1.4:   reasons.append(f"Pit HR/9 {pit_hr9:.2f}")
+    if trend == "hot":  reasons.append("Hot streak")
 
-    bat_platoon_mult = stat_mults.get("bat_platoon", raw_mults.get("bat_platoon", 1.0))
-    pit_platoon_mult = stat_mults.get("pit_platoon", raw_mults.get("pit_platoon", 1.0))
-    pit_vuln_mult    = raw_mults.get("pit_hr9_season", raw_mults.get("pit_hr9_vs_hand", 1.0))
-    barrel_mult      = raw_mults.get("barrel_season", raw_mults.get("group_barrel_season", 1.0))
-    la_mult          = raw_mults.get("la_season", 1.0)
-
+    # Platoon tag
+    bpm = fv("bat_platoon_mult")
+    ppm = fv("pit_platoon_mult")
     platoon_tag = None
-    if bat_platoon_mult >= 1.20:
-        platoon_tag = f"Batter strong vs {opp_p_hand}HP"
-    if pit_platoon_mult >= 1.20:
-        platoon_tag = (platoon_tag + " + " if platoon_tag else "") + f"SP weak vs {bat_hand}HB"
+    if bpm >= 1.20: platoon_tag = f"Batter strong vs {opp_p_hand}HP"
+    if ppm >= 1.20: platoon_tag = (platoon_tag + " + " if platoon_tag else "") + f"SP weak vs {bat_hand}HB"
 
-    conf = "High" if n_components >= 2 and pa_26 >= 50 else "Medium" if n_components >= 1 else "Low"
-    blend_note = f"2026 season ({pa_26} PA)" + (" + L8D" if has_8d else "")
+    conf = "High" if pa_26 >= 50 and has_8d else "Medium" if pa_26 >= 20 else "Low"
 
     breakdown = {
-        "base_rate": round(base_rate * 100, 2),
-        "active_stats": active_stats,
-        "stat_mults": stat_mults,
-        "barrel_mult": round(barrel_mult, 3), "la_mult": round(la_mult, 3),
-        "pit_vuln_mult": round(pit_vuln_mult, 3),
-        "bat_platoon_mult": round(bat_platoon_mult, 3),
-        "pit_platoon_mult": round(pit_platoon_mult, 3),
-        "park_factor": round(park_factor, 3), "weather_mult": round(weather_mult, 3),
-        "hot_cold_mult": 1.0, "k_mult": round(k_mult, 3),
-        "iso_vs_hand": round(iso_vs_hand, 3), "iso_overall": round(iso_overall, 3),
-        "split_pa": split_pa, "split_ip_vs_bat": round(pit_ip_vs_hand, 1),
-        "slg_vs_bat": round(slg_vs_bat, 3) if pit_ip_vs_hand >= 5 else 0,
-        "pit_slg_overall": 0,
-        "split_hr": int(b_split_vs_hand.get("hr", 0)),
-        "split_slg": round(b_split_vs_hand.get("slg", 0), 3),
-        "split_woba": round(b_split_vs_hand.get("woba", 0), 3),
-        "split_k_pct": round(b_split_vs_hand.get("k_pct", 0), 1),
-        "split_brl": round(b_split_vs_hand.get("barrel_pct", 0), 1),
-        "split_iso": round(iso_vs_hand, 3), "split_ip": round(pit_ip_vs_hand, 1),
-        "hr9_split": round(pit_hr9_vs_hand, 2),
-        "hr9_season": round(pit_hr9_season, 2), "pit_hard": round(pit_hard, 1),
-        "n_pit_components": n_components,
-        "pit_blend_note": f"2026 season ({ip_26:.0f} IP)" + (" NEW" if pitcher_is_new else ""),
-        "barrel_use": round(barrel_season, 1), "barrel_season": round(barrel_season, 1),
-        "la_use": round(la_season, 1), "la_season": round(la_season, 1),
-        "la_8d_raw": round(b8d.get("launch_angle",0), 1),
-        "barrel_8d_raw": round(b8d.get("barrel_pct",0), 1),
-        "hr_season": int(bc.get("hr",0)), "pa_season": int(pa_26),
-        "pa_8d": int(b8d.get("pa",0)), "has_8d": has_8d,
-        "blend_note": blend_note, "k_season": round(k_season_disp, 1),
-        "pitch_bonus": pitch_bonus, "pitch_breakdown": pitch_details,
-        "xwoba_l8d": round(xwoba_l8d, 3), "xslg_l8d": round(xslg_l8d, 3),
-        "hh_season": round(hh_season, 1), "ev_season": round(ev_season, 1),
-        "bullpen_hr9": round(bullpen_hr9, 2), "bullpen_vuln": round(bullpen_vuln, 3),
-        "iso_use": round(iso_vs_hand if iso_vs_hand > 0 else iso_overall, 3),
-        "pull_s": round(bc.get("pull_pct",0), 1),
-        "pit_modifier": round(pit_vuln_mult, 3),
-        "hr_rate_8d": round(b8d.get("hr",0) / max(b8d.get("pa",1),1) * 600, 1) if has_8d else 0,
+        "model_type": "decision_tree",
+        "tree_trained": _dt_model is not None,
+        "feature_importances": importances,
+        "top_features": top_stats,
+        "barrel_season": barrel_s,
+        "iso_season":    iso_s,
+        "ev_season":     ev_s,
+        "pit_hr9":       pit_hr9,
+        "park_factor":   park_factor,
+        "weather_mult":  weather_mult,
+        "pa_season":     pa_26,
+        "has_8d":        has_8d,
+        "bat_platoon_mult": bpm,
+        "pit_platoon_mult": ppm,
+        "pitch_bonus":   fv("pitch_matchup_score"),
+        "batter_score":  round(barrel_s / 10, 2) if barrel_s > 0 else 1.0,
+        "matchup_score": round(pit_hr9 / 1.1, 2) if pit_hr9 > 0 else 1.0,
+        "hr_season":     int(bc.get("hr", 0)),
+        "k_mult":        1.0,
+        "bullpen_hr9":   fv("bullpen_hr9"),
+        "iso_vs_hand":   fv("iso_vs_hand"),
+        "xwoba_l8d":     fv("xwoba_l8d"),
+        "xslg_l8d":      fv("xslg_l8d"),
+        "split_pa":      b_split.get("pa", 0),
+        "split_hr":      int(b_split.get("hr", 0)),
+        "split_slg":     round(b_split.get("slg", 0), 3),
+        "split_iso":     round(b_split.get("iso", 0), 3),
+        "split_woba":    round(b_split.get("woba", 0), 3),
+        "split_k_pct":   round(b_split.get("k_pct", 0), 1),
+        "hr9_season":    round(pc.get("hr9", 0), 2),
+        "hr9_split":     round(p_split.get("hr9", 0), 2),
+        "pit_hard":      round(pc.get("hard_hit_pct", 0), 1),
+        "pit_blend_note": f"2026 ({pit_ip_s:.0f} IP)",
+        "blend_note":    f"2026 ({pa_26} PA)" + (" + L8D" if has_8d else ""),
+        "active_stats":  _dt_features[:8] if _dt_features else [],
+        "stat_mults":    {"batter_score": 1.0, "matchup_score": 1.0},
+        "base_rate":     2.8,
+        "la_use":        fv("la_season"),
+        "barrel_use":    barrel_s,
+        "barrel_mult":   1.0,
+        "la_mult":       1.0,
+        "pit_vuln_mult": 1.0,
+        "hot_cold_mult": 1.0,
+        "pit_modifier":  1.0,
+        "pull_s":        fv("pull_pct_season"),
+        "hh_season":     fv("hard_hit_season"),
+        "split_ip_vs_bat": pit_ip_vh,
+        "slg_vs_bat":    round(p_split.get("slg", 0), 3) if pit_ip_vh >= 5 else 0,
+        "pitch_breakdown": [],
         "data_conf": {
-            "barrel":      1 if barrel_season > 0 and pa_26 >= 20 else 0,
-            "hard_hit":    1 if hh_season > 0 and pa_26 >= 20 else 0,
-            "ev":          1 if ev_season > 0 and pa_26 >= 20 else 0,
-            "xwoba_l8d":   1 if xwoba_l8d > 0 and has_8d else 0,
-            "pit_hr9":     1 if pit_hr9_season > 0 and total_ip >= 10 else 0,
-            "pit_hr9_hand":1 if pit_hr9_vs_hand > 0 and pit_ip_vs_hand >= 5 else 0,
-            "park":        1 if park_factor != 1.0 else 0,
-            "pitch_delta": 1 if pitch_bonus != 0 else 0,
+            "barrel": 1 if barrel_s > 0 and pa_26 >= 20 else 0,
+            "hard_hit": 1 if fv("hard_hit_season") > 0 and pa_26 >= 20 else 0,
         },
+        "n_pit_components": 1 if pit_hr9 > 0 else 0,
     }
+
     return hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
-def get_archetype(barrel_pct, k_pct, fb_pct, iso):
-    if barrel_pct >= 10 and k_pct >= 28: return "Boom/Bust"
-    elif barrel_pct >= 10 and k_pct < 22: return "Pure Power"
-    elif barrel_pct >= 7 and fb_pct >= 38: return "Power"
-    elif iso >= 0.180 and k_pct < 20: return "Balanced"
-    elif k_pct >= 28: return "High K"
-    else: return "Contact"
-
-def get_trend(b8d, bc):
-    if not b8d or b8d.get("pa", 0) < 3: return "Steady"
-    score = 0
-    hr_rate = b8d.get("hr_rate", 0)
-    if hr_rate > 25: score += 2
-    elif hr_rate > 12: score += 1
-    elif hr_rate == 0 and b8d.get("pa", 0) >= 10: score -= 1
-    brl_8d = b8d.get("barrel_pct", 0)
-    brl_s = bc.get("barrel_pct", 0)
-    if brl_8d > 0 and brl_s > 0:
-        diff = brl_8d - brl_s
-        if diff >= 5: score += 2
-        elif diff >= 2: score += 1
-        elif diff <= -5: score -= 2
-        elif diff <= -2: score -= 1
-    iso_8d = b8d.get("iso", 0)
-    iso_s = bc.get("iso", 0)
-    if iso_8d > 0 and iso_s > 0:
-        if iso_8d - iso_s >= 0.080: score += 1
-        elif iso_8d - iso_s <= -0.080: score -= 1
-    if score >= 2: return "Heating Up"
-    elif score <= -2: return "Cooling Off"
-    return "Steady"
 
 def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
     return compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team)
