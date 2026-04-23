@@ -273,67 +273,72 @@ async def recalibrate_model():
         from sklearn.preprocessing import StandardScaler
         import numpy as np
 
-        # Build feature matrix — only use stats with enough data
-        feature_fields = list(STAT_FIELD_MAP.values())
-        valid_fields = []
-        for field in feature_fields:
-            vals = [r.get(field) for r in completed if r.get(field) is not None and r.get(field) != 0]
-            if len(vals) >= 20:
-                valid_fields.append(field)
+        # Build feature matrix per pool
+        # Each pool is trained on records that have real data for that pool's stats
+        # This avoids two problems:
+        #   1. Imputing fake values (corrupts LR signal)
+        #   2. Requiring ALL fields have data (loses too many records)
+        # EV with 0 never enters the matrix — only real EV values train on EV
 
-        # Build X matrix and y vector
-        X_rows = []
-        y_vals = []
-        for rec in completed:
-            row = []
-            for field in valid_fields:
-                v = rec.get(field)
-                row.append(float(v) if v is not None else 0.0)
-            X_rows.append(row)
-            y_vals.append(int(rec["hit_hr"]))
+        POOL_FIELDS = {
+            "batter_season": ["barrel_pct_season", "hard_hit_season", "ev_season",
+                              "iso_season", "la_season", "pull_pct_season", "chase_rate_season"],
+            "batter_recent": ["barrel_pct_l8d", "hard_hit_l8d", "ev_l8d", "bat_speed_l8d",
+                              "xwoba_l8d", "xslg_l8d", "slg_l8d", "iso_l8d", "k_pct_l8d", "la_l8d"],
+            "pitcher":       ["pit_hr9_season", "pit_hr9_vs_hand", "pit_slg_vs_hand",
+                              "pit_hard_hit_season", "pit_era_diff", "pit_k9_season", "pit_stuff_plus"],
+            "context":       ["park_factor", "weather_mult", "iso_vs_hand",
+                              "bat_platoon_mult", "bullpen_vuln", "combined_pitch_delta"],
+        }
 
-        X = np.array(X_rows)
-        y = np.array(y_vals)
+        # Reverse map field -> weight key
+        FIELD_TO_WKEY = {v: k for k, v in STAT_FIELD_MAP.items()}
 
-        # Scale features — logistic regression needs normalized inputs
-        scaler = StandardScaler()
-        X_scaled = scaler.fit_transform(X)
-
-        # Fit logistic regression with L2 regularization
-        # C parameter controls regularization — lower C = more regularization
-        # At 600 records use strong regularization (C=0.5) to prevent overfitting
-        # As records grow regularization can relax
-        C_value = min(2.0, max(0.3, n / 1000))
-        lr_model = LogisticRegression(
-            C=C_value,
-            max_iter=1000,
-            random_state=42,
-            class_weight='balanced'  # handles HR imbalance (HRs are rare)
-        )
-        lr_model.fit(X_scaled, y)
-
-        # Extract coefficients — these are the learned weights
-        # Positive coef = stat increases HR probability
-        # Negative coef = stat decreases HR probability
-        coef_map = {}
-        for i, field in enumerate(valid_fields):
-            coef_map[field] = float(lr_model.coef_[0][i])
-
-        print(f"Logistic regression trained — C={C_value:.2f}, {len(valid_fields)} features, {n} records")
-
-        # Convert LR coefficients to model weights
-        # Map field → weight_key, compute weight from coefficient
         correlations = {}
-        for w_key, field in STAT_FIELD_MAP.items():
-            if field in coef_map:
-                coef = coef_map[field]
-                # Normalize: coef range is roughly -2 to +2
-                # Map to weight range 0.3 - 2.5 centered at 1.0
-                # weight = 1.0 + (coef / max_coef * 1.5)
-                correlations[w_key] = coef
+        for pool_name, pool_fields in POOL_FIELDS.items():
+            # Find fields with enough real data in this pool
+            pool_valid = []
+            for field in pool_fields:
+                real = [r for r in completed if r.get(field) is not None and r.get(field) != 0]
+                if len(real) >= 20:
+                    pool_valid.append(field)
+            if not pool_valid:
+                continue
+
+            # Records that have real data for ALL fields in this pool
+            pool_records = [r for r in completed
+                           if all(r.get(f) is not None and r.get(f) != 0 for f in pool_valid)]
+            if len(pool_records) < 20:
+                print(f"  Pool {pool_name}: only {len(pool_records)} complete records — skipping")
+                continue
+
+            print(f"  Pool {pool_name}: {len(pool_valid)} fields, {len(pool_records)} records")
+
+            X_pool = np.array([[float(r[f]) for f in pool_valid] for r in pool_records])
+            y_pool = np.array([int(r["hit_hr"]) for r in pool_records])
+
+            scaler_pool = StandardScaler()
+            X_pool_scaled = scaler_pool.fit_transform(X_pool)
+
+            C_pool = min(2.0, max(0.3, len(pool_records) / 1000))
+            lr_pool = LogisticRegression(C=C_pool, max_iter=1000, random_state=42, class_weight="balanced")
+            lr_pool.fit(X_pool_scaled, y_pool)
+
+            coef_vals_pool = [abs(c) for c in lr_pool.coef_[0]]
+            max_coef_pool = max(coef_vals_pool) if coef_vals_pool else 1.0
+            for i, field in enumerate(pool_valid):
+                w_key = FIELD_TO_WKEY.get(field)
+                if w_key:
+                    correlations[w_key] = lr_pool.coef_[0][i]
+
+        if not correlations:
+            raise ValueError("No pools produced valid correlations")
+
+        valid_fields = list(FIELD_TO_WKEY.get(f, f) for pool in POOL_FIELDS.values() for f in pool)
+        print(f"LR per-pool complete: {len(correlations)} stat correlations")
 
         use_lr = True
-        print(f"Using logistic regression weights")
+        print(f"Per-pool LR complete: {len(correlations)} correlations learned")
 
     except Exception as e:
         print(f"Logistic regression failed ({e}) — falling back to point-biserial")
@@ -388,60 +393,77 @@ async def recalibrate_model():
                 direction = "up" if new_w > old_w else "down"
                 changes.append(f"{stat_name}: {old_w:.2f} -> {new_w:.2f} ({direction})")
 
-    # ── 4-Pool active stat selection ──
-    # Context and Pitcher each guaranteed 1 slot minimum
-    # Batter season and recent have no max — open competition
-    # Remaining slots after minimums filled = open competition across all pools
-    POOL_SLOTS = {
-        "batter_season": {"min": 0, "max": 8},  # no cap — data decides
-        "batter_recent": {"min": 0, "max": 8},  # no cap — data decides
-        "context":       {"min": 1, "max": 8},  # guaranteed 1 slot
-        "pitcher":       {"min": 1, "max": 8},  # guaranteed 1 slot
-    }
+    # ── Active stat selection ──
+    # Architecture:
+    #   BATTER SCORE  — batter_season + batter_recent compete freely (best N win)
+    #   MATCHUP SCORE — min 1 pitcher guaranteed + min 1 context guaranteed
+    #                   remaining open slots go to best pitcher/context by correlation
+    #
+    # Total active = BATTER_ACTIVE_SLOTS + MATCHUP_ACTIVE_SLOTS = 4 + 4 = 8
+    BATTER_ACTIVE_SLOTS  = 4   # top 4 batter stats (season + L8D compete freely)
+    MATCHUP_ACTIVE_SLOTS = 4   # top 4 matchup stats (min 1 pitcher + min 1 context)
 
     ranked = sorted(correlations.items(), key=lambda x: abs(x[1]), reverse=True)
 
-    # Group ranked stats by pool
-    pool_ranked = {pool: [] for pool in POOLS}
+    # Bucket every ranked stat into its pool
+    pool_ranked = {"batter_season": [], "batter_recent": [], "pitcher": [], "context": []}
     for w_key, score in ranked:
         field = STAT_FIELD_MAP.get(w_key)
         if not field: continue
         pool = FIELD_TO_POOL.get(field)
-        if pool:
+        if pool and pool in pool_ranked:
             pool_ranked[pool].append(w_key.replace("_w", ""))
 
-    # First pass — fill minimum guaranteed slots from each pool
-    new_active = []
-    pool_counts = {pool: 0 for pool in POOLS}
-
-    for pool, constraints in POOL_SLOTS.items():
-        candidates = pool_ranked.get(pool, [])
-        min_slots = constraints["min"]
-        filled = 0
-        for stat in candidates:
-            if filled >= min_slots: break
-            if stat not in new_active:
-                new_active.append(stat)
-                pool_counts[pool] += 1
-                filled += 1
-
-    # Second pass — fill remaining slots (8 total) with best remaining stats
-    # respecting max constraints per pool
-    remaining_slots = 8 - len(new_active)
+    # ── Batter score slots: top BATTER_ACTIVE_SLOTS from season+recent combined ──
+    batter_candidates = []
     for w_key, score in ranked:
-        if remaining_slots <= 0: break
-        stat = w_key.replace("_w", "")
-        if stat in new_active: continue
         field = STAT_FIELD_MAP.get(w_key)
         if not field: continue
         pool = FIELD_TO_POOL.get(field)
-        if not pool: continue
-        max_slots = POOL_SLOTS.get(pool, {}).get("max", 2)
-        if pool_counts.get(pool, 0) >= max_slots: continue
-        new_active.append(stat)
-        pool_counts[pool] = pool_counts.get(pool, 0) + 1
-        remaining_slots -= 1
+        if pool in ("batter_season", "batter_recent"):
+            stat = w_key.replace("_w", "")
+            if stat not in batter_candidates:
+                batter_candidates.append(stat)
+    new_active_batter = batter_candidates[:BATTER_ACTIVE_SLOTS]
 
+    # ── Matchup score slots: min 1 pitcher + min 1 context + remaining open ──
+    matchup_candidates = []
+    for w_key, score in ranked:
+        field = STAT_FIELD_MAP.get(w_key)
+        if not field: continue
+        pool = FIELD_TO_POOL.get(field)
+        if pool in ("pitcher", "context"):
+            stat = w_key.replace("_w", "")
+            if stat not in matchup_candidates:
+                matchup_candidates.append(stat)
+
+    new_active_matchup = []
+    # Guarantee 1 pitcher
+    for stat in pool_ranked["pitcher"]:
+        if stat not in new_active_matchup:
+            new_active_matchup.append(stat)
+            break
+    # Guarantee 1 context
+    for stat in pool_ranked["context"]:
+        if stat not in new_active_matchup:
+            new_active_matchup.append(stat)
+            break
+    # Fill remaining matchup slots with best remaining pitcher/context
+    for stat in matchup_candidates:
+        if len(new_active_matchup) >= MATCHUP_ACTIVE_SLOTS: break
+        if stat not in new_active_matchup:
+            new_active_matchup.append(stat)
+
+    new_active = new_active_batter + new_active_matchup
+
+    pool_counts = {
+        "batter_season": sum(1 for s in new_active_batter if s in pool_ranked["batter_season"]),
+        "batter_recent": sum(1 for s in new_active_batter if s in pool_ranked["batter_recent"]),
+        "pitcher":       sum(1 for s in new_active_matchup if s in pool_ranked["pitcher"]),
+        "context":       sum(1 for s in new_active_matchup if s in pool_ranked["context"]),
+    }
+    print(f"  Batter score stats ({len(new_active_batter)}): {new_active_batter}")
+    print(f"  Matchup score stats ({len(new_active_matchup)}): {new_active_matchup}")
     print(f"  Active 8 by pool: {pool_counts}")
     print(f"  Active stats: {new_active}")
 
