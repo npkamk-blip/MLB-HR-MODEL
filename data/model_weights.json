@@ -48,7 +48,7 @@
   ],
   "last_calibrated": "2026-04-23",
   "records_used": 600,
-  "calibration_round": 14,
+  "calibration_round": 15,
   "promoted_stats": [],
   "dropped_stats": [],
   "recent_changes": [],
@@ -138,5 +138,7 @@
     74.1,
     79.0
   ],
-  "tree_hr_rate": 17.2
+  "tree_hr_rate": 17.2,
+  "calibration_factor": 0.1628,
+  "next_depth_upgrade": 1500
 }
