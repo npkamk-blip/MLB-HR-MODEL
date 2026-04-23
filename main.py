@@ -3973,14 +3973,13 @@ async def get_games(date: str = None, refresh: bool = False):
 @app.get("/coverage-check")
 async def coverage_check():
     """
-    Check what % of saved prediction records have real (non-zero) values for each stat.
-    Use this to decide which stats are worth feeding into the Decision Tree.
+    Check coverage and build the clean stat list for Decision Tree.
+    Distinguishes between true zeros vs missing data for each stat.
     """
     import json
     if not GITHUB_TOKEN:
         return {"error": "No GitHub token"}
 
-    # Load all prediction files
     try:
         async with httpx.AsyncClient(timeout=15) as client:
             r = await client.get(
@@ -3998,7 +3997,6 @@ async def coverage_check():
         if not content_raw: continue
         try:
             recs = json.loads(content_raw)
-            # Only completed records (hit_hr is 0 or 1)
             completed = [r for r in recs if r.get("hit_hr") in [0, 1]]
             all_records.extend(completed)
         except:
@@ -4010,75 +4008,109 @@ async def coverage_check():
     total = len(all_records)
     hr_count = sum(1 for r in all_records if r.get("hit_hr") == 1)
 
-    # Every stat we might feed to Decision Tree
-    CANDIDATE_STATS = [
-        # Batter season
+    # Stats where zero = truly missing (player/pitcher not in Savant yet)
+    ZERO_MEANS_MISSING = {
         "barrel_pct_season", "hard_hit_season", "ev_season", "iso_season",
-        "la_season", "pull_pct_season", "chase_rate_season",
-        # Batter L8D
+        "la_season", "pull_pct_season",
         "barrel_pct_l8d", "hard_hit_l8d", "ev_l8d", "bat_speed_l8d",
-        "xwoba_l8d", "xslg_l8d", "slg_l8d", "iso_l8d", "k_pct_l8d", "la_l8d",
-        "pa_l8d",
-        # Batter splits
-        "iso_vs_hand", "slg_vs_hand", "pa_vs_hand",
-        # Pitcher season
-        "pit_hr9_season", "pit_era_season", "pit_hard_hit_season",
-        "pit_k9_season", "pit_ip_season",
-        # Pitcher vs hand
-        "pit_hr9_vs_hand", "pit_slg_vs_hand", "pit_ip_vs_hand",
-        # Context
+        "xwoba_l8d", "xslg_l8d", "slg_l8d", "iso_l8d", "k_pct_l8d",
+        "la_l8d", "pa_l8d",
+    }
+
+    # Stats where zero = real data (pitcher genuinely hasn't given up HR)
+    # BUT only if IP companion field is > 0, otherwise still missing
+    ZERO_MEANS_DOMINANT = {
+        "pit_hr9_season":   "pit_ip_season",     # zero HR/9 only real if IP > 0
+        "pit_hr9_vs_hand":  "pit_ip_vs_hand",    # zero HR/9 vs hand only real if IP > 5
+        "pit_slg_vs_hand":  "pit_ip_vs_hand",    # zero SLG vs hand only real if IP > 5
+    }
+
+    # Stats that are always real (computed values, never truly missing)
+    ALWAYS_REAL = {
         "park_factor", "weather_mult", "bullpen_hr9",
-        # Model multipliers (may still be useful as features)
         "bat_platoon_mult", "pit_platoon_mult",
-        # Pitch matchup
         "pitch_matchup_score",
-    ]
+        "pit_era_season", "pit_hard_hit_season", "pit_k9_season",
+        "pit_ip_season", "pit_ip_vs_hand",
+        "iso_vs_hand", "slg_vs_hand", "pa_vs_hand",
+    }
+
+    # For each record build a clean feature vector
+    # filling zeros with the right value based on stat type
+    def clean_record(rec):
+        cleaned = {}
+        cleaned["hit_hr"] = rec["hit_hr"]
+
+        # Season averages for fallback
+        pit_hr9_season = rec.get("pit_hr9_season", 0)
+        pit_ip_season  = rec.get("pit_ip_season", 0)
+        pit_ip_vs_hand = rec.get("pit_ip_vs_hand", 0)
+
+        for stat in ZERO_MEANS_MISSING:
+            v = rec.get(stat)
+            if v is None or v == 0:
+                cleaned[stat] = None  # genuinely missing
+            else:
+                cleaned[stat] = float(v)
+
+        for stat, ip_field in ZERO_MEANS_DOMINANT.items():
+            v = rec.get(stat)
+            ip = rec.get(ip_field, 0)
+            min_ip = 5 if "vs_hand" in stat else 1
+            if ip >= min_ip:
+                # Real data — zero means dominant, keep it
+                cleaned[stat] = float(v) if v is not None else 0.0
+            else:
+                # No IP = no data — fall back to season rate
+                fallback = pit_hr9_season if "hr9" in stat else None
+                cleaned[stat] = fallback
+
+        for stat in ALWAYS_REAL:
+            v = rec.get(stat)
+            cleaned[stat] = float(v) if v is not None else None
+
+        return cleaned
+
+    cleaned_records = [clean_record(r) for r in all_records]
+
+    # Now check coverage of cleaned records
+    ALL_STATS = list(ZERO_MEANS_MISSING | set(ZERO_MEANS_DOMINANT.keys()) | ALWAYS_REAL)
 
     coverage = {}
-    for stat in CANDIDATE_STATS:
-        real_vals = [r for r in all_records
-                    if r.get(stat) is not None and r.get(stat) != 0]
-        pct = round(len(real_vals) / total * 100, 1)
-        if real_vals:
-            vals = [float(r[stat]) for r in real_vals]
-            avg = round(sum(vals) / len(vals), 3)
-            # HR rate for records with this stat vs without
-            hr_with = sum(1 for r in real_vals if r.get("hit_hr") == 1)
-            hr_without = sum(1 for r in all_records
-                           if (r.get(stat) is None or r.get(stat) == 0)
-                           and r.get("hit_hr") == 1)
-            n_without = total - len(real_vals)
-            hr_rate_with    = round(hr_with / len(real_vals) * 100, 1) if real_vals else 0
-            hr_rate_without = round(hr_without / n_without * 100, 1) if n_without > 0 else 0
-        else:
-            avg = 0
-            hr_rate_with = 0
-            hr_rate_without = 0
-
+    for stat in ALL_STATS:
+        real = [r for r in cleaned_records if r.get(stat) is not None]
+        pct = round(len(real) / total * 100, 1)
+        hr_rate = round(
+            sum(1 for r in real if r.get("hit_hr") == 1) / max(len(real), 1) * 100, 1
+        )
         coverage[stat] = {
             "coverage_pct": pct,
-            "real_records": len(real_vals),
-            "avg_value": avg,
-            "hr_rate_when_present": hr_rate_with,
-            "usable": pct >= 60  # flag stats with enough coverage for DT
+            "real_records": len(real),
+            "hr_rate": hr_rate,
+            "zero_treatment": (
+                "dominant_if_ip>0" if stat in ZERO_MEANS_DOMINANT
+                else "missing" if stat in ZERO_MEANS_MISSING
+                else "always_real"
+            ),
+            "usable": pct >= 60
         }
 
-    # Sort by coverage
-    sorted_coverage = dict(sorted(coverage.items(),
-                                  key=lambda x: x[1]["coverage_pct"],
-                                  reverse=True))
-
-    usable = [s for s, v in coverage.items() if v["usable"]]
+    usable   = sorted([s for s, v in coverage.items() if v["usable"]],
+                      key=lambda s: coverage[s]["coverage_pct"], reverse=True)
     unusable = [s for s, v in coverage.items() if not v["usable"]]
 
     return {
         "total_records": total,
         "hr_records": hr_count,
         "hr_rate": round(hr_count / total * 100, 1),
-        "usable_stats": usable,
-        "unusable_stats": unusable,
-        "coverage_detail": sorted_coverage
+        "usable_for_tree": usable,
+        "unusable_drop": unusable,
+        "coverage_detail": dict(sorted(
+            coverage.items(),
+            key=lambda x: x[1]["coverage_pct"], reverse=True
+        ))
     }
+
 
 @app.get("/debug-score")
 async def debug_score(batter: str, pitcher: str = "TBD", bat_hand: str = None, pit_hand: str = "R", home_team: str = ""):
