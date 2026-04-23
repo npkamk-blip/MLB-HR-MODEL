@@ -232,12 +232,12 @@ def clean_feature_value(rec, stat, medians, pit_ip_season=0, pit_ip_vs_hand=0):
         return medians.get(stat, 0.0)
     return float(v)
 
-async def recalibrate_model():
+async def recalibrate_model(save_to_github: bool = True):
     """
     Train Decision Tree on all completed prediction records.
     Tree depth scales automatically with record count.
     Missing values filled with per-stat medians from real data.
-    Saves tree parameters to GitHub for persistence across redeploys.
+    save_to_github=False on startup to prevent deploy loop.
     """
     global _model_weights, _dt_model, _dt_features, _dt_medians
     import json
@@ -377,8 +377,11 @@ async def recalibrate_model():
         ),
     }
     _model_weights = new_weights
-    await save_model_weights(new_weights)
-    await save_model_log(new_weights)
+    if save_to_github:
+        await save_model_weights(new_weights)
+        await save_model_log(new_weights)
+    else:
+        print("Startup tree: skipping GitHub save to prevent deploy loop")
 
     top_features = list(importances.items())[:8]
     print(f"Tree trained — depth={depth}, {n_leaves} leaves")
@@ -1742,7 +1745,7 @@ async def startup_train_tree():
         return
     try:
         print("Startup: cache ready, training Decision Tree...")
-        result = await recalibrate_model()
+        result = await recalibrate_model(save_to_github=False)
         if isinstance(result, dict) and result.get("status") == "done":
             print(f"Startup tree OK: depth={result.get('tree_depth')}, "
                   f"leaves={result.get('n_leaves')}, "
