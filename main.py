@@ -1727,6 +1727,23 @@ async def startup_event():
     asyncio.create_task(daily_refresh_loop())
     asyncio.create_task(load_model_weights())
     asyncio.create_task(startup_catchup())
+    asyncio.create_task(startup_train_tree())
+
+async def startup_train_tree():
+    """Train Decision Tree on startup using saved records — restores tree after redeploy."""
+    global _dt_model, _dt_features, _dt_medians
+    await asyncio.sleep(90)  # wait for data + weights to load first
+    try:
+        print("Startup: training Decision Tree from saved records...")
+        result = await recalibrate_model()
+        if isinstance(result, dict) and result.get("status") == "done":
+            print(f"Startup tree trained: depth={result.get('tree_depth')}, "
+                  f"leaves={result.get('n_leaves')}, "
+                  f"cal={_model_weights.get('calibration_factor', 1.0):.3f}")
+        else:
+            print(f"Startup tree training result: {result}")
+    except Exception as e:
+        print(f"Startup tree training error: {e}")
 
 async def startup_catchup():
     """On startup:
