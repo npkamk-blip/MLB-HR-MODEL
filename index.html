@@ -322,10 +322,24 @@ async function manualRecalibrate() {
   var btn = document.getElementById('recalibrate-btn');
   if(btn){btn.disabled=true;btn.textContent='Recalibrating...';}
   try {
-    var r = await fetch(API + '/recalibrate', {method:'POST'});
+    var r = await fetch(API + '/recalibrate', {method:'GET'});
     var data = await r.json();
     if(data.error){alert('Failed: '+data.error);}
-    else{alert('Done! '+data.weight_changes+' changes. Records: '+data.records_used);loadModelTab();}
+    else{
+      var records = data.records_used || '?';
+      var changes = data.weight_changes || 0;
+      var newActive = data.new_active_8 || [];
+      var promoted = data.promoted || [];
+      var dropped = data.dropped || [];
+      var msg = 'Recalibration complete!\n'
+        + records + ' records used\n'
+        + changes + ' weight changes\n'
+        + 'New active 8: ' + newActive.slice(0,4).join(', ') + '...\n'
+        + (promoted.length ? 'Promoted: ' + promoted.join(', ') + '\n' : '')
+        + (dropped.length ? 'Dropped: ' + dropped.join(', ') : '');
+      alert(msg);
+      loadModelTab();
+    }
   } catch(e){alert('Error: '+e.message);}
   if(btn){btn.disabled=false;btn.textContent='Recalibrate Now';}
 }
