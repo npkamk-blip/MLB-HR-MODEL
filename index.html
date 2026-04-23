@@ -580,7 +580,7 @@ function buildBatterTable(games){
         name:b.name,team:b.team,hand:b.bat_hand||'R',
         opp:b.opp_pitcher||'TBD',opp_hand:b.opp_p_hand||'R',
         pitcher_name:pitP.name||b.opp_pitcher||'TBD',
-        pitcher_is_new:b._full.pitcher_is_new||false,
+        pitcher_is_new:(b._full&&b._full.pitcher_is_new)||false,
         barrel_s:b.season?b.season.barrel||0:0,
         barrel_8d:b.l8d?b.l8d.barrel||0:0,
         la_s:b.season?b.season.la||0:0,
