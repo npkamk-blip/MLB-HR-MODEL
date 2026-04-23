@@ -1732,7 +1732,7 @@ async def startup_event():
 async def startup_train_tree():
     """Train Decision Tree on startup using saved records — restores tree after redeploy."""
     global _dt_model, _dt_features, _dt_medians
-    await asyncio.sleep(90)  # wait for data + weights to load first
+    await asyncio.sleep(15)  # only needs GitHub records, not Savant data
     try:
         print("Startup: training Decision Tree from saved records...")
         result = await recalibrate_model()
@@ -2326,15 +2326,43 @@ def compute_hr_prob_multiplicative(
 
         print(f"DT: raw={raw_prob:.1f}% × cal={cal_factor:.3f} → {hr_prob}%") if raw_prob > 10 else None
     else:
-        # ── Fallback: simple rule-based estimate until tree is trained ──
-        barrel = fv("barrel_pct_season") or fv("barrel_pct_l8d")
-        pit_hr9 = fv("pit_hr9_season")
+        # ── Fallback: rule-based estimate while tree is training on startup ──
+        # Uses same stats tree found most important: hard_hit, iso_vs_hand,
+        # pit_hr9_vs_hand, la_season, iso_l8d, pit_hr9_season, barrel_season
+        barrel_s  = fv("barrel_pct_season")
+        hh_s      = fv("hard_hit_season")
+        iso_hand  = fv("iso_vs_hand")
+        la_s      = fv("la_season")
+        iso_l8d_v = fv("iso_l8d")
+        pit_hr9_vh = fv("pit_hr9_vs_hand")
+        pit_hr9_s  = fv("pit_hr9_season")
+
+        # Start at league avg and adjust based on top tree features
         base = 2.8
-        if barrel > 15:   base += 3.0
-        elif barrel > 10: base += 1.5
-        if pit_hr9 > 1.5: base += 1.5
-        elif pit_hr9 < 0.8: base -= 1.0
+
+        # Batter quality (hard_hit_season most important per tree)
+        hh_med = _dt_medians.get("hard_hit_season", 46.8)
+        if hh_s > hh_med * 1.3:    base *= 2.0   # elite hard hit
+        elif hh_s > hh_med * 1.1:  base *= 1.5
+        elif hh_s < hh_med * 0.8:  base *= 0.7
+
+        # ISO vs hand
+        iso_med = _dt_medians.get("iso_vs_hand", 0.239)
+        if iso_hand > iso_med * 1.4:   base *= 1.6
+        elif iso_hand > iso_med * 1.1: base *= 1.2
+        elif iso_hand < iso_med * 0.6: base *= 0.8
+
+        # Pitcher vulnerability (pit_hr9_vs_hand)
+        pit_med = _dt_medians.get("pit_hr9_vs_hand", 1.08)
+        if pit_hr9_vh > pit_med * 1.5:   base *= 1.5
+        elif pit_hr9_vh > pit_med * 1.1: base *= 1.2
+        elif pit_hr9_vh < pit_med * 0.5: base *= 0.6
+        elif pit_hr9_vh < pit_med * 0.8: base *= 0.8
+
+        # Apply calibration factor even to fallback
+        cal_factor = _model_weights.get("calibration_factor", 0.163)
         hr_prob = round(min(max(base * park_factor * weather_mult, 2.0), 15.0), 1)
+        print(f"FALLBACK (tree not ready): {name} base={base:.1f} → {hr_prob}%")
 
     # ── Build breakdown for display ──
     importances = _model_weights.get("feature_importances", {})
@@ -3278,6 +3306,12 @@ def status():
         "model_calibrated": _model_weights.get("last_calibrated"),
         "model_round": get_rotation_round(),
         "model_day": get_rotation_day(),
+        # Decision Tree status
+        "tree_trained": _dt_model is not None,
+        "tree_depth": _model_weights.get("tree_depth"),
+        "tree_records": _model_weights.get("records_used", 0),
+        "calibration_factor": _model_weights.get("calibration_factor", 1.0),
+        "next_depth_upgrade": _model_weights.get("next_depth_upgrade"),
     }
 
 @app.get("/reload-contact")
