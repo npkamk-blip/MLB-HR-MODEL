@@ -157,16 +157,19 @@ async def recalibrate_model():
     # Pull all history files
     all_records = []
     try:
-        keys_data, _ = await github_get_file("data/predictions")
-        # list files via GitHub API
         if not GITHUB_TOKEN: return {"error": "No GitHub token"}
         async with httpx.AsyncClient(timeout=30) as client:
             r = await client.get(
                 f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
                 headers={"Authorization": f"token {GITHUB_TOKEN}"}
             )
-            files = r.json() if r.is_success else []
+            if not r.is_success:
+                return {"error": f"GitHub API error: {r.status_code}"}
+            files = r.json()
+            if not isinstance(files, list):
+                return {"error": "GitHub API returned unexpected format"}
         for f in files:
+            if not isinstance(f, dict): continue
             if not f.get("name","").endswith(".json"): continue
             content, _ = await github_get_file(f"data/predictions/{f['name']}")
             if content:
@@ -201,6 +204,7 @@ async def recalibrate_model():
         "context": [
             "park_factor", "weather_mult", "iso_vs_hand",
             "bat_platoon_mult", "bullpen_vuln", "combined_pitch_delta",
+            # Note: combined_pitch_delta is stored field, pitch_delta is weight key
         ],
         "pitcher": [
             "pit_hr9_season", "pit_hr9_vs_hand", "pit_slg_vs_hand",
@@ -215,6 +219,12 @@ async def recalibrate_model():
     for pool, fields in POOLS.items():
         for f in fields:
             FIELD_TO_POOL[f] = pool
+    # Add aliases for stats where weight key name differs from stored field name
+    FIELD_TO_POOL["pitch_delta"] = "context"        # weight key strips to pitch_delta
+    FIELD_TO_POOL["pit_hard_hit"] = "pitcher"        # old name alias
+    FIELD_TO_POOL["bat_platoon"] = "context"         # weight key strips to bat_platoon
+    FIELD_TO_POOL["pit_platoon"] = "pitcher"         # weight key strips to pit_platoon
+    FIELD_TO_POOL["bullpen"] = "context"             # weight key strips to bullpen
 
     STAT_FIELD_MAP = {
         "barrel_season_w":   "barrel_pct_season",
@@ -250,10 +260,9 @@ async def recalibrate_model():
         "slg_l8d_w":         "slg_l8d",
         "xslg_gap_l8d_w":    "xslg_gap_l8d",
         "pit_hard_hit_w":    "pit_hard_hit_season",
-        "hot_cold_mult_w":   "hot_cold_mult",
-        "l8d_hr_w":          "l8d_hr",
-        "chase_rate_w":      "chase_rate_season",   # batter chase rate — lower = better
-        "pit_stuff_plus_w":  "pit_stuff_plus",      # pitcher Stuff+ — higher = better pitcher
+        # hot_cold_mult and l8d_hr excluded — circular prediction (predicting HRs using recent HRs)
+        "chase_rate_w":      "chase_rate_season",
+        "pit_stuff_plus_w":  "pit_stuff_plus",
     }
 
     # ── Logistic Regression — learns weights from all stats simultaneously ──
@@ -380,15 +389,14 @@ async def recalibrate_model():
                 changes.append(f"{stat_name}: {old_w:.2f} -> {new_w:.2f} ({direction})")
 
     # ── 4-Pool active stat selection ──
-    # Pool slot constraints — prevents all-batter-stat domination
-    # Batter season: max 2, Batter recent: max 2,
-    # Context: min 1 guaranteed, Pitcher: min 1 guaranteed
-    # Remaining 2: open competition across all pools
+    # Context and Pitcher each guaranteed 1 slot minimum
+    # Batter season and recent have no max — open competition
+    # Remaining slots after minimums filled = open competition across all pools
     POOL_SLOTS = {
-        "batter_season": {"min": 1, "max": 2},
-        "batter_recent": {"min": 1, "max": 2},
-        "context":       {"min": 1, "max": 2},
-        "pitcher":       {"min": 1, "max": 2},
+        "batter_season": {"min": 0, "max": 8},  # no cap — data decides
+        "batter_recent": {"min": 0, "max": 8},  # no cap — data decides
+        "context":       {"min": 1, "max": 8},  # guaranteed 1 slot
+        "pitcher":       {"min": 1, "max": 8},  # guaranteed 1 slot
     }
 
     ranked = sorted(correlations.items(), key=lambda x: abs(x[1]), reverse=True)
@@ -2401,7 +2409,7 @@ def compute_hr_prob_multiplicative(
         if stat == "pit_slg_vs_hand":
             v = p_split_vs_bat.get("slg", 0)
             return v, pit_ip_vs_hand, LG["pit_slg_vs_hand"], True, 1.6, 0.5
-        if stat == "pit_hard_hit":
+        if stat == "pit_hard_hit" or stat == "pit_hard_hit_season":
             v = blend(pc.get("hard_hit_pct",0), pp2.get("hard_hit_pct",0), pwc, pwp)
             return v, total_ip, LG["pit_hard_hit"], True, 1.5, 0.6
         if stat == "pit_era_diff":
@@ -2485,19 +2493,33 @@ def compute_hr_prob_multiplicative(
     # ── Step 2: Dynamic multiplier loop — active 8 stats ──
     active_stats = _model_weights.get("active_stats", DEFAULT_WEIGHTS["active_stats"])
     stat_mults = {}
-    # Correlated groups — stats measuring the same underlying thing
-    # When multiple stats from same group are active, use geometric mean
-    # to avoid double/triple counting the same signal
+
+    # ── Pool definitions — which stats belong to batter vs matchup score ──
+    BATTER_POOL = {
+        "barrel_season", "hard_hit_season", "ev_season", "iso_season",
+        "la_season", "pull_pct_season", "fb_pct_season", "chase_rate_season",
+        "barrel_l8d", "hard_hit_l8d", "ev_l8d", "bat_speed_l8d",
+        "xwoba_l8d", "xslg_l8d", "slg_l8d", "xslg_gap_l8d",
+        "iso_l8d", "k_pct_l8d", "la_l8d",
+        # Note: k_pct_season intentionally excluded — permanent damper in always-on
+        # Note: hot_cold_mult excluded — circular prediction problem
+        # Note: l8d_hr excluded — circular prediction problem
+    }
+    MATCHUP_POOL = {
+        "park", "weather", "iso_vs_hand", "bat_platoon", "pit_platoon",
+        "bullpen", "pitch_delta",           # pitch_delta is the weight key name
+        "pit_hr9_season", "pit_hr9_vs_hand", "pit_slg_vs_hand",
+        "pit_hard_hit_season",              # fixed: was pit_hard_hit
+        "pit_era_diff", "pit_k9_season",
+        "pit_slg_season", "pit_fb_pct", "pit_stuff_plus",
+    }
+
+    # Correlated groups — use geometric mean to avoid double counting
     correlated_groups = [
-        # Season contact quality — all measure same thing (power contact)
         {"barrel_season", "hard_hit_season", "ev_season", "iso_season"},
-        # L8D contact quality — recent form signals
         {"xwoba_l8d", "xslg_l8d", "slg_l8d", "ev_l8d", "hard_hit_l8d", "barrel_l8d", "bat_speed_l8d"},
-        # Platoon/split signals
-        {"iso_vs_hand", "bat_platoon", "slg_vs_hand"},
-        # Pitcher vulnerability
-        {"pit_hr9_season", "pit_hr9_vs_hand", "pit_hard_hit", "pit_slg_vs_hand"},
-        # Pitcher context
+        {"iso_vs_hand", "bat_platoon"},
+        {"pit_hr9_season", "pit_hr9_vs_hand", "pit_hard_hit_season", "pit_slg_vs_hand"},  # fixed naming
         {"pit_platoon", "pit_era_diff"},
     ]
 
@@ -2506,7 +2528,7 @@ def compute_hr_prob_multiplicative(
             if s1 in g and s2 in g: return True
         return False
 
-    # Compute all multipliers first
+    # Compute raw multiplier for each active stat
     raw_mults = {}
     for stat in active_stats:
         val, sample, lg_avg, higher_good, cap_hi, cap_lo = resolve_stat(stat)
@@ -2514,40 +2536,52 @@ def compute_hr_prob_multiplicative(
         if val == 0 or val is None:
             raw_mults[stat] = 1.0
             continue
-        # For stats already pre-converted to a ratio (la_season, bat_platoon, etc.)
         if lg_avg == 1.0:
             w = W(w_key)
             m = (float(val) ** w) if higher_good else ((1.0 / max(float(val), 0.01)) ** w)
             raw_mults[stat] = max(min(m, cap_hi), cap_lo)
         else:
-            # Standard safe_mult
             min_sample = 20 if "season" in stat else 8
             raw_mults[stat] = safe_mult(val, lg_avg, w_key, sample, min_sample, cap_hi, cap_lo)
-            # For inverse stats (higher is bad for batter)
             if not higher_good and raw_mults[stat] != 1.0:
                 raw_mults[stat] = 1.0 / max(raw_mults[stat], 0.1)
                 raw_mults[stat] = max(min(raw_mults[stat], cap_hi), cap_lo)
 
-    # Apply multipliers — use geometric mean within correlated groups
-    applied = set()
-    for stat in active_stats:
-        if stat in applied: continue
-        # Find group mates that are also active
-        group_mates = [s for s in active_stats if s != stat and in_same_group(stat, s)]
-        if group_mates:
-            # Apply geometric mean of the group
-            group = [stat] + group_mates
-            group_mult = 1.0
-            for s in group:
-                group_mult *= raw_mults.get(s, 1.0)
-            group_mult = group_mult ** (1.0 / len(group))
-            running *= group_mult
-            stat_mults[f"group_{stat}"] = round(group_mult, 3)
-            for s in group: applied.add(s)
-        else:
-            running *= raw_mults.get(stat, 1.0)
-            stat_mults[stat] = round(raw_mults.get(stat, 1.0), 3)
-            applied.add(stat)
+    # ── Build Batter Score and Matchup Score separately ──
+    def apply_pool_stats(stats_in_pool):
+        """Apply multipliers for a set of stats using geometric mean for correlated groups"""
+        score = 1.0
+        applied = set()
+        for stat in stats_in_pool:
+            if stat in applied: continue
+            group_mates = [s for s in stats_in_pool if s != stat and in_same_group(stat, s)]
+            if group_mates:
+                group = [stat] + group_mates
+                group_mult = 1.0
+                for s in group:
+                    group_mult *= raw_mults.get(s, 1.0)
+                group_mult = group_mult ** (1.0 / len(group))
+                score *= group_mult
+                stat_mults[f"group_{stat}"] = round(group_mult, 3)
+                for s in group: applied.add(s)
+            else:
+                score *= raw_mults.get(stat, 1.0)
+                stat_mults[stat] = round(raw_mults.get(stat, 1.0), 3)
+                applied.add(stat)
+        return score
+
+    batter_stats_active = [s for s in active_stats if s in BATTER_POOL]
+    matchup_stats_active = [s for s in active_stats if s in MATCHUP_POOL]
+
+    batter_score  = apply_pool_stats(batter_stats_active)
+    matchup_score = apply_pool_stats(matchup_stats_active)
+
+    # Store for breakdown display
+    stat_mults["batter_score"]  = round(batter_score, 3)
+    stat_mults["matchup_score"] = round(matchup_score, 3)
+
+    # ── Combine: HR% = Base Rate × Batter Score × Matchup Score ──
+    running *= batter_score * matchup_score
 
     # ── Step 3: Always-on context (not in active_stats — structural) ──
     # Park and weather if not already in active_stats
