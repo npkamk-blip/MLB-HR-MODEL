@@ -397,6 +397,8 @@ function renderModelTab(md,hd){
     {key:'bat_speed_l8d_w',field:'bat_speed_l8d',label:'Bat Speed L8D'},
     {key:'pit_hard_hit_w',field:'pit_hard_hit_season',label:'Pit Hard Hit%'},
     {key:'l8d_hr_w',field:'l8d_hr',label:'L8D HR Count'},
+    {key:'chase_rate_w',field:'chase_rate_season',label:'Chase Rate Season'},
+    {key:'pit_stuff_plus_w',field:'pit_stuff_plus',label:'Pit Stuff+'},
   ];
   var statCorrs=allStats.map(function(s){
     var sk=s.key.endsWith('_w')?s.key.slice(0,-2):s.key;
@@ -672,7 +674,9 @@ function buildBatDetail(b){
   var l8dHR=b.l8d_hr||b._full.l8d_hr_count||0;
   var bc_pa=bd.pa_season||0;
   var clog=b._full.contact_log||b.contact_log||[];
-  if(clog.length===0)console.log('No contact log for',b.name,'keys:',Object.keys(b._full||{}));
+  // ── Two-Score display ──
+  var batterScore = bd.batter_score||bd.stat_mults&&bd.stat_mults.batter_score||null;
+  var matchupScore = bd.matchup_score||bd.stat_mults&&bd.stat_mults.matchup_score||null;
 
   function fmtStat(val,dec,suffix){return (val!=null&&val!==0&&val!=='')?(+val).toFixed(dec)+(suffix||''):'--';}
   function fmtSlg(val){return val>0?'.'+String(Math.round(val*1000)).padStart(3,'0'):'--';}
@@ -746,6 +750,19 @@ function buildBatDetail(b){
 
   // LEFT — stat table
   h+='<div>';
+  // ── Two-Score display ──
+  if(batterScore || matchupScore){
+    h+='<div style="display:flex;gap:6px;margin-bottom:8px">';
+    h+='<div style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;text-align:center">';
+    h+='<div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">Batter Score</div>';
+    h+='<div style="font-size:16px;font-weight:700;color:'+(batterScore>=1.3?'var(--g)':batterScore>=1.1?'var(--y)':'var(--muted)')+'">'+( batterScore?batterScore.toFixed(2)+'x':'--')+'</div>';
+    h+='</div>';
+    h+='<div style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;text-align:center">';
+    h+='<div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">Matchup Score</div>';
+    h+='<div style="font-size:16px;font-weight:700;color:'+(matchupScore>=1.2?'var(--g)':matchupScore>=1.0?'var(--y)':'var(--r)')+'">'+( matchupScore?matchupScore.toFixed(2)+'x':'--')+'</div>';
+    h+='</div>';
+    h+='</div>';
+  }
   h+='<div class="dstat-wrap">';
   h+='<div class="drow drow-hdr"><div class="drow-lbl"></div><div class="drow-s">Season</div><div class="drow-l">L8D</div><div class="drow-sp">'+splitLabel+'</div></div>';
   h+=pRow('Hard Hit%', fmtStat(s.hh,1,'%'),s.hh,'hard_hit_season', fmtStat(l.hh,1,'%')+trendFlag(s.hh,l.hh,true),l.hh,'hard_hit_l8d', '--',0,'', false);
@@ -1079,35 +1096,18 @@ function renderHistory(data) {
   var misses = completed.filter(function(r){return r.hit_hr === 0;});
   var avg_pct_miss = misses.length > 0 ? (misses.reduce(function(s,r){return s+r.model_hr_pct;},0)/misses.length).toFixed(1) : '--';
 
+  // ── Tier hit rates ──
+  function tierStats(lo, hi) {
+    var t = completed.filter(function(r){var p=r.model_hr_pct||0;return p>=lo&&p<hi;});
+    var h = t.filter(function(r){return r.hit_hr===1;});
+    return {n:t.length, hits:h.length, rate:t.length>0?(h.length/t.length*100).toFixed(1):'--'};
+  }
+  var t20 = tierStats(20,999);
+  var t15 = tierStats(15,20);
+
   var h = '';
 
-  // Rotation status
-  var rotationStart = new Date('2026-04-13');
-  var today2 = new Date();
-  var daysSinceStart = Math.floor((today2 - rotationStart) / (1000*60*60*24));
-  var currentRound = Math.max(1, Math.floor(daysSinceStart / 45) + 1);
-  var dayInRound = daysSinceStart % 45;
-  var daysLeft = 45 - dayInRound;
-  var roundNotes = {
-    1: 'Baseline - establishing correlations for all core stats',
-    2: 'Testing: Flyball%, Pull%, Pitcher FB% allowed',
-    3: 'Testing: Pitcher recent form vs season ERA, lineup K%',
-    4: 'Testing: H2H career history, days rest, game time'
-  };
-  h += '<div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">';
-  h += '<div>';
-  h += '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Stat Rotation</div>';
-  h += '<div style="font-size:14px;font-weight:600;color:var(--accent)">Round '+currentRound+' &nbsp;<span style="font-size:11px;color:var(--muted);font-weight:400">'+( roundNotes[currentRound]||'')+'</span></div>';
-  h += '</div>';
-  h += '<div style="text-align:right">';
-  h += '<div style="font-size:11px;color:var(--muted)">Day '+dayInRound+' of 45</div>';
-  h += '<div style="font-size:11px;color:var(--warn)">'+daysLeft+' days until next rotation</div>';
-  // Progress bar
-  h += '<div style="width:160px;height:4px;background:var(--border2);border-radius:2px;margin-top:4px;overflow:hidden">';
-  h += '<div style="width:'+(dayInRound/45*100).toFixed(0)+'%;height:100%;background:var(--accent);border-radius:2px"></div>';
-  h += '</div></div></div>';
-
-  // Summary cards
+  // Summary cards — 20%+ tier front and center
   h += '<div class="section-hdr"><div class="section-title">Model History</div>';
   h += '<div style="display:flex;gap:8px"><button class="refresh-btn" style="font-size:11px;padding:4px 10px" onclick="manualSave()">Save Today</button>';
   h += '<button class="refresh-btn" style="font-size:11px;padding:4px 10px;background:var(--s2);color:var(--muted)" onclick="manualRecord()">Record Yesterday</button></div></div>';
@@ -1115,8 +1115,9 @@ function renderHistory(data) {
   h += '<div class="hist-summary">';
   h += histCard(total_preds, 'Total Predictions', false);
   h += histCard(total_hits, 'HR Hits', true);
-  h += histCard(hit_rate + '%', 'Overall Hit Rate', false);
-  h += histCard(top_rate + '%', 'Hit Rate 15%+', false);
+  h += histCard(t20.rate + '%', '20%+ Hit Rate', t20.hits/Math.max(t20.n,1) >= 0.25);
+  h += histCard(t20.hits+'/'+t20.n, '20%+ Record', false);
+  h += histCard(t15.rate + '%', '15-20% Hit Rate', false);
   h += histCard(avg_pct_hit + '%', 'Avg Model% (Hits)', true);
   h += histCard(avg_pct_miss + '%', 'Avg Model% (Misses)', false);
   h += '</div>';
