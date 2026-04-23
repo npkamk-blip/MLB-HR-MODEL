@@ -44,12 +44,11 @@
     "iso_l8d",
     "pit_hr9_season",
     "barrel_pct_season",
-    "iso_season",
-    "barrel_pct_l8d"
+    "pitch_matchup_score"
   ],
   "last_calibrated": "2026-04-23",
   "records_used": 600,
-  "calibration_round": 13,
+  "calibration_round": 14,
   "promoted_stats": [],
   "dropped_stats": [],
   "recent_changes": [],
@@ -84,18 +83,17 @@
   },
   "model_type": "decision_tree",
   "tree_depth": 4,
-  "tree_min_leaf": 20,
-  "tree_n_leaves": 10,
+  "tree_min_leaf": 30,
+  "tree_n_leaves": 9,
   "feature_importances": {
-    "hard_hit_season": 0.205,
-    "iso_vs_hand": 0.1776,
-    "pit_hr9_vs_hand": 0.1713,
-    "la_season": 0.1029,
-    "iso_l8d": 0.0877,
-    "pit_hr9_season": 0.081,
-    "barrel_pct_season": 0.0746,
-    "iso_season": 0.0563,
-    "barrel_pct_l8d": 0.0435
+    "hard_hit_season": 0.2162,
+    "iso_vs_hand": 0.1873,
+    "pit_hr9_vs_hand": 0.1806,
+    "la_season": 0.1085,
+    "iso_l8d": 0.0925,
+    "pit_hr9_season": 0.0854,
+    "barrel_pct_season": 0.0787,
+    "pitch_matchup_score": 0.0508
   },
   "feature_medians": {
     "barrel_pct_season": 12.7,
@@ -131,15 +129,14 @@
   },
   "hr_rates_at_leaves": [
     0.0,
-    0.0,
+    16.5,
     30.1,
-    34.9,
     37.4,
     37.6,
-    49.1,
     53.3,
+    59.6,
     74.1,
-    75.9
+    79.0
   ],
   "tree_hr_rate": 17.2
 }
