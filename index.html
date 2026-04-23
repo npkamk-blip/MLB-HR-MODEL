@@ -456,11 +456,11 @@ function renderModelTab(md,hd){
   h+='<div class="model-card-title"><span>Hit Rate by Tier</span><span style="font-weight:400;color:var(--muted2);font-size:10px">NON-DNP only</span></div>';
 
   var tiers=[
-    {label:'20%+',   lo:20, hi:999, note:'Bet tier',    color:'var(--g)'},
-    {label:'15–20%', lo:15, hi:20,  note:'Strong',      color:'var(--accent)'},
-    {label:'10–15%', lo:10, hi:15,  note:'Watchlist',   color:'var(--y)'},
-    {label:'8–10%',  lo:8,  hi:10,  note:'Marginal',    color:'var(--muted)'},
-    {label:'5–8%',   lo:5,  hi:8,   note:'Data only',   color:'var(--muted2)'},
+    {label:'11%+',   lo:11, hi:999, note:'Bet tier',    color:'var(--g)'},
+    {label:'9–11%',  lo:9,  hi:11,  note:'Strong',      color:'var(--accent)'},
+    {label:'7–9%',   lo:7,  hi:9,   note:'Watchlist',   color:'var(--y)'},
+    {label:'5–7%',   lo:5,  hi:7,   note:'Marginal',    color:'var(--muted)'},
+    {label:'4–5%',   lo:4,  hi:5,   note:'Data only',   color:'var(--muted2)'},
   ];
 
   tiers.forEach(function(t){
@@ -573,7 +573,7 @@ function buildBatterTable(games){
     var all=(g.away_lineup||[]).concat(g.home_lineup||[]);
     if(!all.length)all=g.top_hr_candidates||[];
     all.forEach(function(b){
-      if((b.hr_prob||0)<8)return;
+      if((b.hr_prob||0)<4)return;
       var bd=b.breakdown||{};
       var pitP=b.team===g.away?homeP:awayP;
       batters.push({
@@ -603,9 +603,9 @@ function buildBatterTable(games){
   });
   batters.sort(function(a,b){return sortDir*((b[sortCol]||0)-(a[sortCol]||0));});
 
-  if(!batters.length){document.getElementById('batter-main').innerHTML='<div class="no-data">No batters above 8% HR probability today.</div>';return;}
+  if(!batters.length){document.getElementById('batter-main').innerHTML='<div class="no-data">No batters above 4% HR probability today.</div>';return;}
 
-  var h='<div class="section-hdr"><div class="section-title">HR Probabilities</div><div class="section-count">'+batters.length+' batters &middot; 8%+ threshold</div></div>';
+  var h='<div class="section-hdr"><div class="section-title">HR Probabilities</div><div class="section-count">'+batters.length+' batters &middot; 4%+ threshold</div></div>';
   h+='<div style="font-size:10px;color:var(--muted2);margin-bottom:8px">Matchup: <span class="dot dot-g" style="display:inline-block"></span> Batter strong vs hand &nbsp;·&nbsp; <span class="dot dot-g" style="display:inline-block"></span> Pitcher weak vs hand &nbsp;·&nbsp; Double green = elite spot</div>';
   h+='<div class="tbl-wrap"><table>';
   h+='<thead><tr>';
@@ -1103,8 +1103,8 @@ function renderHistory(data) {
     var h = t.filter(function(r){return r.hit_hr===1;});
     return {n:t.length, hits:h.length, rate:t.length>0?(h.length/t.length*100).toFixed(1):'--'};
   }
-  var t20 = tierStats(20,999);
-  var t15 = tierStats(15,20);
+  var t20 = tierStats(11,999);
+  var t15 = tierStats(9,11);
 
   var h = '';
 
@@ -1116,9 +1116,9 @@ function renderHistory(data) {
   h += '<div class="hist-summary">';
   h += histCard(total_preds, 'Total Predictions', false);
   h += histCard(total_hits, 'HR Hits', true);
-  h += histCard(t20.rate + '%', '20%+ Hit Rate', t20.hits/Math.max(t20.n,1) >= 0.25);
-  h += histCard(t20.hits+'/'+t20.n, '20%+ Record', false);
-  h += histCard(t15.rate + '%', '15-20% Hit Rate', false);
+  h += histCard(t20.rate + '%', '11%+ Hit Rate', t20.hits/Math.max(t20.n,1) >= 0.25);
+  h += histCard(t20.hits+'/'+t20.n, '11%+ Record', false);
+  h += histCard(t15.rate + '%', '9-11% Hit Rate', false);
   h += histCard(avg_pct_hit + '%', 'Avg Model% (Hits)', true);
   h += histCard(avg_pct_miss + '%', 'Avg Model% (Misses)', false);
   h += '</div>';
@@ -1129,7 +1129,7 @@ function renderHistory(data) {
     h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px">';
     h += '<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Overall Accuracy - '+total_preds+' predictions recorded</div>';
     h += '<div class="acc-bar-wrap"><div class="acc-bar" style="width:'+Math.min(acc*3,100)+'%"></div></div>';
-    h += '<div style="font-size:11px;color:var(--muted);margin-top:6px">'+hit_rate+'% hit rate &nbsp;·&nbsp; League avg HR rate ~3% per PA &nbsp;·&nbsp; Model targeting 8-28% range</div>';
+    h += '<div style="font-size:11px;color:var(--muted);margin-top:6px">'+hit_rate+'% hit rate &nbsp;·&nbsp; League avg HR rate ~3% per PA &nbsp;·&nbsp; Model targeting 4-15% range</div>';
     h += '</div>';
   }
 
@@ -1256,10 +1256,8 @@ async function manualSave() {
   try {
     var r = await fetch(API+'/save-predictions', {method:'GET'});
     var d = await r.json();
-    alert('Saved predictions for '+d.date+' — reloading picks...');
+    alert('Saved predictions for '+d.date);
     loadHistory();
-    // Reload the picks/games view so updated players show immediately
-    setTimeout(function(){ load(true); }, 500);
   } catch(e) { alert('Error: '+e.message); }
 }
 
