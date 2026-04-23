@@ -1314,58 +1314,77 @@ async def daily_refresh_loop():
     - 3am  — auto-recalibrate (Sundays only)
     - 4am  — save model log
     """
+    # Track which tasks already ran today so redeploys mid-day don't skip them
+    _scheduled_ran = {}  # { "YYYY-MM-DD:task" : True }
+
     while True:
-        await asyncio.sleep(3600)  # check every hour
-        now = datetime.utcnow()  # Railway runs UTC
-        et_hour = (now.hour - 4) % 24  # UTC → ET (EDT, Apr-Nov)
-        # For weekday check use ET date not UTC date
-        et_now = now - timedelta(hours=4)
+        await asyncio.sleep(600)  # check every 10 min instead of hourly — catches missed windows
+        now = datetime.utcnow()
+        et_now = now - timedelta(hours=4)   # UTC → EDT (Apr–Nov)
+        et_hour = et_now.hour
+        et_date = et_now.date().isoformat()
         is_sunday = et_now.weekday() == 6
 
-        # 9am ET — full Savant season data refresh
-        if et_hour == 9:
+        def already_ran(task):
+            return _scheduled_ran.get(f"{et_date}:{task}", False)
+
+        def mark_ran(task):
+            _scheduled_ran[f"{et_date}:{task}"] = True
+            # Trim old keys (keep only today)
+            for k in list(_scheduled_ran.keys()):
+                if not k.startswith(et_date):
+                    del _scheduled_ran[k]
+
+        # 9am ET — full Savant season data refresh (window: 9:00–9:59)
+        if et_hour == 9 and not already_ran("9am_refresh"):
             try:
                 await load_all_savant_data()
+                mark_ran("9am_refresh")
                 print("9am ET: Full Savant refresh complete")
             except Exception as e:
                 print(f"Daily refresh error: {e}")
 
-        # 11am ET — bat_8d refresh only (Savant fully updated, lock stats for the day)
-        if et_hour == 11:
+        # 11am ET — bat_8d refresh (window: 11:00–11:59)
+        if et_hour == 11 and not already_ran("11am_8d"):
             try:
                 await refresh_8d()
+                mark_ran("11am_8d")
                 print("11am ET: bat_8d locked for the day")
             except Exception as e:
                 print(f"8d refresh error: {e}")
 
-        # 12pm ET — save predictions using locked 11am L8D data
-        if et_hour == 12:
+        # 12pm ET — save predictions (window: 12:00–12:59)
+        if et_hour == 12 and not already_ran("12pm_save"):
             try:
                 await save_daily_predictions()
+                mark_ran("12pm_save")
                 print("12pm ET: Predictions saved with locked L8D data")
             except Exception as e:
                 print(f"Prediction save error: {e}")
 
-        # 2am ET — record results
-        if et_hour == 2:
+        # 2am ET — record results (window: 2:00–2:59)
+        if et_hour == 2 and not already_ran("2am_results"):
             try:
                 yesterday = (date.today() - timedelta(days=1)).isoformat()
                 await record_results(yesterday)
+                mark_ran("2am_results")
             except Exception as e:
                 print(f"Result recording error: {e}")
 
-        # 3am ET — auto-recalibrate (Sundays only)
-        if et_hour == 3 and is_sunday:
+        # 3am ET — auto-recalibrate Sundays (window: 3:00–3:59)
+        if et_hour == 3 and is_sunday and not already_ran("3am_recal"):
             try:
                 print(f"Sunday auto-recalibrate — {_model_weights.get('records_used',0)} records")
                 await recalibrate_model()
+                mark_ran("3am_recal")
             except Exception as e:
                 print(f"Auto-recalibrate error: {e}")
 
-        # 4am ET — save model log
-        if et_hour == 4:
+        # 4am ET — save model log (window: 4:00–4:59)
+        if et_hour == 4 and not already_ran("4am_log"):
             try:
                 await save_model_log(_model_weights)
+                mark_ran("4am_log")
             except Exception as e:
                 print(f"Model log error: {e}")
 
@@ -1420,7 +1439,7 @@ async def save_daily_predictions(force: bool = False):
     path = f"data/predictions/{today}.json"
     existing, sha = await github_get_file(path)
     # Allow overwrite if hit_hr is still null (predictions not yet recorded)
-    # force=True (manual save) always overwrites unless results already recorded
+    # force=True skips the guard entirely (used by /resave-today which handles hit_hr preservation itself)
     if existing and not force:
         import json
         try:
@@ -1429,16 +1448,6 @@ async def save_daily_predictions(force: bool = False):
                 print(f"Predictions already recorded for {today} — skipping")
                 return
             print(f"Overwriting pending predictions for {today}")
-        except Exception:
-            pass
-    elif existing and force:
-        import json
-        try:
-            ex_recs = json.loads(existing)
-            if any(r.get("hit_hr") is not None for r in ex_recs):
-                print(f"Manual save: {today} has recorded results — skipping to protect data")
-                return
-            print(f"Manual save: force-overwriting today's predictions for {today}")
         except Exception:
             pass
     try:
@@ -3084,9 +3093,66 @@ async def get_model_weights():
 
 @app.get("/save-predictions")
 async def manual_save_predictions():
-    """Manually trigger saving today's predictions — always force-overwrites today"""
-    await save_daily_predictions(force=True)
+    """Manually trigger saving today's predictions"""
+    await save_daily_predictions()
     return {"status": "done", "date": date.today().isoformat()}
+
+
+@app.get("/resave-today")
+async def resave_today_predictions():
+    """
+    Re-run today's predictions with current model weights.
+    Preserves any hit_hr results already recorded (HRs that already happened).
+    Only updates model_hr_pct and model breakdown fields — never touches hit_hr.
+    Use this after pushing a new model/LR calibration mid-day.
+    """
+    import json
+    if not _cache["ready"]:
+        return {"error": "Cache not ready"}
+    today = date.today().isoformat()
+    path = f"data/predictions/{today}.json"
+
+    # Load existing file so we can preserve hit_hr values
+    existing_content, sha = await github_get_file(path)
+    existing_results = {}  # name+team -> hit_hr
+    if existing_content:
+        try:
+            ex_recs = json.loads(existing_content)
+            for r in ex_recs:
+                key = f"{r.get('name','')}|{r.get('team','')}"
+                existing_results[key] = r.get("hit_hr")  # preserve hit_hr (0, 1, DNP, or None)
+        except Exception as e:
+            print(f"resave-today: could not parse existing file: {e}")
+
+    # Run full save — this computes fresh model_hr_pct with current LR weights
+    await save_daily_predictions(force=True)
+
+    # Now re-load what was just saved and patch hit_hr values back in
+    new_content, new_sha = await github_get_file(path)
+    if not new_content:
+        return {"error": "Save ran but file not found after write"}
+
+    try:
+        new_recs = json.loads(new_content)
+        patched = 0
+        for r in new_recs:
+            key = f"{r.get('name','')}|{r.get('team','')}"
+            if key in existing_results and existing_results[key] is not None:
+                r["hit_hr"] = existing_results[key]
+                patched += 1
+        # Write patched file back
+        final_content = json.dumps(new_recs, indent=2)
+        await github_put_file(path, final_content, f"resave+patch: {today} ({patched} results preserved)", new_sha)
+        preserved = {k: v for k, v in existing_results.items() if v is not None}
+        return {
+            "status": "done",
+            "date": today,
+            "total_records": len(new_recs),
+            "results_preserved": patched,
+            "preserved_detail": preserved
+        }
+    except Exception as e:
+        return {"error": f"Patch step failed: {e}"}
 
 @app.get("/record-results")
 async def manual_record_results(target_date: str = None, force: bool = True):
