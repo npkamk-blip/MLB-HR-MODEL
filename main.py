@@ -3332,6 +3332,23 @@ async def reload_contact_get():
     asyncio.create_task(reload_contact_log())
     return {"status": "Contact log reloading — check back in 60 seconds"}
 
+
+@app.get("/refresh-8d")
+async def manual_refresh_8d():
+    """Manually trigger full 8d refresh — bat_8d, contact log, l5g, l8d_hr.
+    Updates last_8d_update timestamp. Use to verify scheduler is working."""
+    try:
+        await refresh_8d()
+        return {
+            "status": "done",
+            "last_8d_update": _cache.get("last_8d_update"),
+            "bat_8d": len(_cache["bat_8d"]),
+            "bat_l5g": len(_cache["bat_l5g"]),
+            "bat_l8d_hr": len(_cache.get("bat_l8d_hr", {})),
+            "contact_log": len(_contact_log),
+        }
+    except Exception as e:
+        return {"error": str(e)}
 @app.get("/clear-cache")
 async def clear_cache():
     """Clear games cache — forces fresh rebuild on next /games call"""
@@ -3383,6 +3400,7 @@ async def reload_contact_log():
             print(f"contact_log reloaded: {len(_contact_log)} players")
         else:
             print("contact_log reload failed — CSV empty")
+    _cache["last_8d_update"] = datetime.now().isoformat()
 
 @app.get("/games")
 async def get_games(date: str = None, refresh: bool = False):
