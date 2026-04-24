@@ -343,118 +343,142 @@ async function manualRecalibrate() {
   } catch(e){alert('Error: '+e.message);}
   if(btn){btn.disabled=false;btn.textContent='Recalibrate Now';}
 }
+// ── Stat label map for Decision Tree feature names ──
+var DT_STAT_LABELS = {
+  'barrel_pct_season':'Barrel% Season','hard_hit_season':'Hard Hit% Season',
+  'ev_season':'Exit Velo Season','iso_season':'ISO Season',
+  'la_season':'Launch Angle Season','pull_pct_season':'Pull% Season',
+  'barrel_pct_l8d':'Barrel% L8D','hard_hit_l8d':'Hard Hit% L8D',
+  'ev_l8d':'Exit Velo L8D','bat_speed_l8d':'Bat Speed L8D',
+  'xwoba_l8d':'xwOBA L8D','xslg_l8d':'xSLG L8D','slg_l8d':'SLG L8D',
+  'iso_l8d':'ISO L8D','k_pct_l8d':'K% L8D','la_l8d':'Launch Angle L8D',
+  'iso_vs_hand':'ISO vs Hand','slg_vs_hand':'SLG vs Hand',
+  'pit_hr9_season':'Pit HR/9 Season','pit_era_season':'Pit ERA Season',
+  'pit_hard_hit_season':'Pit Hard Hit%','pit_k9_season':'Pit K/9 Season',
+  'pit_hr9_vs_hand':'Pit HR/9 vs Hand','pit_slg_vs_hand':'Pit SLG vs Hand',
+  'park_factor':'Park Factor','weather_mult':'Weather Mult',
+  'bullpen_hr9':'Bullpen HR/9','bat_platoon_mult':'Bat Platoon',
+  'pit_platoon_mult':'Pit Platoon','pitch_matchup_score':'Pitch Matchup',
+};
+function dtLabel(k){ return DT_STAT_LABELS[k]||k.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();}); }
+
 function renderModelTab(md,hd){
   var el=document.getElementById('model-main');
   if(!md){el.innerHTML='<div class="err">No data</div>';return;}
-  var weights=md.weights||{};var rotation=md.rotation||{};
-  var activeStats=weights.active_stats||['barrel_season','la_season','pit_hr9_vs_hand','iso_vs_hand','park','weather','pitch_delta','bat_platoon'];
-  var lastCal=weights.last_calibrated;var recordsUsed=weights.records_used||0;
-  var changes=weights.recent_changes||[];var promoted=weights.promoted_stats||[];var dropped=weights.dropped_stats||[];
-  var completed=[];
-  if(hd&&hd.records)completed=hd.records.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
-  function correlate(field){
-    var vals=completed.filter(function(r){return r[field]!=null&&r[field]!==0;});
-    if(vals.length<10)return null;
-    var n=vals.length,mx=vals.reduce(function(s,r){return s+Number(r[field]);},0)/n,my=vals.reduce(function(s,r){return s+Number(r.hit_hr);},0)/n;
-    var num=vals.reduce(function(s,r){return s+(Number(r[field])-mx)*(Number(r.hit_hr)-my);},0);
-    var dx=Math.sqrt(vals.reduce(function(s,r){return s+Math.pow(Number(r[field])-mx,2);},0));
-    var dy=Math.sqrt(vals.reduce(function(s,r){return s+Math.pow(Number(r.hit_hr)-my,2);},0));
-    if(!dx||!dy)return null;
-    return Math.round(num/(dx*dy)*1000)/1000;
-  }
-  var allStats=[
-    {key:'barrel_season_w',field:'barrel_pct_season',label:'Barrel% Season'},
-    {key:'barrel_l8d_w',field:'barrel_pct_l8d',label:'Barrel% L8D'},
-    {key:'la_season_w',field:'la_season',label:'Launch Angle Season'},
-    {key:'la_l8d_w',field:'la_l8d',label:'Launch Angle L8D'},
-    {key:'ev_season_w',field:'ev_season',label:'Exit Velocity Season'},
-    {key:'ev_l8d_w',field:'ev_l8d',label:'Exit Velocity L8D'},
-    {key:'iso_season_w',field:'iso_season',label:'ISO Season'},
-    {key:'iso_vs_hand_w',field:'iso_vs_hand',label:'ISO vs Hand'},
-    {key:'hard_hit_season_w',field:'hard_hit_season',label:'Hard Hit% Season'},
-    {key:'hard_hit_l8d_w',field:'hard_hit_l8d',label:'Hard Hit% L8D'},
-    {key:'pit_hr9_season_w',field:'pit_hr9_season',label:'Pit HR/9 Season'},
-    {key:'pit_hr9_vs_hand_w',field:'pit_hr9_vs_hand',label:'Pit HR/9 vs Hand'},
-    {key:'pit_slg_season_w',field:'pit_slg_season',label:'Pit SLG Season'},
-    {key:'pit_slg_vs_hand_w',field:'pit_slg_vs_hand',label:'Pit SLG vs Hand'},
-    {key:'park_w',field:'park_factor',label:'Park Factor'},
-    {key:'weather_w',field:'weather_mult',label:'Weather Mult'},
-    {key:'bullpen_w',field:'bullpen_vuln',label:'Bullpen Vuln'},
-    {key:'bat_platoon_w',field:'bat_platoon_mult',label:'Batter Platoon'},
-    {key:'pit_platoon_w',field:'pit_platoon_mult',label:'Pitcher Platoon'},
-    {key:'pitch_delta_w',field:'combined_pitch_delta',label:'Pitch Delta'},
-    {key:'k_pct_w',field:'k_pct_season',label:'K% Penalty'},
-    {key:'fb_pct_season_w',field:'fb_pct_season',label:'Flyball% Season'},
-    {key:'pull_pct_season_w',field:'pull_pct_season',label:'Pull% Season'},
-    {key:'pit_fb_pct_w',field:'pit_fb_pct_allowed',label:'Pit FB% Allowed'},
-    {key:'k_pct_l8d_w',field:'k_pct_l8d',label:'K% L8D'},
-    {key:'pit_era_diff_w',field:'pit_era_diff',label:'Pit ERA Diff'},
-    {key:'pit_k9_season_w',field:'pit_k9_season',label:'Pit K/9 Season'},
-    {key:'slg_l8d_w',field:'slg_l8d',label:'SLG L8D'},
-    {key:'xslg_l8d_w',field:'xslg_l8d',label:'xSLG L8D'},
-    {key:'xslg_gap_l8d_w',field:'xslg_gap_l8d',label:'xSLG Gap L8D'},
-    {key:'xwoba_l8d_w',field:'xwoba_l8d',label:'xwOBA L8D'},
-    {key:'bat_speed_l8d_w',field:'bat_speed_l8d',label:'Bat Speed L8D'},
-    {key:'pit_hard_hit_w',field:'pit_hard_hit_season',label:'Pit Hard Hit%'},
-    {key:'l8d_hr_w',field:'l8d_hr',label:'L8D HR Count'},
-    {key:'chase_rate_w',field:'chase_rate_season',label:'Chase Rate Season'},
-    {key:'pit_stuff_plus_w',field:'pit_stuff_plus',label:'Pit Stuff+'},
-  ];
-  var statCorrs=allStats.map(function(s){
-    var sk=s.key.endsWith('_w')?s.key.slice(0,-2):s.key;
-    return Object.assign({},s,{corr:correlate(s.field),weight:weights[s.key]||1.0,isActive:activeStats.indexOf(sk)>=0});
-  }).sort(function(a,b){return(b.corr!=null?Math.abs(b.corr):0)-(a.corr!=null?Math.abs(a.corr):0);});
-  var activeObjs=statCorrs.filter(function(s){return s.isActive;}).sort(function(a,b){return b.weight-a.weight;});
+  var weights=md.weights||{};
+  var calInfo=md.calibration||{};
+
+  // ── Decision Tree metadata ──
+  var treeDepth      = weights.tree_depth||4;
+  var treeLeaves     = weights.tree_n_leaves||0;
+  var treeMinLeaf    = weights.tree_min_leaf||30;
+  var recordsUsed    = weights.records_used||0;
+  var calFactor      = weights.calibration_factor||1.0;
+  var calRound       = weights.calibration_round||calInfo.round||1;
+  var lastCal        = weights.last_calibrated||'--';
+  var nextUpgrade    = weights.next_depth_upgrade||1500;
+  var hrRates        = weights.hr_rates_at_leaves||[];
+  var featImport     = weights.feature_importances||{};
+  var modelType      = weights.model_type||'decision_tree';
+  var treeHrRate     = weights.tree_hr_rate||0;
+
+  // ── History: filter to current calibration round ──
+  var allCompleted=[];
+  if(hd&&hd.records)allCompleted=hd.records.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
+  // Tier stats scoped to current round only — resets each Sunday
+  var roundCompleted = allCompleted.filter(function(r){
+    return (r.rotation_round||1) === calRound;
+  });
+  // Fall back to all if round scoping returns nothing (early data before round tracking)
+  var tierCompleted = roundCompleted.length >= 5 ? roundCompleted : allCompleted;
+
+  // ── Build feature importance list ──
+  var featList = Object.entries(featImport).map(function(e){return{key:e[0],imp:e[1],label:dtLabel(e[0])};});
+  featList.sort(function(a,b){return b.imp-a.imp;});
+  var maxImp = featList.length>0 ? featList[0].imp : 1;
+
+  // ── Header ──
   var h='';
   h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">';
-  h+='<div><div style="font-size:20px;font-weight:700;color:var(--accent)">MODEL INTELLIGENCE</div>';
-  h+='<div style="font-size:11px;color:var(--muted);margin-top:2px">'+(lastCal?'Last calibrated: '+lastCal+' - '+recordsUsed+' records':'Not calibrated - default weights 1.0x')+'</div></div>';
+  h+='<div><div style="font-size:20px;font-weight:700;color:var(--accent)">DECISION TREE</div>';
+  h+='<div style="font-size:11px;color:var(--muted);margin-top:2px">Trained '+lastCal+' &middot; '+recordsUsed+' records &middot; Round '+calRound+'</div></div>';
   h+='<div style="display:flex;gap:8px;align-items:center">';
-  h+='<span style="font-size:11px;color:var(--muted2)">'+completed.length+' records</span>';
-  var canR=completed.length>=50;
-  h+='<button id="recalibrate-btn" class="recal-btn" onclick="manualRecalibrate()" '+(canR?'':'disabled')+'>'+(canR?'Recalibrate Now':'Need '+(50-completed.length)+' more')+'</button>';
+  var canR=allCompleted.length>=50;
+  h+='<button id="recalibrate-btn" class="recal-btn" onclick="manualRecalibrate()" '+(canR?'':'disabled')+'>'+(canR?'Retrain Now':'Need '+(50-allCompleted.length)+' more')+'</button>';
   h+='</div></div>';
-  var calInfo=md.calibration||{};
-  h+='<div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">';
-  h+='<div><span style="font-size:11px;color:var(--accent);font-weight:600">Calibration Round '+(calInfo.round||rotation.round||1)+'</span> <span style="font-size:11px;color:var(--muted)">Open competition — all stats compete freely</span></div>';
-  h+='<div style="text-align:right"><div style="font-size:10px;color:var(--muted)">Auto-recalibrates every Sunday</div>';
-  h+='<div style="font-size:10px;color:var(--muted2);margin-top:2px">'+(calInfo.records_used||recordsUsed)+' records used</div></div></div>';
-  if(changes.length){
-    h+='<div style="background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.18);border-radius:8px;padding:8px 14px;margin-bottom:14px">';
-    h+='<div style="font-size:10px;color:#a78bfa;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Recent Weight Changes</div>';
-    changes.slice(0,6).forEach(function(c){
-      var up=c.indexOf('->')>-1&&parseFloat((c.split('->')[1]||'0'))>parseFloat(((c.split('->')[0]||'').split(':')[1]||'1'));
-      h+='<div style="font-size:11px;color:var(--muted)"><span style="color:'+(up?'var(--g)':'var(--r)')+'"></span>'+c+'</div>';
-    });
-    h+='</div>';
+
+  // ── Tree Stats Banner ──
+  h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:14px">';
+  function statBox(lbl,val,sub,color){
+    return '<div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center">'
+      +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:22px;font-weight:800;color:'+(color||'var(--text)')+'">'+val+'</div>'
+      +'<div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">'+lbl+'</div>'
+      +(sub?'<div style="font-size:9px;color:var(--muted2);margin-top:1px">'+sub+'</div>':'')
+      +'</div>';
   }
-  h+='<div class="model-layout">';
-  h+='<div style="display:flex;flex-direction:column;gap:12px">';
-  h+='<div class="model-card">';
-  h+='<div class="model-card-title"><span>Active Model ('+(activeObjs.length)+'/8)</span><span style="font-weight:400">weight / corr</span></div>';
-  if(!activeObjs.length)h+='<div style="font-size:11px;color:var(--muted);padding:8px 0">Using defaults (1.0x). Run recalibration once you have 50+ records.</div>';
-  activeObjs.forEach(function(s,i){
-    var w=s.weight,corr=s.corr;
-    var bW=Math.min(Math.abs(w-1)*150+15,100);
-    var bc=w>1.1?'var(--g)':w<0.9?'var(--r)':'var(--muted2)';
-    var cc=corr!=null?(Math.abs(corr)>=0.2?'var(--g)':Math.abs(corr)>=0.1?'var(--y)':'var(--muted2)'):'var(--border2)';
-    h+='<div class="weight-row"><div class="weight-rank">'+(i+1)+'</div><div class="weight-name">'+s.label+'</div>';
-    h+='<div class="weight-bar-wrap"><div class="weight-bar" style="width:'+bW+'%;background:'+bc+'"></div></div>';
-    h+='<div class="weight-val" style="color:'+bc+'">'+w.toFixed(2)+'x</div>';
-    h+='<div class="weight-delta" style="color:'+cc+'">'+(corr!=null?(corr>0?'+':'')+corr.toFixed(2):'--')+'</div></div>';
-  });
-  if(promoted.length||dropped.length){
-    h+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border2);display:flex;gap:4px;flex-wrap:wrap">';
-    promoted.forEach(function(p){h+='<span class="stat-badge badge-promoted">+'+p+'</span>';});
-    dropped.forEach(function(d){h+='<span class="stat-badge badge-dropped">-'+d+'</span>';});
-    h+='</div>';
-  }
+  h+=statBox('Depth', treeDepth, 'max split layers', 'var(--accent)');
+  h+=statBox('Leaves', treeLeaves||'--', 'decision nodes', 'var(--blue)');
+  h+=statBox('Min Leaf', treeMinLeaf, 'samples/leaf', 'var(--muted)');
+  h+=statBox('Cal Factor', calFactor<1?calFactor.toFixed(3):'1.0 (off)', calFactor>=1?'stabilized':'bias correction', calFactor>=1?'var(--g)':'var(--y)');
+  h+=statBox('Dataset HR%', treeHrRate>0?treeHrRate.toFixed(1)+'%':'--', 'train set rate', 'var(--muted)');
+  // Next depth upgrade countdown
+  var upgradeLeft = typeof nextUpgrade==='number' ? Math.max(nextUpgrade-recordsUsed,0) : 0;
+  var upgradeStr  = typeof nextUpgrade==='number' ? (upgradeLeft>0?('+'+upgradeLeft+' records'):'ready!') : nextUpgrade;
+  h+=statBox('Next Upgrade', 'D'+(treeDepth+1), upgradeStr, upgradeLeft===0?'var(--g)':'var(--muted2)');
   h+='</div>';
 
-  // ── Tier Performance Panel — below active model ──
-  h+='<div class="model-card" style="margin-top:12px">';
-  h+='<div class="model-card-title"><span>Hit Rate by Tier</span><span style="font-weight:400;color:var(--muted2);font-size:10px">NON-DNP only</span></div>';
+  // ── Leaf HR Rate Distribution ──
+  if(hrRates.length>0){
+    h+='<div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px">';
+    h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Leaf HR Rate Distribution ('+(hrRates.length)+' leaves)</div>';
+    h+='<div style="display:flex;align-items:flex-end;gap:2px;height:36px">';
+    var buckets=[0,0,0,0,0,0,0]; // 0-2, 2-5, 5-8, 8-12, 12-18, 18-25, 25+
+    hrRates.forEach(function(r){
+      if(r<2)buckets[0]++;else if(r<5)buckets[1]++;else if(r<8)buckets[2]++;
+      else if(r<12)buckets[3]++;else if(r<18)buckets[4]++;else if(r<25)buckets[5]++;else buckets[6]++;
+    });
+    var bktLabels=['<2%','2-5%','5-8%','8-12%','12-18%','18-25%','25%+'];
+    var bktColors=['var(--muted2)','var(--muted)','var(--y)','var(--warn)','var(--g)','var(--accent)','var(--blue)'];
+    var bktMax=Math.max.apply(null,buckets)||1;
+    buckets.forEach(function(cnt,i){
+      var h2=Math.max(Math.round(cnt/bktMax*36),cnt>0?2:0);
+      h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:1px">';
+      h+='<div style="font-size:7px;color:var(--muted2)">'+cnt+'</div>';
+      h+='<div style="width:100%;height:'+h2+'px;background:'+bktColors[i]+';border-radius:2px 2px 0 0;opacity:0.85"></div>';
+      h+='</div>';
+    });
+    h+='</div>';
+    h+='<div style="display:flex;gap:2px;margin-top:3px">';
+    bktLabels.forEach(function(l){
+      h+='<div style="flex:1;font-size:7px;color:var(--muted2);text-align:center">'+l+'</div>';
+    });
+    h+='</div></div>';
+  }
 
+  h+='<div class="model-layout">';
+  // ── LEFT: Feature Importances + Tier Panel ──
+  h+='<div style="display:flex;flex-direction:column;gap:12px">';
+  h+='<div class="model-card">';
+  h+='<div class="model-card-title"><span>Feature Importance</span><span style="font-weight:400;color:var(--muted2)">tree split weight</span></div>';
+  if(!featList.length){
+    h+='<div style="font-size:11px;color:var(--muted);padding:8px 0">No importance data yet — tree needs training.</div>';
+  }
+  featList.slice(0,15).forEach(function(s,i){
+    var pct=maxImp>0?Math.round(s.imp/maxImp*100):0;
+    var barColor = i<3?'var(--accent)':i<6?'var(--g)':i<10?'var(--y)':'var(--muted2)';
+    h+='<div class="weight-row">';
+    h+='<div class="weight-rank">'+(i+1)+'</div>';
+    h+='<div class="weight-name" style="width:150px">'+s.label+'</div>';
+    h+='<div class="weight-bar-wrap"><div class="weight-bar" style="width:'+pct+'%;background:'+barColor+'"></div></div>';
+    h+='<div class="weight-val" style="color:'+barColor+'">'+Math.round(s.imp*1000)/10+'%</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+
+  // ── Tier Performance — scoped to current round ──
+  var tierSince = roundCompleted.length>=5 ? 'Round '+calRound : 'all time';
+  h+='<div class="model-card">';
+  h+='<div class="model-card-title"><span>Hit Rate by Tier</span><span style="font-weight:400;color:var(--muted2);font-size:10px">'+tierSince+' · non-DNP</span></div>';
   var tiers=[
     {label:'11%+',   lo:11, hi:999, note:'Bet tier',    color:'var(--g)'},
     {label:'9–11%',  lo:9,  hi:11,  note:'Strong',      color:'var(--accent)'},
@@ -462,53 +486,46 @@ function renderModelTab(md,hd){
     {label:'5–7%',   lo:5,  hi:7,   note:'Marginal',    color:'var(--muted)'},
     {label:'4–5%',   lo:4,  hi:5,   note:'Data only',   color:'var(--muted2)'},
   ];
-
   tiers.forEach(function(t){
-    var tierRecs = completed.filter(function(r){
-      var p = r.model_hr_pct||0;
-      return p >= t.lo && p < t.hi;
-    });
-    var tierHits = tierRecs.filter(function(r){return r.hit_hr===1;});
-    var n = tierRecs.length;
-    var hits = tierHits.length;
-    var rate = n > 0 ? (hits/n*100).toFixed(1) : '--';
-    var barW = n > 0 ? Math.min((hits/n)*100*3, 100) : 0; // 3x scale so 33% = full bar
-    var rateColor = n===0?'var(--muted2)':
-                    hits/n >= 0.25?'var(--g)':
-                    hits/n >= 0.15?'var(--accent)':
-                    hits/n >= 0.10?'var(--y)':'var(--muted)';
+    var tierRecs=tierCompleted.filter(function(r){var p=r.model_hr_pct||0;return p>=t.lo&&p<t.hi;});
+    var n=tierRecs.length, hits=tierRecs.filter(function(r){return r.hit_hr===1;}).length;
+    var rate=n>0?(hits/n*100).toFixed(1):'--';
+    var barW=n>0?Math.min((hits/n)*100*3,100):0;
+    var rc=n===0?'var(--muted2)':hits/n>=0.25?'var(--g)':hits/n>=0.15?'var(--accent)':hits/n>=0.10?'var(--y)':'var(--muted)';
     h+='<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border2)">';
     h+='<div style="width:52px;font-size:11px;font-weight:600;color:'+t.color+'">'+t.label+'</div>';
     h+='<div style="width:55px;font-size:10px;color:var(--muted2)">'+t.note+'</div>';
-    h+='<div style="flex:1;height:5px;background:var(--border2);border-radius:3px;overflow:hidden">';
-    h+='<div style="width:'+barW+'%;height:100%;background:'+rateColor+';border-radius:3px;transition:width .3s"></div></div>';
-    h+='<div style="width:38px;text-align:right;font-size:12px;font-weight:700;color:'+rateColor+'">'+rate+'%</div>';
+    h+='<div style="flex:1;height:5px;background:var(--border2);border-radius:3px;overflow:hidden"><div style="width:'+barW+'%;height:100%;background:'+rc+';border-radius:3px;transition:width .3s"></div></div>';
+    h+='<div style="width:38px;text-align:right;font-size:12px;font-weight:700;color:'+rc+'">'+rate+'%</div>';
     h+='<div style="width:40px;text-align:right;font-size:10px;color:var(--muted2)">'+hits+'/'+n+'</div>';
     h+='</div>';
   });
+  if(tierCompleted.length<20)h+='<div style="font-size:10px;color:var(--muted2);margin-top:8px;text-align:center">Rates stabilize at 200+ records</div>';
+  h+='</div>';
+  h+='</div>'; // close left col
 
-  if(completed.length < 20){
-    h+='<div style="font-size:10px;color:var(--muted2);margin-top:8px;text-align:center">Need more data — rates stabilize at 200+ records</div>';
-  }
-  h+='</div>'; // close tier panel card
-  h+='</div>'; // close left column wrapper
+  // ── RIGHT: All features ranked by importance ──
   h+='<div class="model-card">';
-  h+='<div class="model-card-title"><span>All Stats Ranked</span><span style="font-weight:400">'+(completed.length>=10?completed.length+' records':'need 10+')+'</span></div>';
-  statCorrs.forEach(function(s,i){
-    var corr=s.corr,isA=s.isActive,isCand=s.round>1&&!isA;
-    var ca=corr!=null?Math.abs(corr):0;
-    var bW=Math.min(ca*300,100);
-    var bc=ca>=0.25?'var(--g)':ca>=0.12?'var(--y)':'var(--muted2)';
-    var cc=corr!=null?bc:'var(--border2)';
-    h+='<div class="stat-row"><div class="stat-rank">'+(i+1)+'</div>';
-    h+='<div class="stat-name" style="color:'+(isA?'var(--fg)':'var(--muted)')+'">'+s.label+'</div>';
+  h+='<div class="model-card-title"><span>All Features Ranked</span><span style="font-weight:400;color:var(--muted2)">'+recordsUsed+' records · Depth '+treeDepth+'</span></div>';
+  if(!featList.length){
+    h+='<div style="font-size:11px;color:var(--muted);padding:8px 0">Tree not yet trained.</div>';
+  }
+  var allFeatMax = featList.length>0?featList[0].imp:1;
+  featList.forEach(function(s,i){
+    var bW=allFeatMax>0?Math.min(Math.round(s.imp/allFeatMax*100),100):0;
+    var bc=i<3?'var(--accent)':i<6?'var(--g)':i<10?'var(--y)':'var(--muted2)';
+    var impStr = s.imp>0 ? Math.round(s.imp*1000)/10+'%' : '--';
+    h+='<div class="stat-row">';
+    h+='<div class="stat-rank">'+(i+1)+'</div>';
+    h+='<div class="stat-name" style="width:155px;color:'+(i<10?'var(--text)':'var(--muted)')+'">'+s.label+'</div>';
     h+='<div class="stat-bar-wrap"><div class="stat-bar" style="width:'+bW+'%;background:'+bc+'"></div></div>';
-    h+='<div class="stat-corr" style="color:'+cc+'">'+(corr!=null?(corr>0?'+':'')+corr.toFixed(3):'no data')+'</div>';
-    if(isA)h+='<span class="stat-badge badge-active">IN</span>';
-    else if(isCand)h+='<span class="stat-badge badge-candidate">R'+s.round+'</span>';
+    h+='<div class="stat-corr" style="color:'+bc+'">'+impStr+'</div>';
+    if(i<3)h+='<span class="stat-badge badge-active">TOP</span>';
+    else if(i<10)h+='<span class="stat-badge badge-candidate">IN</span>';
     h+='</div>';
   });
-  h+='</div></div>';
+  h+='</div>';
+  h+='</div>'; // close model-layout
   el.innerHTML=h;
 }
 
