@@ -321,20 +321,21 @@ function switchTab(id,btn){
 }
 
 async function loadParlayTab(){
-  var el=document.getElementById("parlay-combo-count");
+  var el=document.getElementById('parlay-combo-count');
   try{
-    var r=await fetch(API+"/parlay-results");
+    var r=await fetch(API+'/parlay-results');
     var d=await r.json();
-    if(d.error){el.innerHTML="<span style="color:var(--muted2)">Combination tracking starts today — check back tomorrow</span>";return;}
+    if(d.error){el.innerHTML='<span style="color:var(--muted2)">Combination tracking starts today — check back tomorrow</span>';return;}
     var all2=d.all_time&&d.all_time.two_leg_combos||0;
     var all3=d.all_time&&d.all_time.three_leg_combos||0;
-    var hr2=d.all_time&&d.all_time.two_leg_hit_rate||"--";
-    var hr3=d.all_time&&d.all_time.three_leg_hit_rate||"--";
-    el.innerHTML="<div style="display:flex;justify-content:center;gap:32px;margin-top:8px">";
-    el.innerHTML+="<div style="text-align:center"><div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:var(--accent)">"+all2+"</div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">2-leg combos tracked</div><div style="font-size:11px;color:var(--g);margin-top:2px">"+hr2+" hit rate</div></div>";
-    el.innerHTML+="<div style="text-align:center"><div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:var(--accent)">"+all3+"</div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">3-leg combos tracked</div><div style="font-size:11px;color:var(--g);margin-top:2px">"+hr3+" hit rate</div></div>";
-    el.innerHTML+="</div>";
-  }catch(e){el.innerHTML="<span style="color:var(--muted2)">Combination tracking starting soon</span>";}
+    var hr2=d.all_time&&d.all_time.two_leg_hit_rate||'--';
+    var hr3=d.all_time&&d.all_time.three_leg_hit_rate||'--';
+    var h='<div style="display:flex;justify-content:center;gap:32px;margin-top:8px">';
+    h+='<div style="text-align:center"><div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:var(--accent)">'+all2+'</div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">2-leg combos tracked</div><div style="font-size:11px;color:var(--g);margin-top:2px">'+hr2+' hit rate</div></div>';
+    h+='<div style="text-align:center"><div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:var(--accent)">'+all3+'</div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">3-leg combos tracked</div><div style="font-size:11px;color:var(--g);margin-top:2px">'+hr3+' hit rate</div></div>';
+    h+='</div>';
+    el.innerHTML=h;
+  }catch(e){el.innerHTML='<span style="color:var(--muted2)">Combination tracking starting soon</span>';}
 }
 async function reloadContact(){
   try{
