@@ -1274,6 +1274,7 @@ async def daily_refresh_loop():
             try:
                 await save_daily_predictions()
                 mark_ran("12pm_save")
+                await save_parlay_combinations()
                 print("12pm ET: Predictions saved with locked L8D data")
             except Exception as e:
                 print(f"Prediction save error: {e}")
@@ -1714,9 +1715,106 @@ async def record_results(target_date: str, force: bool = False):
             f"results: {target_date} ({len(hr_hitters)} HRs, {dnp_count} DNP, force={force})", sha)
         print(f"Recorded results for {target_date}: {len(hr_hitters)} HR hitters, "
               f"{dnp_count} DNP, {updated} updated, {hr_count} HRs confirmed")
+        await record_parlay_results(target_date)
     except Exception as e:
         print(f"record_results error: {e}")
         import traceback; traceback.print_exc()
+
+
+# ── Parlay Combination Tracking ──────────────────────────────────────────────
+
+async def save_parlay_combinations(target_date: str = None):
+    """Generate and save every 2-leg and 3-leg combination from top picks.
+    Called after save_daily_predictions. Feeds option 1 data collection.
+    """
+    if not GITHUB_TOKEN: return
+    today = target_date or date.today().isoformat()
+    pred_path = f"data/predictions/{today}.json"
+    content, _ = await github_get_file(pred_path)
+    if not content:
+        print(f"save_parlay_combinations: no predictions for {today}")
+        return
+    import json, itertools
+    try:
+        records = json.loads(content)
+        # Top picks — 7%+ threshold, max 15 players
+        top = [r for r in records if (r.get("model_hr_pct") or 0) >= 7]
+        top = sorted(top, key=lambda r: r.get("model_hr_pct", 0), reverse=True)[:15]
+        if len(top) < 2:
+            print(f"save_parlay_combinations: not enough picks ({len(top)}) for {today}")
+            return
+
+        combos = []
+        # 2-leg combos
+        for a, b in itertools.combinations(top, 2):
+            pA = a.get("model_hr_pct", 0) / 100
+            pB = b.get("model_hr_pct", 0) / 100
+            combos.append({
+                "legs": [a["player_name"], b["player_name"]],
+                "teams": [a.get("team",""), b.get("team","")],
+                "probs": [a.get("model_hr_pct",0), b.get("model_hr_pct",0)],
+                "same_game": a.get("team","") != b.get("team","") and False,  # placeholder
+                "combined_prob": round(pA * pB * 100, 4),
+                "n_legs": 2,
+                "source": "auto",
+                "both_hit": None,
+            })
+        # 3-leg combos — top 10 only to keep file manageable
+        top10 = top[:10]
+        for a, b, c in itertools.combinations(top10, 3):
+            pA = a.get("model_hr_pct", 0) / 100
+            pB = b.get("model_hr_pct", 0) / 100
+            pC = c.get("model_hr_pct", 0) / 100
+            combos.append({
+                "legs": [a["player_name"], b["player_name"], c["player_name"]],
+                "teams": [a.get("team",""), b.get("team",""), c.get("team","")],
+                "probs": [a.get("model_hr_pct",0), b.get("model_hr_pct",0), c.get("model_hr_pct",0)],
+                "combined_prob": round(pA * pB * pC * 100, 6),
+                "n_legs": 3,
+                "source": "auto",
+                "both_hit": None,
+            })
+
+        path = f"data/parlays/{today}.json"
+        _, sha = await github_get_file(path)
+        await github_put_file(path, json.dumps({"date": today, "combos": combos}, indent=2),
+                              f"parlays: {today} ({len(combos)} combos)", sha)
+        print(f"Saved {len(combos)} parlay combos for {today} ({len(top)} picks)")
+    except Exception as e:
+        print(f"save_parlay_combinations error: {e}")
+        import traceback; traceback.print_exc()
+
+
+async def record_parlay_results(target_date: str):
+    """Patch both_hit into parlay combos using HR results already recorded."""
+    if not GITHUB_TOKEN: return
+    import json
+    path = f"data/parlays/{target_date}.json"
+    content, sha = await github_get_file(path)
+    if not content: return
+    try:
+        data = json.loads(content)
+        combos = data.get("combos", [])
+        # Get individual results from predictions file
+        pred_path = f"data/predictions/{target_date}.json"
+        pred_content, _ = await github_get_file(pred_path)
+        if not pred_content: return
+        preds = json.loads(pred_content)
+        # Build name → hit_hr map
+        hit_map = {r["player_name"]: r.get("hit_hr") for r in preds if r.get("player_name")}
+        updated = 0
+        for combo in combos:
+            if combo.get("both_hit") is not None: continue
+            hits = [hit_map.get(leg) for leg in combo["legs"]]
+            if any(h is None for h in hits): continue  # not all results in yet
+            combo["both_hit"] = 1 if all(h == 1 for h in hits) else 0
+            updated += 1
+        if updated:
+            await github_put_file(path, json.dumps(data, indent=2),
+                                  f"parlay results: {target_date} ({updated} updated)", sha)
+            print(f"Parlay results recorded: {updated} combos for {target_date}")
+    except Exception as e:
+        print(f"record_parlay_results error: {e}")
 
 def run_async(coro):
     loop = asyncio.new_event_loop()
@@ -3719,6 +3817,60 @@ async def get_games(date: str = None, refresh: bool = False):
 
 
 
+
+@app.get("/parlay-results")
+async def parlay_results(date: str = None):
+    """Show parlay combination outcomes — hit rates for 2 and 3-leg combos."""
+    import json
+    if not GITHUB_TOKEN:
+        return {"error": "No GitHub token"}
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(
+                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/parlays",
+                headers={"Authorization": f"token {GITHUB_TOKEN}"}
+            )
+        if r.status_code != 200:
+            return {"error": "No parlay data yet — tracking starts today", "all_time": {"two_leg_combos":0,"three_leg_combos":0,"two_leg_hit_rate":"--","three_leg_hit_rate":"--"}}
+        files = r.json()
+        all_combos = []
+        target = date or datetime.now().strftime("%Y-%m-%d")
+        today_combos = []
+        for f in sorted(files, key=lambda x: x["name"], reverse=True)[:30]:
+            content, _ = await github_get_file(f"data/parlays/{f["name"]}")
+            if not content: continue
+            data = json.loads(content)
+            combos = data.get("combos", [])
+            all_combos.extend(combos)
+            if f["name"].replace(".json","") == target:
+                today_combos = combos
+        completed = [c for c in all_combos if c.get("both_hit") is not None]
+        two_leg   = [c for c in completed if c.get("n_legs")==2]
+        three_leg = [c for c in completed if c.get("n_legs")==3]
+        two_hits   = [c for c in two_leg   if c.get("both_hit")==1]
+        three_hits = [c for c in three_leg if c.get("both_hit")==1]
+        best = sorted([c for c in completed if c.get("both_hit")==1], key=lambda c: c.get("n_legs",0)*100+sum(c.get("probs",[])), reverse=True)
+        today_done = [c for c in today_combos if c.get("both_hit") is not None]
+        today_hits = [c for c in today_done if c.get("both_hit")==1]
+        return {
+            "date": target,
+            "today": {
+                "two_leg_combos": len([c for c in today_combos if c.get("n_legs")==2]),
+                "three_leg_combos": len([c for c in today_combos if c.get("n_legs")==3]),
+                "two_leg_hits": len([c for c in today_hits if c.get("n_legs")==2]),
+                "three_leg_hits": len([c for c in today_hits if c.get("n_legs")==3]),
+            },
+            "all_time": {
+                "two_leg_combos": len(two_leg),
+                "three_leg_combos": len(three_leg),
+                "two_leg_hit_rate": f"{len(two_hits)/len(two_leg)*100:.1f}%" if two_leg else "--",
+                "three_leg_hit_rate": f"{len(three_hits)/len(three_leg)*100:.1f}%" if three_leg else "--",
+                "days_tracked": len(files),
+            },
+            "best_combos": best[:5],
+        }
+    except Exception as e:
+        return {"error": str(e)}
 @app.get("/coverage-check")
 async def coverage_check():
     """
