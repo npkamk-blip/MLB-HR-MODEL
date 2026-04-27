@@ -2096,6 +2096,46 @@ def get_batter_pitch_rv(batter_name, pitch_code):
             return gs(row, "run_value_per_100")
     return None
 
+
+def get_batter_pitch_splits(batter_name: str) -> list:
+    """Return season pitch-type splits for a batter from bat_arsenal.
+    Each entry: {pitch_type, pitch_name, pa, hr, slg, avg, whiff_pct, run_value_per_100}
+    Used as fallback when contact log sample is too small (<20 ABs).
+    """
+    df = _cache["bat_arsenal"]
+    if df.empty:
+        return []
+    last = batter_name.split()[-1].lower()
+    matches = df[df["name"].str.lower().str.contains(last, na=False)]
+    if matches.empty:
+        return []
+    splits = []
+    seen = set()
+    for _, row in matches.iterrows():
+        pt = str(row.get("pitch_type", "")).upper()
+        if not pt or pt in seen:
+            continue
+        seen.add(pt)
+        code = PITCH_TYPE_MAP.get(pt)
+        pa  = int(gs(row, "pa") or 0)
+        if pa < 3:
+            continue
+        usage = gs(row, "pitch_usage") or 0
+        if usage <= 1:
+            usage = round(usage * 100, 1)
+        splits.append({
+            "pitch_type":  pt,
+            "pitch_name":  row.get("pitch_name") or PITCH_DISPLAY.get(code, pt),
+            "pa":          pa,
+            "hr":          int(gs(row, "home_run") or gs(row, "hr") or 0),
+            "slg":         round(float(gs(row, "slg_percent") or gs(row, "slg") or 0), 3),
+            "avg":         round(float(gs(row, "batting_avg") or gs(row, "avg") or 0), 3),
+            "whiff_pct":   round(float(gs(row, "whiff_percent") or gs(row, "whiff_pct") or 0), 1),
+            "run_value":   round(float(gs(row, "run_value_per_100") or 0), 2),
+            "usage":       round(usage, 1),
+        })
+    splits.sort(key=lambda x: x["pa"], reverse=True)
+    return splits
 def compute_pitch_matchup(pitcher_name, batter_name):
     top_pitches = get_pitcher_top_pitches(pitcher_name)
     if not top_pitches:
@@ -3558,6 +3598,7 @@ async def get_games(date: str = None, refresh: bool = False):
                 "dk_odds": fmt_odds(match_dk_odds(name, dk_props)),
                 "projected": is_proj, "platoon_tag": platoon_tag,
                 "contact_log": get_contact_log(name),
+                "pitch_splits": get_batter_pitch_splits(name),
                 "breakdown": breakdown,
             })
 
