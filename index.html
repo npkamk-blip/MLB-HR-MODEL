@@ -235,11 +235,9 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 </header>
 <div class="tabs">
   <button class="tab active" onclick="switchTab('batters',this)">Batters</button>
-  <button class="tab" onclick="switchTab('pitchers',this)">Pitchers</button>
-  <button class="tab" onclick="switchTab('games',this)">Games</button>
+  <button class="tab" onclick="switchTab('parlays',this)">Parlays</button>
   <button class="tab" onclick="switchTab('history',this)">History</button>
   <button class="tab" onclick="switchTab('model',this)">Model</button>
-  <button class="tab" onclick="switchTab('research',this)">Research</button>
 </div>
 
 <div id="batters-panel" class="tab-panel active">
@@ -247,14 +245,37 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
     <div id="batter-main"><div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div></div>
   </div>
 </div>
-<div id="pitchers-panel" class="tab-panel">
-  <div class="container">
-    <div id="pitcher-main"><div class="no-data">Load data first</div></div>
-  </div>
+<!-- pitchers-panel hidden — adding back later -->
+<div id="pitchers-panel" style="display:none">
+  <div class="container"><div id="pitcher-main"></div></div>
 </div>
-<div id="games-panel" class="tab-panel">
-  <div class="container">
-    <div id="game-main"><div class="no-data">Load data first</div></div>
+<!-- games-panel hidden — adding back later -->
+<div id="games-panel" style="display:none">
+  <div class="container"><div id="game-main"></div></div>
+</div>
+<!-- parlays-panel — data collection running, UI coming soon -->
+<div id="parlays-panel" class="tab-panel">
+  <div class="container" style="max-width:700px;margin:60px auto;text-align:center;padding:40px 20px">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:800;color:var(--accent);letter-spacing:.04em">PARLAYS</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:8px;margin-bottom:32px">Coming soon — combination engine in training</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px">
+      <div style="font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px">What's being built</div>
+      <div style="display:flex;flex-direction:column;gap:12px;text-align:left">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="font-size:18px">⚡</div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--text)">Parlay Builder</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Pick any player — Sharp finds the best legs to add. Not a list. A reason.</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="font-size:18px">🧠</div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--text)">Combination Learning</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Every day the model saves every 2 and 3-leg combination and tracks what hits. Real correlation data, not guesswork.</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="font-size:18px">📈</div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--text)">Daily Card</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Top plays in plain English. Best 2-leg. Best 3-leg. Best 5-leg shot. Every morning.</div></div>
+        </div>
+      </div>
+    </div>
+    <div id="parlay-combo-count" style="font-size:11px;color:var(--muted2)">Loading combination data...</div>
   </div>
 </div>
 <div id="history-panel" class="tab-panel">
@@ -267,7 +288,7 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
     <div id="model-main"><div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div></div>
   </div>
 </div>
-<div id="research-panel" class="tab-panel">
+<div id="research-panel" style="display:none">
   <div class="container">
     <div class="search-row">
       <input class="search-input" id="searchInput" placeholder="Search player name..." onkeydown="if(event.key==='Enter')searchPlayer()">
@@ -296,8 +317,25 @@ function switchTab(id,btn){
   btn.classList.add('active');
   if(id==='history'&&!historyData) loadHistory();
   if(id==='model') loadModelTab();
+  if(id==='parlays') loadParlayTab();
 }
 
+async function loadParlayTab(){
+  var el=document.getElementById("parlay-combo-count");
+  try{
+    var r=await fetch(API+"/parlay-results");
+    var d=await r.json();
+    if(d.error){el.innerHTML="<span style="color:var(--muted2)">Combination tracking starts today — check back tomorrow</span>";return;}
+    var all2=d.all_time&&d.all_time.two_leg_combos||0;
+    var all3=d.all_time&&d.all_time.three_leg_combos||0;
+    var hr2=d.all_time&&d.all_time.two_leg_hit_rate||"--";
+    var hr3=d.all_time&&d.all_time.three_leg_hit_rate||"--";
+    el.innerHTML="<div style="display:flex;justify-content:center;gap:32px;margin-top:8px">";
+    el.innerHTML+="<div style="text-align:center"><div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:var(--accent)">"+all2+"</div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">2-leg combos tracked</div><div style="font-size:11px;color:var(--g);margin-top:2px">"+hr2+" hit rate</div></div>";
+    el.innerHTML+="<div style="text-align:center"><div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:var(--accent)">"+all3+"</div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">3-leg combos tracked</div><div style="font-size:11px;color:var(--g);margin-top:2px">"+hr3+" hit rate</div></div>";
+    el.innerHTML+="</div>";
+  }catch(e){el.innerHTML="<span style="color:var(--muted2)">Combination tracking starting soon</span>";}
+}
 async function reloadContact(){
   try{
     var r=await fetch(API+'/reload-contact');
