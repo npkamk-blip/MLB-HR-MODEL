@@ -962,10 +962,10 @@ function buildBatDetail(b){
         out+='</div>';
       });
     } else {
-      // Season splits columns: Pitch | SLG bar | HR | PA | Pit uses
-      out+='<div style="display:grid;grid-template-columns:85px 1fr 32px 38px 58px;gap:4px;padding:0 0 5px 0;border-bottom:1px solid var(--border2);margin-bottom:3px">';
+      // Season splits columns: Pitch | SLG bar | Whiff% | PA | Pit uses
+      out+='<div style="display:grid;grid-template-columns:85px 1fr 48px 38px 58px;gap:4px;padding:0 0 5px 0;border-bottom:1px solid var(--border2);margin-bottom:3px">';
       out+='<div style="font-size:9px;color:var(--muted2)">Pitch</div><div style="font-size:9px;color:var(--muted2)">SLG</div>';
-      out+='<div style="font-size:9px;color:var(--muted2);text-align:center">HR</div>';
+      out+='<div style="font-size:9px;color:var(--muted2);text-align:center">Whiff%</div>';
       out+='<div style="font-size:9px;color:var(--muted2);text-align:center">PA</div>';
       out+='<div style="font-size:9px;color:var(--muted2);text-align:right">Pit uses</div></div>';
       rows.forEach(function(row){
@@ -973,15 +973,17 @@ function buildBatDetail(b){
         var slgColor=slg>=0.600?'var(--accent)':slg>=0.450?'var(--g)':slg>=0.350?'var(--y)':'var(--muted)';
         var slgBarW=slg>0?Math.min(Math.round(slg/0.800*100),100):0;
         var slgStr=slg>0?'.'+String(Math.round(slg*1000)).padStart(3,'0'):'--';
-        var hrColor=row.hr>=3?'var(--accent)':row.hr>=1?'var(--g)':'var(--muted2)';
+        var whiff=row.whiff||0;
+        var whiffColor=whiff>=35?'var(--g)':whiff>=25?'var(--y)':'var(--muted2)';
+        var whiffStr=whiff>0?whiff.toFixed(0)+'%':'--';
         var usageStr=row.usage>0?row.usage.toFixed(0)+'%':'—';
         var usageCls=row.usage>=40?'var(--r)':row.usage>=20?'var(--y)':'var(--muted2)';
         var threat=slg>=0.550&&row.usage>=25;
-        out+='<div style="display:grid;grid-template-columns:85px 1fr 32px 38px 58px;gap:4px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border2)'+(threat?';background:rgba(200,241,53,.04)':'')+';">';
+        out+='<div style="display:grid;grid-template-columns:85px 1fr 48px 38px 58px;gap:4px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border2)'+(threat?';background:rgba(200,241,53,.04)':'')+';">';
         out+='<div style="font-size:11px;font-weight:600;color:'+(threat?'var(--accent)':'var(--text)')+'">'+row.pt+(threat?' ⚡':'')+'</div>';
         out+='<div style="display:flex;align-items:center;gap:5px"><div style="flex:1;height:4px;background:var(--border2);border-radius:2px;overflow:hidden"><div style="width:'+slgBarW+'%;height:100%;background:'+slgColor+';border-radius:2px"></div></div>';
         out+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;color:'+slgColor+';min-width:36px">'+slgStr+'</div></div>';
-        out+='<div style="text-align:center;font-size:11px;font-weight:700;color:'+hrColor+'">'+row.hr+'</div>';
+        out+='<div style="text-align:center;font-size:11px;font-weight:600;color:'+whiffColor+'">'+whiffStr+'</div>';
         out+='<div style="text-align:center;font-size:11px;color:var(--muted2)">'+row.count+'</div>';
         out+='<div style="text-align:right"><span style="font-size:11px;font-weight:700;color:'+usageCls+'">'+usageStr+'</span></div>';
         out+='</div>';
