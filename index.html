@@ -856,130 +856,177 @@ function buildBatDetail(b){
   h+='</div>'; // left col
 
   // ── RIGHT: Pitch Vulnerability Map ──
-  var pitchMap={};
-  // Aggregate contact log by pitch type
-  clog.forEach(function(e){
-    var pt=(e.pitch_type||'Other').replace(/_/g,' ');
-    if(!pitchMap[pt])pitchMap[pt]={count:0,evSum:0,evMax:0,hrCount:0,xbhCount:0,goodAngle:0,events:[]};
-    pitchMap[pt].count++;
-    if(e.ev>0){pitchMap[pt].evSum+=e.ev;pitchMap[pt].evMax=Math.max(pitchMap[pt].evMax,e.ev);}
-    if(e.result==='home_run')pitchMap[pt].hrCount++;
-    if(e.result==='double'||e.result==='triple')pitchMap[pt].xbhCount++;
-    if(e.angle>=18&&e.angle<=38)pitchMap[pt].goodAngle++;
-    pitchMap[pt].events.push(e);
-  });
-
-  // Pitcher's arsenal
+  // Build pitcher arsenal lookup
   var arsenal=(pitP.top_pitches||[]);
   var arsenalMap={};
   arsenal.forEach(function(a){
-    // Normalize pitch names for matching
-    var name=a.name.toLowerCase();
+    var nm=a.name.toLowerCase();
     arsenalMap[a.name]=a.usage;
-    // also store simplified key
-    if(name.includes('4-seam')||name.includes('fastball'))arsenalMap['4-Seam']=a.usage;
-    else if(name.includes('sinker')||name.includes('2-seam'))arsenalMap['Sinker']=a.usage;
-    else if(name.includes('slider'))arsenalMap['Slider']=a.usage;
-    else if(name.includes('curve'))arsenalMap['Curve']=a.usage;
-    else if(name.includes('change'))arsenalMap['Changeup']=a.usage;
-    else if(name.includes('cutter')||name.includes('cut'))arsenalMap['Cutter']=a.usage;
-    else if(name.includes('sweep'))arsenalMap['Sweeper']=a.usage;
-    else if(name.includes('splitter'))arsenalMap['Splitter']=a.usage;
+    if(nm.includes('4-seam')||nm.includes('fastball')){arsenalMap['4-Seam']=a.usage;arsenalMap['FF']=a.usage;arsenalMap['FA']=a.usage;}
+    else if(nm.includes('sinker')||nm.includes('2-seam')){arsenalMap['Sinker']=a.usage;arsenalMap['SI']=a.usage;}
+    else if(nm.includes('sweep')){arsenalMap['Sweeper']=a.usage;arsenalMap['ST']=a.usage;}
+    else if(nm.includes('slider')){arsenalMap['Slider']=a.usage;arsenalMap['SL']=a.usage;}
+    else if(nm.includes('curve')){arsenalMap['Curve']=a.usage;arsenalMap['CU']=a.usage;arsenalMap['KC']=a.usage;}
+    else if(nm.includes('change')){arsenalMap['Changeup']=a.usage;arsenalMap['CH']=a.usage;}
+    else if(nm.includes('cutter')||nm.includes('cut')){arsenalMap['Cutter']=a.usage;arsenalMap['FC']=a.usage;}
+    else if(nm.includes('split')){arsenalMap['Splitter']=a.usage;arsenalMap['FS']=a.usage;}
   });
 
-  // Merge: for each pitch type batter saw, find pitcher usage
-  var pitchRows=Object.entries(pitchMap).map(function(e){
-    var pt=e[0],pm=e[1];
-    var avgEv=pm.count>0&&pm.evSum>0?pm.evSum/pm.count:0;
-    // Find pitcher usage — try exact match then fuzzy
-    var usage=arsenalMap[pt]||0;
-    if(!usage){
+  function getPitUsage(ptName){
+    var u=arsenalMap[ptName]||0;
+    if(!u){
+      var pn=ptName.toLowerCase();
       Object.keys(arsenalMap).forEach(function(ak){
-        if(ak.toLowerCase().includes(pt.toLowerCase())||pt.toLowerCase().includes(ak.toLowerCase()))usage=arsenalMap[ak];
+        if(ak.toLowerCase().includes(pn.split(' ')[0])||pn.includes(ak.toLowerCase().split(' ')[0]))u=u||arsenalMap[ak];
       });
     }
-    return{pt:pt,count:pm.count,avgEv:avgEv,maxEv:pm.evMax,hrCount:pm.hrCount,xbhCount:pm.xbhCount,goodAngle:pm.goodAngle,usage:usage,events:pm.events};
-  }).sort(function(a,b){return b.count-a.count;});
+    return u;
+  }
 
+  // ── Decide: live contact map (≥20 ABs) vs season splits fallback ──
+  var totalClogABs = clog.length;
+  var pitchSplits  = b._full.pitch_splits||[];
+  var useLive      = totalClogABs >= 20;
   var rightH='';
-  rightH+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">';
-  rightH+='<span>Pitch Vulnerability</span>';
-  rightH+='<span style="color:var(--muted2);font-weight:400">vs tonight\'s pitcher</span>';
-  rightH+='</div>';
 
-  if(pitchRows.length===0){
-    rightH+='<div style="color:var(--muted2);font-size:11px;padding:20px 0;text-align:center">No contact data yet — updates after refresh</div>';
-  } else {
-    // Column headers
-    rightH+='<div style="display:grid;grid-template-columns:80px 1fr 44px 44px 60px;gap:4px;padding:0 0 6px 0;border-bottom:1px solid var(--border2);margin-bottom:4px">';
-    rightH+='<div style="font-size:9px;color:var(--muted2)">Pitch</div>';
-    rightH+='<div style="font-size:9px;color:var(--muted2)">Avg EV</div>';
-    rightH+='<div style="font-size:9px;color:var(--muted2);text-align:center">HR/XBH</div>';
-    rightH+='<div style="font-size:9px;color:var(--muted2);text-align:center">ABs</div>';
-    rightH+='<div style="font-size:9px;color:var(--muted2);text-align:right">Pit uses</div>';
-    rightH+='</div>';
-
-    pitchRows.forEach(function(row){
-      var avgEv=row.avgEv;
-      var evColor=avgEv>=100?'var(--accent)':avgEv>=95?'var(--g)':avgEv>=88?'var(--y)':'var(--muted)';
-      var evBarW=avgEv>0?Math.min(Math.round((avgEv-70)/40*100),100):0;
-      var hasHR=row.hrCount>0;
-      var hasXBH=row.xbhCount>0;
-      var resultStr=(row.hrCount>0?row.hrCount+'HR':'')+(row.xbhCount>0?(row.hrCount>0?' ':'')+(row.xbhCount)+'XBH':'');
-      if(!resultStr)resultStr='0';
-      var resultColor=hasHR?'var(--accent)':hasXBH?'var(--g)':'var(--muted2)';
-      // Pitcher usage badge
-      var usageStr=row.usage>0?row.usage.toFixed(0)+'%':'—';
-      var usageCls=row.usage>=40?'var(--r)':row.usage>=20?'var(--y)':'var(--muted2)';
-      // Threat level: high EV + pitcher throws it a lot = danger
-      var threat=avgEv>=95&&row.usage>=30;
-      var safe=avgEv<85&&row.usage>=20;
-      rightH+='<div style="display:grid;grid-template-columns:80px 1fr 44px 44px 60px;gap:4px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border2)'+(threat?';background:rgba(200,241,53,.04);border-radius:4px':safe?';background:rgba(255,77,77,.03)':'')+';">';
-      // Pitch name + threat indicator
-      rightH+='<div style="font-size:11px;font-weight:600;color:'+(threat?'var(--accent)':safe?'var(--muted)':'var(--text)')+'">'+row.pt+(threat?' ⚡':'')+'</div>';
-      // EV bar
-      rightH+='<div style="display:flex;align-items:center;gap:5px">';
-      rightH+='<div style="flex:1;height:4px;background:var(--border2);border-radius:2px;overflow:hidden"><div style="width:'+evBarW+'%;height:100%;background:'+evColor+';border-radius:2px"></div></div>';
-      rightH+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;color:'+evColor+';min-width:34px">'+(avgEv>0?avgEv.toFixed(0):'--')+'</div>';
-      rightH+='</div>';
-      // HR/XBH
-      rightH+='<div style="text-align:center;font-size:11px;font-weight:700;color:'+resultColor+'">'+resultStr+'</div>';
-      // AB count
-      rightH+='<div style="text-align:center;font-size:11px;color:var(--muted2)">'+row.count+'</div>';
-      // Pitcher usage
-      rightH+='<div style="text-align:right"><span style="font-size:11px;font-weight:700;color:'+usageCls+'">'+usageStr+'</span></div>';
-      rightH+='</div>';
+  if(useLive){
+    // ── LIVE: aggregate contact log by pitch type ──
+    var pitchMap={};
+    clog.forEach(function(e){
+      var pt=(e.pitch_type||'Other').replace(/_/g,' ');
+      if(!pitchMap[pt])pitchMap[pt]={count:0,evSum:0,hrCount:0,xbhCount:0};
+      pitchMap[pt].count++;
+      if(e.ev>0)pitchMap[pt].evSum+=e.ev;
+      if(e.result==='home_run')pitchMap[pt].hrCount++;
+      if(e.result==='double'||e.result==='triple')pitchMap[pt].xbhCount++;
     });
+    var pitchRows=Object.entries(pitchMap).map(function(e){
+      var pt=e[0],pm=e[1];
+      var avgEv=pm.count>0&&pm.evSum>0?pm.evSum/pm.count:0;
+      var usage=getPitUsage(pt);
+      return{pt:pt,count:pm.count,avgEv:avgEv,hrCount:pm.hrCount,xbhCount:pm.xbhCount,usage:usage,mode:'live'};
+    }).sort(function(a,b){return b.count-a.count;});
 
-    // Pitcher pitches not seen by batter yet
-    var seenTypes=pitchRows.map(function(r){return r.pt.toLowerCase();});
+    rightH+=buildPitchVulnHeader('Pitch Vulnerability','Live · '+totalClogABs+' ABs',false);
+    rightH+=buildPitchVulnRows(pitchRows,arsenal,'live');
+    rightH+=buildPitchVulnVerdict(pitchRows,'live');
+
+  } else if(pitchSplits.length>0){
+    // ── SEASON SPLITS FALLBACK ──
+    var splitRows=pitchSplits.map(function(sp){
+      var usage=getPitUsage(sp.pitch_name)||getPitUsage(sp.pitch_type)||0;
+      return{pt:sp.pitch_name||sp.pitch_type,count:sp.pa,slg:sp.slg,hr:sp.hr,whiff:sp.whiff_pct,rv:sp.run_value,usage:usage,mode:'season'};
+    }).sort(function(a,b){return b.count-a.count;});
+
+    rightH+=buildPitchVulnHeader('Pitch Vulnerability','Season splits · small recent sample',true);
+    rightH+=buildPitchVulnRows(splitRows,arsenal,'season');
+    rightH+=buildPitchVulnVerdict(splitRows,'season');
+
+  } else {
+    rightH+=buildPitchVulnHeader('Pitch Vulnerability','vs tonight\'s pitcher',false);
+    rightH+='<div style="color:var(--muted2);font-size:11px;padding:20px 0;text-align:center">No pitch data yet — updates after next refresh</div>';
+  }
+
+  function buildPitchVulnHeader(title,sub,isSeason){
+    return '<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">'
+      +'<span>'+title+'</span>'
+      +'<span style="font-weight:400;color:'+(isSeason?'var(--y)':'var(--muted2)')+'">'+sub+'</span></div>';
+  }
+
+  function buildPitchVulnRows(rows,arsenal,mode){
+    var out='';
+    // Column headers — different for live vs season
+    if(mode==='live'){
+      out+='<div style="display:grid;grid-template-columns:85px 1fr 52px 38px 58px;gap:4px;padding:0 0 5px 0;border-bottom:1px solid var(--border2);margin-bottom:3px">';
+      out+='<div style="font-size:9px;color:var(--muted2)">Pitch</div><div style="font-size:9px;color:var(--muted2)">Avg EV</div>';
+      out+='<div style="font-size:9px;color:var(--muted2);text-align:center">HR/XBH</div>';
+      out+='<div style="font-size:9px;color:var(--muted2);text-align:center">ABs</div>';
+      out+='<div style="font-size:9px;color:var(--muted2);text-align:right">Pit uses</div></div>';
+      rows.forEach(function(row){
+        var avgEv=row.avgEv||0;
+        var evColor=avgEv>=100?'var(--accent)':avgEv>=95?'var(--g)':avgEv>=88?'var(--y)':'var(--muted)';
+        var evBarW=avgEv>0?Math.min(Math.round((avgEv-70)/40*100),100):0;
+        var resultStr=(row.hrCount>0?row.hrCount+'HR':'')+(row.xbhCount>0?(row.hrCount>0?' ':'')+row.xbhCount+'XBH':'');
+        if(!resultStr)resultStr='0';
+        var resultColor=row.hrCount>0?'var(--accent)':row.xbhCount>0?'var(--g)':'var(--muted2)';
+        var usageStr=row.usage>0?row.usage.toFixed(0)+'%':'—';
+        var usageCls=row.usage>=40?'var(--r)':row.usage>=20?'var(--y)':'var(--muted2)';
+        var threat=avgEv>=95&&row.usage>=30;
+        out+='<div style="display:grid;grid-template-columns:85px 1fr 52px 38px 58px;gap:4px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border2)'+(threat?';background:rgba(200,241,53,.04)':'')+';">';
+        out+='<div style="font-size:11px;font-weight:600;color:'+(threat?'var(--accent)':'var(--text)')+'">'+row.pt+(threat?' ⚡':'')+'</div>';
+        out+='<div style="display:flex;align-items:center;gap:5px"><div style="flex:1;height:4px;background:var(--border2);border-radius:2px;overflow:hidden"><div style="width:'+evBarW+'%;height:100%;background:'+evColor+';border-radius:2px"></div></div>';
+        out+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;color:'+evColor+';min-width:30px">'+(avgEv>0?avgEv.toFixed(0):'--')+'</div></div>';
+        out+='<div style="text-align:center;font-size:11px;font-weight:700;color:'+resultColor+'">'+resultStr+'</div>';
+        out+='<div style="text-align:center;font-size:11px;color:var(--muted2)">'+row.count+'</div>';
+        out+='<div style="text-align:right"><span style="font-size:11px;font-weight:700;color:'+usageCls+'">'+usageStr+'</span></div>';
+        out+='</div>';
+      });
+    } else {
+      // Season splits columns: Pitch | SLG bar | HR | PA | Pit uses
+      out+='<div style="display:grid;grid-template-columns:85px 1fr 32px 38px 58px;gap:4px;padding:0 0 5px 0;border-bottom:1px solid var(--border2);margin-bottom:3px">';
+      out+='<div style="font-size:9px;color:var(--muted2)">Pitch</div><div style="font-size:9px;color:var(--muted2)">SLG</div>';
+      out+='<div style="font-size:9px;color:var(--muted2);text-align:center">HR</div>';
+      out+='<div style="font-size:9px;color:var(--muted2);text-align:center">PA</div>';
+      out+='<div style="font-size:9px;color:var(--muted2);text-align:right">Pit uses</div></div>';
+      rows.forEach(function(row){
+        var slg=row.slg||0;
+        var slgColor=slg>=0.600?'var(--accent)':slg>=0.450?'var(--g)':slg>=0.350?'var(--y)':'var(--muted)';
+        var slgBarW=slg>0?Math.min(Math.round(slg/0.800*100),100):0;
+        var slgStr=slg>0?'.'+String(Math.round(slg*1000)).padStart(3,'0'):'--';
+        var hrColor=row.hr>=3?'var(--accent)':row.hr>=1?'var(--g)':'var(--muted2)';
+        var usageStr=row.usage>0?row.usage.toFixed(0)+'%':'—';
+        var usageCls=row.usage>=40?'var(--r)':row.usage>=20?'var(--y)':'var(--muted2)';
+        var threat=slg>=0.550&&row.usage>=25;
+        out+='<div style="display:grid;grid-template-columns:85px 1fr 32px 38px 58px;gap:4px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border2)'+(threat?';background:rgba(200,241,53,.04)':'')+';">';
+        out+='<div style="font-size:11px;font-weight:600;color:'+(threat?'var(--accent)':'var(--text)')+'">'+row.pt+(threat?' ⚡':'')+'</div>';
+        out+='<div style="display:flex;align-items:center;gap:5px"><div style="flex:1;height:4px;background:var(--border2);border-radius:2px;overflow:hidden"><div style="width:'+slgBarW+'%;height:100%;background:'+slgColor+';border-radius:2px"></div></div>';
+        out+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;color:'+slgColor+';min-width:36px">'+slgStr+'</div></div>';
+        out+='<div style="text-align:center;font-size:11px;font-weight:700;color:'+hrColor+'">'+row.hr+'</div>';
+        out+='<div style="text-align:center;font-size:11px;color:var(--muted2)">'+row.count+'</div>';
+        out+='<div style="text-align:right"><span style="font-size:11px;font-weight:700;color:'+usageCls+'">'+usageStr+'</span></div>';
+        out+='</div>';
+      });
+    }
+    // Pitcher pitches not seen
+    var seenTypes=rows.map(function(r){return r.pt.toLowerCase();});
     var unseenPitches=arsenal.filter(function(a){
-      var name=a.name.toLowerCase();
-      return !seenTypes.some(function(s){return s.includes(name.split(' ')[0])||name.includes(s.split(' ')[0]);});
+      var nm=a.name.toLowerCase();
+      return !seenTypes.some(function(s){return s.includes(nm.split(' ')[0])||nm.includes(s.split(' ')[0]);});
     });
     if(unseenPitches.length){
-      rightH+='<div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--border2)">';
-      rightH+='<div style="font-size:9px;color:var(--muted2);margin-bottom:4px">Not yet seen from tonight\'s pitcher:</div>';
-      rightH+='<div style="display:flex;gap:4px;flex-wrap:wrap">';
+      out+='<div style="margin-top:7px;padding-top:5px;border-top:1px solid var(--border2)">';
+      out+='<div style="font-size:9px;color:var(--muted2);margin-bottom:3px">Also in pitcher\'s arsenal:</div>';
+      out+='<div style="display:flex;gap:3px;flex-wrap:wrap">';
       unseenPitches.forEach(function(a){
-        rightH+='<span style="font-size:10px;background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--muted)">'+a.name+' '+a.usage+'%</span>';
+        out+='<span style="font-size:10px;background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:2px 6px;color:var(--muted)">'+a.name+' '+a.usage+'%</span>';
       });
-      rightH+='</div></div>';
+      out+='</div></div>';
     }
+    return out;
+  }
 
-    // Summary verdict
-    var topThreat=pitchRows.filter(function(r){return r.avgEv>=95&&r.usage>=25;});
-    var topSafe=pitchRows.filter(function(r){return r.avgEv<85&&r.usage>=20;});
-    if(topThreat.length||topSafe.length){
-      rightH+='<div style="margin-top:10px;padding:7px 10px;background:var(--s2);border-radius:6px;border:1px solid var(--border)">';
-      if(topThreat.length){
-        rightH+='<div style="font-size:10px;color:var(--accent);font-weight:600">⚡ Danger pitch: '+topThreat.map(function(r){return r.pt+' ('+r.avgEv.toFixed(0)+' EV avg, '+r.usage.toFixed(0)+'% usage)';}).join(', ')+'</div>';
-      }
-      if(topSafe.length){
-        rightH+='<div style="font-size:10px;color:var(--muted);margin-top:3px">🛡 Weak vs: '+topSafe.map(function(r){return r.pt;}).join(', ')+'</div>';
-      }
-      rightH+='</div>';
+  function buildPitchVulnVerdict(rows,mode){
+    var topThreat,topSafe;
+    if(mode==='live'){
+      topThreat=rows.filter(function(r){return (r.avgEv||0)>=95&&r.usage>=25;});
+      topSafe=rows.filter(function(r){return (r.avgEv||0)<85&&r.usage>=20;});
+    } else {
+      topThreat=rows.filter(function(r){return (r.slg||0)>=0.550&&r.usage>=25;});
+      topSafe=rows.filter(function(r){return (r.slg||0)<0.300&&r.usage>=20;});
     }
+    if(!topThreat.length&&!topSafe.length)return '';
+    var out='<div style="margin-top:8px;padding:6px 10px;background:var(--s2);border-radius:6px;border:1px solid var(--border)">';
+    if(topThreat.length){
+      var desc=mode==='live'
+        ?topThreat.map(function(r){return r.pt+' ('+((r.avgEv||0).toFixed(0))+' EV, '+r.usage.toFixed(0)+'% usage)';}).join(', ')
+        :topThreat.map(function(r){return r.pt+' (.'+String(Math.round((r.slg||0)*1000)).padStart(3,'0')+' SLG, '+r.usage.toFixed(0)+'% usage)';}).join(', ');
+      out+='<div style="font-size:10px;color:var(--accent);font-weight:600">⚡ Danger: '+desc+'</div>';
+    }
+    if(topSafe.length){
+      out+='<div style="font-size:10px;color:var(--muted);margin-top:2px">🛡 Weak vs: '+topSafe.map(function(r){return r.pt;}).join(', ')+'</div>';
+    }
+    out+='</div>';
+    return out;
   }
 
   h+='<div style="background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:10px 12px">';
