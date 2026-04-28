@@ -704,9 +704,13 @@ def calc_statcast_8d(df: pd.DataFrame) -> pd.DataFrame:
         swings = grp[grp['bat_speed'].notna() & (grp['bat_speed'] > 0)]
         avg_bat_speed = round(swings['bat_speed'].mean(), 1) if len(swings) > 0 else 0.0
 
-        # Expected stats
-        xwoba = round(contact['estimated_woba_using_speedangle'].dropna().mean(), 3) if n_contact > 0 else 0.0
-        xslg  = round(contact['estimated_slg_using_speedangle'].dropna().mean(), 3) if n_contact > 0 else 0.0
+        # Expected stats — filter zeros to avoid diluting with missing/null Statcast values
+        xwoba_vals = contact['estimated_woba_using_speedangle'].dropna()
+        xwoba_vals = xwoba_vals[xwoba_vals > 0]
+        xwoba = round(float(xwoba_vals.mean()), 3) if len(xwoba_vals) > 0 else 0.0
+        xslg_vals = contact['estimated_slg_using_speedangle'].dropna()
+        xslg_vals = xslg_vals[xslg_vals > 0]
+        xslg  = round(float(xslg_vals.mean()), 3) if len(xslg_vals) > 0 else 0.0
 
         # Pull%
         pull_events = contact[contact['hc_x'].notna()]
@@ -1159,7 +1163,8 @@ async def load_all_savant_data():
         df = await fetch_savant_csv(savant_pitch_arsenal_url("batter", year=current_season(), min_pa=1), client)
         if not df.empty:
             _cache["bat_arsenal"] = parse_player_name(df)
-            print(f"bat_arsenal: {len(_cache['bat_arsenal'])} rows")
+            cols = list(_cache["bat_arsenal"].columns)
+            print(f"bat_arsenal: {len(_cache['bat_arsenal'])} rows | cols: {cols[:15]}")
         else:
             print("bat_arsenal: 0 rows")
 
@@ -2226,9 +2231,9 @@ def get_batter_pitch_splits(batter_name: str) -> list:
             "pitch_name":  row.get("pitch_name") or PITCH_DISPLAY.get(code, pt),
             "pa":          pa,
             "hr":          int(gs(row, "home_run") or gs(row, "hr") or 0),
-            "slg":         round(min(float(gs(row, "slg_percent") or 0), 1.500), 3),
-            "avg":         round(min(float(gs(row, "batting_avg") or 0), 1.000), 3),
-            "whiff_pct":   round(float(gs(row, "whiff_percent") or gs(row, "whiff_pct") or 0), 1),
+            "slg":         round(min(float(gs(row, "slg_percent", "slg", "batting_slg", "avg_slg") or 0), 1.500), 3),
+            "avg":         round(min(float(gs(row, "batting_avg", "ba", "avg", "batting_average") or 0), 1.000), 3),
+            "whiff_pct":   round(float(gs(row, "whiff_percent", "whiff_pct", "whiff", "swing_miss_percent") or 0), 1),
             "run_value":   round(float(gs(row, "run_value_per_100") or 0), 2),
             "usage":       round(usage, 1),
         })
