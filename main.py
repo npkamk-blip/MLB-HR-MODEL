@@ -5,6 +5,7 @@ import pandas as pd
 import io
 import math
 import os
+import json
 import threading
 import asyncio
 import uvicorn
@@ -83,10 +84,11 @@ DEFAULT_WEIGHTS = {
     # New stats
     "chase_rate_w":       1.0,   # batter chase rate — lower = better discipline
     "pit_stuff_plus_w":   1.0,   # pitcher Stuff+ — higher = harder to hit
-    # Active stats list (which 8 are in the model)
+    # Active stats list — updated to current tree features (overwritten on retrain)
     "active_stats": [
-        "barrel_season", "la_season", "pit_hr9_vs_hand",
-        "iso_vs_hand", "park", "weather", "pitch_delta", "bat_platoon"
+        "pit_hard_hit_season", "hard_hit_season", "iso_season",
+        "pit_platoon_mult", "barrel_pct_season", "slg_vs_hand",
+        "k_pct_l8d", "iso_l8d"
     ],
     # Metadata
     "last_calibrated":    None,
@@ -108,7 +110,6 @@ async def load_model_weights():
     content, _ = await github_get_file("data/model_weights.json")
     if content:
         try:
-            import json
             w = json.loads(content)
             _model_weights = {**DEFAULT_WEIGHTS, **w}
             print(f"Loaded model weights — round {w.get('calibration_round',0)}, {w.get('records_used',0)} records")
@@ -119,7 +120,6 @@ async def load_model_weights():
 
 async def save_model_weights(weights_dict, changes=None):
     """Save updated weights to GitHub"""
-    import json
     existing, sha = await github_get_file("data/model_weights.json")
     content = json.dumps(weights_dict, indent=2)
     msg = f"weights: round {weights_dict.get('calibration_round',0)}, {weights_dict.get('records_used',0)} records"
@@ -127,7 +127,6 @@ async def save_model_weights(weights_dict, changes=None):
 
 async def save_model_log(weights_dict):
     """Save daily model log snapshot to GitHub"""
-    import json
     today = date.today().isoformat()
     path = f"data/model_log/{today}.json"
     log = {
@@ -248,7 +247,6 @@ async def recalibrate_model(save_to_github: bool = True):
     save_to_github=False on startup to prevent deploy loop.
     """
     global _model_weights, _dt_model, _dt_features, _dt_medians
-    import json
 
     # ── Load all completed records ──
     all_records = []
@@ -1289,11 +1287,17 @@ async def daily_refresh_loop():
         if et_hour == 12 and not already_ran("12pm_save"):
             try:
                 await save_daily_predictions()
-                mark_ran("12pm_save")
-                await save_parlay_combinations()
                 print("12pm ET: Predictions saved with locked L8D data")
             except Exception as e:
                 print(f"Prediction save error: {e}")
+            finally:
+                mark_ran("12pm_save")
+            # Parlay combos in separate try — failure here shouldn't affect predictions
+            try:
+                await save_parlay_combinations()
+                print("12pm ET: Parlay combinations saved")
+            except Exception as e:
+                print(f"Parlay combo save error: {e}")
 
         # 2am ET — record results (window: 2:00–2:59)
         if et_hour == 2 and not already_ran("2am_results"):
@@ -1390,7 +1394,6 @@ async def save_daily_predictions(force: bool = False):
     # Allow overwrite if hit_hr is still null (predictions not yet recorded)
     # force=True skips the guard entirely (used by /resave-today which handles hit_hr preservation itself)
     if existing and not force:
-        import json
         try:
             ex_recs = json.loads(existing)
             if any(r.get("hit_hr") is not None for r in ex_recs):
@@ -1631,7 +1634,6 @@ async def save_daily_predictions(force: bool = False):
         if not records:
             print(f"No predictions to save for {today}")
             return
-        import json
         content = json.dumps(records, indent=2)
         await github_put_file(path, content, f"predictions: {today} ({len(records)} batters)", sha)
         print(f"Saved {len(records)} predictions for {today}")
@@ -1647,7 +1649,6 @@ async def record_results(target_date: str, force: bool = False):
     if not content:
         print(f"No predictions file found for {target_date}")
         return
-    import json
     try:
         records = json.loads(content)
     except Exception:
@@ -1750,7 +1751,7 @@ async def save_parlay_combinations(target_date: str = None):
     if not content:
         print(f"save_parlay_combinations: no predictions for {today}")
         return
-    import json, itertools
+    import itertools
     try:
         records = json.loads(content)
         # Top picks — 7%+ threshold, max 15 players
@@ -1804,7 +1805,6 @@ async def save_parlay_combinations(target_date: str = None):
 async def record_parlay_results(target_date: str):
     """Patch both_hit into parlay combos using HR results already recorded."""
     if not GITHUB_TOKEN: return
-    import json
     path = f"data/parlays/{target_date}.json"
     content, sha = await github_get_file(path)
     if not content: return
@@ -1876,8 +1876,14 @@ async def startup_catchup():
     1. Check if yesterday results were missed and record them
     2. Check if today predictions not saved yet and save them
     """
-    await asyncio.sleep(60)  # wait for data to load first
-    import json
+    # Wait for cache to be ready — same pattern as startup_train_tree
+    for _ in range(30):
+        await asyncio.sleep(10)
+        if _cache.get("ready"):
+            break
+    else:
+        print("Startup catchup: cache never became ready — skipping")
+        return
 
     # Record yesterday results if missed
     try:
@@ -2341,15 +2347,6 @@ def calc_weather_multiplier(home_team, wind_speed, wind_direction, temperature, 
     else:
         direction_label = "Crosswind"
     return round(wind_mult * temp_mult, 3), direction_label
-
-def sigmoid_to_prob(raw_score):
-    """
-    No sigmoid — direct pass-through with floor and cap.
-    base_rate × batter_score × matchup_score × always_on = hr_prob
-    Floor: 2%, Cap: 15%
-    Transparent math — every output is fully traceable.
-    """
-    return round(min(max(raw_score, 2.0), 15.0), 1)
 
 def safe_mult(value, lg_avg, weight_key="", sample=None, min_sample=0, cap_high=2.50, cap_low=0.30):
     """
@@ -2860,7 +2857,6 @@ async def get_history():
     """Return all historical prediction/result files from GitHub"""
     if not GITHUB_TOKEN:
         return {"error": "GitHub not configured", "records": []}
-    import json
     try:
         # List all files in data/predictions/
         url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions"
@@ -2973,7 +2969,6 @@ async def resave_today_predictions():
     Only updates model_hr_pct and model breakdown fields — never touches hit_hr.
     Use this after pushing a new model/LR calibration mid-day.
     """
-    import json
     if not _cache["ready"]:
         return {"error": "Cache not ready"}
     today = date.today().isoformat()
@@ -3031,7 +3026,6 @@ async def manual_record_results(target_date: str = None, force: bool = True):
 @app.get("/rerecord-all")
 async def rerecord_all_results():
     """Re-run record_results for all prediction files — fixes bad DNP records"""
-    import json
     try:
         async with httpx.AsyncClient(timeout=15) as client:
             r = await client.get(
@@ -3067,7 +3061,6 @@ async def rerecord_all_results():
 @app.get("/verify-results")
 async def verify_results():
     """Show DNP/HR/miss breakdown for all prediction dates with tiered hit rates"""
-    import json
     try:
         async with httpx.AsyncClient(timeout=15) as client:
             r = await client.get(
@@ -3226,7 +3219,6 @@ async def debug_model_state():
     - Sample sizes used in last calibration
     - Correlation values per stat
     """
-    import json
 
     # ── Data source map — where each stat comes from ──
     DATA_SOURCES = {
@@ -3359,7 +3351,7 @@ async def debug_score_distribution():
     Return model% distribution for today's predictions.
     Sigmoid removed April 2026 — model_hr_pct is now the direct output.
     """
-    import json, statistics
+    import statistics
 
     today = date.today().isoformat()
     path = f"data/predictions/{today}.json"
@@ -3489,20 +3481,16 @@ async def reload_contact_get():
 
 @app.get("/refresh-8d")
 async def manual_refresh_8d():
-    """Manually trigger full 8d refresh — bat_8d, contact log, l5g, l8d_hr.
-    Updates last_8d_update timestamp. Use to verify scheduler is working."""
-    try:
-        await refresh_8d()
-        return {
-            "status": "done",
-            "last_8d_update": _cache.get("last_8d_update"),
-            "bat_8d": len(_cache["bat_8d"]),
-            "bat_l5g": len(_cache["bat_l5g"]),
-            "bat_l8d_hr": len(_cache.get("bat_l8d_hr", {})),
-            "contact_log": len(_contact_log),
-        }
-    except Exception as e:
-        return {"error": str(e)}
+    """Manually trigger full 8d refresh as background task.
+    Returns immediately — check /status after ~60s for last_8d_update timestamp.
+    Running synchronously caused Railway timeouts on the 9MB contact log fetch."""
+    asyncio.create_task(refresh_8d())
+    return {
+        "status": "refreshing — check /status in 60 seconds",
+        "current_bat_8d": len(_cache["bat_8d"]),
+        "current_contact_log": len(_contact_log),
+        "note": "last_8d_update will populate once refresh completes"
+    }
 @app.get("/clear-cache")
 async def clear_cache():
     """Clear games cache — forces fresh rebuild on next /games call"""
@@ -3837,7 +3825,6 @@ async def get_games(date: str = None, refresh: bool = False):
 @app.get("/parlay-results")
 async def parlay_results(date: str = None):
     """Show parlay combination outcomes — hit rates for 2 and 3-leg combos."""
-    import json
     if not GITHUB_TOKEN:
         return {"error": "No GitHub token"}
     try:
@@ -3893,7 +3880,6 @@ async def coverage_check():
     Check coverage and build the clean stat list for Decision Tree.
     Distinguishes between true zeros vs missing data for each stat.
     """
-    import json
     if not GITHUB_TOKEN:
         return {"error": "No GitHub token"}
 
