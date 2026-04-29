@@ -327,7 +327,10 @@ async def recalibrate_model(save_to_github: bool = True):
         max_depth=depth,
         min_samples_leaf=min_leaf,
         max_features="sqrt",       # √30 ≈ 5-6 features per split — prevents one stat dominating
-        class_weight="balanced",   # corrects HR/non-HR imbalance
+        class_weight=None,         # do NOT use balanced — it inflates HR leaf rates to 30-78%
+                                   # which forces calibration factor to do all the work
+                                   # and creates binary 0% vs 30%+ clustering
+                                   # let the raw HR rate flow through naturally
         random_state=42
     )
     tree.fit(X, y)
