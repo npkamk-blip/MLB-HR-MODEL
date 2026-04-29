@@ -4134,6 +4134,69 @@ async def debug_score(batter: str, pitcher: str = "TBD", bat_hand: str = None, p
         }
     }
 
+
+import json as _json
+
+@app.get("/debug-xslg-history")
+async def debug_xslg_history(days: int = 7):
+    """Show xSLG L8D distribution across recent prediction records.
+    Use to verify xSLG values are in a realistic range after the fix.
+    Example: /debug-xslg-history?days=7
+    """
+    if not GITHUB_TOKEN:
+        return {"error": "No GitHub token"}
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(
+                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
+                headers={"Authorization": f"token {GITHUB_TOKEN}"}
+            )
+        if r.status_code != 200:
+            return {"error": "No prediction files found"}
+        files = sorted(r.json(), key=lambda x: x["name"], reverse=True)[:days]
+        all_xslg = []
+        per_day = []
+        for f in files:
+            content, _ = await github_get_file(f"data/predictions/{f['name']}")
+            if not content:
+                continue
+            records = _json.loads(content)
+            day_vals = [r.get("xslg_l8d", 0) for r in records if r.get("xslg_l8d", 0) > 0]
+            all_xslg.extend(day_vals)
+            per_day.append({
+                "date": f["name"].replace(".json", ""),
+                "n_records": len(records),
+                "n_with_xslg": len(day_vals),
+                "xslg_min":  round(min(day_vals), 3) if day_vals else 0,
+                "xslg_max":  round(max(day_vals), 3) if day_vals else 0,
+                "xslg_mean": round(sum(day_vals)/len(day_vals), 3) if day_vals else 0,
+                "xslg_median": round(sorted(day_vals)[len(day_vals)//2], 3) if day_vals else 0,
+                "above_1":   len([v for v in day_vals if v > 1.0]),
+                "above_0_5": len([v for v in day_vals if v > 0.5]),
+                "below_0_1": len([v for v in day_vals if v < 0.1]),
+                "sample": sorted(day_vals, reverse=True)[:5],
+            })
+        # Overall stats
+        overall = {
+            "total_records": len(all_xslg),
+            "mean":   round(sum(all_xslg)/len(all_xslg), 3) if all_xslg else 0,
+            "median": round(sorted(all_xslg)[len(all_xslg)//2], 3) if all_xslg else 0,
+            "min":    round(min(all_xslg), 3) if all_xslg else 0,
+            "max":    round(max(all_xslg), 3) if all_xslg else 0,
+            "above_1_0_pct":  round(len([v for v in all_xslg if v > 1.0])/len(all_xslg)*100, 1) if all_xslg else 0,
+            "above_0_5_pct":  round(len([v for v in all_xslg if v > 0.5])/len(all_xslg)*100, 1) if all_xslg else 0,
+            "below_0_1_pct":  round(len([v for v in all_xslg if v < 0.1])/len(all_xslg)*100, 1) if all_xslg else 0,
+            "verdict": "looks correct" if all_xslg and 0.3 < sum(all_xslg)/len(all_xslg) < 1.5 else "investigate — values outside expected range"
+        }
+        return {
+            "overall": overall,
+            "per_day": per_day,
+            "expected_range": "0.30 - 1.50 mean for realistic xSLG L8D values",
+            "note": "xSLG per contact event avg — above 1.0 means elite power contact, below 0.1 means fix failed"
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 @app.get("/research")
 async def research(player: str, date: str = None):
     from datetime import date as date_cls
