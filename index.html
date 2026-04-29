@@ -790,8 +790,10 @@ function buildBatterTable(games){
       sec+='</div></div>';
       sec+='</div></div>';
 
-      // Batter rows
+      // Batter rows — attach _full and _pitP so buildBatDetail works correctly
       batters.forEach(function(b,bi){
+        b._full = b;          // buildBatDetail reads b._full.season etc
+        b._pitP = pitcher;    // buildBatDetail reads b._pitP for pitcher strip
         var s=b.season||{};var l8=b.l8d||{};var bd=b.breakdown||{};
         var brl=s.barrel||0;
         var la=s.la||bd.la_use||0;
