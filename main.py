@@ -177,12 +177,20 @@ ZERO_DOMINANT = {
 }
 
 def get_tree_depth(n_records):
-    """Auto-scale tree depth based on record count."""
-    if n_records < 1500:  return 4, 30
-    if n_records < 2500:  return 5, 20
-    if n_records < 5000:  return 6, 15
-    if n_records < 10000: return 7, 10
-    return 8, 5
+    """Auto-scale tree depth and min_samples_leaf based on record count.
+    
+    min_samples_leaf prevents aggressive binary splits when a single feature
+    dominates importance (e.g. xSLG L8D at 30%). Higher min_leaf = smoother
+    probability distribution across leaves. Lower min_leaf = risk of 0%/31%+
+    binary clustering when one feature has outlier values.
+    
+    Rule: min_leaf should be ~1-1.5% of record count at each stage.
+    """
+    if n_records < 1500:  return 4, 40   # was 30 — extra caution early
+    if n_records < 2500:  return 5, 35   # was 20 — prevents binary splits
+    if n_records < 5000:  return 6, 25   # was 15
+    if n_records < 10000: return 7, 15   # was 10
+    return 8, 8                           # was 5
 
 def get_calibration_factor(dataset_hr_rate, n_records, true_hr_rate=2.8):
     """
