@@ -1,6 +1,6 @@
 {
   "date": "2026-04-29",
-  "rotation_round": 44,
+  "rotation_round": 45,
   "rotation_day": 0,
   "weights": {
     "barrel_season_w": 2.071,
@@ -45,13 +45,11 @@
     "xslg_l8d",
     "pull_pct_season",
     "iso_season",
-    "hard_hit_season",
-    "pit_hard_hit_season",
-    "slg_l8d",
     "barrel_pct_season",
-    "iso_vs_hand",
-    "weather_mult",
-    "hard_hit_l8d"
+    "pit_hard_hit_season",
+    "ev_l8d",
+    "xwoba_l8d",
+    "k_pct_l8d"
   ],
   "last_calibrated": "2026-04-29",
   "records_used": 2071,
