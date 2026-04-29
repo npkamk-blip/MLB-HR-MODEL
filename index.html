@@ -804,7 +804,7 @@ function buildBatterTable(games){
         var pc=pctCls2(pct);
         var rowId='gc-'+gi+'-bat-'+bi+'-'+matchupLabel.replace(/\s/g,'');
 
-        sec+='<div class="bat-row" onclick="toggleGcDetail(''+rowId+'')">';
+        sec+='<div class="bat-row" data-rowid="'+rowId+'" onclick="toggleGcDetail(this.dataset.rowid)">';
         sec+='<div class="bat-left">';
         sec+='<div class="bat-trend-dot '+dot+'"></div>';
         sec+='<div>';
