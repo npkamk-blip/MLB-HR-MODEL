@@ -686,22 +686,59 @@ function buildBatterTable(games){
   if(!games||!games.length){el.innerHTML='<div class="no-data">No games today.</div>';return;}
 
   // ── Helper functions ──
-  function evCls(ev){return ev>=100?'pill-g':ev>=97?'pill-y':ev>=92?'pill-m':'pill-r';}
+  // ── Relative-to-median coloring — auto-adjusts as season progresses ──
+  function getMedians(){
+    var fw=modelWeightsData&&modelWeightsData.weights&&modelWeightsData.weights.feature_medians;
+    return fw||{barrel_pct_season:10.2,la_season:14.0,ev_l8d:83.7,xslg_l8d:0.549};
+  }
+  function medCls(val,medKey,invert){
+    var med=getMedians()[medKey]||0;
+    if(!val||val===0||!med)return'pill-m';
+    var ratio=val/med;
+    var good=invert?(ratio<0.85):(ratio>=1.20);
+    var okay=invert?(ratio<1.0):(ratio>=1.0);
+    if(good)return'pill-g';
+    if(okay)return'pill-y';
+    if(invert?(ratio>1.15):(ratio<0.80))return'pill-r';
+    return'pill-m';
+  }
+  // LA uses window logic not median — 18-35deg is always the HR zone
   function laCls2(la){return(la>=18&&la<=35)?'pill-g':(la>=10&&la<18)||(la>35&&la<=45)?'pill-y':'pill-r';}
-  function brlCls(b){return b>=15?'pill-g':b>=10?'pill-y':b>=7?'pill-m':'pill-r';}
-  function xslgCls(x){return x>=0.800?'pill-g':x>=0.550?'pill-y':x>=0.350?'pill-m':'pill-r';}
+  function evCls(ev){return medCls(ev,'ev_l8d',false);}
+  function brlCls(b){return medCls(b,'barrel_pct_season',false);}
+  function xslgCls(x){return medCls(x,'xslg_l8d',false);}
   function pctCls2(p){return p>=15?'pct-elite':p>=11?'pct-high':p>=8?'pct-mid':p>=5?'pct-ok':'pct-low';}
   function l8dHrCls(n){return n>=3?'l8d-fire':n>=1?'l8d-warm':'l8d-none';}
-  function fmtXslg(v){return v>0?('.'+String(Math.round(v*1000)).padStart(3,'0')):'--';}
-  function wxChip(wx){
+  function fmtXslg(v){
+    if(!v||v<=0)return'--';
+    if(v>=1.0){return v.toFixed(3);}
+    return'.'+String(Math.round(v*1000)).padStart(3,'0');
+  }
+  function wxChip(wx, batHand){
     if(!wx||!wx.label)return'';
     var l=(wx.label||'').toLowerCase();
+    var dir=wx.wind_dir||'';  // 'out_rf', 'out_lf', 'out_cf', 'in', 'cross' etc
     var temp=wx.temp||70;var wind=wx.wind_speed||0;
     var parts=[];
-    if(l.includes('dome'))return'<span class="gchip chip-n">Dome</span>';
-    if(l.includes('out')&&wind>=8)parts.push('<span class="gchip chip-g">Wind '+wind+'mph out</span>');
-    else if(l.includes('in')&&wind>=8)parts.push('<span class="gchip chip-r">Wind '+wind+'mph in</span>');
-    else if(wind>0)parts.push('<span class="gchip chip-n">'+wind+'mph</span>');
+    if(l.includes('dome'))return'<span class="gchip chip-n">&#127968; Dome</span>';
+    if(wind>=8){
+      var isOut=l.includes('out');
+      var isIn=l.includes('in');
+      var outRF=l.includes('rf')||l.includes('right');
+      var outLF=l.includes('lf')||l.includes('left');
+      if(isOut){
+        // RF wind favors LHB pull hitters, LF wind favors RHB pull hitters
+        if(batHand&&outRF&&batHand==='L')parts.push('<span class="gchip chip-g">&#128168; Wind '+wind+'mph out RF &#9679;LHB</span>');
+        else if(batHand&&outLF&&batHand==='R')parts.push('<span class="gchip chip-g">&#128168; Wind '+wind+'mph out LF &#9679;RHB</span>');
+        else parts.push('<span class="gchip chip-g">&#128168; Wind '+wind+'mph out</span>');
+      } else if(isIn){
+        parts.push('<span class="gchip chip-r">&#128168; Wind '+wind+'mph in</span>');
+      } else {
+        parts.push('<span class="gchip chip-n">&#128168; Wind '+wind+'mph cross</span>');
+      }
+    } else if(wind>0){
+      parts.push('<span class="gchip chip-n">'+wind+'mph</span>');
+    }
     if(temp>=80)parts.push('<span class="gchip chip-g">'+temp+'&#176; warm</span>');
     else if(temp>=65)parts.push('<span class="gchip chip-n">'+temp+'&#176;</span>');
     else parts.push('<span class="gchip chip-r">'+temp+'&#176; cold</span>');
@@ -795,7 +832,7 @@ function buildBatterTable(games){
         b._full = b;          // buildBatDetail reads b._full.season etc
         b._pitP = pitcher;    // buildBatDetail reads b._pitP for pitcher strip
         var s=b.season||{};var l8=b.l8d||{};var bd=b.breakdown||{};
-        var brl=s.barrel||0;
+        var brl=s.barrel||s.barrel_pct||bd.barrel_season||bd.barrel_use||0;
         var la=s.la||bd.la_use||0;
         var ev=l8.ev||bd.ev_l8d||0;
         var xslg=l8.xslg||bd.xslg_l8d||0;
@@ -814,11 +851,23 @@ function buildBatterTable(games){
         sec+='<div class="bat-team">'+b.team+'</div>';
         sec+='</div></div>';
         // Four stat pills
+        // Wind advantage chip — check if wind favors this batter's pull side
+        var wxLabel=(wx.label||'').toLowerCase();
+        var windSpd=wx.wind_speed||0;
+        var windAdv='';
+        if(windSpd>=8&&wxLabel.includes('out')){
+          var rfFav=(wxLabel.includes('rf')||wxLabel.includes('right'))&&hand==='L';
+          var lfFav=(wxLabel.includes('lf')||wxLabel.includes('left'))&&hand==='R';
+          var cfFav=wxLabel.includes('cf')||wxLabel.includes('center');
+          if(rfFav||lfFav)windAdv='<span class="spill pill-g" title="Wind favors pull side">&#128168;<span class="spill-lbl">Wind</span></span>';
+          else if(cfFav)windAdv='<span class="spill pill-y" title="Wind blowing out CF">&#128168;<span class="spill-lbl">Wind</span></span>';
+        }
         sec+='<div class="stat-pills">';
-        sec+='<span class="spill '+brlCls(brl)+'" title="Barrel% Season">'+(brl>0?brl.toFixed(1)+'%':'--')+'<span class="spill-lbl">Brl</span></span>';
-        sec+='<span class="spill '+laCls2(la)+'" title="Launch Angle Season">'+(la>0?la.toFixed(0)+'&#176;':'--')+'<span class="spill-lbl">LA</span></span>';
-        sec+='<span class="spill '+evCls(ev)+'" title="Exit Velo L8D">'+(ev>0?ev.toFixed(0):'--')+'<span class="spill-lbl">EV</span></span>';
-        sec+='<span class="spill '+xslgCls(xslg)+'" title="xSLG L8D">'+fmtXslg(xslg)+'<span class="spill-lbl">xSLG</span></span>';
+        if(windAdv)sec+=windAdv;
+        sec+='<span class="spill '+brlCls(brl)+'" title="Barrel% Season vs median '+((getMedians().barrel_pct_season||0).toFixed(1))+'%">'+(brl>0?brl.toFixed(1)+'%':'--')+'<span class="spill-lbl">Brl</span></span>';
+        sec+='<span class="spill '+laCls2(la)+'" title="Launch Angle Season (HR window 18-35°)">'+(la>0?la.toFixed(0)+'&#176;':'--')+'<span class="spill-lbl">LA</span></span>';
+        sec+='<span class="spill '+evCls(ev)+'" title="Exit Velo L8D vs median '+((getMedians().ev_l8d||0).toFixed(1))+' mph">'+(ev>0?ev.toFixed(0):'--')+'<span class="spill-lbl">EV</span></span>';
+        sec+='<span class="spill '+xslgCls(xslg)+'" title="xSLG L8D vs median '+fmtXslg(getMedians().xslg_l8d||0)+'">'+fmtXslg(xslg)+'<span class="spill-lbl">xSLG</span></span>';
         sec+='</div>';
         // L8D HR
         sec+='<div class="bat-l8d '+l8dHrCls(l8hr)+'">'+(l8hr>0?l8hr+'HR':'—')+'</div>';
