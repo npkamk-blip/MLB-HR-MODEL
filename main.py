@@ -503,7 +503,8 @@ _cache = {
 
 _games_cache = {}   # { date_str: { "data": ..., "ts": datetime } }
 _contact_log = {}   # { player_name_lower: [ {date, pitch_type, ev, la, dist, bat_speed, result}, ... ] }
-GAMES_CACHE_TTL = 900  # 15 minutes in seconds
+GAMES_CACHE_TTL = 900        # 15 minutes — standard refresh
+GAMES_CACHE_TTL_CONFIRMED = 1800  # 30 minutes once lineups confirmed — less recompute needed
 
 PARK_HR_FACTORS = {
     "Colorado Rockies":      {"L":1.40,"R":1.40},
@@ -2363,6 +2364,31 @@ def safe_mult(value, lg_avg, weight_key="", sample=None, min_sample=0, cap_high=
     raw = (float(value) / float(lg_avg)) ** w
     return max(min(raw, cap_high), cap_low)
 
+def get_lineup_pos_mult(batting_order: int) -> float:
+    """Lineup position multiplier for HR probability.
+    
+    Cleanup spots (3-5) see best pitch quality but also most IBBs.
+    Leadoff (1-2) sees more fastballs early in count.
+    Bottom order (7-9) sees fewer quality pitches, more nibbling.
+    
+    Based on league-wide HR rate by batting order position.
+    Source: Statcast 2021-2025 HR% by lineup spot.
+    """
+    # HR rate by lineup spot (normalized to 1.0 at position 3)
+    LINEUP_MULT = {
+        1: 0.95,   # Leadoff — sees fastballs, good contact, slightly fewer HRs
+        2: 1.00,   # Good hitters, solid HR rate
+        3: 1.12,   # Best hitters, peak HR rate
+        4: 1.15,   # Cleanup — max power, peak HR slot
+        5: 1.10,   # Power hitter, slight dropoff from 4
+        6: 1.00,   # Solid contributor
+        7: 0.92,   # Declining quality
+        8: 0.88,   # Weak hitter typically
+        9: 0.85,   # Bottom of order — fewest HR opportunities
+    }
+    return LINEUP_MULT.get(batting_order, 1.0)
+
+
 def get_bullpen_hr9(home_team):
     """Get bullpen HR/9 for home team from cache."""
     bullpen = _cache.get("team_bullpen", {})
@@ -3553,10 +3579,14 @@ async def get_games(date: str = None, refresh: bool = False):
     today = date if date else date_cls.today().isoformat()
     date = None  # clear to avoid shadowing
 
-    # ── Response cache — return cached result if < 15 min old and not forced refresh ──
+    # ── Response cache — return cached result if fresh and not forced refresh ──
+    # Uses 30min TTL once lineups are confirmed (less recompute needed)
+    # Uses 15min TTL while lineups are still projected
     cached = _games_cache.get(today)
-    if cached and not refresh and (datetime.now() - cached["ts"]).total_seconds() < GAMES_CACHE_TTL:
-        return cached["data"]
+    if cached and not refresh:
+        ttl = GAMES_CACHE_TTL_CONFIRMED if cached.get("lineups_confirmed") else GAMES_CACHE_TTL
+        if (datetime.now() - cached["ts"]).total_seconds() < ttl:
+            return cached["data"]
 
     async with httpx.AsyncClient(timeout=30) as client:
         r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
@@ -3637,8 +3667,13 @@ async def get_games(date: str = None, refresh: bool = False):
                 name = batter.get("person", {}).get("fullName", "")
                 pid = batter.get("person", {}).get("id")
                 bat_hand = batter.get("person", {}).get("batSide", {}).get("code", "")
+                # battingOrder from boxscore is like "100", "200" etc — divide by 100
+                raw_order = batter.get("battingOrder", "0")
+                try: batting_slot = int(str(raw_order).strip()) // 100
+                except: batting_slot = 0
             else:
                 name = batter.get("name", ""); pid = batter.get("id"); bat_hand = ""
+                batting_slot = batter.get("batting_slot", 0)
 
             if pid:
                 info = await fetch_player_hand(pid)
@@ -3651,6 +3686,13 @@ async def get_games(date: str = None, refresh: bool = False):
 
             hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf = compute_hr_probability(
                 name, bat_hand, opp_p_name, opp_p_hand, park_factor, batter_wx_mult, home_team)
+
+            # Apply lineup position multiplier — cleanup spots see better pitch quality
+            if batting_slot and 1 <= batting_slot <= 9:
+                lineup_mult = get_lineup_pos_mult(batting_slot)
+                hr_prob = round(min(max(hr_prob * lineup_mult, 2.0), 28.0), 1)
+                breakdown["lineup_slot"] = batting_slot
+                breakdown["lineup_mult"] = lineup_mult
 
             bc = get_batter_stats(name, 2026)
             b8d = get_batter_8d(name)
@@ -3698,7 +3740,7 @@ async def get_games(date: str = None, refresh: bool = False):
                     "iso": round(bl5g.get("iso", 0), 3),
                 },
                 "dk_odds": fmt_odds(match_dk_odds(name, dk_props)),
-                "projected": is_proj, "platoon_tag": platoon_tag,
+                "projected": is_proj, "platoon_tag": platoon_tag, "batting_slot": batting_slot,
                 "contact_log": get_contact_log(name),
                 "pitch_splits": get_batter_pitch_splits(name),
                 "breakdown": breakdown,
@@ -3816,7 +3858,13 @@ async def get_games(date: str = None, refresh: bool = False):
         })
 
     result = {"games": games_out, "date": today, "loading": False}
-    _games_cache[today] = {"data": result, "ts": datetime.now()}
+    # Track whether lineups were confirmed — affects cache TTL
+    any_confirmed = any(
+        not g.get("projected", True) 
+        for g in result.get("games", []) 
+        for b in g.get("top_hr_candidates", [])
+    )
+    _games_cache[today] = {"data": result, "ts": datetime.now(), "lineups_confirmed": any_confirmed}
     return result
 
 
