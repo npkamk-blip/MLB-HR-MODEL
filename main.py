@@ -503,8 +503,7 @@ _cache = {
 
 _games_cache = {}   # { date_str: { "data": ..., "ts": datetime } }
 _contact_log = {}   # { player_name_lower: [ {date, pitch_type, ev, la, dist, bat_speed, result}, ... ] }
-GAMES_CACHE_TTL = 900        # 15 minutes — standard refresh
-GAMES_CACHE_TTL_CONFIRMED = 1800  # 30 minutes once lineups confirmed — less recompute needed
+GAMES_CACHE_TTL = 900  # 15 minutes in seconds
 
 PARK_HR_FACTORS = {
     "Colorado Rockies":      {"L":1.40,"R":1.40},
@@ -540,39 +539,123 @@ PARK_HR_FACTORS = {
 }
 
 STADIUMS = {
-    # hr_bearing_R = direction RHB pull HRs go (to LF, ~NW for most parks)
-    # hr_bearing_L = direction LHB pull HRs go (to RF, ~SE for most parks)
-    # open_factor = how much wind affects the park (1.0 = fully open like Wrigley)
+    # cf_bearing = compass direction from home plate toward CF (the field axis)
+    # hr_bearing_R = where RHB pull HRs go — to LF, ~90deg left of cf_bearing
+    # hr_bearing_L = where LHB pull HRs go — to RF, ~90deg right of cf_bearing
+    # open_factor = wind exposure (1.0=fully open like Wrigley, 0.4=enclosed)
+    # Sources: satellite imagery analysis, SABR stadium research, ballparks.com
+    #
+    # Convention: cf_bearing is the primary verified number.
+    # hr_bearing_R = (cf_bearing + 270) % 360  (LF = 90 deg CCW from CF)
+    # hr_bearing_L = (cf_bearing + 90) % 360   (RF = 90 deg CW from CF)
+    # These are then fine-tuned for asymmetric parks (Fenway Green Monster etc)
+    #
+    # Truist Park (ATL): CF faces NE (~50deg), so LF=~320(NW), RF=~140(SE)
+    # NW wind at Truist blows toward SE = Out to RF = favors LHB pull hitters
+    # This is the verified fix for the ATL wind direction bug
+
     "Arizona Diamondbacks":  {"lat":33.4453,"lon":-112.0667,"dome":True},
-    "Atlanta Braves":        {"lat":33.8907,"lon":-84.4677,"dome":False,"hr_bearing_R":300,"hr_bearing_L":130,"open_factor":0.5},
-    "Baltimore Orioles":     {"lat":39.2838,"lon":-76.6217,"dome":False,"hr_bearing_R":310,"hr_bearing_L":140,"open_factor":0.6},
-    "Boston Red Sox":        {"lat":42.3467,"lon":-71.0972,"dome":False,"hr_bearing_R":290,"hr_bearing_L":120,"open_factor":0.7},
-    "Chicago Cubs":          {"lat":41.9484,"lon":-87.6553,"dome":False,"hr_bearing_R":305,"hr_bearing_L":135,"open_factor":1.0},
-    "Chicago White Sox":     {"lat":41.8299,"lon":-87.6338,"dome":False,"hr_bearing_R":320,"hr_bearing_L":150,"open_factor":0.5},
-    "Cincinnati Reds":       {"lat":39.0979,"lon":-84.5082,"dome":False,"hr_bearing_R":300,"hr_bearing_L":130,"open_factor":0.6},
-    "Cleveland Guardians":   {"lat":41.4954,"lon":-81.6854,"dome":False,"hr_bearing_R":295,"hr_bearing_L":125,"open_factor":0.6},
-    "Colorado Rockies":      {"lat":39.7559,"lon":-104.9942,"dome":False,"hr_bearing_R":310,"hr_bearing_L":140,"open_factor":0.7},
-    "Detroit Tigers":        {"lat":42.3390,"lon":-83.0485,"dome":False,"hr_bearing_R":280,"hr_bearing_L":110,"open_factor":0.5},
+
+    # Truist Park: Home plate SW corner, CF faces NE ~50deg
+    "Atlanta Braves":        {"lat":33.8907,"lon":-84.4677,"dome":False,
+                              "cf_bearing":50,"hr_bearing_R":320,"hr_bearing_L":140,"open_factor":0.5},
+
+    # Camden Yards: CF faces NE ~40deg
+    "Baltimore Orioles":     {"lat":39.2838,"lon":-76.6217,"dome":False,
+                              "cf_bearing":40,"hr_bearing_R":310,"hr_bearing_L":130,"open_factor":0.6},
+
+    # Fenway: CF faces NE ~60deg (further N than rule 1.04)
+    "Boston Red Sox":        {"lat":42.3467,"lon":-71.0972,"dome":False,
+                              "cf_bearing":60,"hr_bearing_R":330,"hr_bearing_L":150,"open_factor":0.8},
+
+    # Wrigley: CF faces NE ~55deg (further N per SABR research)
+    "Chicago Cubs":          {"lat":41.9484,"lon":-87.6553,"dome":False,
+                              "cf_bearing":55,"hr_bearing_R":325,"hr_bearing_L":145,"open_factor":1.0},
+
+    # Rate Field (CWS): Home plate SE corner, CF faces NW ~315deg (inverted!)
+    # Per Hardball Times: "US Cellular field now points Southeast"
+    "Chicago White Sox":     {"lat":41.8299,"lon":-87.6338,"dome":False,
+                              "cf_bearing":315,"hr_bearing_R":225,"hr_bearing_L":45,"open_factor":0.5},
+
+    # GABP: CF faces NE ~35deg
+    "Cincinnati Reds":       {"lat":39.0979,"lon":-84.5082,"dome":False,
+                              "cf_bearing":35,"hr_bearing_R":305,"hr_bearing_L":125,"open_factor":0.6},
+
+    # Progressive Field: CF faces NE ~30deg
+    "Cleveland Guardians":   {"lat":41.4954,"lon":-81.6854,"dome":False,
+                              "cf_bearing":30,"hr_bearing_R":300,"hr_bearing_L":120,"open_factor":0.6},
+
+    # Coors Field: CF faces NE ~30deg. Per SABR: easterly winds blow FROM CF TO HP
+    "Colorado Rockies":      {"lat":39.7559,"lon":-104.9942,"dome":False,
+                              "cf_bearing":30,"hr_bearing_R":300,"hr_bearing_L":120,"open_factor":0.8},
+
+    # Comerica Park: CF faces SE ~135deg (per Hardball Times — points southeast)
+    "Detroit Tigers":        {"lat":42.3390,"lon":-83.0485,"dome":False,
+                              "cf_bearing":135,"hr_bearing_R":45,"hr_bearing_L":225,"open_factor":0.5},
+
     "Houston Astros":        {"lat":29.7573,"lon":-95.3555,"dome":True},
-    "Kansas City Royals":    {"lat":39.0517,"lon":-94.4803,"dome":False,"hr_bearing_R":315,"hr_bearing_L":145,"open_factor":0.6},
-    "Los Angeles Angels":    {"lat":33.8003,"lon":-117.8827,"dome":False,"hr_bearing_R":300,"hr_bearing_L":130,"open_factor":0.5},
-    "Los Angeles Dodgers":   {"lat":34.0739,"lon":-118.2400,"dome":False,"hr_bearing_R":315,"hr_bearing_L":145,"open_factor":0.5},
+
+    # Kauffman: CF faces NE ~30deg
+    "Kansas City Royals":    {"lat":39.0517,"lon":-94.4803,"dome":False,
+                              "cf_bearing":30,"hr_bearing_R":300,"hr_bearing_L":120,"open_factor":0.7},
+
+    # Angel Stadium: CF faces NE ~30deg
+    "Los Angeles Angels":    {"lat":33.8003,"lon":-117.8827,"dome":False,
+                              "cf_bearing":30,"hr_bearing_R":300,"hr_bearing_L":120,"open_factor":0.5},
+
+    # Dodger Stadium: CF faces NE ~30deg (nestled in hillside, roughly standard)
+    "Los Angeles Dodgers":   {"lat":34.0739,"lon":-118.2400,"dome":False,
+                              "cf_bearing":30,"hr_bearing_R":300,"hr_bearing_L":120,"open_factor":0.5},
+
     "Miami Marlins":         {"lat":25.7781,"lon":-80.2197,"dome":True},
     "Milwaukee Brewers":     {"lat":43.0282,"lon":-87.9712,"dome":True},
-    "Minnesota Twins":       {"lat":44.9817,"lon":-93.2778,"dome":False,"hr_bearing_R":300,"hr_bearing_L":130,"open_factor":0.6},
-    "New York Mets":         {"lat":40.7571,"lon":-73.8458,"dome":False,"hr_bearing_R":310,"hr_bearing_L":140,"open_factor":0.5},
-    "New York Yankees":      {"lat":40.8296,"lon":-73.9262,"dome":False,"hr_bearing_R":290,"hr_bearing_L":120,"open_factor":0.6},
-    "Oakland Athletics":     {"lat":38.5726,"lon":-121.5088,"dome":False,"hr_bearing_R":305,"hr_bearing_L":135,"open_factor":0.5},
-    "Philadelphia Phillies": {"lat":39.9056,"lon":-75.1665,"dome":False,"hr_bearing_R":300,"hr_bearing_L":130,"open_factor":0.5},
-    "Pittsburgh Pirates":    {"lat":40.4469,"lon":-80.0057,"dome":False,"hr_bearing_R":310,"hr_bearing_L":140,"open_factor":0.6},
-    "San Diego Padres":      {"lat":32.7076,"lon":-117.1570,"dome":False,"hr_bearing_R":305,"hr_bearing_L":135,"open_factor":0.8},
-    "San Francisco Giants":  {"lat":37.7786,"lon":-122.3893,"dome":False,"hr_bearing_R":320,"hr_bearing_L":150,"open_factor":0.9},
+
+    # Target Field: CF faces NE ~25deg
+    "Minnesota Twins":       {"lat":44.9817,"lon":-93.2778,"dome":False,
+                              "cf_bearing":25,"hr_bearing_R":295,"hr_bearing_L":115,"open_factor":0.6},
+
+    # Citi Field: CF faces NE ~30deg
+    "New York Mets":         {"lat":40.7571,"lon":-73.8458,"dome":False,
+                              "cf_bearing":30,"hr_bearing_R":300,"hr_bearing_L":120,"open_factor":0.5},
+
+    # Yankee Stadium: CF faces NE ~20deg (most closely aligned per Hardball Times)
+    "New York Yankees":      {"lat":40.8296,"lon":-73.9262,"dome":False,
+                              "cf_bearing":20,"hr_bearing_R":290,"hr_bearing_L":110,"open_factor":0.6},
+
+    # Oakland Coliseum: CF faces NE ~30deg
+    "Oakland Athletics":     {"lat":38.5726,"lon":-121.5088,"dome":False,
+                              "cf_bearing":30,"hr_bearing_R":300,"hr_bearing_L":120,"open_factor":0.5},
+
+    # Citizens Bank Park: CF faces NE ~30deg
+    "Philadelphia Phillies": {"lat":39.9056,"lon":-75.1665,"dome":False,
+                              "cf_bearing":30,"hr_bearing_R":300,"hr_bearing_L":120,"open_factor":0.5},
+
+    # PNC Park: CF faces NE ~30deg (cityscape view toward downtown)
+    "Pittsburgh Pirates":    {"lat":40.4469,"lon":-80.0057,"dome":False,
+                              "cf_bearing":30,"hr_bearing_R":300,"hr_bearing_L":120,"open_factor":0.7},
+
+    # Petco Park: CF faces NE ~30deg, very open to ocean breezes
+    "San Diego Padres":      {"lat":32.7076,"lon":-117.1570,"dome":False,
+                              "cf_bearing":30,"hr_bearing_R":300,"hr_bearing_L":120,"open_factor":0.8},
+
+    # Oracle Park: CF faces due East ~90deg (per ballparks.com — faces bay)
+    # Famous for wind blowing IN from the bay (west wind = blowing IN)
+    "San Francisco Giants":  {"lat":37.7786,"lon":-122.3893,"dome":False,
+                              "cf_bearing":90,"hr_bearing_R":0,"hr_bearing_L":180,"open_factor":0.9},
+
     "Seattle Mariners":      {"lat":47.5914,"lon":-122.3325,"dome":True},
-    "St. Louis Cardinals":   {"lat":38.6226,"lon":-90.1928,"dome":False,"hr_bearing_R":295,"hr_bearing_L":125,"open_factor":0.5},
+
+    # Busch Stadium: CF faces NE ~35deg (cityscape St. Louis arch view)
+    "St. Louis Cardinals":   {"lat":38.6226,"lon":-90.1928,"dome":False,
+                              "cf_bearing":35,"hr_bearing_R":305,"hr_bearing_L":125,"open_factor":0.5},
+
     "Tampa Bay Rays":        {"lat":27.7683,"lon":-82.6534,"dome":True},
     "Texas Rangers":         {"lat":32.7473,"lon":-97.0825,"dome":True},
     "Toronto Blue Jays":     {"lat":43.6414,"lon":-79.3894,"dome":True},
-    "Washington Nationals":  {"lat":38.8730,"lon":-77.0074,"dome":False,"hr_bearing_R":300,"hr_bearing_L":130,"open_factor":0.5},
+
+    # Nationals Park: CF faces NE ~30deg
+    "Washington Nationals":  {"lat":38.8730,"lon":-77.0074,"dome":False,
+                              "cf_bearing":30,"hr_bearing_R":300,"hr_bearing_L":120,"open_factor":0.5},
 }
 
 PITCH_TYPE_MAP = {
@@ -2336,17 +2419,27 @@ def calc_weather_multiplier(home_team, wind_speed, wind_direction, temperature, 
     speed_factor = 0 if wind_speed < 5 else 0.3 if wind_speed < 10 else 0.7 if wind_speed < 16 else 1.0
     wind_mult = 1.0 + (alignment * speed_factor * 0.12 * open_factor)
     temp_mult = 1.06 if temperature >= 80 else 1.02 if temperature >= 70 else 0.91 if temperature < 50 else 0.96 if temperature < 60 else 1.0
-    # Direction label based on batter handedness
+    # Direction label — use cf_bearing for precise field direction labels
+    cf_bearing = stadium.get("cf_bearing", 30)
+    hr_bear_r  = stadium.get("hr_bearing_R", (cf_bearing + 270) % 360)
+    hr_bear_l  = stadium.get("hr_bearing_L", (cf_bearing + 90)  % 360)
     if wind_speed < 5:
         direction_label = "Calm"
-    elif alignment > 0.5:
-        direction_label = "Blowing Out"
-    elif alignment < -0.5:
-        direction_label = "Blowing In"
-    elif abs(alignment) <= 0.5:
-        direction_label = "Favors Righties" if batter_hand == "R" and alignment > 0 else "Favors Lefties" if batter_hand == "L" and alignment > 0 else "Crosswind"
     else:
-        direction_label = "Crosswind"
+        diff_cf = abs(angle_diff(wind_toward, cf_bearing))
+        diff_lf = abs(angle_diff(wind_toward, hr_bear_r))
+        diff_rf = abs(angle_diff(wind_toward, hr_bear_l))
+        if alignment > 0.5:
+            if diff_cf <= 25:      direction_label = "Out to CF"
+            elif diff_lf < diff_rf: direction_label = "Out to LF"
+            else:                   direction_label = "Out to RF"
+        elif alignment > 0.15:
+            if diff_cf <= 35:      direction_label = "Blowing Out"
+            elif diff_lf < diff_rf: direction_label = "Toward LF"
+            else:                   direction_label = "Toward RF"
+        elif alignment < -0.5:    direction_label = "Blowing In"
+        elif alignment < -0.15:   direction_label = "Slightly In"
+        else:                     direction_label = "Crosswind"
     return round(wind_mult * temp_mult, 3), direction_label
 
 def safe_mult(value, lg_avg, weight_key="", sample=None, min_sample=0, cap_high=2.50, cap_low=0.30):
@@ -2363,31 +2456,6 @@ def safe_mult(value, lg_avg, weight_key="", sample=None, min_sample=0, cap_high=
     w = W(weight_key) if weight_key else 1.0
     raw = (float(value) / float(lg_avg)) ** w
     return max(min(raw, cap_high), cap_low)
-
-def get_lineup_pos_mult(batting_order: int) -> float:
-    """Lineup position multiplier for HR probability.
-    
-    Cleanup spots (3-5) see best pitch quality but also most IBBs.
-    Leadoff (1-2) sees more fastballs early in count.
-    Bottom order (7-9) sees fewer quality pitches, more nibbling.
-    
-    Based on league-wide HR rate by batting order position.
-    Source: Statcast 2021-2025 HR% by lineup spot.
-    """
-    # HR rate by lineup spot (normalized to 1.0 at position 3)
-    LINEUP_MULT = {
-        1: 0.95,   # Leadoff — sees fastballs, good contact, slightly fewer HRs
-        2: 1.00,   # Good hitters, solid HR rate
-        3: 1.12,   # Best hitters, peak HR rate
-        4: 1.15,   # Cleanup — max power, peak HR slot
-        5: 1.10,   # Power hitter, slight dropoff from 4
-        6: 1.00,   # Solid contributor
-        7: 0.92,   # Declining quality
-        8: 0.88,   # Weak hitter typically
-        9: 0.85,   # Bottom of order — fewest HR opportunities
-    }
-    return LINEUP_MULT.get(batting_order, 1.0)
-
 
 def get_bullpen_hr9(home_team):
     """Get bullpen HR/9 for home team from cache."""
@@ -3579,14 +3647,10 @@ async def get_games(date: str = None, refresh: bool = False):
     today = date if date else date_cls.today().isoformat()
     date = None  # clear to avoid shadowing
 
-    # ── Response cache — return cached result if fresh and not forced refresh ──
-    # Uses 30min TTL once lineups are confirmed (less recompute needed)
-    # Uses 15min TTL while lineups are still projected
+    # ── Response cache — return cached result if < 15 min old and not forced refresh ──
     cached = _games_cache.get(today)
-    if cached and not refresh:
-        ttl = GAMES_CACHE_TTL_CONFIRMED if cached.get("lineups_confirmed") else GAMES_CACHE_TTL
-        if (datetime.now() - cached["ts"]).total_seconds() < ttl:
-            return cached["data"]
+    if cached and not refresh and (datetime.now() - cached["ts"]).total_seconds() < GAMES_CACHE_TTL:
+        return cached["data"]
 
     async with httpx.AsyncClient(timeout=30) as client:
         r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
@@ -3667,13 +3731,8 @@ async def get_games(date: str = None, refresh: bool = False):
                 name = batter.get("person", {}).get("fullName", "")
                 pid = batter.get("person", {}).get("id")
                 bat_hand = batter.get("person", {}).get("batSide", {}).get("code", "")
-                # battingOrder from boxscore is like "100", "200" etc — divide by 100
-                raw_order = batter.get("battingOrder", "0")
-                try: batting_slot = int(str(raw_order).strip()) // 100
-                except: batting_slot = 0
             else:
                 name = batter.get("name", ""); pid = batter.get("id"); bat_hand = ""
-                batting_slot = batter.get("batting_slot", 0)
 
             if pid:
                 info = await fetch_player_hand(pid)
@@ -3686,13 +3745,6 @@ async def get_games(date: str = None, refresh: bool = False):
 
             hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf = compute_hr_probability(
                 name, bat_hand, opp_p_name, opp_p_hand, park_factor, batter_wx_mult, home_team)
-
-            # Apply lineup position multiplier — cleanup spots see better pitch quality
-            if batting_slot and 1 <= batting_slot <= 9:
-                lineup_mult = get_lineup_pos_mult(batting_slot)
-                hr_prob = round(min(max(hr_prob * lineup_mult, 2.0), 28.0), 1)
-                breakdown["lineup_slot"] = batting_slot
-                breakdown["lineup_mult"] = lineup_mult
 
             bc = get_batter_stats(name, 2026)
             b8d = get_batter_8d(name)
@@ -3740,7 +3792,7 @@ async def get_games(date: str = None, refresh: bool = False):
                     "iso": round(bl5g.get("iso", 0), 3),
                 },
                 "dk_odds": fmt_odds(match_dk_odds(name, dk_props)),
-                "projected": is_proj, "platoon_tag": platoon_tag, "batting_slot": batting_slot,
+                "projected": is_proj, "platoon_tag": platoon_tag,
                 "contact_log": get_contact_log(name),
                 "pitch_splits": get_batter_pitch_splits(name),
                 "breakdown": breakdown,
@@ -3858,13 +3910,7 @@ async def get_games(date: str = None, refresh: bool = False):
         })
 
     result = {"games": games_out, "date": today, "loading": False}
-    # Track whether lineups were confirmed — affects cache TTL
-    any_confirmed = any(
-        not g.get("projected", True) 
-        for g in result.get("games", []) 
-        for b in g.get("top_hr_candidates", [])
-    )
-    _games_cache[today] = {"data": result, "ts": datetime.now(), "lineups_confirmed": any_confirmed}
+    _games_cache[today] = {"data": result, "ts": datetime.now()}
     return result
 
 
@@ -4062,6 +4108,55 @@ async def coverage_check():
         ))
     }
 
+
+
+
+@app.get("/debug-weather")
+async def debug_weather(team: str = "Atlanta Braves", wind_deg: int = 315, wind_speed: int = 9, temp: int = 66):
+    """Debug weather calculation for any stadium.
+    Example: /debug-weather?team=Atlanta+Braves&wind_deg=315&wind_speed=9&temp=66
+    wind_deg = meteorological direction wind comes FROM (0=N, 90=E, 180=S, 270=W)
+    """
+    stadium = STADIUMS.get(team)
+    if not stadium:
+        return {"error": f"Team not found: {team}", "available": list(STADIUMS.keys())}
+    if stadium.get("dome"):
+        return {"team": team, "dome": True, "result": "No wind effect in dome"}
+
+    cf_bearing = stadium.get("cf_bearing", 30)
+    hr_r = stadium.get("hr_bearing_R", (cf_bearing + 270) % 360)
+    hr_l = stadium.get("hr_bearing_L", (cf_bearing + 90) % 360)
+    wind_toward = (wind_deg + 180) % 360
+
+    def compass(deg):
+        dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"]
+        return dirs[round(deg / 22.5) % 16]
+
+    mult_r, label_r = calc_weather_multiplier(team, wind_speed, wind_deg, temp, "R")
+    mult_l, label_l = calc_weather_multiplier(team, wind_speed, wind_deg, temp, "L")
+
+    return {
+        "team": team,
+        "stadium_orientation": {
+            "cf_bearing": cf_bearing,
+            "cf_direction": compass(cf_bearing),
+            "lf_bearing": hr_r,
+            "lf_direction": compass(hr_r),
+            "rf_bearing": hr_l,
+            "rf_direction": compass(hr_l),
+        },
+        "wind": {
+            "from_deg": wind_deg,
+            "from_direction": compass(wind_deg),
+            "toward_deg": wind_toward,
+            "toward_direction": compass(wind_toward),
+            "speed_mph": wind_speed,
+            "temp_f": temp,
+        },
+        "result_rhb": {"mult": mult_r, "label": label_r},
+        "result_lhb": {"mult": mult_l, "label": label_l},
+        "interpretation": f"Wind blowing FROM {compass(wind_deg)} TOWARD {compass(wind_toward)}. CF is at {compass(cf_bearing)}. LF at {compass(hr_r)}, RF at {compass(hr_l)}.",
+    }
 
 @app.get("/debug-score")
 async def debug_score(batter: str, pitcher: str = "TBD", bat_hand: str = None, pit_hand: str = "R", home_team: str = ""):
