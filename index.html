@@ -133,6 +133,7 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 .dot-neutral{background:var(--muted2)}
 .bat-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bat-team{font-size:10px;color:var(--muted2);margin-top:1px}
+.bat-slot{font-size:9px;color:var(--muted2);font-weight:400;margin-left:5px;font-family:var(--font-sans)}
 .stat-pills{display:flex;gap:4px;flex-shrink:0}
 .spill{font-size:11px;font-weight:700;padding:3px 7px;border-radius:5px;display:flex;flex-direction:column;align-items:center;min-width:42px;font-family:'Barlow Condensed',sans-serif}
 .spill-lbl{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;opacity:.7;margin-top:1px}
@@ -847,7 +848,8 @@ function buildBatterTable(games){
         sec+='<div class="bat-left">';
         sec+='<div class="bat-trend-dot '+dot+'"></div>';
         sec+='<div>';
-        sec+='<div class="bat-name">'+b.name+'<span class="hand-tag '+(hand==='L'?'lhb':'rhb')+'" style="margin-left:6px">'+hand+'</span></div>';
+        var slotStr=b.batting_slot&&b.batting_slot>0?'<span class="bat-slot">#'+b.batting_slot+'</span>':'';
+        sec+='<div class="bat-name">'+b.name+slotStr+'<span class="hand-tag '+(hand==='L'?'lhb':'rhb')+'" style="margin-left:6px">'+hand+'</span></div>';
         sec+='<div class="bat-team">'+b.team+'</div>';
         sec+='</div></div>';
         // Four stat pills
