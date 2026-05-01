@@ -912,6 +912,16 @@ function buildBatterTable(games){
   el.innerHTML='<div class="gc-wrap">'+h+'</div>';
 }
 
+function toggleDD(el){
+  var id=el.dataset.ddid;
+  var d=document.getElementById(id);
+  if(!d)return;
+  var open=d.style.display!=='none';
+  d.style.display=open?'none':'block';
+  var arr=el.querySelector('.dd-arrow');
+  if(arr)arr.textContent=open?'▼':'▲';
+}
+
 function toggleGcDetail(id){
   var d=document.getElementById(id);
   if(d)d.style.display=d.style.display==='none'?'block':'none';
@@ -1211,7 +1221,7 @@ function buildBatDetail(b){
   // ── Deep Dive — collapsible raw stats ──
   var ddId = 'dd_'+b.name.replace(/ /g,'_')+'_'+Math.random().toString(36).slice(2,5);
   h+='<div style="border:1px solid var(--border2);border-radius:8px;overflow:hidden">';
-  h+='<div onclick="var d=document.getElementById(\''+ddId+'\');d.style.display=d.style.display===\'none\'?\'block\':\'none\';this.querySelector(\'.dd-arrow\').textContent=d.style.display===\'none\'?\'▼\':\'▲\'" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;background:var(--surface);user-select:none">';
+  h+='<div data-ddid="'+ddId+'" onclick="toggleDD(this)" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;background:var(--surface);user-select:none">';
   h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.09em">Deep Dive — Raw Model Inputs</div>';
   h+='<span class="dd-arrow" style="font-size:10px;color:var(--muted2)">▼</span>';
   h+='</div>';
