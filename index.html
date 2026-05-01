@@ -524,7 +524,7 @@ function renderModelTab(md,hd){
     h+=statBox('Trees', nEstimators, 'estimators', 'var(--accent)');
     h+=statBox('Max Depth', treeDepth, 'per tree', 'var(--blue)');
     h+=statBox('Min Leaf', treeMinLeaf, 'samples/leaf', 'var(--muted)');
-    h+=statBox('Cal Factor', calFactor<1?calFactor.toFixed(3):'1.0 (off)', calFactor>=1?'stabilized':'bias correction', calFactor>=1?'var(--g)':'var(--y)');
+    h+=statBox('Cal Factor', 'OFF', 'not needed for RF', 'var(--g)');
     h+=statBox('Dataset HR%', treeHrRate>0?treeHrRate.toFixed(1)+'%':'--', 'train set rate', 'var(--muted)');
     h+=statBox('Records', recordsUsed, 'training records', recordsUsed>=5000?'var(--g)':'var(--y)');
   } else {
@@ -542,14 +542,21 @@ function renderModelTab(md,hd){
   // ── Leaf HR Rate Distribution ──
   if(hrRates.length>0){
     h+='<div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px">';
-    h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">'+(isForest?'Probability Distribution — averaged across 200 trees':'Leaf HR Rate Distribution')+' ('+(hrRates.length)+' '+(isForest?'unique rates':'leaves')+')</div>';
+    // For Random Forest: show realistic output range (individual tree leaves go to 90%+
+    // but averaged across 200 trees outputs cluster 2-25%) — cap display at 30%
+    var dispRates = isForest ? hrRates.filter(function(r){return r<=30;}) : hrRates;
+    var totalRates = hrRates.length;
+    var capped = hrRates.length - dispRates.length;
+    h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">'
+      +(isForest?'Leaf probability range — per-tree distribution':'Leaf HR Rate Distribution')
+      +' ('+(dispRates.length)+(capped>0?' shown, '+capped+' outliers hidden':' leaves')+')</div>';
     h+='<div style="display:flex;align-items:flex-end;gap:2px;height:36px">';
-    var buckets=[0,0,0,0,0,0,0]; // 0-2, 2-5, 5-8, 8-12, 12-18, 18-25, 25+
-    hrRates.forEach(function(r){
+    var buckets=[0,0,0,0,0,0,0];
+    dispRates.forEach(function(r){
       if(r<2)buckets[0]++;else if(r<5)buckets[1]++;else if(r<8)buckets[2]++;
       else if(r<12)buckets[3]++;else if(r<18)buckets[4]++;else if(r<25)buckets[5]++;else buckets[6]++;
     });
-    var bktLabels=['<2%','2-5%','5-8%','8-12%','12-18%','18-25%','25%+'];
+    var bktLabels=['<2%','2-5%','5-8%','8-12%','12-18%','18-25%','25-30%'];
     var bktColors=['var(--muted2)','var(--muted)','var(--y)','var(--warn)','var(--g)','var(--accent)','var(--blue)'];
     var bktMax=Math.max.apply(null,buckets)||1;
     buckets.forEach(function(cnt,i){
@@ -564,7 +571,9 @@ function renderModelTab(md,hd){
     bktLabels.forEach(function(l){
       h+='<div style="flex:1;font-size:7px;color:var(--muted2);text-align:center">'+l+'</div>';
     });
-    h+='</div></div>';
+    h+='</div>'
+    +(capped>0?'<div style="font-size:9px;color:var(--muted2);margin-top:4px">'+capped+' extreme leaves (>30%) in individual trees hidden — Forest averages these out</div>':'')
+    +'</div>';
   }
 
   h+='<div class="model-layout">';
