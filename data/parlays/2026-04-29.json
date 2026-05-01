@@ -1,0 +1,4415 @@
+{
+  "date": "2026-04-29",
+  "combos": [
+    {
+      "legs": [
+        "Mike Trout",
+        "Dominic Canzone"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Luke Raley"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Paul Goldschmidt"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "New York Yankees"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Cam Smith"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Christian Walker"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Dillon Dingler"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Spencer Torkelson"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Nick Kurtz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Athletics"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Willson Contreras"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Boston Red Sox"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Max Muncy"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Los Angeles Dodgers"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Luke Raley"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Paul Goldschmidt"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "New York Yankees"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Cam Smith"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Christian Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Dillon Dingler"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Spencer Torkelson"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Nick Kurtz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Athletics"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Willson Contreras"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Boston Red Sox"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Max Muncy"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Los Angeles Dodgers"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Paul Goldschmidt"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "New York Yankees"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Cam Smith"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Christian Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Dillon Dingler"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Spencer Torkelson"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Nick Kurtz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Athletics"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Willson Contreras"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Boston Red Sox"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Max Muncy"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Los Angeles Dodgers"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Cam Smith"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Christian Walker"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "New York Yankees",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "New York Yankees",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Dillon Dingler"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Spencer Torkelson"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Nick Kurtz"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Athletics"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Willson Contreras"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Boston Red Sox"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Max Muncy"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Los Angeles Dodgers"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Christian Walker"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Houston Astros",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Houston Astros",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Dillon Dingler"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Spencer Torkelson"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Nick Kurtz"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Athletics"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Willson Contreras"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Boston Red Sox"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Max Muncy"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Los Angeles Dodgers"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Houston Astros",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Houston Astros",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Dillon Dingler"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Spencer Torkelson"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Nick Kurtz"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Athletics"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Willson Contreras"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Boston Red Sox"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Max Muncy"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Los Angeles Dodgers"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Elly De La Cruz",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Cincinnati Reds",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Elly De La Cruz",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Cincinnati Reds",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Elly De La Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Cincinnati Reds",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Elly De La Cruz",
+        "Dillon Dingler"
+      ],
+      "teams": [
+        "Cincinnati Reds",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Elly De La Cruz",
+        "Spencer Torkelson"
+      ],
+      "teams": [
+        "Cincinnati Reds",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Elly De La Cruz",
+        "Nick Kurtz"
+      ],
+      "teams": [
+        "Cincinnati Reds",
+        "Athletics"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Elly De La Cruz",
+        "Willson Contreras"
+      ],
+      "teams": [
+        "Cincinnati Reds",
+        "Boston Red Sox"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Elly De La Cruz",
+        "Max Muncy"
+      ],
+      "teams": [
+        "Cincinnati Reds",
+        "Los Angeles Dodgers"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Jordan Walker",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "St. Louis Cardinals",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Jordan Walker",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "St. Louis Cardinals",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Jordan Walker",
+        "Dillon Dingler"
+      ],
+      "teams": [
+        "St. Louis Cardinals",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Jordan Walker",
+        "Spencer Torkelson"
+      ],
+      "teams": [
+        "St. Louis Cardinals",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Jordan Walker",
+        "Nick Kurtz"
+      ],
+      "teams": [
+        "St. Louis Cardinals",
+        "Athletics"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Jordan Walker",
+        "Willson Contreras"
+      ],
+      "teams": [
+        "St. Louis Cardinals",
+        "Boston Red Sox"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Jordan Walker",
+        "Max Muncy"
+      ],
+      "teams": [
+        "St. Louis Cardinals",
+        "Los Angeles Dodgers"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Oneil Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Pittsburgh Pirates",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Oneil Cruz",
+        "Dillon Dingler"
+      ],
+      "teams": [
+        "Pittsburgh Pirates",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Oneil Cruz",
+        "Spencer Torkelson"
+      ],
+      "teams": [
+        "Pittsburgh Pirates",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Oneil Cruz",
+        "Nick Kurtz"
+      ],
+      "teams": [
+        "Pittsburgh Pirates",
+        "Athletics"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Oneil Cruz",
+        "Willson Contreras"
+      ],
+      "teams": [
+        "Pittsburgh Pirates",
+        "Boston Red Sox"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Oneil Cruz",
+        "Max Muncy"
+      ],
+      "teams": [
+        "Pittsburgh Pirates",
+        "Los Angeles Dodgers"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Heliot Ramos",
+        "Dillon Dingler"
+      ],
+      "teams": [
+        "San Francisco Giants",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Heliot Ramos",
+        "Spencer Torkelson"
+      ],
+      "teams": [
+        "San Francisco Giants",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Heliot Ramos",
+        "Nick Kurtz"
+      ],
+      "teams": [
+        "San Francisco Giants",
+        "Athletics"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Heliot Ramos",
+        "Willson Contreras"
+      ],
+      "teams": [
+        "San Francisco Giants",
+        "Boston Red Sox"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Heliot Ramos",
+        "Max Muncy"
+      ],
+      "teams": [
+        "San Francisco Giants",
+        "Los Angeles Dodgers"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dillon Dingler",
+        "Spencer Torkelson"
+      ],
+      "teams": [
+        "Detroit Tigers",
+        "Detroit Tigers"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dillon Dingler",
+        "Nick Kurtz"
+      ],
+      "teams": [
+        "Detroit Tigers",
+        "Athletics"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dillon Dingler",
+        "Willson Contreras"
+      ],
+      "teams": [
+        "Detroit Tigers",
+        "Boston Red Sox"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dillon Dingler",
+        "Max Muncy"
+      ],
+      "teams": [
+        "Detroit Tigers",
+        "Los Angeles Dodgers"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Spencer Torkelson",
+        "Nick Kurtz"
+      ],
+      "teams": [
+        "Detroit Tigers",
+        "Athletics"
+      ],
+      "probs": [
+        15.0,
+        15.0
+      ],
+      "combined_prob": 2.25,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Spencer Torkelson",
+        "Willson Contreras"
+      ],
+      "teams": [
+        "Detroit Tigers",
+        "Boston Red Sox"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Spencer Torkelson",
+        "Max Muncy"
+      ],
+      "teams": [
+        "Detroit Tigers",
+        "Los Angeles Dodgers"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Nick Kurtz",
+        "Willson Contreras"
+      ],
+      "teams": [
+        "Athletics",
+        "Boston Red Sox"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Nick Kurtz",
+        "Max Muncy"
+      ],
+      "teams": [
+        "Athletics",
+        "Los Angeles Dodgers"
+      ],
+      "probs": [
+        15.0,
+        13.6
+      ],
+      "combined_prob": 2.04,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Willson Contreras",
+        "Max Muncy"
+      ],
+      "teams": [
+        "Boston Red Sox",
+        "Los Angeles Dodgers"
+      ],
+      "probs": [
+        13.6,
+        13.6
+      ],
+      "combined_prob": 1.8496,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Dominic Canzone",
+        "Luke Raley"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Dominic Canzone",
+        "Paul Goldschmidt"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "New York Yankees"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Dominic Canzone",
+        "Cam Smith"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Dominic Canzone",
+        "Christian Walker"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Dominic Canzone",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Dominic Canzone",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Dominic Canzone",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Dominic Canzone",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Luke Raley",
+        "Paul Goldschmidt"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "New York Yankees"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Luke Raley",
+        "Cam Smith"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Luke Raley",
+        "Christian Walker"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Luke Raley",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Luke Raley",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Luke Raley",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Luke Raley",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Seattle Mariners",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Paul Goldschmidt",
+        "Cam Smith"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "New York Yankees",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Paul Goldschmidt",
+        "Christian Walker"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "New York Yankees",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Paul Goldschmidt",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "New York Yankees",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Paul Goldschmidt",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "New York Yankees",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Paul Goldschmidt",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "New York Yankees",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Paul Goldschmidt",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "New York Yankees",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Cam Smith",
+        "Christian Walker"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Houston Astros",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Cam Smith",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Houston Astros",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Cam Smith",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Houston Astros",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Cam Smith",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Cam Smith",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Houston Astros",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Christian Walker",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Houston Astros",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Christian Walker",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Houston Astros",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Christian Walker",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Christian Walker",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Houston Astros",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Elly De La Cruz",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Cincinnati Reds",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Elly De La Cruz",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Cincinnati Reds",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Elly De La Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Cincinnati Reds",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Jordan Walker",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "St. Louis Cardinals",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Jordan Walker",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "St. Louis Cardinals",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Mike Trout",
+        "Oneil Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Los Angeles Angels",
+        "Pittsburgh Pirates",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Luke Raley",
+        "Paul Goldschmidt"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Seattle Mariners",
+        "New York Yankees"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Luke Raley",
+        "Cam Smith"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Seattle Mariners",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Luke Raley",
+        "Christian Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Seattle Mariners",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Luke Raley",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Seattle Mariners",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Luke Raley",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Seattle Mariners",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Luke Raley",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Seattle Mariners",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Luke Raley",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Seattle Mariners",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Paul Goldschmidt",
+        "Cam Smith"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "New York Yankees",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Paul Goldschmidt",
+        "Christian Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "New York Yankees",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Paul Goldschmidt",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "New York Yankees",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Paul Goldschmidt",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "New York Yankees",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Paul Goldschmidt",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "New York Yankees",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Paul Goldschmidt",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "New York Yankees",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Cam Smith",
+        "Christian Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Cam Smith",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Cam Smith",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Cam Smith",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Cam Smith",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Christian Walker",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Christian Walker",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Christian Walker",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Christian Walker",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Elly De La Cruz",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Cincinnati Reds",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Elly De La Cruz",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Cincinnati Reds",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Elly De La Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Cincinnati Reds",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Jordan Walker",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "St. Louis Cardinals",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Jordan Walker",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "St. Louis Cardinals",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Dominic Canzone",
+        "Oneil Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Pittsburgh Pirates",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Paul Goldschmidt",
+        "Cam Smith"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "New York Yankees",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Paul Goldschmidt",
+        "Christian Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "New York Yankees",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Paul Goldschmidt",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "New York Yankees",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Paul Goldschmidt",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "New York Yankees",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Paul Goldschmidt",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "New York Yankees",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Paul Goldschmidt",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "New York Yankees",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Cam Smith",
+        "Christian Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Cam Smith",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Cam Smith",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Cam Smith",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Cam Smith",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Christian Walker",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Christian Walker",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Christian Walker",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Christian Walker",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Houston Astros",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Elly De La Cruz",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Cincinnati Reds",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Elly De La Cruz",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Cincinnati Reds",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Elly De La Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Cincinnati Reds",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Jordan Walker",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "St. Louis Cardinals",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Jordan Walker",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "St. Louis Cardinals",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Luke Raley",
+        "Oneil Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Pittsburgh Pirates",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Cam Smith",
+        "Christian Walker"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros",
+        "Houston Astros"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Cam Smith",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Cam Smith",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Cam Smith",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Cam Smith",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Christian Walker",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Christian Walker",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Christian Walker",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Christian Walker",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Elly De La Cruz",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Cincinnati Reds",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Elly De La Cruz",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Cincinnati Reds",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Elly De La Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Cincinnati Reds",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Jordan Walker",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "New York Yankees",
+        "St. Louis Cardinals",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Jordan Walker",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "New York Yankees",
+        "St. Louis Cardinals",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Paul Goldschmidt",
+        "Oneil Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Pittsburgh Pirates",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Christian Walker",
+        "Elly De La Cruz"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Houston Astros",
+        "Cincinnati Reds"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Christian Walker",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Houston Astros",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Christian Walker",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Christian Walker",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Houston Astros",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Elly De La Cruz",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Cincinnati Reds",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Elly De La Cruz",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Cincinnati Reds",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Elly De La Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Cincinnati Reds",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Jordan Walker",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Houston Astros",
+        "St. Louis Cardinals",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Jordan Walker",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Houston Astros",
+        "St. Louis Cardinals",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Cam Smith",
+        "Oneil Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Pittsburgh Pirates",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Elly De La Cruz",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Cincinnati Reds",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Elly De La Cruz",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Cincinnati Reds",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Elly De La Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Cincinnati Reds",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Jordan Walker",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Houston Astros",
+        "St. Louis Cardinals",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Jordan Walker",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Houston Astros",
+        "St. Louis Cardinals",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Christian Walker",
+        "Oneil Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Pittsburgh Pirates",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Elly De La Cruz",
+        "Jordan Walker",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Cincinnati Reds",
+        "St. Louis Cardinals",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Elly De La Cruz",
+        "Jordan Walker",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Cincinnati Reds",
+        "St. Louis Cardinals",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Elly De La Cruz",
+        "Oneil Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "Cincinnati Reds",
+        "Pittsburgh Pirates",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Jordan Walker",
+        "Oneil Cruz",
+        "Heliot Ramos"
+      ],
+      "teams": [
+        "St. Louis Cardinals",
+        "Pittsburgh Pirates",
+        "San Francisco Giants"
+      ],
+      "probs": [
+        15.0,
+        15.0,
+        15.0
+      ],
+      "combined_prob": 0.3375,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    }
+  ]
+}
