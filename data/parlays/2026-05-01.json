@@ -120,9 +120,9 @@
       ],
       "probs": [
         28.0,
-        25.3
+        25.4
       ],
-      "combined_prob": 7.084,
+      "combined_prob": 7.112,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -138,9 +138,9 @@
       ],
       "probs": [
         28.0,
-        24.8
+        24.9
       ],
-      "combined_prob": 6.944,
+      "combined_prob": 6.972,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -354,9 +354,9 @@
       ],
       "probs": [
         28.0,
-        25.3
+        25.4
       ],
-      "combined_prob": 7.084,
+      "combined_prob": 7.112,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -372,9 +372,9 @@
       ],
       "probs": [
         28.0,
-        24.8
+        24.9
       ],
-      "combined_prob": 6.944,
+      "combined_prob": 6.972,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -570,9 +570,9 @@
       ],
       "probs": [
         27.4,
-        25.3
+        25.4
       ],
-      "combined_prob": 6.9322,
+      "combined_prob": 6.9596,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -588,9 +588,9 @@
       ],
       "probs": [
         27.4,
-        24.8
+        24.9
       ],
-      "combined_prob": 6.7952,
+      "combined_prob": 6.8226,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -768,9 +768,9 @@
       ],
       "probs": [
         27.3,
-        25.3
+        25.4
       ],
-      "combined_prob": 6.9069,
+      "combined_prob": 6.9342,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -786,9 +786,9 @@
       ],
       "probs": [
         27.3,
-        24.8
+        24.9
       ],
-      "combined_prob": 6.7704,
+      "combined_prob": 6.7977,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -948,9 +948,9 @@
       ],
       "probs": [
         26.5,
-        25.3
+        25.4
       ],
-      "combined_prob": 6.7045,
+      "combined_prob": 6.731,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -966,9 +966,9 @@
       ],
       "probs": [
         26.5,
-        24.8
+        24.9
       ],
-      "combined_prob": 6.572,
+      "combined_prob": 6.5985,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1110,9 +1110,9 @@
       ],
       "probs": [
         26.4,
-        25.3
+        25.4
       ],
-      "combined_prob": 6.6792,
+      "combined_prob": 6.7056,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1128,9 +1128,9 @@
       ],
       "probs": [
         26.4,
-        24.8
+        24.9
       ],
-      "combined_prob": 6.5472,
+      "combined_prob": 6.5736,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1254,9 +1254,9 @@
       ],
       "probs": [
         25.6,
-        25.3
+        25.4
       ],
-      "combined_prob": 6.4768,
+      "combined_prob": 6.5024,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1272,9 +1272,9 @@
       ],
       "probs": [
         25.6,
-        24.8
+        24.9
       ],
-      "combined_prob": 6.3488,
+      "combined_prob": 6.3744,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1397,10 +1397,10 @@
         "Colorado Rockies"
       ],
       "probs": [
-        25.3,
-        24.8
+        25.4,
+        24.9
       ],
-      "combined_prob": 6.2744,
+      "combined_prob": 6.3246,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1415,10 +1415,10 @@
         "Los Angeles Angels"
       ],
       "probs": [
-        25.3,
+        25.4,
         24.6
       ],
-      "combined_prob": 6.2238,
+      "combined_prob": 6.2484,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1433,10 +1433,10 @@
         "New York Yankees"
       ],
       "probs": [
-        25.3,
+        25.4,
         23.6
       ],
-      "combined_prob": 5.9708,
+      "combined_prob": 5.9944,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1451,10 +1451,10 @@
         "New York Mets"
       ],
       "probs": [
-        25.3,
+        25.4,
         22.8
       ],
-      "combined_prob": 5.7684,
+      "combined_prob": 5.7912,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1469,10 +1469,10 @@
         "Boston Red Sox"
       ],
       "probs": [
-        25.3,
+        25.4,
         22.7
       ],
-      "combined_prob": 5.7431,
+      "combined_prob": 5.7658,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1487,10 +1487,10 @@
         "Atlanta Braves"
       ],
       "probs": [
-        25.3,
+        25.4,
         22.7
       ],
-      "combined_prob": 5.7431,
+      "combined_prob": 5.7658,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1505,10 +1505,10 @@
         "Seattle Mariners"
       ],
       "probs": [
-        25.3,
+        25.4,
         21.8
       ],
-      "combined_prob": 5.5154,
+      "combined_prob": 5.5372,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1523,10 +1523,10 @@
         "Los Angeles Angels"
       ],
       "probs": [
-        24.8,
+        24.9,
         24.6
       ],
-      "combined_prob": 6.1008,
+      "combined_prob": 6.1254,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1541,10 +1541,10 @@
         "New York Yankees"
       ],
       "probs": [
-        24.8,
+        24.9,
         23.6
       ],
-      "combined_prob": 5.8528,
+      "combined_prob": 5.8764,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1559,10 +1559,10 @@
         "New York Mets"
       ],
       "probs": [
-        24.8,
+        24.9,
         22.8
       ],
-      "combined_prob": 5.6544,
+      "combined_prob": 5.6772,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1577,10 +1577,10 @@
         "Boston Red Sox"
       ],
       "probs": [
-        24.8,
+        24.9,
         22.7
       ],
-      "combined_prob": 5.6296,
+      "combined_prob": 5.6523,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1595,10 +1595,10 @@
         "Atlanta Braves"
       ],
       "probs": [
-        24.8,
+        24.9,
         22.7
       ],
-      "combined_prob": 5.6296,
+      "combined_prob": 5.6523,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1613,10 +1613,10 @@
         "Seattle Mariners"
       ],
       "probs": [
-        24.8,
+        24.9,
         21.8
       ],
-      "combined_prob": 5.4064,
+      "combined_prob": 5.4282,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -2010,9 +2010,9 @@
       "probs": [
         28.0,
         28.0,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.98352,
+      "combined_prob": 1.99136,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2031,9 +2031,9 @@
       "probs": [
         28.0,
         28.0,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.94432,
+      "combined_prob": 1.95216,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2157,9 +2157,9 @@
       "probs": [
         28.0,
         27.4,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.941016,
+      "combined_prob": 1.948688,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2178,9 +2178,9 @@
       "probs": [
         28.0,
         27.4,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.902656,
+      "combined_prob": 1.910328,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2283,9 +2283,9 @@
       "probs": [
         28.0,
         27.3,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.933932,
+      "combined_prob": 1.941576,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2304,9 +2304,9 @@
       "probs": [
         28.0,
         27.3,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.895712,
+      "combined_prob": 1.903356,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2388,9 +2388,9 @@
       "probs": [
         28.0,
         26.5,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.87726,
+      "combined_prob": 1.88468,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2409,9 +2409,9 @@
       "probs": [
         28.0,
         26.5,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.84016,
+      "combined_prob": 1.84758,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2472,9 +2472,9 @@
       "probs": [
         28.0,
         26.4,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.870176,
+      "combined_prob": 1.877568,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2493,9 +2493,9 @@
       "probs": [
         28.0,
         26.4,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.833216,
+      "combined_prob": 1.840608,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2535,9 +2535,9 @@
       "probs": [
         28.0,
         25.6,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.813504,
+      "combined_prob": 1.820672,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2556,9 +2556,9 @@
       "probs": [
         28.0,
         25.6,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.777664,
+      "combined_prob": 1.784832,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2597,10 +2597,10 @@
       ],
       "probs": [
         28.0,
-        25.3,
-        24.8
+        25.4,
+        24.9
       ],
-      "combined_prob": 1.756832,
+      "combined_prob": 1.770888,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2618,10 +2618,10 @@
       ],
       "probs": [
         28.0,
-        25.3,
+        25.4,
         24.6
       ],
-      "combined_prob": 1.742664,
+      "combined_prob": 1.749552,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2639,10 +2639,10 @@
       ],
       "probs": [
         28.0,
-        24.8,
+        24.9,
         24.6
       ],
-      "combined_prob": 1.708224,
+      "combined_prob": 1.715112,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2745,9 +2745,9 @@
       "probs": [
         28.0,
         27.4,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.941016,
+      "combined_prob": 1.948688,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2766,9 +2766,9 @@
       "probs": [
         28.0,
         27.4,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.902656,
+      "combined_prob": 1.910328,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2871,9 +2871,9 @@
       "probs": [
         28.0,
         27.3,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.933932,
+      "combined_prob": 1.941576,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2892,9 +2892,9 @@
       "probs": [
         28.0,
         27.3,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.895712,
+      "combined_prob": 1.903356,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2976,9 +2976,9 @@
       "probs": [
         28.0,
         26.5,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.87726,
+      "combined_prob": 1.88468,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2997,9 +2997,9 @@
       "probs": [
         28.0,
         26.5,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.84016,
+      "combined_prob": 1.84758,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3060,9 +3060,9 @@
       "probs": [
         28.0,
         26.4,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.870176,
+      "combined_prob": 1.877568,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3081,9 +3081,9 @@
       "probs": [
         28.0,
         26.4,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.833216,
+      "combined_prob": 1.840608,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3123,9 +3123,9 @@
       "probs": [
         28.0,
         25.6,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.813504,
+      "combined_prob": 1.820672,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3144,9 +3144,9 @@
       "probs": [
         28.0,
         25.6,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.777664,
+      "combined_prob": 1.784832,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3185,10 +3185,10 @@
       ],
       "probs": [
         28.0,
-        25.3,
-        24.8
+        25.4,
+        24.9
       ],
-      "combined_prob": 1.756832,
+      "combined_prob": 1.770888,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3206,10 +3206,10 @@
       ],
       "probs": [
         28.0,
-        25.3,
+        25.4,
         24.6
       ],
-      "combined_prob": 1.742664,
+      "combined_prob": 1.749552,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3227,10 +3227,10 @@
       ],
       "probs": [
         28.0,
-        24.8,
+        24.9,
         24.6
       ],
-      "combined_prob": 1.708224,
+      "combined_prob": 1.715112,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3312,9 +3312,9 @@
       "probs": [
         27.4,
         27.3,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.892491,
+      "combined_prob": 1.899971,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3333,9 +3333,9 @@
       "probs": [
         27.4,
         27.3,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.85509,
+      "combined_prob": 1.86257,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3417,9 +3417,9 @@
       "probs": [
         27.4,
         26.5,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.837033,
+      "combined_prob": 1.844294,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3438,9 +3438,9 @@
       "probs": [
         27.4,
         26.5,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.800728,
+      "combined_prob": 1.807989,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3501,9 +3501,9 @@
       "probs": [
         27.4,
         26.4,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.830101,
+      "combined_prob": 1.837334,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3522,9 +3522,9 @@
       "probs": [
         27.4,
         26.4,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.793933,
+      "combined_prob": 1.801166,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3564,9 +3564,9 @@
       "probs": [
         27.4,
         25.6,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.774643,
+      "combined_prob": 1.781658,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3585,9 +3585,9 @@
       "probs": [
         27.4,
         25.6,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.739571,
+      "combined_prob": 1.746586,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3626,10 +3626,10 @@
       ],
       "probs": [
         27.4,
-        25.3,
-        24.8
+        25.4,
+        24.9
       ],
-      "combined_prob": 1.719186,
+      "combined_prob": 1.73294,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3647,10 +3647,10 @@
       ],
       "probs": [
         27.4,
-        25.3,
+        25.4,
         24.6
       ],
-      "combined_prob": 1.705321,
+      "combined_prob": 1.712062,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3668,10 +3668,10 @@
       ],
       "probs": [
         27.4,
-        24.8,
+        24.9,
         24.6
       ],
-      "combined_prob": 1.671619,
+      "combined_prob": 1.67836,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3732,9 +3732,9 @@
       "probs": [
         27.3,
         26.5,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.830329,
+      "combined_prob": 1.837563,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3753,9 +3753,9 @@
       "probs": [
         27.3,
         26.5,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.794156,
+      "combined_prob": 1.801391,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3816,9 +3816,9 @@
       "probs": [
         27.3,
         26.4,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.823422,
+      "combined_prob": 1.830629,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3837,9 +3837,9 @@
       "probs": [
         27.3,
         26.4,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.787386,
+      "combined_prob": 1.794593,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3879,9 +3879,9 @@
       "probs": [
         27.3,
         25.6,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.768166,
+      "combined_prob": 1.775155,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3900,9 +3900,9 @@
       "probs": [
         27.3,
         25.6,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.733222,
+      "combined_prob": 1.740211,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3941,10 +3941,10 @@
       ],
       "probs": [
         27.3,
-        25.3,
-        24.8
+        25.4,
+        24.9
       ],
-      "combined_prob": 1.712911,
+      "combined_prob": 1.726616,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3962,10 +3962,10 @@
       ],
       "probs": [
         27.3,
-        25.3,
+        25.4,
         24.6
       ],
-      "combined_prob": 1.699097,
+      "combined_prob": 1.705813,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3983,10 +3983,10 @@
       ],
       "probs": [
         27.3,
-        24.8,
+        24.9,
         24.6
       ],
-      "combined_prob": 1.665518,
+      "combined_prob": 1.672234,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4026,9 +4026,9 @@
       "probs": [
         26.5,
         26.4,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.769988,
+      "combined_prob": 1.776984,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4047,9 +4047,9 @@
       "probs": [
         26.5,
         26.4,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.735008,
+      "combined_prob": 1.742004,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4089,9 +4089,9 @@
       "probs": [
         26.5,
         25.6,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.716352,
+      "combined_prob": 1.723136,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4110,9 +4110,9 @@
       "probs": [
         26.5,
         25.6,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.682432,
+      "combined_prob": 1.689216,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4151,10 +4151,10 @@
       ],
       "probs": [
         26.5,
-        25.3,
-        24.8
+        25.4,
+        24.9
       ],
-      "combined_prob": 1.662716,
+      "combined_prob": 1.676019,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4172,10 +4172,10 @@
       ],
       "probs": [
         26.5,
-        25.3,
+        25.4,
         24.6
       ],
-      "combined_prob": 1.649307,
+      "combined_prob": 1.655826,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4193,10 +4193,10 @@
       ],
       "probs": [
         26.5,
-        24.8,
+        24.9,
         24.6
       ],
-      "combined_prob": 1.616712,
+      "combined_prob": 1.623231,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4215,9 +4215,9 @@
       "probs": [
         26.4,
         25.6,
-        25.3
+        25.4
       ],
-      "combined_prob": 1.709875,
+      "combined_prob": 1.716634,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4236,9 +4236,9 @@
       "probs": [
         26.4,
         25.6,
-        24.8
+        24.9
       ],
-      "combined_prob": 1.676083,
+      "combined_prob": 1.682842,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4277,10 +4277,10 @@
       ],
       "probs": [
         26.4,
-        25.3,
-        24.8
+        25.4,
+        24.9
       ],
-      "combined_prob": 1.656442,
+      "combined_prob": 1.669694,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4298,10 +4298,10 @@
       ],
       "probs": [
         26.4,
-        25.3,
+        25.4,
         24.6
       ],
-      "combined_prob": 1.643083,
+      "combined_prob": 1.649578,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4319,10 +4319,10 @@
       ],
       "probs": [
         26.4,
-        24.8,
+        24.9,
         24.6
       ],
-      "combined_prob": 1.610611,
+      "combined_prob": 1.617106,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4340,10 +4340,10 @@
       ],
       "probs": [
         25.6,
-        25.3,
-        24.8
+        25.4,
+        24.9
       ],
-      "combined_prob": 1.606246,
+      "combined_prob": 1.619098,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4361,10 +4361,10 @@
       ],
       "probs": [
         25.6,
-        25.3,
+        25.4,
         24.6
       ],
-      "combined_prob": 1.593293,
+      "combined_prob": 1.59959,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4382,10 +4382,10 @@
       ],
       "probs": [
         25.6,
-        24.8,
+        24.9,
         24.6
       ],
-      "combined_prob": 1.561805,
+      "combined_prob": 1.568102,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4402,11 +4402,11 @@
         "Los Angeles Angels"
       ],
       "probs": [
-        25.3,
-        24.8,
+        25.4,
+        24.9,
         24.6
       ],
-      "combined_prob": 1.543502,
+      "combined_prob": 1.555852,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
