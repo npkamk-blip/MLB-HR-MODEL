@@ -1396,6 +1396,122 @@ async def github_put_file(path: str, content: str, message: str, sha: str = None
         print(f"GitHub put error: {e}")
         return False
 
+def compute_radar_composite(rec: dict, medians: dict) -> dict:
+    """
+    Compute 6-axis radar composite scores (0-100) from a prediction record.
+    Mirrors the JS buildRadar() in index.html exactly.
+    Saved with every prediction so we can correlate axes with outcomes in October.
+
+    Edges we're looking for:
+    - High Matchup + High Power but low Form → power hitter in cold streak, pitcher is hittable
+    - High Form + low Matchup → hot batter facing tough pitcher, still worth watching
+    - High everything → genuine elite spot
+    - High Discipline + High Power → contact-power profile, lower variance leg
+    - Low Discipline + High Power → boom/bust (Murakami type)
+    """
+    def norm(val, med, cap=100):
+        if not val or not med or val == 0: return 50
+        return min(round((val / med) * 50), cap)
+
+    def norm_low(val, med):
+        if not val or not med or val == 0: return 50
+        return min(round((med / val) * 50), 100)
+
+    def la_score(la):
+        if not la or la == 0: return 40
+        dist = abs(la - 26.5)
+        return max(0, min(100, round(100 - dist * 3.5)))
+
+    med = medians
+
+    # Pull values
+    brl_s  = rec.get('barrel_pct_season', 0)
+    iso_s  = rec.get('iso_season', 0)
+    ev_s   = rec.get('ev_season', 0)
+    la_s   = rec.get('la_season', 0)
+    pull_s = rec.get('pull_pct_season', 0)
+
+    xslg_l = rec.get('xslg_l8d', 0)
+    ev_l   = rec.get('ev_l8d', 0)
+    brl_l  = rec.get('barrel_pct_l8d', 0)
+    spd_l  = rec.get('bat_speed_l8d', 0)
+    hh_l   = rec.get('hard_hit_l8d', 0)
+    la_l   = rec.get('la_l8d', 0)
+
+    pit_hr9   = rec.get('pit_hr9_vs_hand', 0) or rec.get('pit_hr9_season', 0)
+    pit_hh    = rec.get('pit_hard_hit_season', 0)
+    pit_era   = rec.get('pit_era_season', 0)
+    pit_slg   = rec.get('pit_slg_vs_hand', 0)
+
+    pf  = rec.get('park_factor', 1.0)
+    wx  = rec.get('weather_mult', 1.0)
+
+    k_l   = rec.get('k_pct_l8d', 0)
+    chase = rec.get('chase_rate_season', 0)
+
+    bat_plat  = rec.get('bat_platoon_mult', 1.0)
+    pit_plat  = rec.get('pit_platoon_mult', 1.0)
+    iso_hand  = rec.get('iso_vs_hand', 0)
+    pitch_sc  = rec.get('pitch_matchup_score', 0)
+
+    # ── 6 axis scores ──
+    power = round(
+        norm(brl_s, med.get('barrel_pct_season', 10)) * 0.35 +
+        norm(iso_s, med.get('iso_season', 0.162))     * 0.30 +
+        norm(ev_s,  med.get('ev_season', 89.7))       * 0.20 +
+        la_score(la_s)                                * 0.08 +
+        norm(pull_s, med.get('pull_pct_season', 40))  * 0.07
+    )
+
+    form = round(
+        norm(xslg_l, med.get('xslg_l8d', 0.545))       * 0.35 +
+        norm(ev_l,   med.get('ev_l8d', 83.5))           * 0.25 +
+        norm(brl_l,  med.get('barrel_pct_l8d', 7.4))    * 0.20 +
+        norm(spd_l,  med.get('bat_speed_l8d', 70.1))    * 0.10 +
+        norm(hh_l,   med.get('hard_hit_l8d', 27.3))     * 0.05 +
+        la_score(la_l)                                  * 0.05
+    )
+
+    matchup = round(
+        norm(pit_hr9, med.get('pit_hr9_season', 1.0))          * 0.45 +
+        norm(pit_hh,  med.get('pit_hard_hit_season', 40.6))    * 0.30 +
+        norm_low(pit_era, med.get('pit_era_season', 3.68))     * 0.15 +
+        norm(pit_slg, med.get('pit_slg_vs_hand', 0.36))        * 0.10
+    )
+
+    park_wx = 50
+    if pf != 1.0 or wx != 1.0:
+        park_wx = round(
+            norm(pf, 1.04) * 0.60 +
+            norm(wx, 1.00) * 0.40
+        )
+
+    discipline = round(
+        norm_low(k_l, med.get('k_pct_l8d', 21.6)) * 0.60 +
+        (norm_low(chase, 30) * 0.40 if chase > 0 else 50 * 0.40)
+    )
+
+    platoon = round(
+        norm(bat_plat, 1.0)                              * 0.35 +
+        norm(pit_plat, 1.0)                              * 0.35 +
+        norm(iso_hand, med.get('iso_vs_hand', 0.167))    * 0.20 +
+        (min(pitch_sc * 10 + 50, 100) if pitch_sc > 0 else 50) * 0.10
+    )
+
+    scores = [power, form, matchup, park_wx, discipline, platoon]
+    overall = round(sum(scores) / len(scores))
+
+    return {
+        "overall":    overall,
+        "power":      power,
+        "form":       form,
+        "matchup":    matchup,
+        "park":       park_wx,
+        "discipline": discipline,
+        "platoon":    platoon,
+    }
+
+
 async def save_daily_predictions(force: bool = False):
     """Save today's predictions to GitHub — uses same data as /games endpoint for consistency"""
     if not _cache["ready"]: return
@@ -1641,6 +1757,33 @@ async def save_daily_predictions(force: bool = False):
                             "lineup_k_pct": 0,  # populated at game time in future
                             # ── ROUND 4 CANDIDATES ──
                             "pit_k9_season": pit_k9_s,
+                            # ── RADAR COMPOSITE (saved for Oct correlation analysis) ──
+                            "radar": compute_radar_composite({
+                                "barrel_pct_season": barrel_s,
+                                "iso_season": iso_s,
+                                "ev_season": ev_s,
+                                "la_season": la_s,
+                                "pull_pct_season": round(bc2.get("pull_pct",0), 1),
+                                "xslg_l8d": xslg_l8d,
+                                "ev_l8d": ev_l8d,
+                                "barrel_pct_l8d": barrel_l8d,
+                                "bat_speed_l8d": bat_speed_l8d,
+                                "hard_hit_l8d": hh_l8d,
+                                "la_l8d": la_l8d,
+                                "pit_hr9_vs_hand": pit_hr9_vs,
+                                "pit_hr9_season": pit_hr9_s,
+                                "pit_hard_hit_season": pit_hh_s,
+                                "pit_era_season": pit_era_s,
+                                "pit_slg_vs_hand": pit_slg_vs,
+                                "park_factor": breakdown.get("park_factor", 1.0),
+                                "weather_mult": breakdown.get("weather_mult", 1.0),
+                                "k_pct_l8d": round(b8d2.get("k_pct",0), 1),
+                                "chase_rate_season": round(bc2.get("chase_rate",0), 1),
+                                "bat_platoon_mult": breakdown.get("bat_platoon_mult", 1.0),
+                                "pit_platoon_mult": breakdown.get("pit_platoon_mult", 1.0),
+                                "iso_vs_hand": iso_split,
+                                "pitch_matchup_score": round(pitch_score, 2),
+                            }, _dt_medians or {}),
                         })
         if not records:
             print(f"No predictions to save for {today}")
