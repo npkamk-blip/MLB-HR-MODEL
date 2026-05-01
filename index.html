@@ -1016,83 +1016,6 @@ function buildBatDetail(b){
 
   // ── LEFT: Feature-importance driven stat display ──
   var h='<div class="detail-wrap">';
-  h+='<div style="display:grid;grid-template-columns:1fr 1.5fr;gap:12px;align-items:start">';
-  h+='<div>';
-
-  // Tree features header
-  h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;display:flex;justify-content:space-between">';
-  h+='<span>What the tree sees</span><span style="color:var(--muted2)">Value &nbsp; vs median</span></div>';
-
-  // Show stats in feature importance order
-  var shownKeys = [];
-  fiList.forEach(function(fe){
-    var key=fe[0],imp=fe[1];
-    if(!FI_LABELS[key])return;
-    var val=statVals[key]||0;
-    var lbl=FI_LABELS[key];
-    var impPct=Math.round(imp*100);
-    var valStr=fmtByKey(key,val);
-    var med=medians[key]||0;
-    // color the value
-    var isPitStat=key.startsWith('pit_');
-    var isInvert=INVERT[key]||false;
-    var above=val>med;
-    var good;
-    if(isPitStat&&key.includes('hr9'))good=above;
-    else if(isPitStat)good=!above;
-    else if(isInvert)good=!above;
-    else good=above;
-    var valColor=val>0?(good?'var(--g)':'var(--r)'):'var(--muted2)';
-    // importance bar width
-    var maxImp=fiList[0]?fiList[0][1]:1;
-    var barW=maxImp>0?Math.round(imp/maxImp*60):0;
-    h+='<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border2)">';
-    h+='<div style="width:4px;height:28px;background:var(--border);border-radius:2px;flex-shrink:0;position:relative;overflow:hidden">';
-    h+='<div style="position:absolute;bottom:0;width:100%;height:'+barW+'%;background:var(--accent);border-radius:2px"></div></div>';
-    h+='<div style="flex:1;min-width:0">';
-    h+='<div style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+lbl+'</div>';
-    h+='<div style="font-size:8px;color:var(--muted2)">'+impPct+'% tree weight</div>';
-    h+='</div>';
-    h+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:16px;font-weight:700;color:'+valColor+';min-width:52px;text-align:right">'+valStr+'</div>';
-    h+='<div style="min-width:42px;text-align:right">'+medianTag(key,val)+'</div>';
-    h+='</div>';
-    shownKeys.push(key);
-  });
-
-  // If no feature importances yet, fall back to key stats
-  if(shownKeys.length===0){
-    var fallback=[
-      {k:'barrel_pct_season',l:'Barrel% Season',v:s.barrel||0},
-      {k:'hard_hit_season',l:'Hard Hit% Season',v:s.hh||0},
-      {k:'xslg_l8d',l:'xSLG L8D',v:xslg_l8d},
-      {k:'iso_vs_hand',l:'ISO vs Hand',v:bd.iso_vs_hand||0},
-      {k:'la_season',l:'Launch Angle',v:s.la||0},
-    ];
-    fallback.forEach(function(f){
-      var valStr=fmtByKey(f.k,f.v);
-      h+='<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border2)">';
-      h+='<div style="flex:1;font-size:10px;color:var(--muted)">'+f.l+'</div>';
-      h+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:16px;font-weight:700;color:var(--text)">'+valStr+'</div>';
-      h+='<div>'+medianTag(f.k,f.v)+'</div>';
-      h+='</div>';
-    });
-  }
-
-  // Pitcher strip below
-  if(pitP&&pitP.name){
-    h+='<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">';
-    h+='<div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">'+pitP.name+' ('+pitP.hand+'HP)</div>';
-    h+='<div class="chip-row">';
-    h+=chip('ERA',pitP.era?pitP.era.toFixed(2):'--',pitP.era>=4.5?'r':pitP.era>=3.5?'y':'g');
-    h+=chip('HR/9',pitP.hr9?pitP.hr9.toFixed(2):'--',pitP.hr9>=1.4?'g':pitP.hr9>=1?'y':'r');
-    h+=chip('HH%',pitP.hard_hit_pct?pitP.hard_hit_pct+'%':'--',pitP.hard_hit_pct>=42?'r':pitP.hard_hit_pct>=36?'y':'g');
-    var slgKey='vs_'+(b.hand==='L'?'L':'R')+'_slg';
-    var pitSlgV=pitP[slgKey];
-    h+=chip('SLG vs '+b.hand,pitSlgV&&bd.split_ip_vs_bat>=5?fmtSlg(pitSlgV):'--','n');
-    h+='</div></div>';
-  }
-  h+='</div>'; // left col
-
   // ── RIGHT: Radar Chart — Uncle Nicky Signature ──
   // 6-axis composite radar showing why this batter scored what he did
   // Each axis is a composite of multiple underlying stats
@@ -1281,12 +1204,93 @@ function buildBatDetail(b){
 
   var rightH = buildRadar();
 
-  // Append right panel
-  h+='<div style="background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:12px 14px">';
+  h+='<div style="background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;margin-bottom:10px">';
   h+=rightH;
   h+='</div>';
 
-  h+='</div>'; // grid
+  // ── Deep Dive — collapsible raw stats ──
+  var ddId = 'dd_'+b.name.replace(/ /g,'_')+'_'+Math.random().toString(36).slice(2,5);
+  h+='<div style="border:1px solid var(--border2);border-radius:8px;overflow:hidden">';
+  h+='<div onclick="var d=document.getElementById(\''+ddId+'\');d.style.display=d.style.display===\'none\'?\'block\':\'none\';this.querySelector(\'.dd-arrow\').textContent=d.style.display===\'none\'?\'▼\':\'▲\'" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;background:var(--surface);user-select:none">';
+  h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.09em">Deep Dive — Raw Model Inputs</div>';
+  h+='<span class="dd-arrow" style="font-size:10px;color:var(--muted2)">▼</span>';
+  h+='</div>';
+  h+='<div id="'+ddId+'" style="display:none;padding:10px 12px;background:var(--s3)">';
+
+  // Tree features header
+  h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;display:flex;justify-content:space-between">';
+  h+='<span>What the tree sees</span><span style="color:var(--muted2)">Value &nbsp; vs median</span></div>';
+
+  // Show stats in feature importance order
+  var shownKeys = [];
+  fiList.forEach(function(fe){
+    var key=fe[0],imp=fe[1];
+    if(!FI_LABELS[key])return;
+    var val=statVals[key]||0;
+    var lbl=FI_LABELS[key];
+    var impPct=Math.round(imp*100);
+    var valStr=fmtByKey(key,val);
+    var med=medians[key]||0;
+    // color the value
+    var isPitStat=key.startsWith('pit_');
+    var isInvert=INVERT[key]||false;
+    var above=val>med;
+    var good;
+    if(isPitStat&&key.includes('hr9'))good=above;
+    else if(isPitStat)good=!above;
+    else if(isInvert)good=!above;
+    else good=above;
+    var valColor=val>0?(good?'var(--g)':'var(--r)'):'var(--muted2)';
+    // importance bar width
+    var maxImp=fiList[0]?fiList[0][1]:1;
+    var barW=maxImp>0?Math.round(imp/maxImp*60):0;
+    h+='<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border2)">';
+    h+='<div style="width:4px;height:28px;background:var(--border);border-radius:2px;flex-shrink:0;position:relative;overflow:hidden">';
+    h+='<div style="position:absolute;bottom:0;width:100%;height:'+barW+'%;background:var(--accent);border-radius:2px"></div></div>';
+    h+='<div style="flex:1;min-width:0">';
+    h+='<div style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+lbl+'</div>';
+    h+='<div style="font-size:8px;color:var(--muted2)">'+impPct+'% tree weight</div>';
+    h+='</div>';
+    h+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:16px;font-weight:700;color:'+valColor+';min-width:52px;text-align:right">'+valStr+'</div>';
+    h+='<div style="min-width:42px;text-align:right">'+medianTag(key,val)+'</div>';
+    h+='</div>';
+    shownKeys.push(key);
+  });
+
+  // If no feature importances yet, fall back to key stats
+  if(shownKeys.length===0){
+    var fallback=[
+      {k:'barrel_pct_season',l:'Barrel% Season',v:s.barrel||0},
+      {k:'hard_hit_season',l:'Hard Hit% Season',v:s.hh||0},
+      {k:'xslg_l8d',l:'xSLG L8D',v:xslg_l8d},
+      {k:'iso_vs_hand',l:'ISO vs Hand',v:bd.iso_vs_hand||0},
+      {k:'la_season',l:'Launch Angle',v:s.la||0},
+    ];
+    fallback.forEach(function(f){
+      var valStr=fmtByKey(f.k,f.v);
+      h+='<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border2)">';
+      h+='<div style="flex:1;font-size:10px;color:var(--muted)">'+f.l+'</div>';
+      h+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:16px;font-weight:700;color:var(--text)">'+valStr+'</div>';
+      h+='<div>'+medianTag(f.k,f.v)+'</div>';
+      h+='</div>';
+    });
+  }
+
+  // Pitcher strip below
+  if(pitP&&pitP.name){
+    h+='<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">';
+    h+='<div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">'+pitP.name+' ('+pitP.hand+'HP)</div>';
+    h+='<div class="chip-row">';
+    h+=chip('ERA',pitP.era?pitP.era.toFixed(2):'--',pitP.era>=4.5?'r':pitP.era>=3.5?'y':'g');
+    h+=chip('HR/9',pitP.hr9?pitP.hr9.toFixed(2):'--',pitP.hr9>=1.4?'g':pitP.hr9>=1?'y':'r');
+    h+=chip('HH%',pitP.hard_hit_pct?pitP.hard_hit_pct+'%':'--',pitP.hard_hit_pct>=42?'r':pitP.hard_hit_pct>=36?'y':'g');
+    var slgKey='vs_'+(b.hand==='L'?'L':'R')+'_slg';
+    var pitSlgV=pitP[slgKey];
+    h+=chip('SLG vs '+b.hand,pitSlgV&&bd.split_ip_vs_bat>=5?fmtSlg(pitSlgV):'--','n');
+    h+='</div></div>';
+  h+='</div>';
+  h+='</div>';
+
   h+='</div>'; // detail-wrap
   return h;
 }
