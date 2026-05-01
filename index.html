@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>8-Ball - MLB Model</title>
+<title>MLB Home Run Model by Nick</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -281,8 +281,8 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 <body>
 <header>
   <div style="display:flex;align-items:center;gap:12px">
-    <div class="logo">8-Ball</div>
-    <div class="logo-sub">MLB Model</div>
+    <div class="logo">Uncle Nicky</div>
+    <div class="logo-sub">MLB HR Model</div>
   </div>
   <div class="hdr-r">
     <div class="date-nav">
@@ -361,7 +361,8 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 </div>
 
 <script>
-var API='https://web-production-c0e4.up.railway.app';
+var API_BASE = 'https://web-production-c0e4.up.railway.app';
+var API=API_BASE;
 var allGames=[];
 var selectedDate=new Date();
 var sortCol='hr_prob',sortDir=-1;
@@ -444,7 +445,7 @@ async function manualRecalibrate() {
   } catch(e){alert('Error: '+e.message);}
   if(btn){btn.disabled=false;btn.textContent='Recalibrate Now';}
 }
-// ── Stat label map for Decision Tree feature names ──
+// ── Stat label map for model feature names ──
 var DT_STAT_LABELS = {
   'barrel_pct_season':'Barrel% Season','hard_hit_season':'Hard Hit% Season',
   'ev_season':'Exit Velo Season','iso_season':'ISO Season',
@@ -469,10 +470,13 @@ function renderModelTab(md,hd){
   var weights=md.weights||{};
   var calInfo=md.calibration||{};
 
-  // ── Decision Tree metadata ──
+  // ── Model metadata — handles both Decision Tree and Random Forest ──
+  var modelType      = weights.model_type||'decision_tree';
+  var isForest       = modelType === 'random_forest';
   var treeDepth      = weights.tree_depth||4;
   var treeLeaves     = weights.tree_n_leaves||0;
   var treeMinLeaf    = weights.tree_min_leaf||30;
+  var nEstimators    = weights.n_estimators||200;
   var recordsUsed    = weights.records_used||0;
   var calFactor      = weights.calibration_factor||1.0;
   var calRound       = weights.calibration_round||calInfo.round||1;
@@ -480,7 +484,6 @@ function renderModelTab(md,hd){
   var nextUpgrade    = weights.next_depth_upgrade||1500;
   var hrRates        = weights.hr_rates_at_leaves||[];
   var featImport     = weights.feature_importances||{};
-  var modelType      = weights.model_type||'decision_tree';
   var treeHrRate     = weights.tree_hr_rate||0;
 
   // ── History: filter to current calibration round ──
@@ -501,7 +504,7 @@ function renderModelTab(md,hd){
   // ── Header ──
   var h='';
   h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">';
-  h+='<div><div style="font-size:20px;font-weight:700;color:var(--accent)">DECISION TREE</div>';
+  h+='<div><div style="font-size:20px;font-weight:700;color:var(--accent)">'+(isForest?'RANDOM FOREST':'DECISION TREE')+'</div>';
   h+='<div style="font-size:11px;color:var(--muted);margin-top:2px">Trained '+lastCal+' &middot; '+recordsUsed+' records &middot; Round '+calRound+'</div></div>';
   h+='<div style="display:flex;gap:8px;align-items:center">';
   var canR=allCompleted.length>=50;
@@ -517,21 +520,29 @@ function renderModelTab(md,hd){
       +(sub?'<div style="font-size:9px;color:var(--muted2);margin-top:1px">'+sub+'</div>':'')
       +'</div>';
   }
-  h+=statBox('Depth', treeDepth, 'max split layers', 'var(--accent)');
-  h+=statBox('Leaves', treeLeaves||'--', 'decision nodes', 'var(--blue)');
-  h+=statBox('Min Leaf', treeMinLeaf, 'samples/leaf', 'var(--muted)');
-  h+=statBox('Cal Factor', calFactor<1?calFactor.toFixed(3):'1.0 (off)', calFactor>=1?'stabilized':'bias correction', calFactor>=1?'var(--g)':'var(--y)');
-  h+=statBox('Dataset HR%', treeHrRate>0?treeHrRate.toFixed(1)+'%':'--', 'train set rate', 'var(--muted)');
-  // Next depth upgrade countdown
-  var upgradeLeft = typeof nextUpgrade==='number' ? Math.max(nextUpgrade-recordsUsed,0) : 0;
-  var upgradeStr  = typeof nextUpgrade==='number' ? (upgradeLeft>0?('+'+upgradeLeft+' records'):'ready!') : nextUpgrade;
-  h+=statBox('Next Upgrade', 'D'+(treeDepth+1), upgradeStr, upgradeLeft===0?'var(--g)':'var(--muted2)');
+  if(isForest){
+    h+=statBox('Trees', nEstimators, 'estimators', 'var(--accent)');
+    h+=statBox('Max Depth', treeDepth, 'per tree', 'var(--blue)');
+    h+=statBox('Min Leaf', treeMinLeaf, 'samples/leaf', 'var(--muted)');
+    h+=statBox('Cal Factor', calFactor<1?calFactor.toFixed(3):'1.0 (off)', calFactor>=1?'stabilized':'bias correction', calFactor>=1?'var(--g)':'var(--y)');
+    h+=statBox('Dataset HR%', treeHrRate>0?treeHrRate.toFixed(1)+'%':'--', 'train set rate', 'var(--muted)');
+    h+=statBox('Records', recordsUsed, 'training records', recordsUsed>=5000?'var(--g)':'var(--y)');
+  } else {
+    h+=statBox('Depth', treeDepth, 'max split layers', 'var(--accent)');
+    h+=statBox('Leaves', treeLeaves||'--', 'decision nodes', 'var(--blue)');
+    h+=statBox('Min Leaf', treeMinLeaf, 'samples/leaf', 'var(--muted)');
+    h+=statBox('Cal Factor', calFactor<1?calFactor.toFixed(3):'1.0 (off)', calFactor>=1?'stabilized':'bias correction', calFactor>=1?'var(--g)':'var(--y)');
+    h+=statBox('Dataset HR%', treeHrRate>0?treeHrRate.toFixed(1)+'%':'--', 'train set rate', 'var(--muted)');
+    var upgradeLeft = typeof nextUpgrade==='number' ? Math.max(nextUpgrade-recordsUsed,0) : 0;
+    var upgradeStr  = typeof nextUpgrade==='number' ? (upgradeLeft>0?('+'+upgradeLeft+' records'):'ready!') : nextUpgrade;
+    h+=statBox('Next Upgrade', 'D'+(treeDepth+1), upgradeStr, upgradeLeft===0?'var(--g)':'var(--muted2)');
+  }
   h+='</div>';
 
   // ── Leaf HR Rate Distribution ──
   if(hrRates.length>0){
     h+='<div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px">';
-    h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Leaf HR Rate Distribution ('+(hrRates.length)+' leaves)</div>';
+    h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">'+(isForest?'Probability Distribution — averaged across 200 trees':'Leaf HR Rate Distribution')+' ('+(hrRates.length)+' '+(isForest?'unique rates':'leaves')+')</div>';
     h+='<div style="display:flex;align-items:flex-end;gap:2px;height:36px">';
     var buckets=[0,0,0,0,0,0,0]; // 0-2, 2-5, 5-8, 8-12, 12-18, 18-25, 25+
     hrRates.forEach(function(r){
@@ -560,7 +571,7 @@ function renderModelTab(md,hd){
   // ── LEFT: Feature Importances + Tier Panel ──
   h+='<div style="display:flex;flex-direction:column;gap:12px">';
   h+='<div class="model-card">';
-  h+='<div class="model-card-title"><span>Feature Importance</span><span style="font-weight:400;color:var(--muted2)">tree split weight</span></div>';
+  h+='<div class="model-card-title"><span>Feature Importance</span><span style="font-weight:400;color:var(--muted2)">'+(isForest?'averaged across 200 trees':'tree split weight')+'</span></div>';
   if(!featList.length){
     h+='<div style="font-size:11px;color:var(--muted);padding:8px 0">No importance data yet — tree needs training.</div>';
   }
@@ -1722,7 +1733,7 @@ async function manualRecord() {
 async function load(forceRefresh){
   var btn=document.getElementById('refreshBtn'),upd=document.getElementById('upd');
   btn.disabled=true;
-  document.getElementById('batter-main').innerHTML='<div class="loading">Loading 8-Ball Data<div class="dots"><span></span><span></span><span></span></div></div>';
+  document.getElementById('batter-main').innerHTML='<div class="loading">Loading Uncle Nicky's Model<div class="dots"><span></span><span></span><span></span></div></div>';
   document.getElementById('pitcher-main').innerHTML='<div class="no-data">Loading...</div>';
   document.getElementById('game-main').innerHTML='<div class="no-data">Loading...</div>';
   try{
