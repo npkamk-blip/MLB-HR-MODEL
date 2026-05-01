@@ -145,7 +145,7 @@ async def save_model_log(weights_dict):
     await github_put_file(path, json.dumps(log, indent=2), f"model log: {today}", sha)
 
 # ── Decision Tree model storage ──
-_dt_model = None        # trained sklearn DecisionTreeClassifier
+_dt_model = None        # trained sklearn RandomForestClassifier (was DecisionTree)
 _dt_features = []       # ordered feature list the tree was trained on
 _dt_medians = {}        # per-feature medians for missing value imputation
 
@@ -241,8 +241,9 @@ def clean_feature_value(rec, stat, medians, pit_ip_season=0, pit_ip_vs_hand=0):
 
 async def recalibrate_model(save_to_github: bool = True):
     """
-    Train Decision Tree on all completed prediction records.
-    Tree depth scales automatically with record count.
+    Train Random Forest on all completed prediction records.
+    200 trees, max_depth=5, min_samples_leaf=10, max_features=sqrt.
+    No single feature can dominate — pull% bias from Decision Tree is fixed.
     Missing values filled with per-stat medians from real data.
     save_to_github=False on startup to prevent deploy loop.
     """
@@ -279,7 +280,7 @@ async def recalibrate_model(save_to_github: bool = True):
     if n < 50:
         return {"error": f"Not enough data — need 50+, have {n}"}
 
-    print(f"Decision Tree training on {n} records")
+    print(f"Random Forest training on {n} records")
 
     # ── Compute per-stat medians from real non-zero values ──
     medians = {}
@@ -313,44 +314,54 @@ async def recalibrate_model(save_to_github: bool = True):
         y_vals.append(int(rec["hit_hr"]))
 
     import numpy as np
-    from sklearn.tree import DecisionTreeClassifier
+    from sklearn.ensemble import RandomForestClassifier
 
     X = np.array(X_rows)
     y = np.array(y_vals)
 
-    depth, min_leaf = get_tree_depth(n)
-    print(f"Tree params: max_depth={depth}, min_samples_leaf={min_leaf}")
+    print(f"Random Forest training on {n} records — 200 trees")
 
-    tree = DecisionTreeClassifier(
-        max_depth=depth,
-        min_samples_leaf=min_leaf,
-        max_features="sqrt",       # √30 ≈ 5-6 features per split — prevents one stat dominating
-        class_weight=None,         # do NOT use balanced — it inflates HR leaf rates to 30-78%
-                                   # which forces calibration factor to do all the work
-                                   # and creates binary 0% vs 30%+ clustering
-                                   # let the raw HR rate flow through naturally
-        random_state=42
+    # Locked Random Forest parameters
+    # max_depth=5 prevents overfitting on smaller datasets
+    # min_samples_leaf=10 ensures each leaf has enough examples
+    # max_features=sqrt means each tree sees ~6 random features per split
+    # bootstrap=True means each tree trains on a random 80% of records
+    # No class_weight — let natural HR rate flow through
+    forest = RandomForestClassifier(
+        n_estimators=200,
+        max_depth=5,
+        min_samples_leaf=10,
+        max_features="sqrt",
+        bootstrap=True,
+        class_weight=None,
+        random_state=42,
+        n_jobs=-1
     )
-    tree.fit(X, y)
+    forest.fit(X, y)
+    tree = forest  # keep _dt_model variable name for compatibility
 
-    # ── Extract feature importance ──
+    # ── Extract feature importance (averaged across all 200 trees) ──
     importances = {
-        features[i]: round(float(tree.feature_importances_[i]), 4)
+        features[i]: round(float(forest.feature_importances_[i]), 4)
         for i in range(len(features))
-        if tree.feature_importances_[i] > 0
+        if forest.feature_importances_[i] > 0
     }
     importances = dict(sorted(importances.items(), key=lambda x: x[1], reverse=True))
 
-    # ── Extract tree structure for display ──
-    tree_info = tree.tree_
-    n_leaves = tree_info.n_node_samples[tree_info.children_left == -1].shape[0]
+    # ── Extract leaf HR rates (sample from first 20 trees for display) ──
     hr_rates_at_leaves = []
-    for i in range(tree_info.node_count):
-        if tree_info.children_left[i] == -1:  # leaf
-            vals = tree_info.value[i][0]
-            total = sum(vals)
-            hr_rate = round(vals[1] / total * 100, 1) if total > 0 else 0
-            hr_rates_at_leaves.append(hr_rate)
+    n_leaves = 0
+    for estimator in forest.estimators_[:20]:
+        tree_info = estimator.tree_
+        n_leaves += tree_info.n_node_samples[tree_info.children_left == -1].shape[0]
+        for i in range(tree_info.node_count):
+            if tree_info.children_left[i] == -1:
+                vals = tree_info.value[i][0]
+                total = sum(vals)
+                hr_rate = round(vals[1] / total * 100, 1) if total > 0 else 0
+                hr_rates_at_leaves.append(hr_rate)
+    n_leaves = n_leaves // 20  # avg leaves per tree
+    hr_rates_at_leaves = sorted(set(hr_rates_at_leaves))  # unique rates for display
 
     # ── Compute calibration factor ──
     dataset_hr_rate = round(sum(y_vals) / len(y_vals) * 100, 1)
@@ -368,9 +379,10 @@ async def recalibrate_model(save_to_github: bool = True):
         "calibration_round": _model_weights.get("calibration_round", 0) + 1,
         "last_calibrated": date.today().isoformat(),
         "records_used": n,
-        "model_type": "decision_tree",
-        "tree_depth": depth,
-        "tree_min_leaf": min_leaf,
+        "model_type": "random_forest",
+        "n_estimators": 200,
+        "tree_depth": 5,
+        "tree_min_leaf": 10,
         "tree_n_leaves": n_leaves,
         "feature_importances": importances,
         "feature_medians": {k: round(v, 4) for k, v in medians.items()},
@@ -378,12 +390,7 @@ async def recalibrate_model(save_to_github: bool = True):
         "hr_rates_at_leaves": sorted(hr_rates_at_leaves),
         "tree_hr_rate": dataset_hr_rate,
         "calibration_factor": round(cal_factor, 4),
-        "next_depth_upgrade": (
-            1500 if n < 1500 else
-            2500 if n < 2500 else
-            5000 if n < 5000 else
-            10000 if n < 10000 else "random_forest"
-        ),
+        "next_depth_upgrade": "xgboost_at_10000",
     }
     _model_weights = new_weights
     if save_to_github:
@@ -393,16 +400,17 @@ async def recalibrate_model(save_to_github: bool = True):
         print("Startup tree: skipping GitHub save to prevent deploy loop")
 
     top_features = list(importances.items())[:8]
-    print(f"Tree trained — depth={depth}, {n_leaves} leaves")
+    print(f"Random Forest trained — 200 trees, avg {n_leaves} leaves/tree")
     print(f"Top features: {top_features}")
 
     return {
         "status": "done",
         "records_used": n,
-        "model_type": "decision_tree",
-        "tree_depth": depth,
-        "min_samples_leaf": min_leaf,
-        "n_leaves": n_leaves,
+        "model_type": "random_forest",
+        "n_estimators": 200,
+        "max_depth": 5,
+        "min_samples_leaf": 10,
+        "avg_leaves_per_tree": n_leaves,
         "top_features": top_features,
         "leaf_hr_rates": sorted(hr_rates_at_leaves),
         "feature_importances": importances,
