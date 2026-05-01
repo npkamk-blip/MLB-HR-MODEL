@@ -1764,16 +1764,18 @@ async def save_parlay_combinations(target_date: str = None):
             print(f"save_parlay_combinations: not enough picks ({len(top)}) for {today}")
             return
 
+        # Helper — get player name from record (field may be name or player_name)
+        def pname(r): return r.get("name") or r.get("player_name") or r.get("batter","Unknown")
+
         combos = []
         # 2-leg combos
         for a, b in itertools.combinations(top, 2):
             pA = a.get("model_hr_pct", 0) / 100
             pB = b.get("model_hr_pct", 0) / 100
             combos.append({
-                "legs": [a["player_name"], b["player_name"]],
+                "legs": [pname(a), pname(b)],
                 "teams": [a.get("team",""), b.get("team","")],
                 "probs": [a.get("model_hr_pct",0), b.get("model_hr_pct",0)],
-                "same_game": a.get("team","") != b.get("team","") and False,  # placeholder
                 "combined_prob": round(pA * pB * 100, 4),
                 "n_legs": 2,
                 "source": "auto",
@@ -1786,7 +1788,7 @@ async def save_parlay_combinations(target_date: str = None):
             pB = b.get("model_hr_pct", 0) / 100
             pC = c.get("model_hr_pct", 0) / 100
             combos.append({
-                "legs": [a["player_name"], b["player_name"], c["player_name"]],
+                "legs": [pname(a), pname(b), pname(c)],
                 "teams": [a.get("team",""), b.get("team",""), c.get("team","")],
                 "probs": [a.get("model_hr_pct",0), b.get("model_hr_pct",0), c.get("model_hr_pct",0)],
                 "combined_prob": round(pA * pB * pC * 100, 6),
@@ -1820,7 +1822,7 @@ async def record_parlay_results(target_date: str):
         if not pred_content: return
         preds = json.loads(pred_content)
         # Build name → hit_hr map
-        hit_map = {r["player_name"]: r.get("hit_hr") for r in preds if r.get("player_name")}
+        hit_map = {(r.get("name") or r.get("player_name","")): r.get("hit_hr") for r in preds if r.get("name") or r.get("player_name")}
         updated = 0
         for combo in combos:
             if combo.get("both_hit") is not None: continue
@@ -2959,9 +2961,21 @@ async def get_model_weights():
 
 @app.get("/save-predictions")
 async def manual_save_predictions():
-    """Manually trigger saving today's predictions"""
+    """Manually trigger saving today's predictions and parlay combos"""
     await save_daily_predictions()
+    await save_parlay_combinations()
     return {"status": "done", "date": date.today().isoformat()}
+
+
+@app.get("/save-parlays")
+async def manual_save_parlays(target_date: str = None):
+    """Manually trigger parlay combination saving for a specific date.
+    Example: /save-parlays?target_date=2026-04-29
+    Uses today if no date specified.
+    """
+    d = target_date or date.today().isoformat()
+    await save_parlay_combinations(target_date=d)
+    return {"status": "done", "date": d}
 
 
 @app.get("/resave-today")
