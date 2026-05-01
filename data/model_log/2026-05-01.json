@@ -1,6 +1,6 @@
 {
   "date": "2026-05-01",
-  "rotation_round": 49,
+  "rotation_round": 51,
   "rotation_day": 0,
   "weights": {
     "barrel_season_w": 2.071,
@@ -42,16 +42,16 @@
     "pit_stuff_plus_w": 1.0
   },
   "active_stats": [
+    "iso_season",
+    "hard_hit_season",
+    "barrel_pct_season",
+    "bullpen_hr9",
     "pull_pct_season",
     "la_l8d",
-    "xwoba_l8d",
-    "slg_l8d",
-    "pit_platoon_mult",
+    "bat_speed_l8d",
+    "ev_season",
     "la_season",
-    "iso_season",
-    "barrel_pct_l8d",
-    "xslg_l8d",
-    "hard_hit_l8d"
+    "iso_l8d"
   ],
   "last_calibrated": "2026-05-01",
   "records_used": 2560,
