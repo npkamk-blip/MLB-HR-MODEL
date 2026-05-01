@@ -9,24 +9,24 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0a0a;--surface:#111;--s2:#161616;--s3:#0e0e0e;--card2:#131313;
-  --border:#252525;--border2:#1a1a1a;
-  --accent:#c8f135;--blue:#4da6ff;--text:#f0f0f0;
-  --muted:#888;--muted2:#555;--danger:#ff4d4d;--warn:#ffaa33;--purple:#c084fc;
-  --g:#39d353;--y:#ffaa33;--r:#ff4d4d;
+  --bg:#1c1c1e;--surface:#2c2c2e;--s2:#242426;--s3:#1c1c1e;--card2:#252527;
+  --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.06);
+  --accent:#f5f5f5;--blue:#0a84ff;--text:#f5f5f5;
+  --muted:#8e8e93;--muted2:#636366;--danger:#ff453a;--warn:#ff9f0a;--purple:#bf5af2;
+  --g:#32d74b;--y:#ff9f0a;--r:#ff453a;
   /* Pink/red gradient for stat coloring — top 10% = hot pink, bottom = dark red */
   --b10:#ff6eb4;--b25:#e0445a;--b50:#b02030;--b75:#6b1020;
 }
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px}
 header{border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;background:var(--bg)}
-.logo{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:var(--text);text-transform:uppercase;letter-spacing:.05em}
 .logo-sub{font-size:11px;color:var(--muted);border-left:1px solid var(--border);padding-left:10px;text-transform:uppercase;letter-spacing:.1em}
 .hdr-r{display:flex;align-items:center;gap:10px}
 .date-nav{display:flex;align-items:center;gap:6px}
 .date-btn{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:18px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
-.date-btn:hover{border-color:var(--accent);color:var(--accent)}
+.date-btn:hover{border-color:var(--muted);color:var(--text)}
 .date-lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
-.refresh-btn{background:var(--accent);color:#0a0a0a;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;cursor:pointer}
+.refresh-btn{background:var(--text);color:#1c1c1e;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;cursor:pointer}
 .refresh-btn:hover{opacity:.85}
 .refresh-btn:disabled{opacity:.4;cursor:not-allowed}
 .upd{font-size:11px;color:var(--muted2)}
@@ -34,28 +34,28 @@ header{border-bottom:1px solid var(--border);padding:10px 20px;display:flex;alig
 .tabs::-webkit-scrollbar{display:none}
 .tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;cursor:pointer;transition:all .15s;margin-bottom:-1px;white-space:nowrap}
 .tab:hover{color:var(--text)}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab.active{color:var(--text);border-bottom-color:var(--text)}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 .container{max-width:1300px;margin:0 auto;padding:12px 10px}
 @media(min-width:600px){.container{padding:16px}}
 .loading{text-align:center;padding:60px 20px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:18px;letter-spacing:.1em}
 .dots{display:inline-flex;gap:6px;margin-left:10px}
-.dots span{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:dot .8s infinite alternate}
+.dots span{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:dot .8s infinite alternate}
 .dots span:nth-child(2){animation-delay:.2s}
 .dots span:nth-child(3){animation-delay:.4s}
 @keyframes dot{from{opacity:.2}to{opacity:1}}
 .err{background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);border-radius:8px;padding:16px;color:var(--danger);margin:20px 0}
 .no-data{text-align:center;padding:40px;color:var(--muted2);font-size:13px}
 .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.section-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text)}
 .section-count{font-size:11px;color:var(--muted2)}
 .tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
 table{width:100%;border-collapse:collapse;font-size:12px}
 thead th{background:var(--s2);padding:8px 10px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
 thead th:hover{color:var(--text)}
-thead th.sort-asc::after{content:' ▲';color:var(--accent)}
-thead th.sort-desc::after{content:' ▼';color:var(--accent)}
+thead th.sort-asc::after{content:' ▲';color:var(--muted)}
+thead th.sort-desc::after{content:' ▼';color:var(--muted)}
 thead th.num{text-align:right}
 tbody tr{border-bottom:1px solid var(--border2);cursor:pointer;transition:background .1s}
 tbody tr:hover{background:var(--s2)}
@@ -66,9 +66,9 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 .player-name{font-weight:600;font-size:13px}
 .player-sub{font-size:10px;color:var(--muted);margin-top:1px}
 .hand-tag{display:inline-block;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;text-transform:uppercase}
-.rhb{background:rgba(200,241,53,.08);color:var(--accent);border:1px solid rgba(200,241,53,.2)}
+.rhb{background:rgba(255,59,48,0.12);color:#ff453a;border:1px solid rgba(255,59,48,0.2)}
 .lhb{background:rgba(77,166,255,.12);color:var(--blue);border:1px solid rgba(77,166,255,.25)}
-.rhp{background:rgba(200,241,53,.08);color:var(--accent);border:1px solid rgba(200,241,53,.2)}
+.rhp{background:rgba(255,59,48,0.12);color:#ff453a;border:1px solid rgba(255,59,48,0.2)}
 .lhp{background:rgba(77,166,255,.12);color:var(--blue);border:1px solid rgba(77,166,255,.25)}
 .sc{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600}
 .sc-g{color:var(--g)}
@@ -99,7 +99,7 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 .gc-time{font-size:11px;color:var(--muted2)}
 .gc-chips{display:flex;gap:5px;flex-wrap:wrap}
 .gchip{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;white-space:nowrap}
-.chip-g{background:rgba(57,211,83,.12);color:var(--g);border:1px solid rgba(57,211,83,.2)}
+.chip-g{background:rgba(50,215,75,.12);color:var(--g);border:1px solid rgba(50,215,75,.2)}
 .chip-r{background:rgba(255,77,77,.10);color:var(--r);border:1px solid rgba(255,77,77,.2)}
 .chip-n{background:var(--s2);color:var(--muted);border:1px solid var(--border2)}
 .pit-bar{display:flex;align-items:center;gap:12px;padding:8px 14px;background:var(--s2);border-bottom:1px solid var(--border2)}
@@ -146,7 +146,7 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 .l8d-warm{color:var(--y)}
 .l8d-none{color:var(--muted2)}
 .bat-pct{font-size:15px;font-weight:800;min-width:42px;text-align:right;flex-shrink:0;font-family:'Barlow Condensed',sans-serif}
-.pct-elite{color:var(--accent)}
+.pct-elite{color:var(--text)}
 .pct-high{color:var(--g)}
 .pct-mid{color:var(--y)}
 .pct-ok{color:var(--muted)}
@@ -394,8 +394,8 @@ async function loadParlayTab(){
     var hr2=d.all_time&&d.all_time.two_leg_hit_rate||'--';
     var hr3=d.all_time&&d.all_time.three_leg_hit_rate||'--';
     var h='<div style="display:flex;justify-content:center;gap:32px;margin-top:8px">';
-    h+='<div style="text-align:center"><div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:var(--accent)">'+all2+'</div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">2-leg combos tracked</div><div style="font-size:11px;color:var(--g);margin-top:2px">'+hr2+' hit rate</div></div>';
-    h+='<div style="text-align:center"><div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:var(--accent)">'+all3+'</div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">3-leg combos tracked</div><div style="font-size:11px;color:var(--g);margin-top:2px">'+hr3+' hit rate</div></div>';
+    h+='<div style="text-align:center"><div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:var(--text)">'+all2+'</div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">2-leg combos tracked</div><div style="font-size:11px;color:var(--g);margin-top:2px">'+hr2+' hit rate</div></div>';
+    h+='<div style="text-align:center"><div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:var(--text)">'+all3+'</div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">3-leg combos tracked</div><div style="font-size:11px;color:var(--g);margin-top:2px">'+hr3+' hit rate</div></div>';
     h+='</div>';
     el.innerHTML=h;
   }catch(e){el.innerHTML='<span style="color:var(--muted2)">Combination tracking starting soon</span>';}
@@ -504,7 +504,7 @@ function renderModelTab(md,hd){
   // ── Header ──
   var h='';
   h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">';
-  h+='<div><div style="font-size:20px;font-weight:700;color:var(--accent)">'+(isForest?'RANDOM FOREST':'DECISION TREE')+'</div>';
+  h+='<div><div style="font-size:20px;font-weight:700;color:var(--text)">'+(isForest?'RANDOM FOREST':'DECISION TREE')+'</div>';
   h+='<div style="font-size:11px;color:var(--muted);margin-top:2px">Trained '+lastCal+' &middot; '+recordsUsed+' records &middot; Round '+calRound+'</div></div>';
   h+='<div style="display:flex;gap:8px;align-items:center">';
   var canR=allCompleted.length>=50;
@@ -1272,7 +1272,7 @@ function buildPitcherTable(games){
     h+='<td class="num sc '+oppKCls+'">'+(p.opp_lineup_k>0?p.opp_lineup_k.toFixed(1)+'%':'--')+'</td>';
     h+='<td class="num sc-n">'+(p.avg_ip>0?p.avg_ip.toFixed(1):'--')+'</td>';
     h+='<td class="num sc '+k9Cls+'">'+(p.k9>0?p.k9.toFixed(1):'--')+'</td>';
-    h+='<td class="num"><span style="font-family:\'Barlow Condensed\',sans-serif;font-size:18px;font-weight:800;color:var(--accent)">'+(p.exp_k>0?p.exp_k.toFixed(1):'--')+'</span></td>';
+    h+='<td class="num"><span style="font-family:\'Barlow Condensed\',sans-serif;font-size:18px;font-weight:800;color:var(--text)">'+(p.exp_k>0?p.exp_k.toFixed(1):'--')+'</span></td>';
     h+='<td class="num" style="font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:600">'+propDisp+'</td>';
     h+='<td class="num '+edgeCls+'">'+edgeDisp+'</td>';
     h+='<td>'+conBadge+'</td>';
