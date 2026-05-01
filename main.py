@@ -2971,11 +2971,50 @@ async def manual_save_predictions():
 async def manual_save_parlays(target_date: str = None):
     """Manually trigger parlay combination saving for a specific date.
     Example: /save-parlays?target_date=2026-04-29
-    Uses today if no date specified.
     """
     d = target_date or date.today().isoformat()
     await save_parlay_combinations(target_date=d)
     return {"status": "done", "date": d}
+
+
+@app.get("/record-parlay-results")
+async def manual_record_parlay_results(target_date: str = None):
+    """Rerun parlay result recording for any date — resets both_hit to null first.
+    Example: /record-parlay-results?target_date=2026-04-29
+    Use this to fix dates where both_hit was incorrectly recorded as 0.
+    """
+    d = target_date or (date.today() - timedelta(days=1)).isoformat()
+    # First reset all both_hit to null so we repatch cleanly
+    path = f"data/parlays/{d}.json"
+    content, sha = await github_get_file(path)
+    if not content:
+        return {"error": f"No parlay file found for {d}"}
+    try:
+        data = json.loads(content)
+        combos = data.get("combos", [])
+        # Reset both_hit to null so fixed code can repatch
+        for combo in combos:
+            combo["both_hit"] = None
+        await github_put_file(path, json.dumps(data, indent=2),
+                              f"parlay reset: {d} (re-recording results)", sha)
+        # Now rerun result recording with fixed name lookup
+        await record_parlay_results(d)
+        # Fetch updated file to show results
+        updated_content, _ = await github_get_file(path)
+        updated_data = json.loads(updated_content) if updated_content else {}
+        updated_combos = updated_data.get("combos", [])
+        hit_count = sum(1 for c in updated_combos if c.get("both_hit") == 1)
+        null_count = sum(1 for c in updated_combos if c.get("both_hit") is None)
+        return {
+            "status": "done",
+            "date": d,
+            "total_combos": len(updated_combos),
+            "both_hit": hit_count,
+            "no_hit": len(updated_combos) - hit_count - null_count,
+            "still_null": null_count,
+        }
+    except Exception as e:
+        return {"error": str(e)}
 
 
 @app.get("/resave-today")
