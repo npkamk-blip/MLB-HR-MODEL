@@ -1868,10 +1868,10 @@ async def startup_train_tree():
         if _cache.get("ready"):
             break
     else:
-        print("Startup tree: cache never became ready — skipping tree training")
+        print("Startup: cache never became ready — skipping model training")
         return
     try:
-        print("Startup: cache ready, training Decision Tree...")
+        print(f"Startup: cache ready, training model ({_model_weights.get('model_type','decision_tree')})...")
         result = await recalibrate_model(save_to_github=False)
         if isinstance(result, dict) and result.get("status") == "done":
             print(f"Startup tree OK: depth={result.get('tree_depth')}, "
@@ -1963,7 +1963,7 @@ def gs(row, *keys, default=0.0):
         if val is not None and str(val) not in ('nan', 'None', ''):
             try:
                 return float(val)
-            except:
+            except Exception:
                 pass
     return default
 
@@ -2486,21 +2486,24 @@ def compute_hr_prob_multiplicative(
             return _dt_medians.get(stat, 0.0)
         return float(raw)
 
-    # ── Run Decision Tree if trained ──
+    # ── Run model if trained (Decision Tree or Random Forest) ──
     if _dt_model is not None and _dt_features:
         feat_vec = np.array([[fv(stat) for stat in _dt_features]])
         proba = _dt_model.predict_proba(feat_vec)[0]
         raw_prob = proba[1] * 100
 
-        # Apply calibration factor — corrects for biased training population
-        # Factor auto-removes as dataset HR rate approaches true league rate (~2.8%)
-        cal_factor = _model_weights.get("calibration_factor", 1.0)
-        calibrated = raw_prob * cal_factor
-
-        # Floor 2%, cap 15%
-        hr_prob = round(min(max(calibrated, 2.0), 15.0), 1)
-
-        print(f"DT: raw={raw_prob:.1f}% × cal={cal_factor:.3f} → {hr_prob}%") if raw_prob > 10 else None
+        model_type = _model_weights.get("model_type", "decision_tree")
+        if model_type == "random_forest":
+            # Random Forest is naturally calibrated across 200 trees
+            # No calibration factor needed — applying it suppresses probabilities incorrectly
+            hr_prob = round(min(max(raw_prob, 2.0), 28.0), 1)
+            print(f"RF: raw={raw_prob:.1f}% → {hr_prob}%") if raw_prob > 8 else None
+        else:
+            # Decision Tree needs calibration factor to correct biased training population
+            cal_factor = _model_weights.get("calibration_factor", 1.0)
+            calibrated = raw_prob * cal_factor
+            hr_prob = round(min(max(calibrated, 2.0), 28.0), 1)
+            print(f"DT: raw={raw_prob:.1f}% × cal={cal_factor:.3f} → {hr_prob}%") if raw_prob > 10 else None
     else:
         # ── Fallback: rule-based estimate while tree is training on startup ──
         # Uses same stats tree found most important: hard_hit, iso_vs_hand,
@@ -2578,7 +2581,7 @@ def compute_hr_prob_multiplicative(
     conf = "High" if pa_26 >= 50 and has_8d else "Medium" if pa_26 >= 20 else "Low"
 
     breakdown = {
-        "model_type": "decision_tree",
+        "model_type": _model_weights.get("model_type", "decision_tree"),
         "tree_trained": _dt_model is not None,
         "feature_importances": importances,
         "top_features": top_stats,
@@ -4196,7 +4199,6 @@ async def debug_score(batter: str, pitcher: str = "TBD", bat_hand: str = None, p
     }
 
 
-import json as _json
 
 @app.get("/debug-xslg-history")
 async def debug_xslg_history(days: int = 7):
