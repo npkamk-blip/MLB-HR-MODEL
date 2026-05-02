@@ -17,7 +17,7 @@
       "combined_prob": 7.84,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -35,7 +35,7 @@
       "combined_prob": 7.672,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -53,7 +53,7 @@
       "combined_prob": 7.644,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -71,7 +71,7 @@
       "combined_prob": 7.42,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -89,7 +89,7 @@
       "combined_prob": 7.392,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -107,7 +107,7 @@
       "combined_prob": 7.168,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -125,7 +125,7 @@
       "combined_prob": 7.112,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -143,7 +143,7 @@
       "combined_prob": 6.972,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -161,7 +161,7 @@
       "combined_prob": 6.888,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -179,7 +179,7 @@
       "combined_prob": 6.608,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -197,7 +197,7 @@
       "combined_prob": 6.384,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -215,7 +215,7 @@
       "combined_prob": 6.356,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -233,7 +233,7 @@
       "combined_prob": 6.356,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -251,7 +251,7 @@
       "combined_prob": 6.104,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -269,7 +269,7 @@
       "combined_prob": 7.672,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -287,7 +287,7 @@
       "combined_prob": 7.644,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -305,7 +305,7 @@
       "combined_prob": 7.42,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -323,7 +323,7 @@
       "combined_prob": 7.392,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -341,7 +341,7 @@
       "combined_prob": 7.168,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -359,7 +359,7 @@
       "combined_prob": 7.112,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -377,7 +377,7 @@
       "combined_prob": 6.972,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -395,7 +395,7 @@
       "combined_prob": 6.888,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -413,7 +413,7 @@
       "combined_prob": 6.608,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -431,7 +431,7 @@
       "combined_prob": 6.384,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -449,7 +449,7 @@
       "combined_prob": 6.356,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -467,7 +467,7 @@
       "combined_prob": 6.356,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -485,7 +485,7 @@
       "combined_prob": 6.104,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -503,7 +503,7 @@
       "combined_prob": 7.4802,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -521,7 +521,7 @@
       "combined_prob": 7.261,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -539,7 +539,7 @@
       "combined_prob": 7.2336,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -557,7 +557,7 @@
       "combined_prob": 7.0144,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -575,7 +575,7 @@
       "combined_prob": 6.9596,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -593,7 +593,7 @@
       "combined_prob": 6.8226,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -611,7 +611,7 @@
       "combined_prob": 6.7404,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -629,7 +629,7 @@
       "combined_prob": 6.4664,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 1
     },
     {
       "legs": [
@@ -647,7 +647,7 @@
       "combined_prob": 6.2472,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -665,7 +665,7 @@
       "combined_prob": 6.2198,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -683,7 +683,7 @@
       "combined_prob": 6.2198,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 1
     },
     {
       "legs": [
@@ -701,7 +701,7 @@
       "combined_prob": 5.9732,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -719,7 +719,7 @@
       "combined_prob": 7.2345,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -737,7 +737,7 @@
       "combined_prob": 7.2072,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -755,7 +755,7 @@
       "combined_prob": 6.9888,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -773,7 +773,7 @@
       "combined_prob": 6.9342,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -791,7 +791,7 @@
       "combined_prob": 6.7977,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -809,7 +809,7 @@
       "combined_prob": 6.7158,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -827,7 +827,7 @@
       "combined_prob": 6.4428,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -845,7 +845,7 @@
       "combined_prob": 6.2244,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -863,7 +863,7 @@
       "combined_prob": 6.1971,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -881,7 +881,7 @@
       "combined_prob": 6.1971,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -899,7 +899,7 @@
       "combined_prob": 5.9514,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -917,7 +917,7 @@
       "combined_prob": 6.996,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -935,7 +935,7 @@
       "combined_prob": 6.784,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -953,7 +953,7 @@
       "combined_prob": 6.731,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -971,7 +971,7 @@
       "combined_prob": 6.5985,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -989,7 +989,7 @@
       "combined_prob": 6.519,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1007,7 +1007,7 @@
       "combined_prob": 6.254,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1025,7 +1025,7 @@
       "combined_prob": 6.042,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1043,7 +1043,7 @@
       "combined_prob": 6.0155,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1061,7 +1061,7 @@
       "combined_prob": 6.0155,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1079,7 +1079,7 @@
       "combined_prob": 5.777,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1097,7 +1097,7 @@
       "combined_prob": 6.7584,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1115,7 +1115,7 @@
       "combined_prob": 6.7056,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1133,7 +1133,7 @@
       "combined_prob": 6.5736,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1151,7 +1151,7 @@
       "combined_prob": 6.4944,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1169,7 +1169,7 @@
       "combined_prob": 6.2304,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1187,7 +1187,7 @@
       "combined_prob": 6.0192,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1205,7 +1205,7 @@
       "combined_prob": 5.9928,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1223,7 +1223,7 @@
       "combined_prob": 5.9928,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1241,7 +1241,7 @@
       "combined_prob": 5.7552,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1259,7 +1259,7 @@
       "combined_prob": 6.5024,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1277,7 +1277,7 @@
       "combined_prob": 6.3744,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1295,7 +1295,7 @@
       "combined_prob": 6.2976,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1313,7 +1313,7 @@
       "combined_prob": 6.0416,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1331,7 +1331,7 @@
       "combined_prob": 5.8368,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1349,7 +1349,7 @@
       "combined_prob": 5.8112,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1367,7 +1367,7 @@
       "combined_prob": 5.8112,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1385,7 +1385,7 @@
       "combined_prob": 5.5808,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1403,7 +1403,7 @@
       "combined_prob": 6.3246,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1421,7 +1421,7 @@
       "combined_prob": 6.2484,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1439,7 +1439,7 @@
       "combined_prob": 5.9944,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1457,7 +1457,7 @@
       "combined_prob": 5.7912,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1475,7 +1475,7 @@
       "combined_prob": 5.7658,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1493,7 +1493,7 @@
       "combined_prob": 5.7658,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1511,7 +1511,7 @@
       "combined_prob": 5.5372,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1529,7 +1529,7 @@
       "combined_prob": 6.1254,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1547,7 +1547,7 @@
       "combined_prob": 5.8764,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1565,7 +1565,7 @@
       "combined_prob": 5.6772,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1583,7 +1583,7 @@
       "combined_prob": 5.6523,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1601,7 +1601,7 @@
       "combined_prob": 5.6523,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1619,7 +1619,7 @@
       "combined_prob": 5.4282,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1637,7 +1637,7 @@
       "combined_prob": 5.8056,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1655,7 +1655,7 @@
       "combined_prob": 5.6088,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1673,7 +1673,7 @@
       "combined_prob": 5.5842,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1691,7 +1691,7 @@
       "combined_prob": 5.5842,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1709,7 +1709,7 @@
       "combined_prob": 5.3628,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1727,7 +1727,7 @@
       "combined_prob": 5.3808,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1745,7 +1745,7 @@
       "combined_prob": 5.3572,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1763,7 +1763,7 @@
       "combined_prob": 5.3572,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 1
     },
     {
       "legs": [
@@ -1781,7 +1781,7 @@
       "combined_prob": 5.1448,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1799,7 +1799,7 @@
       "combined_prob": 5.1756,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1817,7 +1817,7 @@
       "combined_prob": 5.1756,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1835,7 +1835,7 @@
       "combined_prob": 4.9704,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1853,7 +1853,7 @@
       "combined_prob": 5.1529,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1871,7 +1871,7 @@
       "combined_prob": 4.9486,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1889,7 +1889,7 @@
       "combined_prob": 4.9486,
       "n_legs": 2,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1910,7 +1910,7 @@
       "combined_prob": 2.14816,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1931,7 +1931,7 @@
       "combined_prob": 2.14032,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1952,7 +1952,7 @@
       "combined_prob": 2.0776,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1973,7 +1973,7 @@
       "combined_prob": 2.06976,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -1994,7 +1994,7 @@
       "combined_prob": 2.00704,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2015,7 +2015,7 @@
       "combined_prob": 1.99136,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2036,7 +2036,7 @@
       "combined_prob": 1.95216,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2057,7 +2057,7 @@
       "combined_prob": 1.92864,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2078,7 +2078,7 @@
       "combined_prob": 2.094456,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2099,7 +2099,7 @@
       "combined_prob": 2.03308,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2120,7 +2120,7 @@
       "combined_prob": 2.025408,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2141,7 +2141,7 @@
       "combined_prob": 1.964032,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2162,7 +2162,7 @@
       "combined_prob": 1.948688,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2183,7 +2183,7 @@
       "combined_prob": 1.910328,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2204,7 +2204,7 @@
       "combined_prob": 1.887312,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2225,7 +2225,7 @@
       "combined_prob": 2.02566,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2246,7 +2246,7 @@
       "combined_prob": 2.018016,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2267,7 +2267,7 @@
       "combined_prob": 1.956864,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2288,7 +2288,7 @@
       "combined_prob": 1.941576,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2309,7 +2309,7 @@
       "combined_prob": 1.903356,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2330,7 +2330,7 @@
       "combined_prob": 1.880424,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2351,7 +2351,7 @@
       "combined_prob": 1.95888,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2372,7 +2372,7 @@
       "combined_prob": 1.89952,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2393,7 +2393,7 @@
       "combined_prob": 1.88468,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2414,7 +2414,7 @@
       "combined_prob": 1.84758,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2435,7 +2435,7 @@
       "combined_prob": 1.82532,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2456,7 +2456,7 @@
       "combined_prob": 1.892352,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2477,7 +2477,7 @@
       "combined_prob": 1.877568,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2498,7 +2498,7 @@
       "combined_prob": 1.840608,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2519,7 +2519,7 @@
       "combined_prob": 1.818432,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2540,7 +2540,7 @@
       "combined_prob": 1.820672,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2561,7 +2561,7 @@
       "combined_prob": 1.784832,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2582,7 +2582,7 @@
       "combined_prob": 1.763328,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2603,7 +2603,7 @@
       "combined_prob": 1.770888,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2624,7 +2624,7 @@
       "combined_prob": 1.749552,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2645,7 +2645,7 @@
       "combined_prob": 1.715112,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2666,7 +2666,7 @@
       "combined_prob": 2.094456,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2687,7 +2687,7 @@
       "combined_prob": 2.03308,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2708,7 +2708,7 @@
       "combined_prob": 2.025408,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2729,7 +2729,7 @@
       "combined_prob": 1.964032,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2750,7 +2750,7 @@
       "combined_prob": 1.948688,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2771,7 +2771,7 @@
       "combined_prob": 1.910328,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2792,7 +2792,7 @@
       "combined_prob": 1.887312,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2813,7 +2813,7 @@
       "combined_prob": 2.02566,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2834,7 +2834,7 @@
       "combined_prob": 2.018016,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2855,7 +2855,7 @@
       "combined_prob": 1.956864,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2876,7 +2876,7 @@
       "combined_prob": 1.941576,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2897,7 +2897,7 @@
       "combined_prob": 1.903356,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2918,7 +2918,7 @@
       "combined_prob": 1.880424,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2939,7 +2939,7 @@
       "combined_prob": 1.95888,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2960,7 +2960,7 @@
       "combined_prob": 1.89952,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -2981,7 +2981,7 @@
       "combined_prob": 1.88468,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3002,7 +3002,7 @@
       "combined_prob": 1.84758,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3023,7 +3023,7 @@
       "combined_prob": 1.82532,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3044,7 +3044,7 @@
       "combined_prob": 1.892352,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3065,7 +3065,7 @@
       "combined_prob": 1.877568,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3086,7 +3086,7 @@
       "combined_prob": 1.840608,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3107,7 +3107,7 @@
       "combined_prob": 1.818432,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3128,7 +3128,7 @@
       "combined_prob": 1.820672,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3149,7 +3149,7 @@
       "combined_prob": 1.784832,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3170,7 +3170,7 @@
       "combined_prob": 1.763328,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3191,7 +3191,7 @@
       "combined_prob": 1.770888,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3212,7 +3212,7 @@
       "combined_prob": 1.749552,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3233,7 +3233,7 @@
       "combined_prob": 1.715112,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3254,7 +3254,7 @@
       "combined_prob": 1.982253,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3275,7 +3275,7 @@
       "combined_prob": 1.974773,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3296,7 +3296,7 @@
       "combined_prob": 1.914931,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3317,7 +3317,7 @@
       "combined_prob": 1.899971,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3338,7 +3338,7 @@
       "combined_prob": 1.86257,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3359,7 +3359,7 @@
       "combined_prob": 1.840129,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3380,7 +3380,7 @@
       "combined_prob": 1.916904,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3401,7 +3401,7 @@
       "combined_prob": 1.858816,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3422,7 +3422,7 @@
       "combined_prob": 1.844294,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3443,7 +3443,7 @@
       "combined_prob": 1.807989,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3464,7 +3464,7 @@
       "combined_prob": 1.786206,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3485,7 +3485,7 @@
       "combined_prob": 1.851802,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3506,7 +3506,7 @@
       "combined_prob": 1.837334,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3527,7 +3527,7 @@
       "combined_prob": 1.801166,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3548,7 +3548,7 @@
       "combined_prob": 1.779466,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3569,7 +3569,7 @@
       "combined_prob": 1.781658,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3590,7 +3590,7 @@
       "combined_prob": 1.746586,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3611,7 +3611,7 @@
       "combined_prob": 1.725542,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3632,7 +3632,7 @@
       "combined_prob": 1.73294,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3653,7 +3653,7 @@
       "combined_prob": 1.712062,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3674,7 +3674,7 @@
       "combined_prob": 1.67836,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3695,7 +3695,7 @@
       "combined_prob": 1.909908,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3716,7 +3716,7 @@
       "combined_prob": 1.852032,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3737,7 +3737,7 @@
       "combined_prob": 1.837563,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3758,7 +3758,7 @@
       "combined_prob": 1.801391,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3779,7 +3779,7 @@
       "combined_prob": 1.779687,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3800,7 +3800,7 @@
       "combined_prob": 1.845043,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3821,7 +3821,7 @@
       "combined_prob": 1.830629,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3842,7 +3842,7 @@
       "combined_prob": 1.794593,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3863,7 +3863,7 @@
       "combined_prob": 1.772971,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3884,7 +3884,7 @@
       "combined_prob": 1.775155,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3905,7 +3905,7 @@
       "combined_prob": 1.740211,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3926,7 +3926,7 @@
       "combined_prob": 1.719245,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3947,7 +3947,7 @@
       "combined_prob": 1.726616,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3968,7 +3968,7 @@
       "combined_prob": 1.705813,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -3989,7 +3989,7 @@
       "combined_prob": 1.672234,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4010,7 +4010,7 @@
       "combined_prob": 1.790976,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4031,7 +4031,7 @@
       "combined_prob": 1.776984,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4052,7 +4052,7 @@
       "combined_prob": 1.742004,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4073,7 +4073,7 @@
       "combined_prob": 1.721016,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4094,7 +4094,7 @@
       "combined_prob": 1.723136,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4115,7 +4115,7 @@
       "combined_prob": 1.689216,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4136,7 +4136,7 @@
       "combined_prob": 1.668864,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4157,7 +4157,7 @@
       "combined_prob": 1.676019,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4178,7 +4178,7 @@
       "combined_prob": 1.655826,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4199,7 +4199,7 @@
       "combined_prob": 1.623231,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4220,7 +4220,7 @@
       "combined_prob": 1.716634,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4241,7 +4241,7 @@
       "combined_prob": 1.682842,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4262,7 +4262,7 @@
       "combined_prob": 1.662566,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4283,7 +4283,7 @@
       "combined_prob": 1.669694,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4304,7 +4304,7 @@
       "combined_prob": 1.649578,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4325,7 +4325,7 @@
       "combined_prob": 1.617106,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4346,7 +4346,7 @@
       "combined_prob": 1.619098,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4367,7 +4367,7 @@
       "combined_prob": 1.59959,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4388,7 +4388,7 @@
       "combined_prob": 1.568102,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     },
     {
       "legs": [
@@ -4409,7 +4409,7 @@
       "combined_prob": 1.555852,
       "n_legs": 3,
       "source": "auto",
-      "both_hit": null
+      "both_hit": 0
     }
   ]
 }
