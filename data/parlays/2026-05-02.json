@@ -12,9 +12,9 @@
       ],
       "probs": [
         28.0,
-        27.4
+        26.6
       ],
-      "combined_prob": 7.672,
+      "combined_prob": 7.448,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -30,9 +30,9 @@
       ],
       "probs": [
         28.0,
-        27.3
+        26.3
       ],
-      "combined_prob": 7.644,
+      "combined_prob": 7.364,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -48,27 +48,9 @@
       ],
       "probs": [
         28.0,
-        25.8
+        26.0
       ],
-      "combined_prob": 7.224,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Munetaka Murakami",
-        "Yordan Alvarez"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "Houston Astros"
-      ],
-      "probs": [
-        28.0,
-        25.4
-      ],
-      "combined_prob": 7.112,
+      "combined_prob": 7.28,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -84,9 +66,9 @@
       ],
       "probs": [
         28.0,
-        24.8
+        24.7
       ],
-      "combined_prob": 6.944,
+      "combined_prob": 6.916,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -130,6 +112,24 @@
     {
       "legs": [
         "Munetaka Murakami",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "Chicago White Sox",
+        "Houston Astros"
+      ],
+      "probs": [
+        28.0,
+        24.3
+      ],
+      "combined_prob": 6.804,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Munetaka Murakami",
         "Oneil Cruz"
       ],
       "teams": [
@@ -138,27 +138,9 @@
       ],
       "probs": [
         28.0,
-        22.8
+        22.6
       ],
-      "combined_prob": 6.384,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Munetaka Murakami",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        28.0,
-        22.1
-      ],
-      "combined_prob": 6.188,
+      "combined_prob": 6.328,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -174,9 +156,27 @@
       ],
       "probs": [
         28.0,
-        21.9
+        22.0
       ],
-      "combined_prob": 6.132,
+      "combined_prob": 6.16,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Munetaka Murakami",
+        "Connor Joe"
+      ],
+      "teams": [
+        "Chicago White Sox",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        28.0,
+        22.0
+      ],
+      "combined_prob": 6.16,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -202,17 +202,17 @@
     {
       "legs": [
         "Munetaka Murakami",
-        "Ty France"
+        "Colson Montgomery"
       ],
       "teams": [
         "Chicago White Sox",
-        "San Diego Padres"
+        "Chicago White Sox"
       ],
       "probs": [
         28.0,
-        21.3
+        21.7
       ],
-      "combined_prob": 5.964,
+      "combined_prob": 6.076,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -263,10 +263,10 @@
         "New York Yankees"
       ],
       "probs": [
-        27.4,
-        27.3
+        26.6,
+        26.3
       ],
-      "combined_prob": 7.4802,
+      "combined_prob": 6.9958,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -281,28 +281,10 @@
         "New York Mets"
       ],
       "probs": [
-        27.4,
-        25.8
+        26.6,
+        26.0
       ],
-      "combined_prob": 7.0692,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Hunter Goodman",
-        "Yordan Alvarez"
-      ],
-      "teams": [
-        "Colorado Rockies",
-        "Houston Astros"
-      ],
-      "probs": [
-        27.4,
-        25.4
-      ],
-      "combined_prob": 6.9596,
+      "combined_prob": 6.916,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -317,10 +299,10 @@
         "New York Yankees"
       ],
       "probs": [
-        27.4,
-        24.8
+        26.6,
+        24.7
       ],
-      "combined_prob": 6.7952,
+      "combined_prob": 6.5702,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -335,10 +317,10 @@
         "St. Louis Cardinals"
       ],
       "probs": [
-        27.4,
+        26.6,
         24.6
       ],
-      "combined_prob": 6.7404,
+      "combined_prob": 6.5436,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -353,10 +335,28 @@
         "Washington Nationals"
       ],
       "probs": [
-        27.4,
+        26.6,
         24.5
       ],
-      "combined_prob": 6.713,
+      "combined_prob": 6.517,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Hunter Goodman",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "Colorado Rockies",
+        "Houston Astros"
+      ],
+      "probs": [
+        26.6,
+        24.3
+      ],
+      "combined_prob": 6.4638,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -371,28 +371,10 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        27.4,
-        22.8
+        26.6,
+        22.6
       ],
-      "combined_prob": 6.2472,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Hunter Goodman",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "Colorado Rockies",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        27.4,
-        22.1
-      ],
-      "combined_prob": 6.0554,
+      "combined_prob": 6.0116,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -407,10 +389,28 @@
         "Atlanta Braves"
       ],
       "probs": [
-        27.4,
-        21.9
+        26.6,
+        22.0
       ],
-      "combined_prob": 6.0006,
+      "combined_prob": 5.852,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Hunter Goodman",
+        "Connor Joe"
+      ],
+      "teams": [
+        "Colorado Rockies",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        26.6,
+        22.0
+      ],
+      "combined_prob": 5.852,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -425,10 +425,10 @@
         "Los Angeles Angels"
       ],
       "probs": [
-        27.4,
+        26.6,
         21.8
       ],
-      "combined_prob": 5.9732,
+      "combined_prob": 5.7988,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -436,17 +436,17 @@
     {
       "legs": [
         "Hunter Goodman",
-        "Ty France"
+        "Colson Montgomery"
       ],
       "teams": [
         "Colorado Rockies",
-        "San Diego Padres"
+        "Chicago White Sox"
       ],
       "probs": [
-        27.4,
-        21.3
+        26.6,
+        21.7
       ],
-      "combined_prob": 5.8362,
+      "combined_prob": 5.7722,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -461,10 +461,10 @@
         "Seattle Mariners"
       ],
       "probs": [
-        27.4,
+        26.6,
         21.3
       ],
-      "combined_prob": 5.8362,
+      "combined_prob": 5.6658,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -479,10 +479,10 @@
         "Philadelphia Phillies"
       ],
       "probs": [
-        27.4,
+        26.6,
         20.4
       ],
-      "combined_prob": 5.5896,
+      "combined_prob": 5.4264,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -497,10 +497,64 @@
         "New York Mets"
       ],
       "probs": [
-        27.3,
-        25.8
+        26.3,
+        26.0
       ],
-      "combined_prob": 7.0434,
+      "combined_prob": 6.838,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Ben Rice",
+        "Aaron Judge"
+      ],
+      "teams": [
+        "New York Yankees",
+        "New York Yankees"
+      ],
+      "probs": [
+        26.3,
+        24.7
+      ],
+      "combined_prob": 6.4961,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Ben Rice",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "New York Yankees",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        26.3,
+        24.6
+      ],
+      "combined_prob": 6.4698,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Ben Rice",
+        "James Wood"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Washington Nationals"
+      ],
+      "probs": [
+        26.3,
+        24.5
+      ],
+      "combined_prob": 6.4435,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -515,64 +569,10 @@
         "Houston Astros"
       ],
       "probs": [
-        27.3,
-        25.4
+        26.3,
+        24.3
       ],
-      "combined_prob": 6.9342,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Ben Rice",
-        "Aaron Judge"
-      ],
-      "teams": [
-        "New York Yankees",
-        "New York Yankees"
-      ],
-      "probs": [
-        27.3,
-        24.8
-      ],
-      "combined_prob": 6.7704,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Ben Rice",
-        "Jordan Walker"
-      ],
-      "teams": [
-        "New York Yankees",
-        "St. Louis Cardinals"
-      ],
-      "probs": [
-        27.3,
-        24.6
-      ],
-      "combined_prob": 6.7158,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Ben Rice",
-        "James Wood"
-      ],
-      "teams": [
-        "New York Yankees",
-        "Washington Nationals"
-      ],
-      "probs": [
-        27.3,
-        24.5
-      ],
-      "combined_prob": 6.6885,
+      "combined_prob": 6.3909,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -587,28 +587,10 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        27.3,
-        22.8
+        26.3,
+        22.6
       ],
-      "combined_prob": 6.2244,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Ben Rice",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "New York Yankees",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        27.3,
-        22.1
-      ],
-      "combined_prob": 6.0333,
+      "combined_prob": 5.9438,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -623,10 +605,28 @@
         "Atlanta Braves"
       ],
       "probs": [
-        27.3,
-        21.9
+        26.3,
+        22.0
       ],
-      "combined_prob": 5.9787,
+      "combined_prob": 5.786,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Ben Rice",
+        "Connor Joe"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        26.3,
+        22.0
+      ],
+      "combined_prob": 5.786,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -641,10 +641,10 @@
         "Los Angeles Angels"
       ],
       "probs": [
-        27.3,
+        26.3,
         21.8
       ],
-      "combined_prob": 5.9514,
+      "combined_prob": 5.7334,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -652,17 +652,17 @@
     {
       "legs": [
         "Ben Rice",
-        "Ty France"
+        "Colson Montgomery"
       ],
       "teams": [
         "New York Yankees",
-        "San Diego Padres"
+        "Chicago White Sox"
       ],
       "probs": [
-        27.3,
-        21.3
+        26.3,
+        21.7
       ],
-      "combined_prob": 5.8149,
+      "combined_prob": 5.7071,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -677,10 +677,10 @@
         "Seattle Mariners"
       ],
       "probs": [
-        27.3,
+        26.3,
         21.3
       ],
-      "combined_prob": 5.8149,
+      "combined_prob": 5.6019,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -695,10 +695,64 @@
         "Philadelphia Phillies"
       ],
       "probs": [
-        27.3,
+        26.3,
         20.4
       ],
-      "combined_prob": 5.5692,
+      "combined_prob": 5.3652,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "MJ Melendez",
+        "Aaron Judge"
+      ],
+      "teams": [
+        "New York Mets",
+        "New York Yankees"
+      ],
+      "probs": [
+        26.0,
+        24.7
+      ],
+      "combined_prob": 6.422,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "MJ Melendez",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "New York Mets",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        26.0,
+        24.6
+      ],
+      "combined_prob": 6.396,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "MJ Melendez",
+        "James Wood"
+      ],
+      "teams": [
+        "New York Mets",
+        "Washington Nationals"
+      ],
+      "probs": [
+        26.0,
+        24.5
+      ],
+      "combined_prob": 6.37,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -713,64 +767,10 @@
         "Houston Astros"
       ],
       "probs": [
-        25.8,
-        25.4
+        26.0,
+        24.3
       ],
-      "combined_prob": 6.5532,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "MJ Melendez",
-        "Aaron Judge"
-      ],
-      "teams": [
-        "New York Mets",
-        "New York Yankees"
-      ],
-      "probs": [
-        25.8,
-        24.8
-      ],
-      "combined_prob": 6.3984,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "MJ Melendez",
-        "Jordan Walker"
-      ],
-      "teams": [
-        "New York Mets",
-        "St. Louis Cardinals"
-      ],
-      "probs": [
-        25.8,
-        24.6
-      ],
-      "combined_prob": 6.3468,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "MJ Melendez",
-        "James Wood"
-      ],
-      "teams": [
-        "New York Mets",
-        "Washington Nationals"
-      ],
-      "probs": [
-        25.8,
-        24.5
-      ],
-      "combined_prob": 6.321,
+      "combined_prob": 6.318,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -785,28 +785,10 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        25.8,
-        22.8
+        26.0,
+        22.6
       ],
-      "combined_prob": 5.8824,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "MJ Melendez",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "New York Mets",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        25.8,
-        22.1
-      ],
-      "combined_prob": 5.7018,
+      "combined_prob": 5.876,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -821,10 +803,28 @@
         "Atlanta Braves"
       ],
       "probs": [
-        25.8,
-        21.9
+        26.0,
+        22.0
       ],
-      "combined_prob": 5.6502,
+      "combined_prob": 5.72,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "MJ Melendez",
+        "Connor Joe"
+      ],
+      "teams": [
+        "New York Mets",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        26.0,
+        22.0
+      ],
+      "combined_prob": 5.72,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -839,10 +839,10 @@
         "Los Angeles Angels"
       ],
       "probs": [
-        25.8,
+        26.0,
         21.8
       ],
-      "combined_prob": 5.6244,
+      "combined_prob": 5.668,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -850,233 +850,53 @@
     {
       "legs": [
         "MJ Melendez",
-        "Ty France"
-      ],
-      "teams": [
-        "New York Mets",
-        "San Diego Padres"
-      ],
-      "probs": [
-        25.8,
-        21.3
-      ],
-      "combined_prob": 5.4954,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "MJ Melendez",
-        "Luke Raley"
-      ],
-      "teams": [
-        "New York Mets",
-        "Seattle Mariners"
-      ],
-      "probs": [
-        25.8,
-        21.3
-      ],
-      "combined_prob": 5.4954,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "MJ Melendez",
-        "Kyle Schwarber"
-      ],
-      "teams": [
-        "New York Mets",
-        "Philadelphia Phillies"
-      ],
-      "probs": [
-        25.8,
-        20.4
-      ],
-      "combined_prob": 5.2632,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "Aaron Judge"
-      ],
-      "teams": [
-        "Houston Astros",
-        "New York Yankees"
-      ],
-      "probs": [
-        25.4,
-        24.8
-      ],
-      "combined_prob": 6.2992,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "Jordan Walker"
-      ],
-      "teams": [
-        "Houston Astros",
-        "St. Louis Cardinals"
-      ],
-      "probs": [
-        25.4,
-        24.6
-      ],
-      "combined_prob": 6.2484,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "James Wood"
-      ],
-      "teams": [
-        "Houston Astros",
-        "Washington Nationals"
-      ],
-      "probs": [
-        25.4,
-        24.5
-      ],
-      "combined_prob": 6.223,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "Oneil Cruz"
-      ],
-      "teams": [
-        "Houston Astros",
-        "Pittsburgh Pirates"
-      ],
-      "probs": [
-        25.4,
-        22.8
-      ],
-      "combined_prob": 5.7912,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
         "Colson Montgomery"
       ],
       "teams": [
-        "Houston Astros",
+        "New York Mets",
         "Chicago White Sox"
       ],
       "probs": [
-        25.4,
-        22.1
+        26.0,
+        21.7
       ],
-      "combined_prob": 5.6134,
+      "combined_prob": 5.642,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
     },
     {
       "legs": [
-        "Yordan Alvarez",
-        "Matt Olson"
-      ],
-      "teams": [
-        "Houston Astros",
-        "Atlanta Braves"
-      ],
-      "probs": [
-        25.4,
-        21.9
-      ],
-      "combined_prob": 5.5626,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "Mike Trout"
-      ],
-      "teams": [
-        "Houston Astros",
-        "Los Angeles Angels"
-      ],
-      "probs": [
-        25.4,
-        21.8
-      ],
-      "combined_prob": 5.5372,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "Ty France"
-      ],
-      "teams": [
-        "Houston Astros",
-        "San Diego Padres"
-      ],
-      "probs": [
-        25.4,
-        21.3
-      ],
-      "combined_prob": 5.4102,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
+        "MJ Melendez",
         "Luke Raley"
       ],
       "teams": [
-        "Houston Astros",
+        "New York Mets",
         "Seattle Mariners"
       ],
       "probs": [
-        25.4,
+        26.0,
         21.3
       ],
-      "combined_prob": 5.4102,
+      "combined_prob": 5.538,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
     },
     {
       "legs": [
-        "Yordan Alvarez",
+        "MJ Melendez",
         "Kyle Schwarber"
       ],
       "teams": [
-        "Houston Astros",
+        "New York Mets",
         "Philadelphia Phillies"
       ],
       "probs": [
-        25.4,
+        26.0,
         20.4
       ],
-      "combined_prob": 5.1816,
+      "combined_prob": 5.304,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1091,10 +911,10 @@
         "St. Louis Cardinals"
       ],
       "probs": [
-        24.8,
+        24.7,
         24.6
       ],
-      "combined_prob": 6.1008,
+      "combined_prob": 6.0762,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1109,10 +929,28 @@
         "Washington Nationals"
       ],
       "probs": [
-        24.8,
+        24.7,
         24.5
       ],
-      "combined_prob": 6.076,
+      "combined_prob": 6.0515,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Aaron Judge",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros"
+      ],
+      "probs": [
+        24.7,
+        24.3
+      ],
+      "combined_prob": 6.0021,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1127,28 +965,10 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        24.8,
-        22.8
+        24.7,
+        22.6
       ],
-      "combined_prob": 5.6544,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Aaron Judge",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "New York Yankees",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        24.8,
-        22.1
-      ],
-      "combined_prob": 5.4808,
+      "combined_prob": 5.5822,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1163,10 +983,28 @@
         "Atlanta Braves"
       ],
       "probs": [
-        24.8,
-        21.9
+        24.7,
+        22.0
       ],
-      "combined_prob": 5.4312,
+      "combined_prob": 5.434,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Aaron Judge",
+        "Connor Joe"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        24.7,
+        22.0
+      ],
+      "combined_prob": 5.434,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1181,10 +1019,10 @@
         "Los Angeles Angels"
       ],
       "probs": [
-        24.8,
+        24.7,
         21.8
       ],
-      "combined_prob": 5.4064,
+      "combined_prob": 5.3846,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1192,17 +1030,17 @@
     {
       "legs": [
         "Aaron Judge",
-        "Ty France"
+        "Colson Montgomery"
       ],
       "teams": [
         "New York Yankees",
-        "San Diego Padres"
+        "Chicago White Sox"
       ],
       "probs": [
-        24.8,
-        21.3
+        24.7,
+        21.7
       ],
-      "combined_prob": 5.2824,
+      "combined_prob": 5.3599,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1217,10 +1055,10 @@
         "Seattle Mariners"
       ],
       "probs": [
-        24.8,
+        24.7,
         21.3
       ],
-      "combined_prob": 5.2824,
+      "combined_prob": 5.2611,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1235,10 +1073,10 @@
         "Philadelphia Phillies"
       ],
       "probs": [
-        24.8,
+        24.7,
         20.4
       ],
-      "combined_prob": 5.0592,
+      "combined_prob": 5.0388,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1264,6 +1102,24 @@
     {
       "legs": [
         "Jordan Walker",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "St. Louis Cardinals",
+        "Houston Astros"
+      ],
+      "probs": [
+        24.6,
+        24.3
+      ],
+      "combined_prob": 5.9778,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Jordan Walker",
         "Oneil Cruz"
       ],
       "teams": [
@@ -1272,27 +1128,9 @@
       ],
       "probs": [
         24.6,
-        22.8
+        22.6
       ],
-      "combined_prob": 5.6088,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Jordan Walker",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "St. Louis Cardinals",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        24.6,
-        22.1
-      ],
-      "combined_prob": 5.4366,
+      "combined_prob": 5.5596,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1308,9 +1146,27 @@
       ],
       "probs": [
         24.6,
-        21.9
+        22.0
       ],
-      "combined_prob": 5.3874,
+      "combined_prob": 5.412,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Jordan Walker",
+        "Connor Joe"
+      ],
+      "teams": [
+        "St. Louis Cardinals",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        24.6,
+        22.0
+      ],
+      "combined_prob": 5.412,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1336,17 +1192,17 @@
     {
       "legs": [
         "Jordan Walker",
-        "Ty France"
+        "Colson Montgomery"
       ],
       "teams": [
         "St. Louis Cardinals",
-        "San Diego Padres"
+        "Chicago White Sox"
       ],
       "probs": [
         24.6,
-        21.3
+        21.7
       ],
-      "combined_prob": 5.2398,
+      "combined_prob": 5.3382,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1390,6 +1246,24 @@
     {
       "legs": [
         "James Wood",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "Washington Nationals",
+        "Houston Astros"
+      ],
+      "probs": [
+        24.5,
+        24.3
+      ],
+      "combined_prob": 5.9535,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "James Wood",
         "Oneil Cruz"
       ],
       "teams": [
@@ -1398,27 +1272,9 @@
       ],
       "probs": [
         24.5,
-        22.8
+        22.6
       ],
-      "combined_prob": 5.586,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "James Wood",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "Washington Nationals",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        24.5,
-        22.1
-      ],
-      "combined_prob": 5.4145,
+      "combined_prob": 5.537,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1434,9 +1290,27 @@
       ],
       "probs": [
         24.5,
-        21.9
+        22.0
       ],
-      "combined_prob": 5.3655,
+      "combined_prob": 5.39,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "James Wood",
+        "Connor Joe"
+      ],
+      "teams": [
+        "Washington Nationals",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        24.5,
+        22.0
+      ],
+      "combined_prob": 5.39,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1462,17 +1336,17 @@
     {
       "legs": [
         "James Wood",
-        "Ty France"
+        "Colson Montgomery"
       ],
       "teams": [
         "Washington Nationals",
-        "San Diego Padres"
+        "Chicago White Sox"
       ],
       "probs": [
         24.5,
-        21.3
+        21.7
       ],
-      "combined_prob": 5.2185,
+      "combined_prob": 5.3165,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1515,6 +1389,186 @@
     },
     {
       "legs": [
+        "Yordan Alvarez",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        24.3,
+        22.6
+      ],
+      "combined_prob": 5.4918,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Yordan Alvarez",
+        "Matt Olson"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Atlanta Braves"
+      ],
+      "probs": [
+        24.3,
+        22.0
+      ],
+      "combined_prob": 5.346,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Yordan Alvarez",
+        "Connor Joe"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        24.3,
+        22.0
+      ],
+      "combined_prob": 5.346,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Yordan Alvarez",
+        "Mike Trout"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Los Angeles Angels"
+      ],
+      "probs": [
+        24.3,
+        21.8
+      ],
+      "combined_prob": 5.2974,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Yordan Alvarez",
+        "Colson Montgomery"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Chicago White Sox"
+      ],
+      "probs": [
+        24.3,
+        21.7
+      ],
+      "combined_prob": 5.2731,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Yordan Alvarez",
+        "Luke Raley"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        24.3,
+        21.3
+      ],
+      "combined_prob": 5.1759,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Yordan Alvarez",
+        "Kyle Schwarber"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Philadelphia Phillies"
+      ],
+      "probs": [
+        24.3,
+        20.4
+      ],
+      "combined_prob": 4.9572,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Oneil Cruz",
+        "Matt Olson"
+      ],
+      "teams": [
+        "Pittsburgh Pirates",
+        "Atlanta Braves"
+      ],
+      "probs": [
+        22.6,
+        22.0
+      ],
+      "combined_prob": 4.972,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Oneil Cruz",
+        "Connor Joe"
+      ],
+      "teams": [
+        "Pittsburgh Pirates",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        22.6,
+        22.0
+      ],
+      "combined_prob": 4.972,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Oneil Cruz",
+        "Mike Trout"
+      ],
+      "teams": [
+        "Pittsburgh Pirates",
+        "Los Angeles Angels"
+      ],
+      "probs": [
+        22.6,
+        21.8
+      ],
+      "combined_prob": 4.9268,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
         "Oneil Cruz",
         "Colson Montgomery"
       ],
@@ -1523,64 +1577,10 @@
         "Chicago White Sox"
       ],
       "probs": [
-        22.8,
-        22.1
+        22.6,
+        21.7
       ],
-      "combined_prob": 5.0388,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Oneil Cruz",
-        "Matt Olson"
-      ],
-      "teams": [
-        "Pittsburgh Pirates",
-        "Atlanta Braves"
-      ],
-      "probs": [
-        22.8,
-        21.9
-      ],
-      "combined_prob": 4.9932,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Oneil Cruz",
-        "Mike Trout"
-      ],
-      "teams": [
-        "Pittsburgh Pirates",
-        "Los Angeles Angels"
-      ],
-      "probs": [
-        22.8,
-        21.8
-      ],
-      "combined_prob": 4.9704,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Oneil Cruz",
-        "Ty France"
-      ],
-      "teams": [
-        "Pittsburgh Pirates",
-        "San Diego Padres"
-      ],
-      "probs": [
-        22.8,
-        21.3
-      ],
-      "combined_prob": 4.8564,
+      "combined_prob": 4.9042,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1595,10 +1595,10 @@
         "Seattle Mariners"
       ],
       "probs": [
-        22.8,
+        22.6,
         21.3
       ],
-      "combined_prob": 4.8564,
+      "combined_prob": 4.8138,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1613,100 +1613,28 @@
         "Philadelphia Phillies"
       ],
       "probs": [
-        22.8,
+        22.6,
         20.4
       ],
-      "combined_prob": 4.6512,
+      "combined_prob": 4.6104,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
     },
     {
       "legs": [
-        "Colson Montgomery",
-        "Matt Olson"
+        "Matt Olson",
+        "Connor Joe"
       ],
       "teams": [
-        "Chicago White Sox",
-        "Atlanta Braves"
-      ],
-      "probs": [
-        22.1,
-        21.9
-      ],
-      "combined_prob": 4.8399,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Colson Montgomery",
-        "Mike Trout"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "Los Angeles Angels"
-      ],
-      "probs": [
-        22.1,
-        21.8
-      ],
-      "combined_prob": 4.8178,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Colson Montgomery",
-        "Ty France"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "San Diego Padres"
-      ],
-      "probs": [
-        22.1,
-        21.3
-      ],
-      "combined_prob": 4.7073,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Colson Montgomery",
-        "Luke Raley"
-      ],
-      "teams": [
-        "Chicago White Sox",
+        "Atlanta Braves",
         "Seattle Mariners"
       ],
       "probs": [
-        22.1,
-        21.3
+        22.0,
+        22.0
       ],
-      "combined_prob": 4.7073,
-      "n_legs": 2,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Colson Montgomery",
-        "Kyle Schwarber"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "Philadelphia Phillies"
-      ],
-      "probs": [
-        22.1,
-        20.4
-      ],
-      "combined_prob": 4.5084,
+      "combined_prob": 4.84,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1721,10 +1649,10 @@
         "Los Angeles Angels"
       ],
       "probs": [
-        21.9,
+        22.0,
         21.8
       ],
-      "combined_prob": 4.7742,
+      "combined_prob": 4.796,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1732,17 +1660,17 @@
     {
       "legs": [
         "Matt Olson",
-        "Ty France"
+        "Colson Montgomery"
       ],
       "teams": [
         "Atlanta Braves",
-        "San Diego Padres"
+        "Chicago White Sox"
       ],
       "probs": [
-        21.9,
-        21.3
+        22.0,
+        21.7
       ],
-      "combined_prob": 4.6647,
+      "combined_prob": 4.774,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1757,10 +1685,10 @@
         "Seattle Mariners"
       ],
       "probs": [
-        21.9,
+        22.0,
         21.3
       ],
-      "combined_prob": 4.6647,
+      "combined_prob": 4.686,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1775,10 +1703,82 @@
         "Philadelphia Phillies"
       ],
       "probs": [
-        21.9,
+        22.0,
         20.4
       ],
-      "combined_prob": 4.4676,
+      "combined_prob": 4.488,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Connor Joe",
+        "Mike Trout"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Los Angeles Angels"
+      ],
+      "probs": [
+        22.0,
+        21.8
+      ],
+      "combined_prob": 4.796,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Connor Joe",
+        "Colson Montgomery"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Chicago White Sox"
+      ],
+      "probs": [
+        22.0,
+        21.7
+      ],
+      "combined_prob": 4.774,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Connor Joe",
+        "Luke Raley"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Seattle Mariners"
+      ],
+      "probs": [
+        22.0,
+        21.3
+      ],
+      "combined_prob": 4.686,
+      "n_legs": 2,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Connor Joe",
+        "Kyle Schwarber"
+      ],
+      "teams": [
+        "Seattle Mariners",
+        "Philadelphia Phillies"
+      ],
+      "probs": [
+        22.0,
+        20.4
+      ],
+      "combined_prob": 4.488,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1786,17 +1786,17 @@
     {
       "legs": [
         "Mike Trout",
-        "Ty France"
+        "Colson Montgomery"
       ],
       "teams": [
         "Los Angeles Angels",
-        "San Diego Padres"
+        "Chicago White Sox"
       ],
       "probs": [
         21.8,
-        21.3
+        21.7
       ],
-      "combined_prob": 4.6434,
+      "combined_prob": 4.7306,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1839,36 +1839,36 @@
     },
     {
       "legs": [
-        "Ty France",
+        "Colson Montgomery",
         "Luke Raley"
       ],
       "teams": [
-        "San Diego Padres",
+        "Chicago White Sox",
         "Seattle Mariners"
       ],
       "probs": [
-        21.3,
+        21.7,
         21.3
       ],
-      "combined_prob": 4.5369,
+      "combined_prob": 4.6221,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
     },
     {
       "legs": [
-        "Ty France",
+        "Colson Montgomery",
         "Kyle Schwarber"
       ],
       "teams": [
-        "San Diego Padres",
+        "Chicago White Sox",
         "Philadelphia Phillies"
       ],
       "probs": [
-        21.3,
+        21.7,
         20.4
       ],
-      "combined_prob": 4.3452,
+      "combined_prob": 4.4268,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1904,10 +1904,10 @@
       ],
       "probs": [
         28.0,
-        27.4,
-        27.3
+        26.6,
+        26.3
       ],
-      "combined_prob": 2.094456,
+      "combined_prob": 1.958824,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -1925,31 +1925,10 @@
       ],
       "probs": [
         28.0,
-        27.4,
-        25.8
+        26.6,
+        26.0
       ],
-      "combined_prob": 1.979376,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Munetaka Murakami",
-        "Hunter Goodman",
-        "Yordan Alvarez"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "Colorado Rockies",
-        "Houston Astros"
-      ],
-      "probs": [
-        28.0,
-        27.4,
-        25.4
-      ],
-      "combined_prob": 1.948688,
+      "combined_prob": 1.93648,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -1967,10 +1946,10 @@
       ],
       "probs": [
         28.0,
-        27.4,
-        24.8
+        26.6,
+        24.7
       ],
-      "combined_prob": 1.902656,
+      "combined_prob": 1.839656,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -1988,10 +1967,10 @@
       ],
       "probs": [
         28.0,
-        27.4,
+        26.6,
         24.6
       ],
-      "combined_prob": 1.887312,
+      "combined_prob": 1.832208,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2009,10 +1988,31 @@
       ],
       "probs": [
         28.0,
-        27.4,
+        26.6,
         24.5
       ],
-      "combined_prob": 1.87964,
+      "combined_prob": 1.82476,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Munetaka Murakami",
+        "Hunter Goodman",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "Chicago White Sox",
+        "Colorado Rockies",
+        "Houston Astros"
+      ],
+      "probs": [
+        28.0,
+        26.6,
+        24.3
+      ],
+      "combined_prob": 1.809864,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2030,10 +2030,10 @@
       ],
       "probs": [
         28.0,
-        27.4,
-        22.8
+        26.6,
+        22.6
       ],
-      "combined_prob": 1.749216,
+      "combined_prob": 1.683248,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2042,19 +2042,19 @@
       "legs": [
         "Munetaka Murakami",
         "Hunter Goodman",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "Chicago White Sox",
         "Colorado Rockies",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
         28.0,
-        27.4,
-        22.1
+        26.6,
+        22.0
       ],
-      "combined_prob": 1.695512,
+      "combined_prob": 1.63856,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2072,10 +2072,73 @@
       ],
       "probs": [
         28.0,
-        27.3,
-        25.8
+        26.3,
+        26.0
       ],
-      "combined_prob": 1.972152,
+      "combined_prob": 1.91464,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Munetaka Murakami",
+        "Ben Rice",
+        "Aaron Judge"
+      ],
+      "teams": [
+        "Chicago White Sox",
+        "New York Yankees",
+        "New York Yankees"
+      ],
+      "probs": [
+        28.0,
+        26.3,
+        24.7
+      ],
+      "combined_prob": 1.818908,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Munetaka Murakami",
+        "Ben Rice",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Chicago White Sox",
+        "New York Yankees",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        28.0,
+        26.3,
+        24.6
+      ],
+      "combined_prob": 1.811544,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Munetaka Murakami",
+        "Ben Rice",
+        "James Wood"
+      ],
+      "teams": [
+        "Chicago White Sox",
+        "New York Yankees",
+        "Washington Nationals"
+      ],
+      "probs": [
+        28.0,
+        26.3,
+        24.5
+      ],
+      "combined_prob": 1.80418,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2093,73 +2156,10 @@
       ],
       "probs": [
         28.0,
-        27.3,
-        25.4
+        26.3,
+        24.3
       ],
-      "combined_prob": 1.941576,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Munetaka Murakami",
-        "Ben Rice",
-        "Aaron Judge"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "New York Yankees",
-        "New York Yankees"
-      ],
-      "probs": [
-        28.0,
-        27.3,
-        24.8
-      ],
-      "combined_prob": 1.895712,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Munetaka Murakami",
-        "Ben Rice",
-        "Jordan Walker"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "New York Yankees",
-        "St. Louis Cardinals"
-      ],
-      "probs": [
-        28.0,
-        27.3,
-        24.6
-      ],
-      "combined_prob": 1.880424,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Munetaka Murakami",
-        "Ben Rice",
-        "James Wood"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "New York Yankees",
-        "Washington Nationals"
-      ],
-      "probs": [
-        28.0,
-        27.3,
-        24.5
-      ],
-      "combined_prob": 1.87278,
+      "combined_prob": 1.789452,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2177,10 +2177,10 @@
       ],
       "probs": [
         28.0,
-        27.3,
-        22.8
+        26.3,
+        22.6
       ],
-      "combined_prob": 1.742832,
+      "combined_prob": 1.664264,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2189,19 +2189,82 @@
       "legs": [
         "Munetaka Murakami",
         "Ben Rice",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "Chicago White Sox",
         "New York Yankees",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
         28.0,
-        27.3,
-        22.1
+        26.3,
+        22.0
       ],
-      "combined_prob": 1.689324,
+      "combined_prob": 1.62008,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Munetaka Murakami",
+        "MJ Melendez",
+        "Aaron Judge"
+      ],
+      "teams": [
+        "Chicago White Sox",
+        "New York Mets",
+        "New York Yankees"
+      ],
+      "probs": [
+        28.0,
+        26.0,
+        24.7
+      ],
+      "combined_prob": 1.79816,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Munetaka Murakami",
+        "MJ Melendez",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Chicago White Sox",
+        "New York Mets",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        28.0,
+        26.0,
+        24.6
+      ],
+      "combined_prob": 1.79088,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Munetaka Murakami",
+        "MJ Melendez",
+        "James Wood"
+      ],
+      "teams": [
+        "Chicago White Sox",
+        "New York Mets",
+        "Washington Nationals"
+      ],
+      "probs": [
+        28.0,
+        26.0,
+        24.5
+      ],
+      "combined_prob": 1.7836,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2219,73 +2282,10 @@
       ],
       "probs": [
         28.0,
-        25.8,
-        25.4
+        26.0,
+        24.3
       ],
-      "combined_prob": 1.834896,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Munetaka Murakami",
-        "MJ Melendez",
-        "Aaron Judge"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "New York Mets",
-        "New York Yankees"
-      ],
-      "probs": [
-        28.0,
-        25.8,
-        24.8
-      ],
-      "combined_prob": 1.791552,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Munetaka Murakami",
-        "MJ Melendez",
-        "Jordan Walker"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "New York Mets",
-        "St. Louis Cardinals"
-      ],
-      "probs": [
-        28.0,
-        25.8,
-        24.6
-      ],
-      "combined_prob": 1.777104,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Munetaka Murakami",
-        "MJ Melendez",
-        "James Wood"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "New York Mets",
-        "Washington Nationals"
-      ],
-      "probs": [
-        28.0,
-        25.8,
-        24.5
-      ],
-      "combined_prob": 1.76988,
+      "combined_prob": 1.76904,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2303,10 +2303,10 @@
       ],
       "probs": [
         28.0,
-        25.8,
-        22.8
+        26.0,
+        22.6
       ],
-      "combined_prob": 1.647072,
+      "combined_prob": 1.64528,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2315,124 +2315,19 @@
       "legs": [
         "Munetaka Murakami",
         "MJ Melendez",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "Chicago White Sox",
         "New York Mets",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
         28.0,
-        25.8,
-        22.1
+        26.0,
+        22.0
       ],
-      "combined_prob": 1.596504,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Munetaka Murakami",
-        "Yordan Alvarez",
-        "Aaron Judge"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "Houston Astros",
-        "New York Yankees"
-      ],
-      "probs": [
-        28.0,
-        25.4,
-        24.8
-      ],
-      "combined_prob": 1.763776,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Munetaka Murakami",
-        "Yordan Alvarez",
-        "Jordan Walker"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "Houston Astros",
-        "St. Louis Cardinals"
-      ],
-      "probs": [
-        28.0,
-        25.4,
-        24.6
-      ],
-      "combined_prob": 1.749552,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Munetaka Murakami",
-        "Yordan Alvarez",
-        "James Wood"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "Houston Astros",
-        "Washington Nationals"
-      ],
-      "probs": [
-        28.0,
-        25.4,
-        24.5
-      ],
-      "combined_prob": 1.74244,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Munetaka Murakami",
-        "Yordan Alvarez",
-        "Oneil Cruz"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "Houston Astros",
-        "Pittsburgh Pirates"
-      ],
-      "probs": [
-        28.0,
-        25.4,
-        22.8
-      ],
-      "combined_prob": 1.621536,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Munetaka Murakami",
-        "Yordan Alvarez",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "Chicago White Sox",
-        "Houston Astros",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        28.0,
-        25.4,
-        22.1
-      ],
-      "combined_prob": 1.571752,
+      "combined_prob": 1.6016,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2450,10 +2345,10 @@
       ],
       "probs": [
         28.0,
-        24.8,
+        24.7,
         24.6
       ],
-      "combined_prob": 1.708224,
+      "combined_prob": 1.701336,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2471,10 +2366,31 @@
       ],
       "probs": [
         28.0,
-        24.8,
+        24.7,
         24.5
       ],
-      "combined_prob": 1.70128,
+      "combined_prob": 1.69442,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Munetaka Murakami",
+        "Aaron Judge",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "Chicago White Sox",
+        "New York Yankees",
+        "Houston Astros"
+      ],
+      "probs": [
+        28.0,
+        24.7,
+        24.3
+      ],
+      "combined_prob": 1.680588,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2492,10 +2408,10 @@
       ],
       "probs": [
         28.0,
-        24.8,
-        22.8
+        24.7,
+        22.6
       ],
-      "combined_prob": 1.583232,
+      "combined_prob": 1.563016,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2504,19 +2420,19 @@
       "legs": [
         "Munetaka Murakami",
         "Aaron Judge",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "Chicago White Sox",
         "New York Yankees",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
         28.0,
-        24.8,
-        22.1
+        24.7,
+        22.0
       ],
-      "combined_prob": 1.534624,
+      "combined_prob": 1.52152,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2546,19 +2462,19 @@
       "legs": [
         "Munetaka Murakami",
         "Jordan Walker",
-        "Oneil Cruz"
+        "Yordan Alvarez"
       ],
       "teams": [
         "Chicago White Sox",
         "St. Louis Cardinals",
-        "Pittsburgh Pirates"
+        "Houston Astros"
       ],
       "probs": [
         28.0,
         24.6,
-        22.8
+        24.3
       ],
-      "combined_prob": 1.570464,
+      "combined_prob": 1.673784,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2567,19 +2483,61 @@
       "legs": [
         "Munetaka Murakami",
         "Jordan Walker",
-        "Colson Montgomery"
+        "Oneil Cruz"
       ],
       "teams": [
         "Chicago White Sox",
         "St. Louis Cardinals",
-        "Chicago White Sox"
+        "Pittsburgh Pirates"
       ],
       "probs": [
         28.0,
         24.6,
-        22.1
+        22.6
       ],
-      "combined_prob": 1.522248,
+      "combined_prob": 1.556688,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Munetaka Murakami",
+        "Jordan Walker",
+        "Matt Olson"
+      ],
+      "teams": [
+        "Chicago White Sox",
+        "St. Louis Cardinals",
+        "Atlanta Braves"
+      ],
+      "probs": [
+        28.0,
+        24.6,
+        22.0
+      ],
+      "combined_prob": 1.51536,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Munetaka Murakami",
+        "James Wood",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "Chicago White Sox",
+        "Washington Nationals",
+        "Houston Astros"
+      ],
+      "probs": [
+        28.0,
+        24.5,
+        24.3
+      ],
+      "combined_prob": 1.66698,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2598,9 +2556,9 @@
       "probs": [
         28.0,
         24.5,
-        22.8
+        22.6
       ],
-      "combined_prob": 1.56408,
+      "combined_prob": 1.55036,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2609,19 +2567,61 @@
       "legs": [
         "Munetaka Murakami",
         "James Wood",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "Chicago White Sox",
         "Washington Nationals",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
         28.0,
         24.5,
-        22.1
+        22.0
       ],
-      "combined_prob": 1.51606,
+      "combined_prob": 1.5092,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Munetaka Murakami",
+        "Yordan Alvarez",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Chicago White Sox",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        28.0,
+        24.3,
+        22.6
+      ],
+      "combined_prob": 1.537704,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Munetaka Murakami",
+        "Yordan Alvarez",
+        "Matt Olson"
+      ],
+      "teams": [
+        "Chicago White Sox",
+        "Houston Astros",
+        "Atlanta Braves"
+      ],
+      "probs": [
+        28.0,
+        24.3,
+        22.0
+      ],
+      "combined_prob": 1.49688,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2630,19 +2630,19 @@
       "legs": [
         "Munetaka Murakami",
         "Oneil Cruz",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "Chicago White Sox",
         "Pittsburgh Pirates",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
         28.0,
-        22.8,
-        22.1
+        22.6,
+        22.0
       ],
-      "combined_prob": 1.410864,
+      "combined_prob": 1.39216,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2659,11 +2659,74 @@
         "New York Mets"
       ],
       "probs": [
-        27.4,
-        27.3,
-        25.8
+        26.6,
+        26.3,
+        26.0
       ],
-      "combined_prob": 1.929892,
+      "combined_prob": 1.818908,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Hunter Goodman",
+        "Ben Rice",
+        "Aaron Judge"
+      ],
+      "teams": [
+        "Colorado Rockies",
+        "New York Yankees",
+        "New York Yankees"
+      ],
+      "probs": [
+        26.6,
+        26.3,
+        24.7
+      ],
+      "combined_prob": 1.727963,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Hunter Goodman",
+        "Ben Rice",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Colorado Rockies",
+        "New York Yankees",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        26.6,
+        26.3,
+        24.6
+      ],
+      "combined_prob": 1.720967,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Hunter Goodman",
+        "Ben Rice",
+        "James Wood"
+      ],
+      "teams": [
+        "Colorado Rockies",
+        "New York Yankees",
+        "Washington Nationals"
+      ],
+      "probs": [
+        26.6,
+        26.3,
+        24.5
+      ],
+      "combined_prob": 1.713971,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2680,74 +2743,11 @@
         "Houston Astros"
       ],
       "probs": [
-        27.4,
-        27.3,
-        25.4
+        26.6,
+        26.3,
+        24.3
       ],
-      "combined_prob": 1.899971,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Hunter Goodman",
-        "Ben Rice",
-        "Aaron Judge"
-      ],
-      "teams": [
-        "Colorado Rockies",
-        "New York Yankees",
-        "New York Yankees"
-      ],
-      "probs": [
-        27.4,
-        27.3,
-        24.8
-      ],
-      "combined_prob": 1.85509,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Hunter Goodman",
-        "Ben Rice",
-        "Jordan Walker"
-      ],
-      "teams": [
-        "Colorado Rockies",
-        "New York Yankees",
-        "St. Louis Cardinals"
-      ],
-      "probs": [
-        27.4,
-        27.3,
-        24.6
-      ],
-      "combined_prob": 1.840129,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Hunter Goodman",
-        "Ben Rice",
-        "James Wood"
-      ],
-      "teams": [
-        "Colorado Rockies",
-        "New York Yankees",
-        "Washington Nationals"
-      ],
-      "probs": [
-        27.4,
-        27.3,
-        24.5
-      ],
-      "combined_prob": 1.832649,
+      "combined_prob": 1.699979,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2764,11 +2764,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        27.4,
-        27.3,
-        22.8
+        26.6,
+        26.3,
+        22.6
       ],
-      "combined_prob": 1.705486,
+      "combined_prob": 1.581051,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2777,19 +2777,82 @@
       "legs": [
         "Hunter Goodman",
         "Ben Rice",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "Colorado Rockies",
         "New York Yankees",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        27.4,
-        27.3,
-        22.1
+        26.6,
+        26.3,
+        22.0
       ],
-      "combined_prob": 1.653124,
+      "combined_prob": 1.539076,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Hunter Goodman",
+        "MJ Melendez",
+        "Aaron Judge"
+      ],
+      "teams": [
+        "Colorado Rockies",
+        "New York Mets",
+        "New York Yankees"
+      ],
+      "probs": [
+        26.6,
+        26.0,
+        24.7
+      ],
+      "combined_prob": 1.708252,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Hunter Goodman",
+        "MJ Melendez",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "Colorado Rockies",
+        "New York Mets",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        26.6,
+        26.0,
+        24.6
+      ],
+      "combined_prob": 1.701336,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Hunter Goodman",
+        "MJ Melendez",
+        "James Wood"
+      ],
+      "teams": [
+        "Colorado Rockies",
+        "New York Mets",
+        "Washington Nationals"
+      ],
+      "probs": [
+        26.6,
+        26.0,
+        24.5
+      ],
+      "combined_prob": 1.69442,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2806,74 +2869,11 @@
         "Houston Astros"
       ],
       "probs": [
-        27.4,
-        25.8,
-        25.4
+        26.6,
+        26.0,
+        24.3
       ],
-      "combined_prob": 1.795577,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Hunter Goodman",
-        "MJ Melendez",
-        "Aaron Judge"
-      ],
-      "teams": [
-        "Colorado Rockies",
-        "New York Mets",
-        "New York Yankees"
-      ],
-      "probs": [
-        27.4,
-        25.8,
-        24.8
-      ],
-      "combined_prob": 1.753162,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Hunter Goodman",
-        "MJ Melendez",
-        "Jordan Walker"
-      ],
-      "teams": [
-        "Colorado Rockies",
-        "New York Mets",
-        "St. Louis Cardinals"
-      ],
-      "probs": [
-        27.4,
-        25.8,
-        24.6
-      ],
-      "combined_prob": 1.739023,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Hunter Goodman",
-        "MJ Melendez",
-        "James Wood"
-      ],
-      "teams": [
-        "Colorado Rockies",
-        "New York Mets",
-        "Washington Nationals"
-      ],
-      "probs": [
-        27.4,
-        25.8,
-        24.5
-      ],
-      "combined_prob": 1.731954,
+      "combined_prob": 1.680588,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2890,11 +2890,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        27.4,
-        25.8,
-        22.8
+        26.6,
+        26.0,
+        22.6
       ],
-      "combined_prob": 1.611778,
+      "combined_prob": 1.563016,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2903,124 +2903,19 @@
       "legs": [
         "Hunter Goodman",
         "MJ Melendez",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "Colorado Rockies",
         "New York Mets",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        27.4,
-        25.8,
-        22.1
+        26.6,
+        26.0,
+        22.0
       ],
-      "combined_prob": 1.562293,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Hunter Goodman",
-        "Yordan Alvarez",
-        "Aaron Judge"
-      ],
-      "teams": [
-        "Colorado Rockies",
-        "Houston Astros",
-        "New York Yankees"
-      ],
-      "probs": [
-        27.4,
-        25.4,
-        24.8
-      ],
-      "combined_prob": 1.725981,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Hunter Goodman",
-        "Yordan Alvarez",
-        "Jordan Walker"
-      ],
-      "teams": [
-        "Colorado Rockies",
-        "Houston Astros",
-        "St. Louis Cardinals"
-      ],
-      "probs": [
-        27.4,
-        25.4,
-        24.6
-      ],
-      "combined_prob": 1.712062,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Hunter Goodman",
-        "Yordan Alvarez",
-        "James Wood"
-      ],
-      "teams": [
-        "Colorado Rockies",
-        "Houston Astros",
-        "Washington Nationals"
-      ],
-      "probs": [
-        27.4,
-        25.4,
-        24.5
-      ],
-      "combined_prob": 1.705102,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Hunter Goodman",
-        "Yordan Alvarez",
-        "Oneil Cruz"
-      ],
-      "teams": [
-        "Colorado Rockies",
-        "Houston Astros",
-        "Pittsburgh Pirates"
-      ],
-      "probs": [
-        27.4,
-        25.4,
-        22.8
-      ],
-      "combined_prob": 1.586789,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Hunter Goodman",
-        "Yordan Alvarez",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "Colorado Rockies",
-        "Houston Astros",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        27.4,
-        25.4,
-        22.1
-      ],
-      "combined_prob": 1.538072,
+      "combined_prob": 1.52152,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3037,11 +2932,11 @@
         "St. Louis Cardinals"
       ],
       "probs": [
-        27.4,
-        24.8,
+        26.6,
+        24.7,
         24.6
       ],
-      "combined_prob": 1.671619,
+      "combined_prob": 1.616269,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3058,11 +2953,32 @@
         "Washington Nationals"
       ],
       "probs": [
-        27.4,
-        24.8,
+        26.6,
+        24.7,
         24.5
       ],
-      "combined_prob": 1.664824,
+      "combined_prob": 1.609699,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Hunter Goodman",
+        "Aaron Judge",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "Colorado Rockies",
+        "New York Yankees",
+        "Houston Astros"
+      ],
+      "probs": [
+        26.6,
+        24.7,
+        24.3
+      ],
+      "combined_prob": 1.596559,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3079,11 +2995,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        27.4,
-        24.8,
-        22.8
+        26.6,
+        24.7,
+        22.6
       ],
-      "combined_prob": 1.549306,
+      "combined_prob": 1.484865,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3092,19 +3008,19 @@
       "legs": [
         "Hunter Goodman",
         "Aaron Judge",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "Colorado Rockies",
         "New York Yankees",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        27.4,
-        24.8,
-        22.1
+        26.6,
+        24.7,
+        22.0
       ],
-      "combined_prob": 1.501739,
+      "combined_prob": 1.445444,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3121,11 +3037,32 @@
         "Washington Nationals"
       ],
       "probs": [
-        27.4,
+        26.6,
         24.6,
         24.5
       ],
-      "combined_prob": 1.651398,
+      "combined_prob": 1.603182,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Hunter Goodman",
+        "Jordan Walker",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "Colorado Rockies",
+        "St. Louis Cardinals",
+        "Houston Astros"
+      ],
+      "probs": [
+        26.6,
+        24.6,
+        24.3
+      ],
+      "combined_prob": 1.590095,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3142,11 +3079,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        27.4,
+        26.6,
         24.6,
-        22.8
+        22.6
       ],
-      "combined_prob": 1.536811,
+      "combined_prob": 1.478854,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3155,19 +3092,40 @@
       "legs": [
         "Hunter Goodman",
         "Jordan Walker",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "Colorado Rockies",
         "St. Louis Cardinals",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        27.4,
+        26.6,
         24.6,
-        22.1
+        22.0
       ],
-      "combined_prob": 1.489628,
+      "combined_prob": 1.439592,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Hunter Goodman",
+        "James Wood",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "Colorado Rockies",
+        "Washington Nationals",
+        "Houston Astros"
+      ],
+      "probs": [
+        26.6,
+        24.5,
+        24.3
+      ],
+      "combined_prob": 1.583631,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3184,11 +3142,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        27.4,
+        26.6,
         24.5,
-        22.8
+        22.6
       ],
-      "combined_prob": 1.530564,
+      "combined_prob": 1.472842,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3197,19 +3155,61 @@
       "legs": [
         "Hunter Goodman",
         "James Wood",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "Colorado Rockies",
         "Washington Nationals",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        27.4,
+        26.6,
         24.5,
-        22.1
+        22.0
       ],
-      "combined_prob": 1.483573,
+      "combined_prob": 1.43374,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Hunter Goodman",
+        "Yordan Alvarez",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Colorado Rockies",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        26.6,
+        24.3,
+        22.6
+      ],
+      "combined_prob": 1.460819,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Hunter Goodman",
+        "Yordan Alvarez",
+        "Matt Olson"
+      ],
+      "teams": [
+        "Colorado Rockies",
+        "Houston Astros",
+        "Atlanta Braves"
+      ],
+      "probs": [
+        26.6,
+        24.3,
+        22.0
+      ],
+      "combined_prob": 1.422036,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3218,19 +3218,82 @@
       "legs": [
         "Hunter Goodman",
         "Oneil Cruz",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "Colorado Rockies",
         "Pittsburgh Pirates",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        27.4,
-        22.8,
-        22.1
+        26.6,
+        22.6,
+        22.0
       ],
-      "combined_prob": 1.380631,
+      "combined_prob": 1.322552,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Ben Rice",
+        "MJ Melendez",
+        "Aaron Judge"
+      ],
+      "teams": [
+        "New York Yankees",
+        "New York Mets",
+        "New York Yankees"
+      ],
+      "probs": [
+        26.3,
+        26.0,
+        24.7
+      ],
+      "combined_prob": 1.688986,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Ben Rice",
+        "MJ Melendez",
+        "Jordan Walker"
+      ],
+      "teams": [
+        "New York Yankees",
+        "New York Mets",
+        "St. Louis Cardinals"
+      ],
+      "probs": [
+        26.3,
+        26.0,
+        24.6
+      ],
+      "combined_prob": 1.682148,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Ben Rice",
+        "MJ Melendez",
+        "James Wood"
+      ],
+      "teams": [
+        "New York Yankees",
+        "New York Mets",
+        "Washington Nationals"
+      ],
+      "probs": [
+        26.3,
+        26.0,
+        24.5
+      ],
+      "combined_prob": 1.67531,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3247,74 +3310,11 @@
         "Houston Astros"
       ],
       "probs": [
-        27.3,
-        25.8,
-        25.4
+        26.3,
+        26.0,
+        24.3
       ],
-      "combined_prob": 1.789024,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Ben Rice",
-        "MJ Melendez",
-        "Aaron Judge"
-      ],
-      "teams": [
-        "New York Yankees",
-        "New York Mets",
-        "New York Yankees"
-      ],
-      "probs": [
-        27.3,
-        25.8,
-        24.8
-      ],
-      "combined_prob": 1.746763,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Ben Rice",
-        "MJ Melendez",
-        "Jordan Walker"
-      ],
-      "teams": [
-        "New York Yankees",
-        "New York Mets",
-        "St. Louis Cardinals"
-      ],
-      "probs": [
-        27.3,
-        25.8,
-        24.6
-      ],
-      "combined_prob": 1.732676,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Ben Rice",
-        "MJ Melendez",
-        "James Wood"
-      ],
-      "teams": [
-        "New York Yankees",
-        "New York Mets",
-        "Washington Nationals"
-      ],
-      "probs": [
-        27.3,
-        25.8,
-        24.5
-      ],
-      "combined_prob": 1.725633,
+      "combined_prob": 1.661634,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3331,11 +3331,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        27.3,
-        25.8,
-        22.8
+        26.3,
+        26.0,
+        22.6
       ],
-      "combined_prob": 1.605895,
+      "combined_prob": 1.545388,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3344,124 +3344,19 @@
       "legs": [
         "Ben Rice",
         "MJ Melendez",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "New York Yankees",
         "New York Mets",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        27.3,
-        25.8,
-        22.1
+        26.3,
+        26.0,
+        22.0
       ],
-      "combined_prob": 1.556591,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Ben Rice",
-        "Yordan Alvarez",
-        "Aaron Judge"
-      ],
-      "teams": [
-        "New York Yankees",
-        "Houston Astros",
-        "New York Yankees"
-      ],
-      "probs": [
-        27.3,
-        25.4,
-        24.8
-      ],
-      "combined_prob": 1.719682,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Ben Rice",
-        "Yordan Alvarez",
-        "Jordan Walker"
-      ],
-      "teams": [
-        "New York Yankees",
-        "Houston Astros",
-        "St. Louis Cardinals"
-      ],
-      "probs": [
-        27.3,
-        25.4,
-        24.6
-      ],
-      "combined_prob": 1.705813,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Ben Rice",
-        "Yordan Alvarez",
-        "James Wood"
-      ],
-      "teams": [
-        "New York Yankees",
-        "Houston Astros",
-        "Washington Nationals"
-      ],
-      "probs": [
-        27.3,
-        25.4,
-        24.5
-      ],
-      "combined_prob": 1.698879,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Ben Rice",
-        "Yordan Alvarez",
-        "Oneil Cruz"
-      ],
-      "teams": [
-        "New York Yankees",
-        "Houston Astros",
-        "Pittsburgh Pirates"
-      ],
-      "probs": [
-        27.3,
-        25.4,
-        22.8
-      ],
-      "combined_prob": 1.580998,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Ben Rice",
-        "Yordan Alvarez",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "New York Yankees",
-        "Houston Astros",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        27.3,
-        25.4,
-        22.1
-      ],
-      "combined_prob": 1.532458,
+      "combined_prob": 1.50436,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3478,11 +3373,11 @@
         "St. Louis Cardinals"
       ],
       "probs": [
-        27.3,
-        24.8,
+        26.3,
+        24.7,
         24.6
       ],
-      "combined_prob": 1.665518,
+      "combined_prob": 1.598041,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3499,11 +3394,32 @@
         "Washington Nationals"
       ],
       "probs": [
-        27.3,
-        24.8,
+        26.3,
+        24.7,
         24.5
       ],
-      "combined_prob": 1.658748,
+      "combined_prob": 1.591544,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Ben Rice",
+        "Aaron Judge",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "New York Yankees",
+        "New York Yankees",
+        "Houston Astros"
+      ],
+      "probs": [
+        26.3,
+        24.7,
+        24.3
+      ],
+      "combined_prob": 1.578552,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3520,11 +3436,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        27.3,
-        24.8,
-        22.8
+        26.3,
+        24.7,
+        22.6
       ],
-      "combined_prob": 1.543651,
+      "combined_prob": 1.468119,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3533,19 +3449,19 @@
       "legs": [
         "Ben Rice",
         "Aaron Judge",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "New York Yankees",
         "New York Yankees",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        27.3,
-        24.8,
-        22.1
+        26.3,
+        24.7,
+        22.0
       ],
-      "combined_prob": 1.496258,
+      "combined_prob": 1.429142,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3562,11 +3478,32 @@
         "Washington Nationals"
       ],
       "probs": [
-        27.3,
+        26.3,
         24.6,
         24.5
       ],
-      "combined_prob": 1.645371,
+      "combined_prob": 1.585101,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Ben Rice",
+        "Jordan Walker",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "New York Yankees",
+        "St. Louis Cardinals",
+        "Houston Astros"
+      ],
+      "probs": [
+        26.3,
+        24.6,
+        24.3
+      ],
+      "combined_prob": 1.572161,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3583,11 +3520,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        27.3,
+        26.3,
         24.6,
-        22.8
+        22.6
       ],
-      "combined_prob": 1.531202,
+      "combined_prob": 1.462175,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3596,19 +3533,40 @@
       "legs": [
         "Ben Rice",
         "Jordan Walker",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "New York Yankees",
         "St. Louis Cardinals",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        27.3,
+        26.3,
         24.6,
-        22.1
+        22.0
       ],
-      "combined_prob": 1.484192,
+      "combined_prob": 1.423356,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Ben Rice",
+        "James Wood",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Washington Nationals",
+        "Houston Astros"
+      ],
+      "probs": [
+        26.3,
+        24.5,
+        24.3
+      ],
+      "combined_prob": 1.565771,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3625,11 +3583,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        27.3,
+        26.3,
         24.5,
-        22.8
+        22.6
       ],
-      "combined_prob": 1.524978,
+      "combined_prob": 1.456231,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3638,19 +3596,61 @@
       "legs": [
         "Ben Rice",
         "James Wood",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "New York Yankees",
         "Washington Nationals",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        27.3,
+        26.3,
         24.5,
-        22.1
+        22.0
       ],
-      "combined_prob": 1.478158,
+      "combined_prob": 1.41757,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Ben Rice",
+        "Yordan Alvarez",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        26.3,
+        24.3,
+        22.6
+      ],
+      "combined_prob": 1.444343,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Ben Rice",
+        "Yordan Alvarez",
+        "Matt Olson"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros",
+        "Atlanta Braves"
+      ],
+      "probs": [
+        26.3,
+        24.3,
+        22.0
+      ],
+      "combined_prob": 1.405998,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3659,19 +3659,19 @@
       "legs": [
         "Ben Rice",
         "Oneil Cruz",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "New York Yankees",
         "Pittsburgh Pirates",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        27.3,
-        22.8,
-        22.1
+        26.3,
+        22.6,
+        22.0
       ],
-      "combined_prob": 1.375592,
+      "combined_prob": 1.307636,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3679,125 +3679,20 @@
     {
       "legs": [
         "MJ Melendez",
-        "Yordan Alvarez",
-        "Aaron Judge"
-      ],
-      "teams": [
-        "New York Mets",
-        "Houston Astros",
-        "New York Yankees"
-      ],
-      "probs": [
-        25.8,
-        25.4,
-        24.8
-      ],
-      "combined_prob": 1.625194,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "MJ Melendez",
-        "Yordan Alvarez",
+        "Aaron Judge",
         "Jordan Walker"
       ],
       "teams": [
         "New York Mets",
-        "Houston Astros",
-        "St. Louis Cardinals"
-      ],
-      "probs": [
-        25.8,
-        25.4,
-        24.6
-      ],
-      "combined_prob": 1.612087,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "MJ Melendez",
-        "Yordan Alvarez",
-        "James Wood"
-      ],
-      "teams": [
-        "New York Mets",
-        "Houston Astros",
-        "Washington Nationals"
-      ],
-      "probs": [
-        25.8,
-        25.4,
-        24.5
-      ],
-      "combined_prob": 1.605534,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "MJ Melendez",
-        "Yordan Alvarez",
-        "Oneil Cruz"
-      ],
-      "teams": [
-        "New York Mets",
-        "Houston Astros",
-        "Pittsburgh Pirates"
-      ],
-      "probs": [
-        25.8,
-        25.4,
-        22.8
-      ],
-      "combined_prob": 1.49413,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "MJ Melendez",
-        "Yordan Alvarez",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "New York Mets",
-        "Houston Astros",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        25.8,
-        25.4,
-        22.1
-      ],
-      "combined_prob": 1.448257,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "MJ Melendez",
-        "Aaron Judge",
-        "Jordan Walker"
-      ],
-      "teams": [
-        "New York Mets",
         "New York Yankees",
         "St. Louis Cardinals"
       ],
       "probs": [
-        25.8,
-        24.8,
+        26.0,
+        24.7,
         24.6
       ],
-      "combined_prob": 1.574006,
+      "combined_prob": 1.579812,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3814,11 +3709,32 @@
         "Washington Nationals"
       ],
       "probs": [
-        25.8,
-        24.8,
+        26.0,
+        24.7,
         24.5
       ],
-      "combined_prob": 1.567608,
+      "combined_prob": 1.57339,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "MJ Melendez",
+        "Aaron Judge",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "New York Mets",
+        "New York Yankees",
+        "Houston Astros"
+      ],
+      "probs": [
+        26.0,
+        24.7,
+        24.3
+      ],
+      "combined_prob": 1.560546,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3835,11 +3751,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        25.8,
-        24.8,
-        22.8
+        26.0,
+        24.7,
+        22.6
       ],
-      "combined_prob": 1.458835,
+      "combined_prob": 1.451372,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3848,19 +3764,19 @@
       "legs": [
         "MJ Melendez",
         "Aaron Judge",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "New York Mets",
         "New York Yankees",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        25.8,
-        24.8,
-        22.1
+        26.0,
+        24.7,
+        22.0
       ],
-      "combined_prob": 1.414046,
+      "combined_prob": 1.41284,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3877,11 +3793,32 @@
         "Washington Nationals"
       ],
       "probs": [
-        25.8,
+        26.0,
         24.6,
         24.5
       ],
-      "combined_prob": 1.554966,
+      "combined_prob": 1.56702,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "MJ Melendez",
+        "Jordan Walker",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "New York Mets",
+        "St. Louis Cardinals",
+        "Houston Astros"
+      ],
+      "probs": [
+        26.0,
+        24.6,
+        24.3
+      ],
+      "combined_prob": 1.554228,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3898,11 +3835,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        25.8,
+        26.0,
         24.6,
-        22.8
+        22.6
       ],
-      "combined_prob": 1.44707,
+      "combined_prob": 1.445496,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3911,19 +3848,40 @@
       "legs": [
         "MJ Melendez",
         "Jordan Walker",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "New York Mets",
         "St. Louis Cardinals",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        25.8,
+        26.0,
         24.6,
-        22.1
+        22.0
       ],
-      "combined_prob": 1.402643,
+      "combined_prob": 1.40712,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "MJ Melendez",
+        "James Wood",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "New York Mets",
+        "Washington Nationals",
+        "Houston Astros"
+      ],
+      "probs": [
+        26.0,
+        24.5,
+        24.3
+      ],
+      "combined_prob": 1.54791,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3940,11 +3898,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        25.8,
+        26.0,
         24.5,
-        22.8
+        22.6
       ],
-      "combined_prob": 1.441188,
+      "combined_prob": 1.43962,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3953,19 +3911,61 @@
       "legs": [
         "MJ Melendez",
         "James Wood",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "New York Mets",
         "Washington Nationals",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        25.8,
+        26.0,
         24.5,
-        22.1
+        22.0
       ],
-      "combined_prob": 1.396941,
+      "combined_prob": 1.4014,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "MJ Melendez",
+        "Yordan Alvarez",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "New York Mets",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        26.0,
+        24.3,
+        22.6
+      ],
+      "combined_prob": 1.427868,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "MJ Melendez",
+        "Yordan Alvarez",
+        "Matt Olson"
+      ],
+      "teams": [
+        "New York Mets",
+        "Houston Astros",
+        "Atlanta Braves"
+      ],
+      "probs": [
+        26.0,
+        24.3,
+        22.0
+      ],
+      "combined_prob": 1.38996,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3974,229 +3974,19 @@
       "legs": [
         "MJ Melendez",
         "Oneil Cruz",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "New York Mets",
         "Pittsburgh Pirates",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        25.8,
-        22.8,
-        22.1
+        26.0,
+        22.6,
+        22.0
       ],
-      "combined_prob": 1.30001,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "Aaron Judge",
-        "Jordan Walker"
-      ],
-      "teams": [
-        "Houston Astros",
-        "New York Yankees",
-        "St. Louis Cardinals"
-      ],
-      "probs": [
-        25.4,
-        24.8,
-        24.6
-      ],
-      "combined_prob": 1.549603,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "Aaron Judge",
-        "James Wood"
-      ],
-      "teams": [
-        "Houston Astros",
-        "New York Yankees",
-        "Washington Nationals"
-      ],
-      "probs": [
-        25.4,
-        24.8,
-        24.5
-      ],
-      "combined_prob": 1.543304,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "Aaron Judge",
-        "Oneil Cruz"
-      ],
-      "teams": [
-        "Houston Astros",
-        "New York Yankees",
-        "Pittsburgh Pirates"
-      ],
-      "probs": [
-        25.4,
-        24.8,
-        22.8
-      ],
-      "combined_prob": 1.436218,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "Aaron Judge",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "Houston Astros",
-        "New York Yankees",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        25.4,
-        24.8,
-        22.1
-      ],
-      "combined_prob": 1.392123,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "Jordan Walker",
-        "James Wood"
-      ],
-      "teams": [
-        "Houston Astros",
-        "St. Louis Cardinals",
-        "Washington Nationals"
-      ],
-      "probs": [
-        25.4,
-        24.6,
-        24.5
-      ],
-      "combined_prob": 1.530858,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "Jordan Walker",
-        "Oneil Cruz"
-      ],
-      "teams": [
-        "Houston Astros",
-        "St. Louis Cardinals",
-        "Pittsburgh Pirates"
-      ],
-      "probs": [
-        25.4,
-        24.6,
-        22.8
-      ],
-      "combined_prob": 1.424635,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "Jordan Walker",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "Houston Astros",
-        "St. Louis Cardinals",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        25.4,
-        24.6,
-        22.1
-      ],
-      "combined_prob": 1.380896,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "James Wood",
-        "Oneil Cruz"
-      ],
-      "teams": [
-        "Houston Astros",
-        "Washington Nationals",
-        "Pittsburgh Pirates"
-      ],
-      "probs": [
-        25.4,
-        24.5,
-        22.8
-      ],
-      "combined_prob": 1.418844,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "James Wood",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "Houston Astros",
-        "Washington Nationals",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        25.4,
-        24.5,
-        22.1
-      ],
-      "combined_prob": 1.375283,
-      "n_legs": 3,
-      "source": "auto",
-      "both_hit": null
-    },
-    {
-      "legs": [
-        "Yordan Alvarez",
-        "Oneil Cruz",
-        "Colson Montgomery"
-      ],
-      "teams": [
-        "Houston Astros",
-        "Pittsburgh Pirates",
-        "Chicago White Sox"
-      ],
-      "probs": [
-        25.4,
-        22.8,
-        22.1
-      ],
-      "combined_prob": 1.279855,
+      "combined_prob": 1.29272,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4213,11 +4003,32 @@
         "Washington Nationals"
       ],
       "probs": [
-        24.8,
+        24.7,
         24.6,
         24.5
       ],
-      "combined_prob": 1.494696,
+      "combined_prob": 1.488669,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Aaron Judge",
+        "Jordan Walker",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "New York Yankees",
+        "St. Louis Cardinals",
+        "Houston Astros"
+      ],
+      "probs": [
+        24.7,
+        24.6,
+        24.3
+      ],
+      "combined_prob": 1.476517,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4234,11 +4045,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        24.8,
+        24.7,
         24.6,
-        22.8
+        22.6
       ],
-      "combined_prob": 1.390982,
+      "combined_prob": 1.373221,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4247,19 +4058,40 @@
       "legs": [
         "Aaron Judge",
         "Jordan Walker",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "New York Yankees",
         "St. Louis Cardinals",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        24.8,
+        24.7,
         24.6,
-        22.1
+        22.0
       ],
-      "combined_prob": 1.348277,
+      "combined_prob": 1.336764,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Aaron Judge",
+        "James Wood",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Washington Nationals",
+        "Houston Astros"
+      ],
+      "probs": [
+        24.7,
+        24.5,
+        24.3
+      ],
+      "combined_prob": 1.470514,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4276,11 +4108,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        24.8,
+        24.7,
         24.5,
-        22.8
+        22.6
       ],
-      "combined_prob": 1.385328,
+      "combined_prob": 1.367639,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4289,19 +4121,61 @@
       "legs": [
         "Aaron Judge",
         "James Wood",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "New York Yankees",
         "Washington Nationals",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        24.8,
+        24.7,
         24.5,
-        22.1
+        22.0
       ],
-      "combined_prob": 1.342796,
+      "combined_prob": 1.33133,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Aaron Judge",
+        "Yordan Alvarez",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        24.7,
+        24.3,
+        22.6
+      ],
+      "combined_prob": 1.356475,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Aaron Judge",
+        "Yordan Alvarez",
+        "Matt Olson"
+      ],
+      "teams": [
+        "New York Yankees",
+        "Houston Astros",
+        "Atlanta Braves"
+      ],
+      "probs": [
+        24.7,
+        24.3,
+        22.0
+      ],
+      "combined_prob": 1.320462,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4310,19 +4184,40 @@
       "legs": [
         "Aaron Judge",
         "Oneil Cruz",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "New York Yankees",
         "Pittsburgh Pirates",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
-        24.8,
-        22.8,
-        22.1
+        24.7,
+        22.6,
+        22.0
       ],
-      "combined_prob": 1.249622,
+      "combined_prob": 1.228084,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Jordan Walker",
+        "James Wood",
+        "Yordan Alvarez"
+      ],
+      "teams": [
+        "St. Louis Cardinals",
+        "Washington Nationals",
+        "Houston Astros"
+      ],
+      "probs": [
+        24.6,
+        24.5,
+        24.3
+      ],
+      "combined_prob": 1.464561,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4341,9 +4236,9 @@
       "probs": [
         24.6,
         24.5,
-        22.8
+        22.6
       ],
-      "combined_prob": 1.374156,
+      "combined_prob": 1.362102,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4352,19 +4247,61 @@
       "legs": [
         "Jordan Walker",
         "James Wood",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "St. Louis Cardinals",
         "Washington Nationals",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
         24.6,
         24.5,
-        22.1
+        22.0
       ],
-      "combined_prob": 1.331967,
+      "combined_prob": 1.32594,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Jordan Walker",
+        "Yordan Alvarez",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "St. Louis Cardinals",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        24.6,
+        24.3,
+        22.6
+      ],
+      "combined_prob": 1.350983,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Jordan Walker",
+        "Yordan Alvarez",
+        "Matt Olson"
+      ],
+      "teams": [
+        "St. Louis Cardinals",
+        "Houston Astros",
+        "Atlanta Braves"
+      ],
+      "probs": [
+        24.6,
+        24.3,
+        22.0
+      ],
+      "combined_prob": 1.315116,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4373,19 +4310,61 @@
       "legs": [
         "Jordan Walker",
         "Oneil Cruz",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "St. Louis Cardinals",
         "Pittsburgh Pirates",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
         24.6,
-        22.8,
-        22.1
+        22.6,
+        22.0
       ],
-      "combined_prob": 1.239545,
+      "combined_prob": 1.223112,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "James Wood",
+        "Yordan Alvarez",
+        "Oneil Cruz"
+      ],
+      "teams": [
+        "Washington Nationals",
+        "Houston Astros",
+        "Pittsburgh Pirates"
+      ],
+      "probs": [
+        24.5,
+        24.3,
+        22.6
+      ],
+      "combined_prob": 1.345491,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "James Wood",
+        "Yordan Alvarez",
+        "Matt Olson"
+      ],
+      "teams": [
+        "Washington Nationals",
+        "Houston Astros",
+        "Atlanta Braves"
+      ],
+      "probs": [
+        24.5,
+        24.3,
+        22.0
+      ],
+      "combined_prob": 1.30977,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4394,19 +4373,40 @@
       "legs": [
         "James Wood",
         "Oneil Cruz",
-        "Colson Montgomery"
+        "Matt Olson"
       ],
       "teams": [
         "Washington Nationals",
         "Pittsburgh Pirates",
-        "Chicago White Sox"
+        "Atlanta Braves"
       ],
       "probs": [
         24.5,
-        22.8,
-        22.1
+        22.6,
+        22.0
       ],
-      "combined_prob": 1.234506,
+      "combined_prob": 1.21814,
+      "n_legs": 3,
+      "source": "auto",
+      "both_hit": null
+    },
+    {
+      "legs": [
+        "Yordan Alvarez",
+        "Oneil Cruz",
+        "Matt Olson"
+      ],
+      "teams": [
+        "Houston Astros",
+        "Pittsburgh Pirates",
+        "Atlanta Braves"
+      ],
+      "probs": [
+        24.3,
+        22.6,
+        22.0
+      ],
+      "combined_prob": 1.208196,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
