@@ -11,10 +11,10 @@
         "Colorado Rockies"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.6
       ],
-      "combined_prob": 7.448,
+      "combined_prob": 7.3416,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -29,10 +29,10 @@
         "New York Yankees"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.3
       ],
-      "combined_prob": 7.364,
+      "combined_prob": 7.2588,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -47,10 +47,10 @@
         "New York Mets"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.0
       ],
-      "combined_prob": 7.28,
+      "combined_prob": 7.176,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -65,10 +65,10 @@
         "New York Yankees"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.7
       ],
-      "combined_prob": 6.916,
+      "combined_prob": 6.8172,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -83,10 +83,10 @@
         "St. Louis Cardinals"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.6
       ],
-      "combined_prob": 6.888,
+      "combined_prob": 6.7896,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -101,10 +101,10 @@
         "Washington Nationals"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.5
       ],
-      "combined_prob": 6.86,
+      "combined_prob": 6.762,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -119,10 +119,10 @@
         "Houston Astros"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.3
       ],
-      "combined_prob": 6.804,
+      "combined_prob": 6.7068,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -137,10 +137,10 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        28.0,
-        22.6
+        27.6,
+        22.4
       ],
-      "combined_prob": 6.328,
+      "combined_prob": 6.1824,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -155,10 +155,10 @@
         "Atlanta Braves"
       ],
       "probs": [
-        28.0,
+        27.6,
         22.0
       ],
-      "combined_prob": 6.16,
+      "combined_prob": 6.072,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -173,10 +173,10 @@
         "Seattle Mariners"
       ],
       "probs": [
-        28.0,
+        27.6,
         22.0
       ],
-      "combined_prob": 6.16,
+      "combined_prob": 6.072,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -191,10 +191,10 @@
         "Los Angeles Angels"
       ],
       "probs": [
-        28.0,
+        27.6,
         21.8
       ],
-      "combined_prob": 6.104,
+      "combined_prob": 6.0168,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -209,10 +209,10 @@
         "Chicago White Sox"
       ],
       "probs": [
-        28.0,
-        21.7
+        27.6,
+        21.5
       ],
-      "combined_prob": 6.076,
+      "combined_prob": 5.934,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -227,10 +227,10 @@
         "Seattle Mariners"
       ],
       "probs": [
-        28.0,
+        27.6,
         21.3
       ],
-      "combined_prob": 5.964,
+      "combined_prob": 5.8788,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -245,10 +245,10 @@
         "Philadelphia Phillies"
       ],
       "probs": [
-        28.0,
+        27.6,
         20.4
       ],
-      "combined_prob": 5.712,
+      "combined_prob": 5.6304,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -372,9 +372,9 @@
       ],
       "probs": [
         26.6,
-        22.6
+        22.4
       ],
-      "combined_prob": 6.0116,
+      "combined_prob": 5.9584,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -444,9 +444,9 @@
       ],
       "probs": [
         26.6,
-        21.7
+        21.5
       ],
-      "combined_prob": 5.7722,
+      "combined_prob": 5.719,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -588,9 +588,9 @@
       ],
       "probs": [
         26.3,
-        22.6
+        22.4
       ],
-      "combined_prob": 5.9438,
+      "combined_prob": 5.8912,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -660,9 +660,9 @@
       ],
       "probs": [
         26.3,
-        21.7
+        21.5
       ],
-      "combined_prob": 5.7071,
+      "combined_prob": 5.6545,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -786,9 +786,9 @@
       ],
       "probs": [
         26.0,
-        22.6
+        22.4
       ],
-      "combined_prob": 5.876,
+      "combined_prob": 5.824,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -858,9 +858,9 @@
       ],
       "probs": [
         26.0,
-        21.7
+        21.5
       ],
-      "combined_prob": 5.642,
+      "combined_prob": 5.59,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -966,9 +966,9 @@
       ],
       "probs": [
         24.7,
-        22.6
+        22.4
       ],
-      "combined_prob": 5.5822,
+      "combined_prob": 5.5328,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1038,9 +1038,9 @@
       ],
       "probs": [
         24.7,
-        21.7
+        21.5
       ],
-      "combined_prob": 5.3599,
+      "combined_prob": 5.3105,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1128,9 +1128,9 @@
       ],
       "probs": [
         24.6,
-        22.6
+        22.4
       ],
-      "combined_prob": 5.5596,
+      "combined_prob": 5.5104,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1200,9 +1200,9 @@
       ],
       "probs": [
         24.6,
-        21.7
+        21.5
       ],
-      "combined_prob": 5.3382,
+      "combined_prob": 5.289,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1272,9 +1272,9 @@
       ],
       "probs": [
         24.5,
-        22.6
+        22.4
       ],
-      "combined_prob": 5.537,
+      "combined_prob": 5.488,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1344,9 +1344,9 @@
       ],
       "probs": [
         24.5,
-        21.7
+        21.5
       ],
-      "combined_prob": 5.3165,
+      "combined_prob": 5.2675,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1398,9 +1398,9 @@
       ],
       "probs": [
         24.3,
-        22.6
+        22.4
       ],
-      "combined_prob": 5.4918,
+      "combined_prob": 5.4432,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1470,9 +1470,9 @@
       ],
       "probs": [
         24.3,
-        21.7
+        21.5
       ],
-      "combined_prob": 5.2731,
+      "combined_prob": 5.2245,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1523,10 +1523,10 @@
         "Atlanta Braves"
       ],
       "probs": [
-        22.6,
+        22.4,
         22.0
       ],
-      "combined_prob": 4.972,
+      "combined_prob": 4.928,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1541,10 +1541,10 @@
         "Seattle Mariners"
       ],
       "probs": [
-        22.6,
+        22.4,
         22.0
       ],
-      "combined_prob": 4.972,
+      "combined_prob": 4.928,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1559,10 +1559,10 @@
         "Los Angeles Angels"
       ],
       "probs": [
-        22.6,
+        22.4,
         21.8
       ],
-      "combined_prob": 4.9268,
+      "combined_prob": 4.8832,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1577,10 +1577,10 @@
         "Chicago White Sox"
       ],
       "probs": [
-        22.6,
-        21.7
+        22.4,
+        21.5
       ],
-      "combined_prob": 4.9042,
+      "combined_prob": 4.816,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1595,10 +1595,10 @@
         "Seattle Mariners"
       ],
       "probs": [
-        22.6,
+        22.4,
         21.3
       ],
-      "combined_prob": 4.8138,
+      "combined_prob": 4.7712,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1613,10 +1613,10 @@
         "Philadelphia Phillies"
       ],
       "probs": [
-        22.6,
+        22.4,
         20.4
       ],
-      "combined_prob": 4.6104,
+      "combined_prob": 4.5696,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1668,9 +1668,9 @@
       ],
       "probs": [
         22.0,
-        21.7
+        21.5
       ],
-      "combined_prob": 4.774,
+      "combined_prob": 4.73,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1740,9 +1740,9 @@
       ],
       "probs": [
         22.0,
-        21.7
+        21.5
       ],
-      "combined_prob": 4.774,
+      "combined_prob": 4.73,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1794,9 +1794,9 @@
       ],
       "probs": [
         21.8,
-        21.7
+        21.5
       ],
-      "combined_prob": 4.7306,
+      "combined_prob": 4.687,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1847,10 +1847,10 @@
         "Seattle Mariners"
       ],
       "probs": [
-        21.7,
+        21.5,
         21.3
       ],
-      "combined_prob": 4.6221,
+      "combined_prob": 4.5795,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1865,10 +1865,10 @@
         "Philadelphia Phillies"
       ],
       "probs": [
-        21.7,
+        21.5,
         20.4
       ],
-      "combined_prob": 4.4268,
+      "combined_prob": 4.386,
       "n_legs": 2,
       "source": "auto",
       "both_hit": null
@@ -1903,11 +1903,11 @@
         "New York Yankees"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.6,
         26.3
       ],
-      "combined_prob": 1.958824,
+      "combined_prob": 1.930841,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -1924,11 +1924,11 @@
         "New York Mets"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.6,
         26.0
       ],
-      "combined_prob": 1.93648,
+      "combined_prob": 1.908816,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -1945,11 +1945,11 @@
         "New York Yankees"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.6,
         24.7
       ],
-      "combined_prob": 1.839656,
+      "combined_prob": 1.813375,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -1966,11 +1966,11 @@
         "St. Louis Cardinals"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.6,
         24.6
       ],
-      "combined_prob": 1.832208,
+      "combined_prob": 1.806034,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -1987,11 +1987,11 @@
         "Washington Nationals"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.6,
         24.5
       ],
-      "combined_prob": 1.82476,
+      "combined_prob": 1.798692,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2008,11 +2008,11 @@
         "Houston Astros"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.6,
         24.3
       ],
-      "combined_prob": 1.809864,
+      "combined_prob": 1.784009,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2029,11 +2029,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.6,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.683248,
+      "combined_prob": 1.644518,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2050,11 +2050,11 @@
         "Atlanta Braves"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.6,
         22.0
       ],
-      "combined_prob": 1.63856,
+      "combined_prob": 1.615152,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2071,11 +2071,11 @@
         "New York Mets"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.3,
         26.0
       ],
-      "combined_prob": 1.91464,
+      "combined_prob": 1.887288,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2092,11 +2092,11 @@
         "New York Yankees"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.3,
         24.7
       ],
-      "combined_prob": 1.818908,
+      "combined_prob": 1.792924,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2113,11 +2113,11 @@
         "St. Louis Cardinals"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.3,
         24.6
       ],
-      "combined_prob": 1.811544,
+      "combined_prob": 1.785665,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2134,11 +2134,11 @@
         "Washington Nationals"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.3,
         24.5
       ],
-      "combined_prob": 1.80418,
+      "combined_prob": 1.778406,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2155,11 +2155,11 @@
         "Houston Astros"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.3,
         24.3
       ],
-      "combined_prob": 1.789452,
+      "combined_prob": 1.763888,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2176,11 +2176,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.3,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.664264,
+      "combined_prob": 1.625971,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2197,11 +2197,11 @@
         "Atlanta Braves"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.3,
         22.0
       ],
-      "combined_prob": 1.62008,
+      "combined_prob": 1.596936,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2218,11 +2218,11 @@
         "New York Yankees"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.0,
         24.7
       ],
-      "combined_prob": 1.79816,
+      "combined_prob": 1.772472,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2239,11 +2239,11 @@
         "St. Louis Cardinals"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.0,
         24.6
       ],
-      "combined_prob": 1.79088,
+      "combined_prob": 1.765296,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2260,11 +2260,11 @@
         "Washington Nationals"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.0,
         24.5
       ],
-      "combined_prob": 1.7836,
+      "combined_prob": 1.75812,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2281,11 +2281,11 @@
         "Houston Astros"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.0,
         24.3
       ],
-      "combined_prob": 1.76904,
+      "combined_prob": 1.743768,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2302,11 +2302,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.0,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.64528,
+      "combined_prob": 1.607424,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2323,11 +2323,11 @@
         "Atlanta Braves"
       ],
       "probs": [
-        28.0,
+        27.6,
         26.0,
         22.0
       ],
-      "combined_prob": 1.6016,
+      "combined_prob": 1.57872,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2344,11 +2344,11 @@
         "St. Louis Cardinals"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.7,
         24.6
       ],
-      "combined_prob": 1.701336,
+      "combined_prob": 1.677031,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2365,11 +2365,11 @@
         "Washington Nationals"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.7,
         24.5
       ],
-      "combined_prob": 1.69442,
+      "combined_prob": 1.670214,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2386,11 +2386,11 @@
         "Houston Astros"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.7,
         24.3
       ],
-      "combined_prob": 1.680588,
+      "combined_prob": 1.65658,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2407,11 +2407,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.7,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.563016,
+      "combined_prob": 1.527053,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2428,11 +2428,11 @@
         "Atlanta Braves"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.7,
         22.0
       ],
-      "combined_prob": 1.52152,
+      "combined_prob": 1.499784,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2449,11 +2449,11 @@
         "Washington Nationals"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.6,
         24.5
       ],
-      "combined_prob": 1.68756,
+      "combined_prob": 1.663452,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2470,11 +2470,11 @@
         "Houston Astros"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.6,
         24.3
       ],
-      "combined_prob": 1.673784,
+      "combined_prob": 1.649873,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2491,11 +2491,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.6,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.556688,
+      "combined_prob": 1.52087,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2512,11 +2512,11 @@
         "Atlanta Braves"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.6,
         22.0
       ],
-      "combined_prob": 1.51536,
+      "combined_prob": 1.493712,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2533,11 +2533,11 @@
         "Houston Astros"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.5,
         24.3
       ],
-      "combined_prob": 1.66698,
+      "combined_prob": 1.643166,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2554,11 +2554,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.5,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.55036,
+      "combined_prob": 1.514688,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2575,11 +2575,11 @@
         "Atlanta Braves"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.5,
         22.0
       ],
-      "combined_prob": 1.5092,
+      "combined_prob": 1.48764,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2596,11 +2596,11 @@
         "Pittsburgh Pirates"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.3,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.537704,
+      "combined_prob": 1.502323,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2617,11 +2617,11 @@
         "Atlanta Braves"
       ],
       "probs": [
-        28.0,
+        27.6,
         24.3,
         22.0
       ],
-      "combined_prob": 1.49688,
+      "combined_prob": 1.475496,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2638,11 +2638,11 @@
         "Atlanta Braves"
       ],
       "probs": [
-        28.0,
-        22.6,
+        27.6,
+        22.4,
         22.0
       ],
-      "combined_prob": 1.39216,
+      "combined_prob": 1.360128,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2766,9 +2766,9 @@
       "probs": [
         26.6,
         26.3,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.581051,
+      "combined_prob": 1.567059,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2892,9 +2892,9 @@
       "probs": [
         26.6,
         26.0,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.563016,
+      "combined_prob": 1.549184,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -2997,9 +2997,9 @@
       "probs": [
         26.6,
         24.7,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.484865,
+      "combined_prob": 1.471725,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3081,9 +3081,9 @@
       "probs": [
         26.6,
         24.6,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.478854,
+      "combined_prob": 1.465766,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3144,9 +3144,9 @@
       "probs": [
         26.6,
         24.5,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.472842,
+      "combined_prob": 1.459808,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3186,9 +3186,9 @@
       "probs": [
         26.6,
         24.3,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.460819,
+      "combined_prob": 1.447891,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3227,10 +3227,10 @@
       ],
       "probs": [
         26.6,
-        22.6,
+        22.4,
         22.0
       ],
-      "combined_prob": 1.322552,
+      "combined_prob": 1.310848,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3333,9 +3333,9 @@
       "probs": [
         26.3,
         26.0,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.545388,
+      "combined_prob": 1.531712,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3438,9 +3438,9 @@
       "probs": [
         26.3,
         24.7,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.468119,
+      "combined_prob": 1.455126,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3522,9 +3522,9 @@
       "probs": [
         26.3,
         24.6,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.462175,
+      "combined_prob": 1.449235,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3585,9 +3585,9 @@
       "probs": [
         26.3,
         24.5,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.456231,
+      "combined_prob": 1.443344,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3627,9 +3627,9 @@
       "probs": [
         26.3,
         24.3,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.444343,
+      "combined_prob": 1.431562,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3668,10 +3668,10 @@
       ],
       "probs": [
         26.3,
-        22.6,
+        22.4,
         22.0
       ],
-      "combined_prob": 1.307636,
+      "combined_prob": 1.296064,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3753,9 +3753,9 @@
       "probs": [
         26.0,
         24.7,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.451372,
+      "combined_prob": 1.438528,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3837,9 +3837,9 @@
       "probs": [
         26.0,
         24.6,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.445496,
+      "combined_prob": 1.432704,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3900,9 +3900,9 @@
       "probs": [
         26.0,
         24.5,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.43962,
+      "combined_prob": 1.42688,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3942,9 +3942,9 @@
       "probs": [
         26.0,
         24.3,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.427868,
+      "combined_prob": 1.415232,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -3983,10 +3983,10 @@
       ],
       "probs": [
         26.0,
-        22.6,
+        22.4,
         22.0
       ],
-      "combined_prob": 1.29272,
+      "combined_prob": 1.28128,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4047,9 +4047,9 @@
       "probs": [
         24.7,
         24.6,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.373221,
+      "combined_prob": 1.361069,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4110,9 +4110,9 @@
       "probs": [
         24.7,
         24.5,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.367639,
+      "combined_prob": 1.355536,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4152,9 +4152,9 @@
       "probs": [
         24.7,
         24.3,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.356475,
+      "combined_prob": 1.34447,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4193,10 +4193,10 @@
       ],
       "probs": [
         24.7,
-        22.6,
+        22.4,
         22.0
       ],
-      "combined_prob": 1.228084,
+      "combined_prob": 1.217216,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4236,9 +4236,9 @@
       "probs": [
         24.6,
         24.5,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.362102,
+      "combined_prob": 1.350048,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4278,9 +4278,9 @@
       "probs": [
         24.6,
         24.3,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.350983,
+      "combined_prob": 1.339027,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4319,10 +4319,10 @@
       ],
       "probs": [
         24.6,
-        22.6,
+        22.4,
         22.0
       ],
-      "combined_prob": 1.223112,
+      "combined_prob": 1.212288,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4341,9 +4341,9 @@
       "probs": [
         24.5,
         24.3,
-        22.6
+        22.4
       ],
-      "combined_prob": 1.345491,
+      "combined_prob": 1.333584,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4382,10 +4382,10 @@
       ],
       "probs": [
         24.5,
-        22.6,
+        22.4,
         22.0
       ],
-      "combined_prob": 1.21814,
+      "combined_prob": 1.20736,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
@@ -4403,10 +4403,10 @@
       ],
       "probs": [
         24.3,
-        22.6,
+        22.4,
         22.0
       ],
-      "combined_prob": 1.208196,
+      "combined_prob": 1.197504,
       "n_legs": 3,
       "source": "auto",
       "both_hit": null
