@@ -5,7 +5,6 @@ import pandas as pd
 import io
 import math
 import os
-import json
 import threading
 import asyncio
 import uvicorn
@@ -30,7 +29,7 @@ LEAGUE_CONSTANTS = {
     "lg_hr_per_pa":    0.028,  # league avg HR/PA (~10% per game at 3.8 PA/game)
     "lg_era":          4.20,   # league avg ERA
     "max_hr_per_pa":   0.12,   # ceiling on any batter base rate
-    "hr_prob_cap":     28.0,   # hard cap — prevents runaway multiplier stacking
+    "hr_prob_cap":     28.0,   # hard cap on model output %
 }
 
 # ── Model Weights (learned from ML, updated every 45 days) ──
@@ -39,7 +38,7 @@ LEAGUE_CONSTANTS = {
 # weight > 1.0 = stat matters MORE than assumed
 # weight < 1.0 = stat matters LESS than assumed
 DEFAULT_WEIGHTS = {
-    # Batter contact quality — season
+    # Batter contact quality
     "barrel_season_w":    1.0,
     "barrel_l8d_w":       1.0,
     "la_season_w":        1.0,
@@ -50,27 +49,11 @@ DEFAULT_WEIGHTS = {
     "iso_vs_hand_w":      1.0,
     "hard_hit_season_w":  1.0,
     "hard_hit_l8d_w":     1.0,
-    # Batter L8D advanced
-    "xwoba_l8d_w":        1.0,
-    "xslg_l8d_w":         1.0,
-    "bat_speed_l8d_w":    1.0,
-    "slg_l8d_w":          1.0,
-    "xslg_gap_l8d_w":     1.0,
-    "l8d_hr_w":           1.0,
-    # Batter other
-    "fb_pct_season_w":    1.0,
-    "pull_pct_season_w":  1.0,
-    "k_pct_l8d_w":        1.0,
-    "hot_cold_mult_w":    1.0,
     # Pitcher vulnerability
     "pit_hr9_season_w":   1.0,
     "pit_hr9_vs_hand_w":  1.0,
     "pit_slg_season_w":   1.0,
     "pit_slg_vs_hand_w":  1.0,
-    "pit_hard_hit_w":     1.0,
-    "pit_fb_pct_w":       1.0,
-    "pit_era_diff_w":     1.0,
-    "pit_k9_season_w":    1.0,
     # Context
     "park_w":             1.0,
     "weather_w":          1.0,
@@ -81,14 +64,10 @@ DEFAULT_WEIGHTS = {
     "pitch_delta_w":      1.0,
     # K% penalty
     "k_pct_w":            1.0,
-    # New stats
-    "chase_rate_w":       1.0,   # batter chase rate — lower = better discipline
-    "pit_stuff_plus_w":   1.0,   # pitcher Stuff+ — higher = harder to hit
-    # Active stats list — updated to current tree features (overwritten on retrain)
+    # Active stats list (which 8 are in the model)
     "active_stats": [
-        "pit_hard_hit_season", "hard_hit_season", "iso_season",
-        "pit_platoon_mult", "barrel_pct_season", "slg_vs_hand",
-        "k_pct_l8d", "iso_l8d"
+        "barrel_season", "la_season", "pit_hr9_vs_hand",
+        "iso_vs_hand", "park", "weather", "pitch_delta", "bat_platoon"
     ],
     # Metadata
     "last_calibrated":    None,
@@ -110,6 +89,7 @@ async def load_model_weights():
     content, _ = await github_get_file("data/model_weights.json")
     if content:
         try:
+            import json
             w = json.loads(content)
             _model_weights = {**DEFAULT_WEIGHTS, **w}
             print(f"Loaded model weights — round {w.get('calibration_round',0)}, {w.get('records_used',0)} records")
@@ -120,6 +100,7 @@ async def load_model_weights():
 
 async def save_model_weights(weights_dict, changes=None):
     """Save updated weights to GitHub"""
+    import json
     existing, sha = await github_get_file("data/model_weights.json")
     content = json.dumps(weights_dict, indent=2)
     msg = f"weights: round {weights_dict.get('calibration_round',0)}, {weights_dict.get('records_used',0)} records"
@@ -127,6 +108,7 @@ async def save_model_weights(weights_dict, changes=None):
 
 async def save_model_log(weights_dict):
     """Save daily model log snapshot to GitHub"""
+    import json
     today = date.today().isoformat()
     path = f"data/model_log/{today}.json"
     log = {
@@ -144,127 +126,29 @@ async def save_model_log(weights_dict):
     existing, sha = await github_get_file(path)
     await github_put_file(path, json.dumps(log, indent=2), f"model log: {today}", sha)
 
-# ── Decision Tree model storage ──
-_dt_model = None        # trained sklearn RandomForestClassifier (was DecisionTree)
-_dt_features = []       # ordered feature list the tree was trained on
-_dt_medians = {}        # per-feature medians for missing value imputation
-
-TREE_STATS = [
-    # Batter season
-    "barrel_pct_season", "hard_hit_season", "ev_season", "iso_season",
-    "la_season", "pull_pct_season",
-    # Batter L8D
-    "barrel_pct_l8d", "hard_hit_l8d", "ev_l8d", "bat_speed_l8d",
-    "xwoba_l8d", "xslg_l8d", "slg_l8d", "iso_l8d", "k_pct_l8d", "la_l8d",
-    # Batter splits
-    "iso_vs_hand", "slg_vs_hand",
-    # Pitcher season
-    "pit_hr9_season", "pit_era_season", "pit_hard_hit_season", "pit_k9_season",
-    # Pitcher vs hand
-    "pit_hr9_vs_hand", "pit_slg_vs_hand",
-    # Context
-    "park_factor", "weather_mult", "bullpen_hr9",
-    "bat_platoon_mult", "pit_platoon_mult",
-    "pitch_matchup_score",
-]
-
-# Stats where zero = genuinely dominant (not missing) IF companion IP > 0
-ZERO_DOMINANT = {
-    "pit_hr9_season":  "pit_ip_season",
-    "pit_hr9_vs_hand": "pit_ip_vs_hand",
-    "pit_slg_vs_hand": "pit_ip_vs_hand",
-}
-
-def get_tree_depth(n_records):
-    """Auto-scale tree depth and min_samples_leaf based on record count.
-    
-    min_samples_leaf prevents aggressive binary splits when a single feature
-    dominates importance (e.g. xSLG L8D at 30%). Higher min_leaf = smoother
-    probability distribution across leaves. Lower min_leaf = risk of 0%/31%+
-    binary clustering when one feature has outlier values.
-    
-    Rule: min_leaf should be ~1-1.5% of record count at each stage.
+async def recalibrate_model():
     """
-    if n_records < 1500:  return 4, 40   # was 30 — extra caution early
-    if n_records < 2500:  return 5, 35   # was 20 — prevents binary splits
-    if n_records < 5000:  return 6, 25   # was 15
-    if n_records < 10000: return 7, 15   # was 10
-    return 8, 8                           # was 5
-
-def get_calibration_factor(dataset_hr_rate, n_records, true_hr_rate=2.8):
+    Run logistic regression on all history records.
+    Update the 22 weights. Auto-promote candidates with correlation > 0.15.
+    Enforce 8 stat hard cap — weakest gets replaced by strong candidate.
+    Save updated weights + model log to GitHub.
     """
-    Calibration corrects for biased training population early on.
-    
-    Removal strategy (Option 2 — let data fix itself):
-    - Below 3000 records: dataset is still filling in, apply calibration
-    - 3000+ records: dataset HR rate has stabilized and reflects true
-      deployment population — tree outputs are already correct, factor = 1.0
-    
-    Between 1500-3000: linear blend from calibrated to raw
-    so the transition is smooth not a sudden jump.
-    """
-    # Above 3000 records — tree trained on stable population, no correction needed
-    if n_records >= 3000:
-        return 1.0
-
-    # Below 1500 records — full calibration
-    if n_records < 1500:
-        if dataset_hr_rate <= 0:
-            return 1.0
-        return true_hr_rate / dataset_hr_rate
-
-    # 1500-3000 records — linear blend toward 1.0
-    # At 1500: full calibration. At 3000: factor = 1.0
-    blend = (n_records - 1500) / (3000 - 1500)  # 0.0 at 1500, 1.0 at 3000
-    full_factor = true_hr_rate / dataset_hr_rate if dataset_hr_rate > 0 else 1.0
-    return full_factor + blend * (1.0 - full_factor)
-
-def clean_feature_value(rec, stat, medians, pit_ip_season=0, pit_ip_vs_hand=0):
-    """Return clean float value for a stat from a record, using medians for missing."""
-    v = rec.get(stat)
-    # Handle zero-means-dominant stats
-    if stat in ZERO_DOMINANT:
-        ip_field = ZERO_DOMINANT[stat]
-        ip = rec.get(ip_field, 0) or 0
-        min_ip = 5 if "vs_hand" in stat else 1
-        if ip >= min_ip:
-            # Real data — zero IS a signal (dominant pitcher)
-            return float(v) if v is not None else 0.0
-        else:
-            # No IP = no data — use season HR9 as fallback
-            fallback = rec.get("pit_hr9_season", medians.get(stat, 1.1))
-            return float(fallback) if fallback else medians.get(stat, 1.1)
-    # Regular stats — zero means missing
-    if v is None or v == 0:
-        return medians.get(stat, 0.0)
-    return float(v)
-
-async def recalibrate_model(save_to_github: bool = True):
-    """
-    Train Random Forest on all completed prediction records.
-    200 trees, max_depth=5, min_samples_leaf=10, max_features=sqrt.
-    No single feature can dominate — pull% bias from Decision Tree is fixed.
-    Missing values filled with per-stat medians from real data.
-    save_to_github=False on startup to prevent deploy loop.
-    """
-    global _model_weights, _dt_model, _dt_features, _dt_medians
-
-    # ── Load all completed records ──
+    global _model_weights
+    import json, math
+    # Pull all history files
     all_records = []
     try:
-        if not GITHUB_TOKEN:
-            return {"error": "No GitHub token"}
+        keys_data, _ = await github_get_file("data/predictions")
+        # list files via GitHub API
+        if not GITHUB_TOKEN: return {"error": "No GitHub token"}
         async with httpx.AsyncClient(timeout=30) as client:
             r = await client.get(
                 f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
                 headers={"Authorization": f"token {GITHUB_TOKEN}"}
             )
-            if not r.is_success:
-                return {"error": f"GitHub API error: {r.status_code}"}
-            files = r.json()
+            files = r.json() if r.is_success else []
         for f in files:
-            if not isinstance(f, dict): continue
-            if not f.get("name", "").endswith(".json"): continue
+            if not f.get("name","").endswith(".json"): continue
             content, _ = await github_get_file(f"data/predictions/{f['name']}")
             if content:
                 try:
@@ -275,158 +159,208 @@ async def recalibrate_model(save_to_github: bool = True):
         print(f"Recalibration data load error: {e}")
         return {"error": str(e)}
 
+    # Filter to completed non-DNP records
     completed = [r for r in all_records if r.get("hit_hr") in [0, 1]]
     n = len(completed)
     if n < 50:
-        return {"error": f"Not enough data — need 50+, have {n}"}
+        return {"error": f"Not enough data — need 50+ records, have {n}"}
 
-    print(f"Random Forest training on {n} records")
+    print(f"Recalibrating on {n} completed records")
 
-    # ── Compute per-stat medians from real non-zero values ──
-    medians = {}
-    for stat in TREE_STATS:
-        if stat in ZERO_DOMINANT:
-            # For dominant stats, median of all records with real IP
-            ip_field = ZERO_DOMINANT[stat]
-            min_ip = 5 if "vs_hand" in stat else 1
-            real = [float(r[stat]) for r in completed
-                    if r.get(stat) is not None
-                    and (r.get(ip_field, 0) or 0) >= min_ip]
-        else:
-            real = [float(r[stat]) for r in completed
-                    if r.get(stat) is not None and r.get(stat) != 0]
-        if real:
-            real.sort()
-            medians[stat] = real[len(real) // 2]
-        else:
-            medians[stat] = 0.0
+    # ── Point-biserial correlation for each stat ──
+    def correlate(records, key):
+        vals = [(r[key], r["hit_hr"]) for r in records if r.get(key) is not None and r.get(key) != 0]
+        if len(vals) < 20: return None
+        xs = [v[0] for v in vals]
+        ys = [v[1] for v in vals]
+        n2 = len(xs)
+        mx = sum(xs)/n2; my = sum(ys)/n2
+        num = sum((x-mx)*(y-my) for x,y in zip(xs,ys))
+        dx = math.sqrt(sum((x-mx)**2 for x in xs))
+        dy = math.sqrt(sum((y-my)**2 for y in ys))
+        if dx*dy == 0: return None
+        return round(num/(dx*dy), 4)
 
-    # ── Build feature matrix ──
-    features = TREE_STATS  # all 30 stats
-    X_rows = []
-    y_vals = []
-    for rec in completed:
-        pit_ip_s  = rec.get("pit_ip_season", 0) or 0
-        pit_ip_vh = rec.get("pit_ip_vs_hand", 0) or 0
-        row = [clean_feature_value(rec, stat, medians, pit_ip_s, pit_ip_vh)
-               for stat in features]
-        X_rows.append(row)
-        y_vals.append(int(rec["hit_hr"]))
+    # All stats to evaluate
+    all_stats = [
+        # Active model stats
+        "barrel_season_w",   "barrel_l8d_w",
+        "la_season_w",       "la_l8d_w",
+        "ev_season_w",       "ev_l8d_w",
+        "iso_season_w",      "iso_vs_hand_w",
+        "hard_hit_season_w", "hard_hit_l8d_w",
+        "pit_hr9_season_w",  "pit_hr9_vs_hand_w",
+        "pit_slg_season_w",  "pit_slg_vs_hand_w",
+        "park_w",            "weather_w",
+        "bullpen_w",         "bat_platoon_w",
+        "pit_platoon_w",     "pitch_delta_w",
+        "k_pct_w",
+        # Round 2 candidates
+        "fb_pct_season",     "pull_pct_season",
+        "pit_fb_pct_allowed","hard_hit_l8d",
+        "k_pct_l8d",
+        # Round 3 candidates
+        "pit_era_diff",
+        # Round 4 candidates
+        "pit_k9_season",
+    ]
 
-    import numpy as np
-    from sklearn.ensemble import RandomForestClassifier
+    # Map weight keys to stored field names
+    stat_field_map = {
+        "barrel_season_w": "barrel_pct_season",
+        "barrel_l8d_w": "barrel_pct_l8d",
+        "la_season_w": "la_season",
+        "la_l8d_w": "la_l8d",
+        "ev_season_w": "ev_season",
+        "ev_l8d_w": "ev_l8d",
+        "iso_season_w": "iso_season",
+        "iso_vs_hand_w": "iso_vs_hand",
+        "hard_hit_season_w": "hard_hit_season",
+        "hard_hit_l8d_w": "hard_hit_l8d",
+        "pit_hr9_season_w": "pit_hr9_season",
+        "pit_hr9_vs_hand_w": "pit_hr9_vs_hand",
+        "pit_slg_season_w": "pit_slg_season",
+        "pit_slg_vs_hand_w": "pit_slg_vs_hand",
+        "park_w": "park_factor",
+        "weather_w": "weather_mult",
+        "bullpen_w": "bullpen_vuln",
+        "bat_platoon_w": "bat_platoon_mult",
+        "pit_platoon_w": "pit_platoon_mult",
+        "pitch_delta_w": "combined_pitch_delta",
+        "k_pct_w": "k_pct_season",
+        "fb_pct_season": "fb_pct_season",
+        "pull_pct_season": "pull_pct_season",
+        "pit_fb_pct_allowed": "pit_fb_pct_allowed",
+        "k_pct_l8d": "k_pct_l8d",
+        "pit_era_diff": "pit_era_diff",
+        "pit_hr_fb_pct": "pit_hr_fb_pct",
+        "pit_k9_season": "pit_k9_season",
+    }
 
-    X = np.array(X_rows)
-    y = np.array(y_vals)
+    correlations = {}
+    for stat_key in all_stats:
+        field = stat_field_map.get(stat_key, stat_key)
+        corr = correlate(completed, field)
+        if corr is not None:
+            correlations[stat_key] = corr
 
-    print(f"Random Forest training on {n} records — 200 trees")
+    # ── Convert correlations to weights ──
+    # New weight = 1.0 + (correlation * 2.0) clamped to 0.3 - 2.5
+    new_weights = _model_weights.copy()
+    changes = []
+    for stat_key, corr in correlations.items():
+        if not stat_key.endswith("_w"): continue
+        old_w = W(stat_key)
+        new_w = round(max(0.3, min(2.5, 1.0 + corr * 2.0)), 3)
+        new_weights[stat_key] = new_w
+        if abs(new_w - old_w) >= 0.05:
+            direction = "up" if new_w > old_w else "down"
+            changes.append(f"{stat_key}: {old_w:.2f} -> {new_w:.2f} ({direction})")
 
-    # Locked Random Forest parameters
-    # max_depth=5 prevents overfitting on smaller datasets
-    # min_samples_leaf=10 ensures each leaf has enough examples
-    # max_features=sqrt means each tree sees ~6 random features per split
-    # bootstrap=True means each tree trains on a random 80% of records
-    # No class_weight — let natural HR rate flow through
-    forest = RandomForestClassifier(
-        n_estimators=200,
-        max_depth=5,
-        min_samples_leaf=10,
-        max_features="sqrt",
-        bootstrap=True,
-        class_weight=None,
-        random_state=42,
-        n_jobs=-1
+    # ── Determine active 8 stats ──
+    # Rank all stats by correlation, keep top 8, enforce cap
+    ranked = sorted(
+        [(k, v) for k, v in correlations.items() if k.endswith("_w")],
+        key=lambda x: abs(x[1]), reverse=True
     )
-    forest.fit(X, y)
-    tree = forest  # keep _dt_model variable name for compatibility
+    new_active = [k.replace("_w","") for k,v in ranked[:8]]
 
-    # ── Extract feature importance (averaged across all 200 trees) ──
-    importances = {
-        features[i]: round(float(forest.feature_importances_[i]), 4)
-        for i in range(len(features))
-        if forest.feature_importances_[i] > 0
-    }
-    importances = dict(sorted(importances.items(), key=lambda x: x[1], reverse=True))
+    # ── Auto-promote candidates with corr > 0.15 ──
+    promoted = []
+    dropped = []
+    candidates = {k: v for k, v in correlations.items() if not k.endswith("_w") and abs(v) >= 0.15}
+    current_active = _model_weights.get("active_stats", DEFAULT_WEIGHTS["active_stats"])
 
-    # ── Extract leaf HR rates (sample from first 20 trees for display) ──
-    hr_rates_at_leaves = []
-    n_leaves = 0
-    for estimator in forest.estimators_[:20]:
-        tree_info = estimator.tree_
-        n_leaves += tree_info.n_node_samples[tree_info.children_left == -1].shape[0]
-        for i in range(tree_info.node_count):
-            if tree_info.children_left[i] == -1:
-                vals = tree_info.value[i][0]
-                total = sum(vals)
-                hr_rate = round(vals[1] / total * 100, 1) if total > 0 else 0
-                hr_rates_at_leaves.append(hr_rate)
-    n_leaves = n_leaves // 20  # avg leaves per tree
-    hr_rates_at_leaves = sorted(set(hr_rates_at_leaves))  # unique rates for display
+    for cand_key, cand_corr in sorted(candidates.items(), key=lambda x: abs(x[1]), reverse=True):
+        if len(new_active) >= 8:
+            # Find weakest active stat to displace
+            weakest = min(
+                [(k, correlations.get(k+"_w", 0)) for k in new_active],
+                key=lambda x: abs(x[1])
+            )
+            if abs(cand_corr) > abs(weakest[1]):
+                dropped.append(weakest[0])
+                new_active.remove(weakest[0])
+                new_active.append(cand_key)
+                promoted.append(cand_key)
+                # Add weight for newly promoted stat
+                new_weights[cand_key + "_w"] = round(max(0.3, min(2.5, 1.0 + cand_corr * 2.0)), 3)
+        else:
+            new_active.append(cand_key)
+            promoted.append(cand_key)
 
-    # ── Compute calibration factor ──
-    dataset_hr_rate = round(sum(y_vals) / len(y_vals) * 100, 1)
-    cal_factor = get_calibration_factor(dataset_hr_rate, n)
-    print(f"Dataset HR rate: {dataset_hr_rate}% → calibration factor: {cal_factor:.3f}")
+    # ── Save updated weights ──
+    new_weights["active_stats"] = new_active
+    new_weights["last_calibrated"] = date.today().isoformat()
+    new_weights["records_used"] = n
+    new_weights["calibration_round"] = get_rotation_round()
+    new_weights["promoted_stats"] = promoted
+    new_weights["dropped_stats"] = dropped
+    new_weights["recent_changes"] = changes[:20]
 
-    # ── Store tree globally ──
-    _dt_model = tree
-    _dt_features = features
-    _dt_medians = medians
-
-    # ── Save metadata to GitHub ──
-    new_weights = {
-        **_model_weights,
-        "calibration_round": _model_weights.get("calibration_round", 0) + 1,
-        "last_calibrated": date.today().isoformat(),
-        "records_used": n,
-        "model_type": "random_forest",
-        "n_estimators": 200,
-        "tree_depth": 5,
-        "tree_min_leaf": 10,
-        "tree_n_leaves": n_leaves,
-        "feature_importances": importances,
-        "feature_medians": {k: round(v, 4) for k, v in medians.items()},
-        "active_stats": list(importances.keys())[:10],
-        "hr_rates_at_leaves": sorted(hr_rates_at_leaves),
-        "tree_hr_rate": dataset_hr_rate,
-        "calibration_factor": round(cal_factor, 4),
-        "next_depth_upgrade": "xgboost_at_10000",
-    }
     _model_weights = new_weights
-    if save_to_github:
-        await save_model_weights(new_weights)
-        await save_model_log(new_weights)
-    else:
-        print("Startup tree: skipping GitHub save to prevent deploy loop")
 
-    top_features = list(importances.items())[:8]
-    print(f"Random Forest trained — 200 trees, avg {n_leaves} leaves/tree")
-    print(f"Top features: {top_features}")
+    await save_model_weights(new_weights)
+    await save_model_log(new_weights)
 
+    print(f"Recalibration complete — {len(changes)} weight changes, {len(promoted)} promotions, {len(dropped)} drops")
     return {
-        "status": "done",
         "records_used": n,
-        "model_type": "random_forest",
-        "n_estimators": 200,
-        "max_depth": 5,
-        "min_samples_leaf": 10,
-        "avg_leaves_per_tree": n_leaves,
-        "top_features": top_features,
-        "leaf_hr_rates": sorted(hr_rates_at_leaves),
-        "feature_importances": importances,
+        "weight_changes": len(changes),
+        "promoted": promoted,
+        "dropped": dropped,
+        "top_predictors": [k for k,v in ranked[:5]],
+        "changes": changes[:10],
     }
 
+
+# Every 45 days we rotate candidate stats in/out to find what actually predicts HRs
+# Round start date: April 13, 2026 (first day of data collection)
+ROTATION_START = date(2026, 4, 13)
+ROTATION_DAYS  = 45
 
 def get_rotation_round():
-    """Rotation system removed — returns calibration round from weights instead"""
-    return int(_model_weights.get("calibration_round", 1))
+    """Return current rotation round number (1-based)"""
+    delta = (date.today() - ROTATION_START).days
+    return max(1, delta // ROTATION_DAYS + 1)
 
 def get_rotation_day():
-    """Rotation system removed — returns 0"""
-    return 0
+    """Return days into current rotation round"""
+    delta = (date.today() - ROTATION_START).days
+    return delta % ROTATION_DAYS
 
-ROTATION_DAYS = 0
-ROTATION_SCHEDULE = {}
+# Stats being evaluated per round
+ROTATION_SCHEDULE = {
+    1: {
+        "active": ["barrel_pct_season","barrel_pct_l8d","la_season","la_l8d",
+                   "ev_season","iso_vs_hand","iso_season","l8d_hr",
+                   "pit_hr9_vs_hand","pit_hr9_season","pit_slg_vs_hand",
+                   "pit_hard_hit_season","pitch_matchup_score",
+                   "bullpen_vuln","bat_platoon_mult","pit_platoon_mult",
+                   "park_factor","weather_mult","hot_cold_mult","k_pct_season",
+],
+        "candidates": [],  # nothing new yet, establishing baseline
+        "note": "Baseline round — establishing correlations for all core stats"
+    },
+    2: {
+        "active": [],  # filled after round 1 correlation analysis
+        "candidates": ["fb_pct_season","pull_pct_season","pit_fb_pct_allowed",
+                       "hard_hit_l8d","k_pct_l8d"],
+        "note": "Testing flyball%, pull%, pitcher flyball% allowed"
+    },
+    3: {
+        "active": [],
+        "candidates": ["hard_hit_l8d", "k_pct_l8d", "pit_hr_fb_pct"],
+        "note": "Testing Hard Hit% L8D, K% L8D, Pitcher HR/FB%"
+    },
+    4: {
+        "active": [],
+        "candidates": ["batter_vs_pit_career_ab","batter_vs_pit_career_hr",
+                       "pit_days_rest","game_time_hour"],
+        "note": "Testing H2H career history, days rest, game time"
+    },
+}
+
 
 SAVANT_BASE = "https://baseballsavant.mlb.com"
 
@@ -435,17 +369,13 @@ def savant_batter_url(year=None, min_pa=10, extra=""):
     return (f"{SAVANT_BASE}/leaderboard/custom?year={yr}&type=batter&filter=&sort=4"
             f"&sortDir=desc&min={min_pa}&selections=pa,ab,hit,home_run,strikeout,"
             f"k_percent,slg_percent,batting_avg,barrel_batted_rate,exit_velocity_avg,"
-            f"launch_angle_avg,hard_hit_percent,pull_percent,n_fb_percent,"
-            f"oz_swing_percent{extra}&csv=true")
-            # oz_swing_percent = chase rate (swing% on pitches outside zone)
+            f"launch_angle_avg,hard_hit_percent,pull_percent,n_fb_percent{extra}&csv=true")
 
 def savant_pitcher_url(year=None, min_pa=5, extra=""):
     yr = year or current_season()
     return (f"{SAVANT_BASE}/leaderboard/custom?year={yr}&type=pitcher&filter=&sort=4"
             f"&sortDir=desc&min={min_pa}&selections=pa,home_run,barrel_batted_rate,"
-            f"exit_velocity_avg,hard_hit_percent,k_percent,p_era,n_fb_percent,"
-            f"p_stuff_plus{extra}&csv=true")
-            # p_stuff_plus = Stuff+ composite pitch quality metric
+            f"exit_velocity_avg,hard_hit_percent,k_percent,p_era,n_fb_percent{extra}&csv=true")
 
 def savant_pitch_arsenal_url(ptype="pitcher", year=None, min_pa=1):
     yr = year or current_season()
@@ -459,12 +389,15 @@ def current_season():
     return today.year if today.month >= 3 else today.year - 1
 
 def savant_contact_log_url():
-    """Pitch-by-pitch contact events — last 3 days only to keep size small and avoid timeout.
-    group_by=pitch returns individual rows needed for the contact log table."""
-    cutoff = (date.today() - timedelta(days=3)).isoformat()
+    """Pitch-by-pitch URL — only batted ball contact events, minimal columns for speed."""
+    cutoff = (date.today() - timedelta(days=8)).isoformat()
     today_str = (date.today() + timedelta(days=1)).isoformat()
+    # hfAB=54 filters to balls in play only (no strikes/balls) — much smaller dataset
+    # Only request columns we need for contact log
+    # hfAB=54 = "in_play" filter — returns only batted ball events (~8k rows vs 25k)
+    # This reduces download from 16MB to ~5MB, preventing Railway timeout
     return (f"{SAVANT_BASE}/statcast_search/csv?all=true"
-            f"&hfPT=&hfAB=&hfGT=R%7C&hfPR=&hfZ=&hfStadium=&hfBBL=&hfNewZones=&hfPull="
+            f"&hfPT=&hfAB=54%7C&hfGT=R%7C&hfPR=&hfZ=&hfStadium=&hfBBL=&hfNewZones=&hfPull="
             f"&hfC=&hfSea={current_season()}%7C&hfSit=&player_type=batter&hfOuts=&hfOpponent="
             f"&pitcher_throws=&batter_stands=&hfSA=&game_date_gt={cutoff}"
             f"&game_date_lt={today_str}&hfMon=&hfInfield=&team=&position=&hfRO="
@@ -488,6 +421,7 @@ def savant_8d_url():
 
 _cache = {
     "bat_2026":     pd.DataFrame(),
+    "bat_2025":     pd.DataFrame(),
     "bat_8d":       pd.DataFrame(),
     "bat_l5g":      {},
     "bat_l8d_hr":   {},
@@ -495,6 +429,7 @@ _cache = {
     "bat_vs_lhp":   pd.DataFrame(),
     "bat_vs_rhp":   pd.DataFrame(),
     "pit_2026":     pd.DataFrame(),
+    "pit_2025":     pd.DataFrame(),
     "pit_vs_lhh":   pd.DataFrame(),
     "pit_vs_rhh":   pd.DataFrame(),
     "pit_arsenal":  pd.DataFrame(),
@@ -547,42 +482,40 @@ PARK_HR_FACTORS = {
 }
 
 STADIUMS = {
-    # cf_bearing = compass degrees from home plate toward CF (verified from Andrew Clem's database)
-    # hr_bearing_R = LF direction (RHB pull) = (cf+270)%360
-    # hr_bearing_L = RF direction (LHB pull) = (cf+90)%360
-    # open_factor = wind exposure (1.0=Wrigley fully open, 0.4=enclosed modern park)
-    # Source: andrewclem.com/Baseball/Stadium_statistics.html
-
+    # cf_bearing = compass degrees from home plate toward CF (verified Andrew Clem database)
+    # hr_bearing_R = LF bearing (RHB pull) = (cf+270)%360
+    # hr_bearing_L = RF bearing (LHB pull) = (cf+90)%360
+    # open_factor = wind exposure (1.0=Wrigley fully open)
     "Arizona Diamondbacks":  {"lat":33.4453,"lon":-112.0667,"dome":True},
-    "Atlanta Braves":        {"lat":33.8907,"lon":-84.4677,  "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.5},  # NE
-    "Baltimore Orioles":     {"lat":39.2838,"lon":-76.6217,  "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
-    "Boston Red Sox":        {"lat":42.3467,"lon":-71.0972,  "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.8},  # NE
-    "Chicago Cubs":          {"lat":41.9484,"lon":-87.6553,  "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":1.0},  # NE - most open park
-    "Chicago White Sox":     {"lat":41.8299,"lon":-87.6338,  "dome":False,"cf_bearing":135,"hr_bearing_R":45, "hr_bearing_L":225,"open_factor":0.5},  # SE - inverted!
-    "Cincinnati Reds":       {"lat":39.0979,"lon":-84.5082,  "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
-    "Cleveland Guardians":   {"lat":41.4954,"lon":-81.6854,  "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
-    "Colorado Rockies":      {"lat":39.7559,"lon":-104.9942, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.8},  # ENE - high altitude open
-    "Detroit Tigers":        {"lat":42.3390,"lon":-83.0485,  "dome":False,"cf_bearing":135,"hr_bearing_R":45, "hr_bearing_L":225,"open_factor":0.5},  # SE - inverted like CWS
-    "Houston Astros":        {"lat":29.7573,"lon":-95.3555,  "dome":True},
-    "Kansas City Royals":    {"lat":39.0517,"lon":-94.4803,  "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.7},  # NE
-    "Los Angeles Angels":    {"lat":33.8003,"lon":-117.8827, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.5},  # NE
-    "Los Angeles Dodgers":   {"lat":34.0739,"lon":-118.2400, "dome":False,"cf_bearing":22, "hr_bearing_R":292,"hr_bearing_L":112,"open_factor":0.5},  # NNE
-    "Miami Marlins":         {"lat":25.7781,"lon":-80.2197,  "dome":True},
-    "Milwaukee Brewers":     {"lat":43.0282,"lon":-87.9712,  "dome":True},
-    "Minnesota Twins":       {"lat":44.9817,"lon":-93.2778,  "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
-    "New York Mets":         {"lat":40.7571,"lon":-73.8458,  "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
-    "New York Yankees":      {"lat":40.8296,"lon":-73.9262,  "dome":False,"cf_bearing":90, "hr_bearing_R":0,  "hr_bearing_L":180,"open_factor":0.6},  # E
-    "Oakland Athletics":     {"lat":38.5726,"lon":-121.5088, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.5},  # NE
-    "Philadelphia Phillies": {"lat":39.9056,"lon":-75.1665,  "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
-    "Pittsburgh Pirates":    {"lat":40.4469,"lon":-80.0057,  "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.7},  # ENE
-    "San Diego Padres":      {"lat":32.7076,"lon":-117.1570, "dome":False,"cf_bearing":315,"hr_bearing_R":225,"hr_bearing_L":45, "open_factor":0.8},  # NW - faces downtown
-    "San Francisco Giants":  {"lat":37.7786,"lon":-122.3893, "dome":False,"cf_bearing":90, "hr_bearing_R":0,  "hr_bearing_L":180,"open_factor":0.9},  # E - bay wind blows IN
-    "Seattle Mariners":      {"lat":47.5914,"lon":-122.3325, "dome":True},
-    "St. Louis Cardinals":   {"lat":38.6226,"lon":-90.1928,  "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
-    "Tampa Bay Rays":        {"lat":27.7683,"lon":-82.6534,  "dome":True},
-    "Texas Rangers":         {"lat":32.7473,"lon":-97.0825,  "dome":True},
-    "Toronto Blue Jays":     {"lat":43.6414,"lon":-79.3894,  "dome":True},
-    "Washington Nationals":  {"lat":38.8730,"lon":-77.0074,  "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
+    "Atlanta Braves":        {"lat":33.8907,"lon":-84.4677, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.5},  # NE
+    "Baltimore Orioles":     {"lat":39.2838,"lon":-76.6217, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
+    "Boston Red Sox":        {"lat":42.3467,"lon":-71.0972, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.8},  # NE
+    "Chicago Cubs":          {"lat":41.9484,"lon":-87.6553, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":1.0},  # NE
+    "Chicago White Sox":     {"lat":41.8299,"lon":-87.6338, "dome":False,"cf_bearing":135,"hr_bearing_R":45, "hr_bearing_L":225,"open_factor":0.5},  # SE inverted
+    "Cincinnati Reds":       {"lat":39.0979,"lon":-84.5082, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
+    "Cleveland Guardians":   {"lat":41.4954,"lon":-81.6854, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
+    "Colorado Rockies":      {"lat":39.7559,"lon":-104.9942,"dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.8},  # ENE
+    "Detroit Tigers":        {"lat":42.3390,"lon":-83.0485, "dome":False,"cf_bearing":135,"hr_bearing_R":45, "hr_bearing_L":225,"open_factor":0.5},  # SE inverted
+    "Houston Astros":        {"lat":29.7573,"lon":-95.3555, "dome":True},
+    "Kansas City Royals":    {"lat":39.0517,"lon":-94.4803, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.7},  # NE
+    "Los Angeles Angels":    {"lat":33.8003,"lon":-117.8827,"dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.5},  # NE
+    "Los Angeles Dodgers":   {"lat":34.0739,"lon":-118.2400,"dome":False,"cf_bearing":22, "hr_bearing_R":292,"hr_bearing_L":112,"open_factor":0.5},  # NNE
+    "Miami Marlins":         {"lat":25.7781,"lon":-80.2197, "dome":True},
+    "Milwaukee Brewers":     {"lat":43.0282,"lon":-87.9712, "dome":True},
+    "Minnesota Twins":       {"lat":44.9817,"lon":-93.2778, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
+    "New York Mets":         {"lat":40.7571,"lon":-73.8458, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
+    "New York Yankees":      {"lat":40.8296,"lon":-73.9262, "dome":False,"cf_bearing":90, "hr_bearing_R":0,  "hr_bearing_L":180,"open_factor":0.6},  # E
+    "Oakland Athletics":     {"lat":38.5726,"lon":-121.5088,"dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.5},  # NE
+    "Philadelphia Phillies": {"lat":39.9056,"lon":-75.1665, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
+    "Pittsburgh Pirates":    {"lat":40.4469,"lon":-80.0057, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.7},  # ENE
+    "San Diego Padres":      {"lat":32.7076,"lon":-117.1570,"dome":False,"cf_bearing":315,"hr_bearing_R":225,"hr_bearing_L":45, "open_factor":0.8},  # NW faces downtown
+    "San Francisco Giants":  {"lat":37.7786,"lon":-122.3893,"dome":False,"cf_bearing":90, "hr_bearing_R":0,  "hr_bearing_L":180,"open_factor":0.9},  # E bay wind blows IN
+    "Seattle Mariners":      {"lat":47.5914,"lon":-122.3325,"dome":True},
+    "St. Louis Cardinals":   {"lat":38.6226,"lon":-90.1928, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
+    "Tampa Bay Rays":        {"lat":27.7683,"lon":-82.6534, "dome":True},
+    "Texas Rangers":         {"lat":32.7473,"lon":-97.0825, "dome":True},
+    "Toronto Blue Jays":     {"lat":43.6414,"lon":-79.3894, "dome":True},
+    "Washington Nationals":  {"lat":38.8730,"lon":-77.0074, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
 }
 
 PITCH_TYPE_MAP = {
@@ -604,10 +537,10 @@ PITCH_DISPLAY = {
 }
 
 # ── Data Loading ──
-async def fetch_savant_csv(url: str, session: httpx.AsyncClient, timeout: int = 120) -> pd.DataFrame:
+async def fetch_savant_csv(url: str, session: httpx.AsyncClient) -> pd.DataFrame:
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
     try:
-        r = await session.get(url, headers=headers, timeout=timeout, follow_redirects=True)
+        r = await session.get(url, headers=headers, timeout=60, follow_redirects=True)
         if not r.is_success:
             print(f"Savant fetch failed {r.status_code}: {url[:80]}")
             return pd.DataFrame()
@@ -666,7 +599,6 @@ def calc_batter_stats(df: pd.DataFrame) -> pd.DataFrame:
         'n_fb_percent': 'fb_pct',
         'k_percent': 'k_pct',
         'home_run': 'hr',
-        'oz_swing_percent': 'chase_rate',  # swing% on pitches outside zone
     }
     df = df.rename(columns={k: v for k, v in rename.items() if k in df.columns})
     return df
@@ -682,7 +614,6 @@ def calc_pitcher_stats(df: pd.DataFrame) -> pd.DataFrame:
         'k_percent': 'k_pct',
         'p_era': 'era',
         'home_run': 'hr',
-        'p_stuff_plus': 'stuff_plus',  # composite pitch quality — 100 = avg, higher = better
     }
     df = df.rename(columns={k: v for k, v in rename.items() if k in df.columns})
     return df
@@ -724,13 +655,9 @@ def calc_statcast_8d(df: pd.DataFrame) -> pd.DataFrame:
         swings = grp[grp['bat_speed'].notna() & (grp['bat_speed'] > 0)]
         avg_bat_speed = round(swings['bat_speed'].mean(), 1) if len(swings) > 0 else 0.0
 
-        # Expected stats — filter zeros to avoid diluting with missing/null Statcast values
-        xwoba_vals = contact['estimated_woba_using_speedangle'].dropna()
-        xwoba_vals = xwoba_vals[xwoba_vals > 0]
-        xwoba = round(float(xwoba_vals.mean()), 3) if len(xwoba_vals) > 0 else 0.0
-        xslg_vals = contact['estimated_slg_using_speedangle'].dropna()
-        xslg_vals = xslg_vals[xslg_vals > 0]
-        xslg  = round(float(xslg_vals.mean()), 3) if len(xslg_vals) > 0 else 0.0
+        # Expected stats
+        xwoba = round(contact['estimated_woba_using_speedangle'].dropna().mean(), 3) if n_contact > 0 else 0.0
+        xslg  = round(contact['estimated_slg_using_speedangle'].dropna().mean(), 3) if n_contact > 0 else 0.0
 
         # Pull%
         pull_events = contact[contact['hc_x'].notna()]
@@ -802,7 +729,6 @@ def _build_contact_log(df: pd.DataFrame):
             try:
                 events.append({
                     'date':       str(row.get('game_date', ''))[-5:],
-                    'pitcher':    reverse_name(str(row.get('pitcher_name', '') or '').strip()),
                     'pitch_type': pitch_short,
                     'ev':         round(float(row['launch_speed']), 1),
                     'angle':      round(float(row['launch_angle']), 1) if pd.notna(row.get('launch_angle')) else 0,
@@ -1147,6 +1073,12 @@ async def load_all_savant_data():
             _cache["bat_2026"] = calc_batter_stats(df)
             print(f"bat_2026: {len(_cache['bat_2026'])} rows")
 
+        # Batter 2025
+        df = await fetch_savant_csv(savant_batter_url(year=current_season()-1, min_pa=50), client)
+        if not df.empty:
+            _cache["bat_2025"] = calc_batter_stats(df)
+            print(f"bat_2025: {len(_cache['bat_2025'])} rows")
+
         # Batter 8d — aggregated stats per player (group_by=name)
         df = await fetch_savant_csv(savant_8d_url(), client)
         if not df.empty:
@@ -1155,19 +1087,19 @@ async def load_all_savant_data():
         else:
             print("bat_8d: 0 rows")
 
-        # Contact log — separate 3-day window fetch (group_by=pitch, ~9MB)
-        df_contact = await fetch_savant_csv(savant_contact_log_url(), client, timeout=180)
-        if not df_contact.empty:
-            _build_contact_log(df_contact)
-            print(f"contact_log: {len(_contact_log)} players")
-        else:
-            print("contact_log: 0 players (will retry on next refresh)")
+        # Contact log fetched separately in refresh_8d to avoid startup timeout
 
         # Pitcher 2026
         df = await fetch_savant_csv(savant_pitcher_url(min_pa=5), client)
         if not df.empty:
             _cache["pit_2026"] = calc_pitcher_stats(df)
             print(f"pit_2026: {len(_cache['pit_2026'])} rows")
+
+        # Pitcher 2025
+        df = await fetch_savant_csv(savant_pitcher_url(year=current_season()-1, min_pa=50), client)
+        if not df.empty:
+            _cache["pit_2025"] = calc_pitcher_stats(df)
+            print(f"pit_2025: {len(_cache['pit_2025'])} rows")
 
         # Pitch arsenal - pitcher
         await asyncio.sleep(3)
@@ -1183,8 +1115,7 @@ async def load_all_savant_data():
         df = await fetch_savant_csv(savant_pitch_arsenal_url("batter", year=current_season(), min_pa=1), client)
         if not df.empty:
             _cache["bat_arsenal"] = parse_player_name(df)
-            cols = list(_cache["bat_arsenal"].columns)
-            print(f"bat_arsenal: {len(_cache['bat_arsenal'])} rows | cols: {cols[:15]}")
+            print(f"bat_arsenal: {len(_cache['bat_arsenal'])} rows")
         else:
             print("bat_arsenal: 0 rows")
 
@@ -1219,22 +1150,18 @@ async def load_all_savant_data():
 
 async def refresh_8d():
     """Refresh 8-day data — aggregated stats + contact log"""
-    async with httpx.AsyncClient(timeout=200) as client:
-        # 8d aggregated stats (group_by=name)
+    async with httpx.AsyncClient(timeout=60) as client:
         df = await fetch_savant_csv(savant_8d_url(), client)
         if not df.empty:
             agg = calc_statcast_8d(df)
             if not agg.empty:
                 _cache["bat_8d"] = agg
                 print(f"bat_8d refreshed: {len(agg)} players")
-        # Contact log — separate fetch with 3-day window (~9MB, needs long timeout)
-        df_contact = await fetch_savant_csv(savant_contact_log_url(), client, timeout=180)
+        await asyncio.sleep(2)
+        df_contact = await fetch_savant_csv(savant_contact_log_url(), client)
         if not df_contact.empty:
             _build_contact_log(df_contact)
-            _games_cache.clear()
             print(f"contact_log refreshed: {len(_contact_log)} players")
-        else:
-            print("contact_log: CSV empty — will retry next refresh")
     l5g_data = await fetch_last5_games_batting()
     if l5g_data:
         _cache["bat_l5g"] = l5g_data
@@ -1246,109 +1173,39 @@ async def refresh_8d():
     _cache["last_8d_update"] = datetime.now().isoformat()
 
 async def daily_refresh_loop():
-    """Run in background — check every hour for scheduled tasks.
-    Schedule (all ET):
-    - 9am  — full Savant data refresh (season stats, splits, arsenal)
-    - 11am — bat_8d refresh (Savant fully updated by now with last night's games)
-    - 12pm — save daily predictions (uses fresh 11am L8D data, locked for the day)
-    - 2am  — record results (all games finished)
-    - 3am  — auto-recalibrate (Sundays only)
-    - 4am  — save model log
-    """
-    # Track which tasks already ran today so redeploys mid-day don't skip them
-    _scheduled_ran = {}  # { "YYYY-MM-DD:task" : True }
-
+    """Run in background — check every hour for scheduled tasks"""
     while True:
-        await asyncio.sleep(600)  # check every 10 min instead of hourly — catches missed windows
-        now = datetime.utcnow()
-        et_now = now - timedelta(hours=4)   # UTC → EDT (Apr–Nov)
-        et_hour = et_now.hour
-        et_date = et_now.date().isoformat()
-        is_sunday = et_now.weekday() == 6
-
-        def already_ran(task):
-            return _scheduled_ran.get(f"{et_date}:{task}", False)
-
-        def mark_ran(task):
-            _scheduled_ran[f"{et_date}:{task}"] = True
-            # Trim old keys (keep only today)
-            for k in list(_scheduled_ran.keys()):
-                if not k.startswith(et_date):
-                    del _scheduled_ran[k]
-
-        # 9am ET — full Savant season data refresh (window: 9:00–9:59)
-        if et_hour == 9 and not already_ran("9am_refresh"):
+        now = datetime.now()
+        await asyncio.sleep(3600)  # check every hour
+        if now.hour == 7:
             try:
                 await load_all_savant_data()
-                mark_ran("9am_refresh")
-                print("9am ET: Full Savant refresh complete")
             except Exception as e:
                 print(f"Daily refresh error: {e}")
-
-        # 11am ET — bat_8d refresh (window: 11:00–11:59)
-        if et_hour == 11 and not already_ran("11am_8d"):
-            try:
-                await refresh_8d()
-                mark_ran("11am_8d")
-                print("11am ET: bat_8d locked for the day")
-            except Exception as e:
-                print(f"8d refresh error: {e}")
-
-        # 12pm ET — save predictions (window: 12:00–12:59)
-        if et_hour == 12 and not already_ran("12pm_save"):
+        # Save predictions at 1pm ET (18:00 UTC) — lineups mostly confirmed
+        if now.hour == 11:
             try:
                 await save_daily_predictions()
-                print("12pm ET: Predictions saved with locked L8D data")
             except Exception as e:
                 print(f"Prediction save error: {e}")
-            finally:
-                mark_ran("12pm_save")
-            # Parlay combos in separate try — failure here shouldn't affect predictions
-            try:
-                await save_parlay_combinations()
-                print("12pm ET: Parlay combinations saved")
-            except Exception as e:
-                print(f"Parlay combo save error: {e}")
-
-        # 2am ET — record results (window: 2:00–2:59)
-        if et_hour == 2 and not already_ran("2am_results"):
+        # Record results at 2am ET — all games finished
+        if now.hour == 2:
             try:
                 yesterday = (date.today() - timedelta(days=1)).isoformat()
                 await record_results(yesterday)
-                mark_ran("2am_results")
             except Exception as e:
                 print(f"Result recording error: {e}")
-
-        # 3am ET — auto-recalibrate Sundays (window: 3:00–3:59)
-        if et_hour == 3 and is_sunday and not already_ran("3am_recal"):
+        # Auto-recalibrate on Day 45 of each rotation round at 3am ET
+        if now.hour == 3 and get_rotation_day() == 0 and get_rotation_round() > 1:
             try:
-                print(f"Sunday auto-recalibrate — {_model_weights.get('records_used',0)} records")
+                print(f"Auto-recalibrating — Round {get_rotation_round()} Day 0")
                 await recalibrate_model()
-                mark_ran("3am_recal")
             except Exception as e:
                 print(f"Auto-recalibrate error: {e}")
-
-        # Auto-retrain when record count crosses a depth threshold
-        # Checks daily at 3am — if records crossed 1500/2500/5000/10000 since last train
-        if et_hour == 3 and not already_ran("3am_depth_check"):
-            try:
-                mark_ran("3am_depth_check")
-                current_records = _model_weights.get("records_used", 0)
-                next_upgrade = _model_weights.get("next_depth_upgrade", 1500)
-                if isinstance(next_upgrade, int) and current_records >= next_upgrade:
-                    print(f"Auto depth upgrade: {current_records} records >= {next_upgrade} threshold")
-                    result = await recalibrate_model()
-                    new_depth = _model_weights.get("tree_depth", 4)
-                    cal = _model_weights.get("calibration_factor", 1.0)
-                    print(f"Depth upgraded to {new_depth}, cal_factor={cal:.3f}")
-            except Exception as e:
-                print(f"Depth upgrade check error: {e}")
-
-        # 4am ET — save model log (window: 4:00–4:59)
-        if et_hour == 4 and not already_ran("4am_log"):
+        # Save daily model log at 4am ET
+        if now.hour == 4:
             try:
                 await save_model_log(_model_weights)
-                mark_ran("4am_log")
             except Exception as e:
                 print(f"Model log error: {e}")
 
@@ -1396,131 +1253,15 @@ async def github_put_file(path: str, content: str, message: str, sha: str = None
         print(f"GitHub put error: {e}")
         return False
 
-def compute_radar_composite(rec: dict, medians: dict) -> dict:
-    """
-    Compute 6-axis radar composite scores (0-100) from a prediction record.
-    Mirrors the JS buildRadar() in index.html exactly.
-    Saved with every prediction so we can correlate axes with outcomes in October.
-
-    Edges we're looking for:
-    - High Matchup + High Power but low Form → power hitter in cold streak, pitcher is hittable
-    - High Form + low Matchup → hot batter facing tough pitcher, still worth watching
-    - High everything → genuine elite spot
-    - High Discipline + High Power → contact-power profile, lower variance leg
-    - Low Discipline + High Power → boom/bust (Murakami type)
-    """
-    def norm(val, med, cap=100):
-        if not val or not med or val == 0: return 50
-        return min(round((val / med) * 50), cap)
-
-    def norm_low(val, med):
-        if not val or not med or val == 0: return 50
-        return min(round((med / val) * 50), 100)
-
-    def la_score(la):
-        if not la or la == 0: return 40
-        dist = abs(la - 26.5)
-        return max(0, min(100, round(100 - dist * 3.5)))
-
-    med = medians
-
-    # Pull values
-    brl_s  = rec.get('barrel_pct_season', 0)
-    iso_s  = rec.get('iso_season', 0)
-    ev_s   = rec.get('ev_season', 0)
-    la_s   = rec.get('la_season', 0)
-    pull_s = rec.get('pull_pct_season', 0)
-
-    xslg_l = rec.get('xslg_l8d', 0)
-    ev_l   = rec.get('ev_l8d', 0)
-    brl_l  = rec.get('barrel_pct_l8d', 0)
-    spd_l  = rec.get('bat_speed_l8d', 0)
-    hh_l   = rec.get('hard_hit_l8d', 0)
-    la_l   = rec.get('la_l8d', 0)
-
-    pit_hr9   = rec.get('pit_hr9_vs_hand', 0) or rec.get('pit_hr9_season', 0)
-    pit_hh    = rec.get('pit_hard_hit_season', 0)
-    pit_era   = rec.get('pit_era_season', 0)
-    pit_slg   = rec.get('pit_slg_vs_hand', 0)
-
-    pf  = rec.get('park_factor', 1.0)
-    wx  = rec.get('weather_mult', 1.0)
-
-    k_l   = rec.get('k_pct_l8d', 0)
-    chase = rec.get('chase_rate_season', 0)
-
-    bat_plat  = rec.get('bat_platoon_mult', 1.0)
-    pit_plat  = rec.get('pit_platoon_mult', 1.0)
-    iso_hand  = rec.get('iso_vs_hand', 0)
-    pitch_sc  = rec.get('pitch_matchup_score', 0)
-
-    # ── 6 axis scores ──
-    power = round(
-        norm(brl_s, med.get('barrel_pct_season', 10)) * 0.35 +
-        norm(iso_s, med.get('iso_season', 0.162))     * 0.30 +
-        norm(ev_s,  med.get('ev_season', 89.7))       * 0.20 +
-        la_score(la_s)                                * 0.08 +
-        norm(pull_s, med.get('pull_pct_season', 40))  * 0.07
-    )
-
-    form = round(
-        norm(xslg_l, med.get('xslg_l8d', 0.545))       * 0.35 +
-        norm(ev_l,   med.get('ev_l8d', 83.5))           * 0.25 +
-        norm(brl_l,  med.get('barrel_pct_l8d', 7.4))    * 0.20 +
-        norm(spd_l,  med.get('bat_speed_l8d', 70.1))    * 0.10 +
-        norm(hh_l,   med.get('hard_hit_l8d', 27.3))     * 0.05 +
-        la_score(la_l)                                  * 0.05
-    )
-
-    matchup = round(
-        norm(pit_hr9, med.get('pit_hr9_season', 1.0))          * 0.45 +
-        norm(pit_hh,  med.get('pit_hard_hit_season', 40.6))    * 0.30 +
-        norm_low(pit_era, med.get('pit_era_season', 3.68))     * 0.15 +
-        norm(pit_slg, med.get('pit_slg_vs_hand', 0.36))        * 0.10
-    )
-
-    park_wx = 50
-    if pf != 1.0 or wx != 1.0:
-        park_wx = round(
-            norm(pf, 1.04) * 0.60 +
-            norm(wx, 1.00) * 0.40
-        )
-
-    discipline = round(
-        norm_low(k_l, med.get('k_pct_l8d', 21.6)) * 0.60 +
-        (norm_low(chase, 30) * 0.40 if chase > 0 else 50 * 0.40)
-    )
-
-    platoon = round(
-        norm(bat_plat, 1.0)                              * 0.35 +
-        norm(pit_plat, 1.0)                              * 0.35 +
-        norm(iso_hand, med.get('iso_vs_hand', 0.167))    * 0.20 +
-        (min(pitch_sc * 10 + 50, 100) if pitch_sc > 0 else 50) * 0.10
-    )
-
-    scores = [power, form, matchup, park_wx, discipline, platoon]
-    overall = round(sum(scores) / len(scores))
-
-    return {
-        "overall":    overall,
-        "power":      power,
-        "form":       form,
-        "matchup":    matchup,
-        "park":       park_wx,
-        "discipline": discipline,
-        "platoon":    platoon,
-    }
-
-
-async def save_daily_predictions(force: bool = False):
+async def save_daily_predictions():
     """Save today's predictions to GitHub — uses same data as /games endpoint for consistency"""
     if not _cache["ready"]: return
     today = date.today().isoformat()
     path = f"data/predictions/{today}.json"
     existing, sha = await github_get_file(path)
     # Allow overwrite if hit_hr is still null (predictions not yet recorded)
-    # force=True skips the guard entirely (used by /resave-today which handles hit_hr preservation itself)
-    if existing and not force:
+    if existing:
+        import json
         try:
             ex_recs = json.loads(existing)
             if any(r.get("hit_hr") is not None for r in ex_recs):
@@ -1560,74 +1301,71 @@ async def save_daily_predictions(force: bool = False):
                 if not stadium.get("dome") and stadium.get("lat"):
                     temp, wind_speed, wind_dir = await fetch_weather(stadium["lat"], stadium["lon"], gtime)
 
-                # ── Get all batters with recent ABs for each team ──
-                # Pull active roster from MLB API, cross-reference with bat_8d
-                # Anyone with PA in last 8 days gets processed — DNP tag handles non-starters
+                # Try confirmed lineup first, fall back to projected
+                lineup_away, lineup_home = [], []
+                try:
+                    async with httpx.AsyncClient(timeout=15) as client:
+                        r2 = await client.get(f"{MLB_API}/game/{gid}/boxscore")
+                        box = r2.json()
+                    teams = box.get("teams", {})
+                    def extract(side):
+                        players = teams.get(side, {}).get("players", {})
+                        return sorted([p for p in players.values() if p.get("battingOrder") and int(p["battingOrder"]) <= 900],
+                                      key=lambda x: int(x["battingOrder"]))[:9]
+                    ca, ch = extract("away"), extract("home")
+                    if ca: lineup_away = ca
+                    if ch: lineup_home = ch
+                except Exception: pass
 
-                async def get_team_active_batters(team_id, team_name):
-                    """Get roster players who have recent 8d data"""
-                    try:
-                        async with httpx.AsyncClient(timeout=10) as rc:
-                            r3 = await rc.get(f"{MLB_API}/teams/{team_id}/roster?rosterType=active&season={current_season()}")
-                            roster = r3.json().get("roster", [])
-                        players = []
-                        for p in roster:
-                            pos = p.get("position", {}).get("type", "")
-                            if pos == "Pitcher": continue  # skip pitchers
-                            name = p.get("person", {}).get("fullName", "")
-                            if not name: continue
-                            b8d = get_batter_8d(name)
-                            if b8d.get("pa", 0) >= 1:
-                                players.append(name)
-                        return players if players else []
-                    except Exception:
-                        return []
-
-                away_players = await get_team_active_batters(away_team_id, away_team)
-                home_players = await get_team_active_batters(home_team_id, home_team)
-
-                # Fall back to projected lineup if roster fetch fails
-                if not away_players:
+                lineup_away_source = "confirmed"
+                lineup_home_source = "confirmed"
+                if not lineup_away:
                     proj, _ = await fetch_projected_lineup(away_team_id, away_team)
-                    away_players = [p.get("name","") or p.get("person",{}).get("fullName","") for p in proj]
-                    away_players = [n for n in away_players if n]
-                if not home_players:
+                    lineup_away = proj
+                    lineup_away_source = "projected"
+                if not lineup_home:
                     proj, _ = await fetch_projected_lineup(home_team_id, home_team)
-                    home_players = [p.get("name","") or p.get("person",{}).get("fullName","") for p in proj]
-                    home_players = [n for n in home_players if n]
+                    lineup_home = proj
+                    lineup_home_source = "projected"
 
-                lineup_src = "bat_8d_roster"
-
-                for player_list, team, opp_p_name, opp_p_hand in [
-                    (away_players, away_team, home_p.get("fullName","TBD"), home_p_hand),
-                    (home_players, home_team, away_p.get("fullName","TBD"), away_p_hand),
+                for batters, team, opp_p_name, opp_p_hand, lineup_src in [
+                    (lineup_away, away_team, home_p.get("fullName","TBD"), home_p_hand, lineup_away_source),
+                    (lineup_home, home_team, away_p.get("fullName","TBD"), away_p_hand, lineup_home_source),
                 ]:
-                    for name in player_list:
+                    for batter in batters:
+                        if "person" in batter:
+                            name = batter.get("person", {}).get("fullName", "")
+                            pid = batter.get("person", {}).get("id")
+                        else:
+                            name = batter.get("name", "")
+                            pid = batter.get("id")
                         if not name: continue
                         bat_hand = "R"
-                        nl = name.lower().strip()
-                        cached_hand = _cache.get("player_hands", {}).get(nl, {})
-                        if cached_hand:
-                            bat_hand = cached_hand.get("bat_side", "R")
+                        if pid:
+                            info = await fetch_player_hand(pid)
+                            bat_hand = info.get("bat_side", "R")
                         if bat_hand == "S": bat_hand = "L" if opp_p_hand == "R" else "R"
                         park_factor = get_park_hr_factor(home_team, bat_hand)
                         wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
                         hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(
                             name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult, home_team)
-                        if hr_prob < 2: continue  # save near-everything for full tree training population
+                        if hr_prob < 5: continue
                         top_pitches = get_pitcher_top_pitches(opp_p_name)[:2]
                         pitch1 = top_pitches[0] if len(top_pitches) > 0 else {}
                         pitch2 = top_pitches[1] if len(top_pitches) > 1 else {}
                         pitch_score, _ = compute_pitch_matchup(opp_p_name, name)
                         pa_data = get_avg_pa_per_game(name)
-                        # Raw batter season stats — 2026 only
+                        # Raw batter season stats
                         bc2 = get_batter_stats(name, 2026)
-                        barrel_s = round(bc2.get("barrel_pct",0), 1)
-                        la_s     = round(bc2.get("launch_angle",0), 1)
-                        ev_s     = round(bc2.get("exit_velo",0), 1)
-                        iso_s    = round(bc2.get("iso",0), 3)
-                        hh_s     = round(bc2.get("hard_hit_pct",0), 1)
-                        k_s      = round(bc2.get("k_pct",0), 1)
+                        bp2 = get_batter_stats(name, 2025)
+                        pa26 = bc2.get("pa", 0); pa25 = bp2.get("pa", 0)
+                        bwc2, bwp2 = get_batter_blend_weights(pa26, pa25)
+                        barrel_s = round(blend(bc2.get("barrel_pct",0), bp2.get("barrel_pct",0), bwc2, bwp2), 1)
+                        la_s     = round(blend(bc2.get("launch_angle",0), bp2.get("launch_angle",0), bwc2, bwp2), 1)
+                        ev_s     = round(blend(bc2.get("exit_velo",0), bp2.get("exit_velo",0), bwc2, bwp2), 1)
+                        iso_s    = round(blend(bc2.get("iso",0), bp2.get("iso",0), bwc2, bwp2), 3)
+                        hh_s     = round(blend(bc2.get("hard_hit_pct",0), bp2.get("hard_hit_pct",0), bwc2, bwp2), 1)
+                        k_s      = round(blend(bc2.get("k_pct",0), bp2.get("k_pct",0), bwc2, bwp2), 1)
                         # Raw batter L8D stats
                         b8d2 = get_batter_8d(name)
                         barrel_l8d   = round(b8d2.get("barrel_pct",0), 1)
@@ -1647,14 +1385,15 @@ async def save_daily_predictions(force: bool = False):
                         slg_split  = round(b_split2.get("slg",0), 3)
                         hr_split   = int(b_split2.get("hr",0))
                         pa_split   = int(b_split2.get("pa",0))
-                        # Raw pitcher stats — 2026 only
+                        # Raw pitcher stats
                         pc2  = get_pitcher_stats(opp_p_name, 2026)
+                        pp2b = get_pitcher_stats(opp_p_name, 2025)
                         ip26 = pc2.get("ip",0)
-                        pit_hr9_s   = round(pc2.get("hr9",0), 2)
-                        pit_era_s   = round(pc2.get("era",0), 2)
-                        pit_hh_s    = round(pc2.get("hard_hit_pct",0), 1)
-                        pit_k9_s    = round(pc2.get("k9",0), 1)
-                        pit_is_new  = pc2.get("is_new", False)
+                        pwc2, pwp2 = get_pitcher_blend_weights(ip26, pp2b.get("ip",0))
+                        pit_hr9_s   = round(blend(pc2.get("hr9",0), pp2b.get("hr9",0), pwc2, pwp2), 2)
+                        pit_era_s   = round(blend(pc2.get("era",0), pp2b.get("era",0), pwc2, pwp2), 2)
+                        pit_hh_s    = round(blend(pc2.get("hard_hit_pct",0), pp2b.get("hard_hit_pct",0), pwc2, pwp2), 1)
+                        pit_k9_s    = round(blend(pc2.get("k9",0), pp2b.get("k9",0), pwc2, pwp2), 1)
                         # Pitcher split vs batter hand
                         p_split2    = get_pitcher_split(opp_p_name, bat_hand)
                         pit_hr9_vs  = round(p_split2.get("hr9",0), 2)
@@ -1677,7 +1416,7 @@ async def save_daily_predictions(force: bool = False):
                             "hard_hit_season": hh_s,
                             "k_pct_season": k_s,
                             "hr_season": int(bc2.get("hr",0)),
-                            "pa_season": int(bc2.get("pa", 0)),
+                            "pa_season": pa26,
                             # ── BATTER L8D ──
                             "barrel_pct_l8d": barrel_l8d,
                             "la_l8d": la_l8d,
@@ -1741,53 +1480,23 @@ async def save_daily_predictions(force: bool = False):
                             "rotation_round": get_rotation_round(),
                             "rotation_day": get_rotation_day(),
                             # ── ROUND 2 CANDIDATES (stored from day 1, evaluated at day 45) ──
-                            "fb_pct_season": round(bc2.get("fb_pct",0), 1),
-                            "pull_pct_season": round(bc2.get("pull_pct",0), 1),
-                            "pit_fb_pct_allowed": round(pc2.get("fb_pct",0), 1),
+                            "fb_pct_season": round(blend(bc2.get("fb_pct",0), bp2.get("fb_pct",0), bwc2, bwp2), 1),
+                            "pull_pct_season": round(blend(bc2.get("pull_pct",0), bp2.get("pull_pct",0), bwc2, bwp2), 1),
+                            "pit_fb_pct_allowed": round(blend(pc2.get("fb_pct",0), pp2b.get("fb_pct",0), pwc2, pwp2), 1),
                             "hard_hit_l8d": hh_l8d,
                             "k_pct_l8d": round(b8d2.get("k_pct",0), 1),
-                            # ── NEW STATS ──
-                            "chase_rate_season": round(bc2.get("chase_rate",0), 1),
-                            "pit_stuff_plus": round(pc2.get("stuff_plus",100), 1),
-                            "pitcher_is_new": pit_is_new,
                             # ── ROUND 3 CANDIDATES ──
                             "pit_era_season": pit_era_s,
                             "pit_era_diff": round(pit_era_s - 4.20, 2) if pit_era_s > 0 else 0,
-                            "pit_hr_fb_pct": round(pc2.get("hr_fb_pct",0), 1),
+                            "pit_hr_fb_pct": round(blend(pc2.get("hr_fb_pct",0), pp2b.get("hr_fb_pct",0), pwc2, pwp2), 1),
                             "lineup_k_pct": 0,  # populated at game time in future
                             # ── ROUND 4 CANDIDATES ──
                             "pit_k9_season": pit_k9_s,
-                            # ── RADAR COMPOSITE (saved for Oct correlation analysis) ──
-                            "radar": compute_radar_composite({
-                                "barrel_pct_season": barrel_s,
-                                "iso_season": iso_s,
-                                "ev_season": ev_s,
-                                "la_season": la_s,
-                                "pull_pct_season": round(bc2.get("pull_pct",0), 1),
-                                "xslg_l8d": xslg_l8d,
-                                "ev_l8d": ev_l8d,
-                                "barrel_pct_l8d": barrel_l8d,
-                                "bat_speed_l8d": bat_speed_l8d,
-                                "hard_hit_l8d": hh_l8d,
-                                "la_l8d": la_l8d,
-                                "pit_hr9_vs_hand": pit_hr9_vs,
-                                "pit_hr9_season": pit_hr9_s,
-                                "pit_hard_hit_season": pit_hh_s,
-                                "pit_era_season": pit_era_s,
-                                "pit_slg_vs_hand": pit_slg_vs,
-                                "park_factor": breakdown.get("park_factor", 1.0),
-                                "weather_mult": breakdown.get("weather_mult", 1.0),
-                                "k_pct_l8d": round(b8d2.get("k_pct",0), 1),
-                                "chase_rate_season": round(bc2.get("chase_rate",0), 1),
-                                "bat_platoon_mult": breakdown.get("bat_platoon_mult", 1.0),
-                                "pit_platoon_mult": breakdown.get("pit_platoon_mult", 1.0),
-                                "iso_vs_hand": iso_split,
-                                "pitch_matchup_score": round(pitch_score, 2),
-                            }, _dt_medians or {}),
                         })
         if not records:
             print(f"No predictions to save for {today}")
             return
+        import json
         content = json.dumps(records, indent=2)
         await github_put_file(path, content, f"predictions: {today} ({len(records)} batters)", sha)
         print(f"Saved {len(records)} predictions for {today}")
@@ -1795,7 +1504,7 @@ async def save_daily_predictions(force: bool = False):
         print(f"save_daily_predictions error: {e}")
         import traceback; traceback.print_exc()
 
-async def record_results(target_date: str, force: bool = False):
+async def record_results(target_date: str):
     """Fetch actual HR results for target_date and update the predictions file"""
     if not GITHUB_TOKEN: return
     path = f"data/predictions/{target_date}.json"
@@ -1803,6 +1512,7 @@ async def record_results(target_date: str, force: bool = False):
     if not content:
         print(f"No predictions file found for {target_date}")
         return
+    import json
     try:
         records = json.loads(content)
     except Exception:
@@ -1827,166 +1537,44 @@ async def record_results(target_date: str, force: bool = False):
                             stats = p.get("stats", {}).get("batting", {})
                             name = p.get("person", {}).get("fullName", "")
                             if not name: continue
-                            nl = name.lower().strip()
                             ab = int(stats.get("atBats", 0) or 0)
-                            actual_ab[nl] = ab
+                            actual_ab[name.lower()] = ab
                             if int(stats.get("homeRuns", 0) or 0) > 0:
-                                hr_hitters.add(nl)
-                                import unicodedata
-                                normalized = unicodedata.normalize('NFD', nl)
-                                normalized = ''.join(c for c in normalized if unicodedata.category(c) != 'Mn')
-                                hr_hitters.add(normalized)
-                                actual_ab[normalized] = ab
+                                hr_hitters.add(name.lower())
                 except Exception: continue
-
+        # Update records with actual results — DNP if fewer than 2 AB
         updated = 0
         dnp_count = 0
-        hr_count = 0
         for rec in records:
-            # Process if null OR if force=True and currently DNP (may be wrong)
-            if rec.get("hit_hr") is None or (force and rec.get("hit_hr") == "DNP"):
-                nl = rec["name"].lower().strip()
-                # Normalize accented chars for matching
-                import unicodedata
-                nl_norm = unicodedata.normalize('NFD', nl)
-                nl_norm = ''.join(c for c in nl_norm if unicodedata.category(c) != 'Mn')
-
-                # Try exact match
-                ab = actual_ab.get(nl, actual_ab.get(nl_norm, -1))
-                hit = nl in hr_hitters or nl_norm in hr_hitters
-
-                # Try last name match
-                if ab == -1:
+            if rec.get("hit_hr") is None:
+                nl = rec["name"].lower()
+                ab = actual_ab.get(nl, 0)
+                # Check partial name match too
+                if ab == 0:
                     last = nl.split()[-1]
-                    last_norm = nl_norm.split()[-1]
                     for k, v in actual_ab.items():
-                        k_parts = k.split()
-                        if k_parts and (k_parts[-1] == last or k_parts[-1] == last_norm):
+                        if last in k:
                             ab = v
-                            if k in hr_hitters:
-                                hit = True
                             break
-
-                if ab == -1:
-                    ab = 0
-
-                # Only mark DNP if truly 0 AB and not a known HR hitter
-                if ab == 0 and not hit:
+                if ab < 2:
                     rec["hit_hr"] = "DNP"
-                    rec["actual_ab"] = 0
+                    rec["actual_ab"] = ab
                     dnp_count += 1
                 else:
+                    # Exact match first, then partial last name match for foreign players
+                    hit = nl in hr_hitters
+                    if not hit:
+                        last = nl.split()[-1]
+                        hit = any(last in k for k in hr_hitters)
                     rec["hit_hr"] = 1 if hit else 0
-                    rec["actual_ab"] = max(ab, 0)
-                    if hit: hr_count += 1
-                    updated += 1
-
+                    rec["actual_ab"] = ab
+                updated += 1
         content_updated = json.dumps(records, indent=2)
-        await github_put_file(path, content_updated,
-            f"results: {target_date} ({len(hr_hitters)} HRs, {dnp_count} DNP, force={force})", sha)
-        print(f"Recorded results for {target_date}: {len(hr_hitters)} HR hitters, "
-              f"{dnp_count} DNP, {updated} updated, {hr_count} HRs confirmed")
-        await record_parlay_results(target_date)
+        await github_put_file(path, content_updated, f"results: {target_date} ({len(hr_hitters)} HRs, {dnp_count} DNP)", sha)
+        print(f"Recorded results for {target_date}: {len(hr_hitters)} HR hitters, {dnp_count} DNP, {updated} records updated")
     except Exception as e:
         print(f"record_results error: {e}")
         import traceback; traceback.print_exc()
-
-
-# ── Parlay Combination Tracking ──────────────────────────────────────────────
-
-async def save_parlay_combinations(target_date: str = None):
-    """Generate and save every 2-leg and 3-leg combination from top picks.
-    Called after save_daily_predictions. Feeds option 1 data collection.
-    """
-    if not GITHUB_TOKEN: return
-    today = target_date or date.today().isoformat()
-    pred_path = f"data/predictions/{today}.json"
-    content, _ = await github_get_file(pred_path)
-    if not content:
-        print(f"save_parlay_combinations: no predictions for {today}")
-        return
-    import itertools
-    try:
-        records = json.loads(content)
-        # Top picks — 7%+ threshold, max 15 players
-        top = [r for r in records if (r.get("model_hr_pct") or 0) >= 7]
-        top = sorted(top, key=lambda r: r.get("model_hr_pct", 0), reverse=True)[:15]
-        if len(top) < 2:
-            print(f"save_parlay_combinations: not enough picks ({len(top)}) for {today}")
-            return
-
-        # Helper — get player name from record (field may be name or player_name)
-        def pname(r): return r.get("name") or r.get("player_name") or r.get("batter","Unknown")
-
-        combos = []
-        # 2-leg combos
-        for a, b in itertools.combinations(top, 2):
-            pA = a.get("model_hr_pct", 0) / 100
-            pB = b.get("model_hr_pct", 0) / 100
-            combos.append({
-                "legs": [pname(a), pname(b)],
-                "teams": [a.get("team",""), b.get("team","")],
-                "probs": [a.get("model_hr_pct",0), b.get("model_hr_pct",0)],
-                "combined_prob": round(pA * pB * 100, 4),
-                "n_legs": 2,
-                "source": "auto",
-                "both_hit": None,
-            })
-        # 3-leg combos — top 10 only to keep file manageable
-        top10 = top[:10]
-        for a, b, c in itertools.combinations(top10, 3):
-            pA = a.get("model_hr_pct", 0) / 100
-            pB = b.get("model_hr_pct", 0) / 100
-            pC = c.get("model_hr_pct", 0) / 100
-            combos.append({
-                "legs": [pname(a), pname(b), pname(c)],
-                "teams": [a.get("team",""), b.get("team",""), c.get("team","")],
-                "probs": [a.get("model_hr_pct",0), b.get("model_hr_pct",0), c.get("model_hr_pct",0)],
-                "combined_prob": round(pA * pB * pC * 100, 6),
-                "n_legs": 3,
-                "source": "auto",
-                "both_hit": None,
-            })
-
-        path = f"data/parlays/{today}.json"
-        _, sha = await github_get_file(path)
-        await github_put_file(path, json.dumps({"date": today, "combos": combos}, indent=2),
-                              f"parlays: {today} ({len(combos)} combos)", sha)
-        print(f"Saved {len(combos)} parlay combos for {today} ({len(top)} picks)")
-    except Exception as e:
-        print(f"save_parlay_combinations error: {e}")
-        import traceback; traceback.print_exc()
-
-
-async def record_parlay_results(target_date: str):
-    """Patch both_hit into parlay combos using HR results already recorded."""
-    if not GITHUB_TOKEN: return
-    path = f"data/parlays/{target_date}.json"
-    content, sha = await github_get_file(path)
-    if not content: return
-    try:
-        data = json.loads(content)
-        combos = data.get("combos", [])
-        # Get individual results from predictions file
-        pred_path = f"data/predictions/{target_date}.json"
-        pred_content, _ = await github_get_file(pred_path)
-        if not pred_content: return
-        preds = json.loads(pred_content)
-        # Build name → hit_hr map
-        hit_map = {(r.get("name") or r.get("player_name","")): r.get("hit_hr") for r in preds if r.get("name") or r.get("player_name")}
-        updated = 0
-        for combo in combos:
-            if combo.get("both_hit") is not None: continue
-            hits = [hit_map.get(leg) for leg in combo["legs"]]
-            if any(h is None for h in hits): continue  # not all results in yet
-            combo["both_hit"] = 1 if all(h == 1 for h in hits) else 0
-            updated += 1
-        if updated:
-            await github_put_file(path, json.dumps(data, indent=2),
-                                  f"parlay results: {target_date} ({updated} updated)", sha)
-            print(f"Parlay results recorded: {updated} combos for {target_date}")
-    except Exception as e:
-        print(f"record_parlay_results error: {e}")
 
 def run_async(coro):
     loop = asyncio.new_event_loop()
@@ -2000,46 +1588,14 @@ async def startup_event():
     asyncio.create_task(daily_refresh_loop())
     asyncio.create_task(load_model_weights())
     asyncio.create_task(startup_catchup())
-    asyncio.create_task(startup_train_tree())
-
-async def startup_train_tree():
-    """Train Decision Tree on startup — waits for Savant data to fully load first."""
-    # Wait for cache to be ready before training tree
-    # Polls every 10 seconds, gives up after 5 minutes
-    for _ in range(30):
-        await asyncio.sleep(10)
-        if _cache.get("ready"):
-            break
-    else:
-        print("Startup: cache never became ready — skipping model training")
-        return
-    try:
-        print(f"Startup: cache ready, training model ({_model_weights.get('model_type','decision_tree')})...")
-        result = await recalibrate_model(save_to_github=False)
-        if isinstance(result, dict) and result.get("status") == "done":
-            print(f"Startup tree OK: depth={result.get('tree_depth')}, "
-                  f"leaves={result.get('n_leaves')}, "
-                  f"cal={_model_weights.get('calibration_factor', 1.0):.3f}")
-        else:
-            print(f"Startup tree result: {result}")
-    except Exception as e:
-        import traceback
-        print(f"Startup tree training failed (non-fatal): {e}")
-        traceback.print_exc()
 
 async def startup_catchup():
     """On startup:
     1. Check if yesterday results were missed and record them
     2. Check if today predictions not saved yet and save them
     """
-    # Wait for cache to be ready — same pattern as startup_train_tree
-    for _ in range(30):
-        await asyncio.sleep(10)
-        if _cache.get("ready"):
-            break
-    else:
-        print("Startup catchup: cache never became ready — skipping")
-        return
+    await asyncio.sleep(60)  # wait for data to load first
+    import json
 
     # Record yesterday results if missed
     try:
@@ -2106,13 +1662,14 @@ def gs(row, *keys, default=0.0):
         if val is not None and str(val) not in ('nan', 'None', ''):
             try:
                 return float(val)
-            except Exception:
+            except:
                 pass
     return default
 
 # ── Stat getters ──
 def get_batter_stats(name, year=2026):
-    df = _cache["bat_2026"]
+    cur = current_season()
+    df = _cache["bat_2026"] if year == cur else _cache["bat_2025"]
     row = fuzzy_match(name, df)
     if row is None:
         return {}
@@ -2124,7 +1681,6 @@ def get_batter_stats(name, year=2026):
         "hard_hit_pct": gs(row, "hard_hit_pct"),
         "fb_pct": gs(row, "fb_pct"),
         "pull_pct": gs(row, "pull_pct"),
-        "chase_rate": gs(row, "chase_rate"),
         "iso": gs(row, "iso"),
         "slg_percent": gs(row, "slg_percent"),
         "batting_avg": gs(row, "batting_avg"),
@@ -2258,11 +1814,12 @@ def get_batter_split(name, pit_hand):
     }
 
 def get_pitcher_stats(name, year=2026):
-    df = _cache["pit_2026"]
+    cur = current_season()
+    df = _cache["pit_2026"] if year == cur else _cache["pit_2025"]
     row = fuzzy_match(name, df)
-
     nl = name.lower().strip()
     ip_data = _cache["player_ip"].get(nl, {})
+    # Try last name match for IP data
     if not ip_data:
         last = nl.split()[-1]
         for k, v in _cache["player_ip"].items():
@@ -2275,14 +1832,9 @@ def get_pitcher_stats(name, year=2026):
     k9  = ip_data.get("k9", 0)
     avg_ip = ip_data.get("avg_ip", 5.0)
     gs_val = ip_data.get("gs", 0)
-
-    # NEW pitcher flag — no 2026 data at all, treat as neutral
-    is_new = (ip == 0 and (row is None))
-
     if row is None:
         return {"era": era, "ip": ip, "hr9": hr9, "k9": k9, "avg_ip": avg_ip, "gs": gs_val,
-                "hard_hit_pct": 0, "barrel_pct_allowed": 0, "fb_pct": 0, "k_pct": 0,
-                "stuff_plus": 100, "is_new": is_new}
+                "hard_hit_pct": 0, "barrel_pct_allowed": 0, "fb_pct": 0, "k_pct": 0, "hr_fb_pct": 0}
     return {
         "era": era or gs(row, "era"),
         "ip": ip, "hr9": hr9, "k9": k9, "avg_ip": avg_ip, "gs": gs_val,
@@ -2290,8 +1842,7 @@ def get_pitcher_stats(name, year=2026):
         "barrel_pct_allowed": gs(row, "barrel_pct_allowed"),
         "fb_pct": gs(row, "fb_pct"),
         "k_pct": gs(row, "k_pct"),
-        "stuff_plus": gs(row, "stuff_plus") or 100,
-        "is_new": is_new,
+        "hr_fb_pct": 0,
     }
 
 def get_pitcher_split(name, vs_hand):
@@ -2372,46 +1923,6 @@ def get_batter_pitch_rv(batter_name, pitch_code):
             return gs(row, "run_value_per_100")
     return None
 
-
-def get_batter_pitch_splits(batter_name: str) -> list:
-    """Return season pitch-type splits for a batter from bat_arsenal.
-    Each entry: {pitch_type, pitch_name, pa, hr, slg, avg, whiff_pct, run_value_per_100}
-    Used as fallback when contact log sample is too small (<20 ABs).
-    """
-    df = _cache["bat_arsenal"]
-    if df.empty:
-        return []
-    last = batter_name.split()[-1].lower()
-    matches = df[df["name"].str.lower().str.contains(last, na=False)]
-    if matches.empty:
-        return []
-    splits = []
-    seen = set()
-    for _, row in matches.iterrows():
-        pt = str(row.get("pitch_type", "")).upper()
-        if not pt or pt in seen:
-            continue
-        seen.add(pt)
-        code = PITCH_TYPE_MAP.get(pt)
-        pa  = int(gs(row, "pa") or 0)
-        if pa < 3:
-            continue
-        usage = gs(row, "pitch_usage") or 0
-        if usage <= 1:
-            usage = round(usage * 100, 1)
-        splits.append({
-            "pitch_type":  pt,
-            "pitch_name":  row.get("pitch_name") or PITCH_DISPLAY.get(code, pt),
-            "pa":          pa,
-            "hr":          int(gs(row, "home_run") or gs(row, "hr") or 0),
-            "slg":         round(min(float(gs(row, "slg_percent", "slg", "batting_slg", "avg_slg") or 0), 1.500), 3),
-            "avg":         round(min(float(gs(row, "batting_avg", "ba", "avg", "batting_average") or 0), 1.000), 3),
-            "whiff_pct":   round(float(gs(row, "whiff_percent", "whiff_pct", "whiff", "swing_miss_percent") or 0), 1),
-            "run_value":   round(float(gs(row, "run_value_per_100") or 0), 2),
-            "usage":       round(usage, 1),
-        })
-    splits.sort(key=lambda x: x["pa"], reverse=True)
-    return splits
 def compute_pitch_matchup(pitcher_name, batter_name):
     top_pitches = get_pitcher_top_pitches(pitcher_name)
     if not top_pitches:
@@ -2447,22 +1958,23 @@ def blend(v1, v2, w1, w2):
     return c * w1 + p * w2
 
 def get_batter_blend_weights(pa_2026, pa_2025):
-    # Always use 2026 data only — previous year not relevant by betting season
-    # April thin data is acceptable — we're not betting until May 31
-    # Safety net: if truly no 2026 data at all, fall back to 2025 temporarily
     pa = float(pa_2026 or 0)
-    if pa == 0:
-        return 0.0, 1.0  # no 2026 ABs yet — use 2025 as placeholder
-    return 1.0, 0.0
+    pa25 = float(pa_2025 or 0)
+    # If no 2025 MLB data (new MLB player), use whatever 2026 data we have
+    if pa25 < 10:
+        return 1.0, 0.0  # no career MLB data → use 2026 only, even if small
+    if pa >= 200:   return 1.0, 0.0
+    elif pa >= 150: w = 0.80; return w, 1.0 - w
+    elif pa >= 100: w = 0.60; return w, 1.0 - w
+    elif pa >= 50:  w = 0.30; return w, 1.0 - w
+    else:           return 0.0, 1.0  # <50 PA but has 2025 data → use career
 
 def get_pitcher_blend_weights(ip_2026, ip_2025):
-    # Always use 2026 data only — previous year not relevant by betting season
-    # April thin data is acceptable — we're not betting until May 31
-    # Safety net: if truly no 2026 data at all, fall back to 2025 temporarily
     ip = float(ip_2026 or 0)
-    if ip == 0:
-        return 0.0, 1.0  # no 2026 IP yet — use 2025 as placeholder
-    return 1.0, 0.0
+    if ip >= 30: return 1.0, 0.0
+    elif ip >= 10: w = (ip - 10) / 20.0; return 0.5 + w * 0.5, 0.5 - w * 0.5
+    elif ip > 0: return 0.5, 0.5
+    else: return 0.0, 1.0
 
 def get_park_hr_factor(home_team, batter_hand):
     pf = PARK_HR_FACTORS.get(home_team, {"L": 1.0, "R": 1.0})
@@ -2491,18 +2003,34 @@ def calc_weather_multiplier(home_team, wind_speed, wind_direction, temperature, 
     speed_factor = 0 if wind_speed < 5 else 0.3 if wind_speed < 10 else 0.7 if wind_speed < 16 else 1.0
     wind_mult = 1.0 + (alignment * speed_factor * 0.12 * open_factor)
     temp_mult = 1.06 if temperature >= 80 else 1.02 if temperature >= 70 else 0.91 if temperature < 50 else 0.96 if temperature < 60 else 1.0
-    # Direction label based on batter handedness
+    # Direction label — uses cf_bearing for precise field direction labels
+    cf_bearing = stadium.get("cf_bearing", 67)  # default ENE
+    hr_bear_r  = stadium.get("hr_bearing_R", (cf_bearing + 270) % 360)
+    hr_bear_l  = stadium.get("hr_bearing_L", (cf_bearing + 90)  % 360)
+
     if wind_speed < 5:
         direction_label = "Calm"
-    elif alignment > 0.5:
-        direction_label = "Blowing Out"
-    elif alignment < -0.5:
-        direction_label = "Blowing In"
-    elif abs(alignment) <= 0.5:
-        direction_label = "Favors Righties" if batter_hand == "R" and alignment > 0 else "Favors Lefties" if batter_hand == "L" and alignment > 0 else "Crosswind"
     else:
-        direction_label = "Crosswind"
+        diff_cf = abs(angle_diff(wind_toward, cf_bearing))
+        diff_lf = abs(angle_diff(wind_toward, hr_bear_r))
+        diff_rf = abs(angle_diff(wind_toward, hr_bear_l))
+        if alignment > 0.5:
+            if diff_cf <= 25:       direction_label = "Out to CF"
+            elif diff_lf < diff_rf: direction_label = "Out to LF"
+            else:                   direction_label = "Out to RF"
+        elif alignment > 0.15:
+            if diff_cf <= 35:       direction_label = "Blowing Out"
+            elif diff_lf < diff_rf: direction_label = "Toward LF"
+            else:                   direction_label = "Toward RF"
+        elif alignment < -0.5:      direction_label = "Blowing In"
+        elif alignment < -0.15:     direction_label = "Slightly In"
+        else:                       direction_label = "Crosswind"
     return round(wind_mult * temp_mult, 3), direction_label
+
+def sigmoid_to_prob(raw_score):
+    centered = (raw_score - 50) / 18.0
+    sigmoid = 1 / (1 + math.exp(-centered))
+    return round(min(max(0.02 + sigmoid * 0.25, 0.02), 0.25) * 100, 1)
 
 def safe_mult(value, lg_avg, weight_key="", sample=None, min_sample=0, cap_high=2.50, cap_low=0.30):
     """
@@ -2519,273 +2047,476 @@ def safe_mult(value, lg_avg, weight_key="", sample=None, min_sample=0, cap_high=
     raw = (float(value) / float(lg_avg)) ** w
     return max(min(raw, cap_high), cap_low)
 
-def get_bullpen_hr9(home_team):
-    """Get bullpen HR/9 for home team from cache."""
-    bullpen = _cache.get("team_bullpen", {})
-    return bullpen.get(home_team, {}).get("hr9", 1.2)
-
-def get_bat_platoon(bat_hand, pit_hand):
-    """Platoon multiplier for batter vs pitcher hand."""
-    # L vs R and R vs L are favorable platoon matchups
-    if bat_hand == "L" and pit_hand == "R": return 1.08
-    if bat_hand == "R" and pit_hand == "L": return 1.08
-    return 0.94  # same hand = unfavorable
-
-def get_pit_platoon(pit_hand, bat_hand):
-    """Platoon multiplier for pitcher vs batter hand."""
-    if pit_hand == "R" and bat_hand == "L": return 0.94
-    if pit_hand == "L" and bat_hand == "R": return 0.94
-    return 1.06  # same hand = pitcher advantage
-
-
 def compute_hr_prob_multiplicative(
         name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
     """
-    Decision Tree HR probability.
-    Builds a feature vector for this batter+matchup and runs it through
-    the trained tree. Falls back to a simple rule-based estimate if tree
-    not trained yet.
-    Returns: (hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf)
+    Multiplicative HR probability model.
+    P(HR) = Base Rate × Barrel% × LA × Pitcher Vuln × Batter Platoon ×
+            Pitcher Platoon × Park × Weather × Hot/Cold × K% penalty
+    Hard cap: 28%
     """
-    import numpy as np
+    # ── Data fetch ──
+    bc  = get_batter_stats(name, 2026)
+    bp  = get_batter_stats(name, 2025)
+    b8d = get_batter_8d(name)
+    b_split_vs_hand = get_batter_split(name, opp_p_hand)   # batter vs pitcher hand
+    b_split_opp     = get_batter_split(name, "R" if opp_p_hand == "L" else "L")  # vs opposite hand
+    p_split_vs_bat  = get_pitcher_split(opp_p_name, bat_hand)  # pitcher vs batter hand
 
-    # ── Gather all stats ──
-    bc   = get_batter_stats(name, 2026)
-    b8d  = get_batter_8d(name)
-    pc   = get_pitcher_stats(opp_p_name, 2026)
-    b_split = get_batter_split(name, opp_p_hand)
-    p_split = get_pitcher_split(opp_p_name, bat_hand)
+    pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
+    bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
+    # For brand new MLB players (under 60 PA, no 2025 data), Savant's game_date_gt
+    # filter sometimes returns full season stats instead of true L8D window.
+    # If L8D PA matches season PA exactly, it's bogus — clear it.
 
-    pa_26       = bc.get("pa", 0)
-    has_8d      = b8d.get("pa", 0) >= 5
-    pit_ip_s    = pc.get("ip", 0) or 0
-    pit_ip_vh   = p_split.get("ip", 0) or 0
+    has_8d = b8d.get("pa", 0) >= 3
+    total_pa = pa_26 + pa_25
 
-    # ── Build feature vector ──
-    def fv(stat):
-        """Get clean feature value for this batter+matchup."""
-        # Map stat name to data source
-        batter_season = {
-            "barrel_pct_season": bc.get("barrel_pct", 0),
-            "hard_hit_season":   bc.get("hard_hit_pct", 0),
-            "ev_season":         bc.get("exit_velo", 0),
-            "iso_season":        bc.get("iso", 0),
-            "la_season":         bc.get("launch_angle", 0),
-            "pull_pct_season":   bc.get("pull_pct", 0),
-        }
-        batter_l8d = {
-            "barrel_pct_l8d":  b8d.get("barrel_pct", 0),
-            "hard_hit_l8d":    b8d.get("hard_hit_pct", 0),
-            "ev_l8d":          b8d.get("exit_velo", 0),
-            "bat_speed_l8d":   b8d.get("bat_speed", 0),
-            "xwoba_l8d":       b8d.get("xwoba", 0),
-            "xslg_l8d":        b8d.get("xslg", 0),
-            "slg_l8d":         b8d.get("slg", 0),
-            "iso_l8d":         b8d.get("iso", 0),
-            "k_pct_l8d":       b8d.get("k_pct", 0),
-            "la_l8d":          b8d.get("launch_angle", 0),
-        }
-        batter_splits = {
-            "iso_vs_hand":  b_split.get("iso", 0),
-            "slg_vs_hand":  b_split.get("slg", 0),
-        }
-        pitcher = {
-            "pit_hr9_season":      pc.get("hr9", 0),
-            "pit_era_season":      pc.get("era", 4.2),
-            "pit_hard_hit_season": pc.get("hard_hit_pct", 0),
-            "pit_k9_season":       pc.get("k9", 0),
-            "pit_hr9_vs_hand":     p_split.get("hr9", 0),
-            "pit_slg_vs_hand":     p_split.get("slg", 0),
-        }
-        context = {
-            "park_factor":       park_factor,
-            "weather_mult":      weather_mult,
-            "bullpen_hr9":       get_bullpen_hr9(home_team),
-            "bat_platoon_mult":  get_bat_platoon(bat_hand, opp_p_hand),
-            "pit_platoon_mult":  get_pit_platoon(opp_p_hand, bat_hand),
-            "pitch_matchup_score": compute_pitch_matchup(opp_p_name, name)[0],
-        }
-        all_vals = {**batter_season, **batter_l8d, **batter_splits,
-                    **pitcher, **context}
-        raw = all_vals.get(stat, 0)
+    # ── Step 1: Base HR rate (per-PA, relative ranking model) ──
+    # base_rate = HR/PA blended between 2026 season and 2025 career
+    # Output is a relative score — higher = more likely than others today
+    # Not a literal per-game probability. Rankings matter more than absolute values.
+    hr_season = bc.get("hr", 0)
+    hr_career  = blend(bc.get("hr", 0), bp.get("hr", 0), bwc, bwp)
+    pa_season  = max(pa_26, 1)
 
-        # Zero disambiguation
-        if stat in ZERO_DOMINANT:
-            ip_field_map = {
-                "pit_hr9_season":  pit_ip_s,
-                "pit_hr9_vs_hand": pit_ip_vh,
-                "pit_slg_vs_hand": pit_ip_vh,
-            }
-            ip = ip_field_map.get(stat, 0)
-            min_ip = 5 if "vs_hand" in stat else 1
-            if ip >= min_ip:
-                return float(raw) if raw is not None else 0.0
-            else:
-                fallback = pc.get("hr9", _dt_medians.get(stat, 1.1))
-                return float(fallback)
+    hr_per_pa_season = hr_season / pa_season if pa_season > 0 else 0
+    hr_per_pa_career = hr_career / max(pa_25 + pa_26, 1) if (pa_25 + pa_26) > 0 else 0.028
 
-        # Regular stats — zero means missing, use median
-        if raw is None or raw == 0:
-            return _dt_medians.get(stat, 0.0)
-        return float(raw)
-
-    # ── Run model if trained (Decision Tree or Random Forest) ──
-    if _dt_model is not None and _dt_features:
-        feat_vec = np.array([[fv(stat) for stat in _dt_features]])
-        proba = _dt_model.predict_proba(feat_vec)[0]
-        raw_prob = proba[1] * 100
-
-        model_type = _model_weights.get("model_type", "decision_tree")
-        if model_type == "random_forest":
-            # Random Forest is naturally calibrated across 200 trees
-            # No calibration factor needed — applying it suppresses probabilities incorrectly
-            hr_prob = round(min(max(raw_prob, 2.0), 28.0), 1)
-            print(f"RF: raw={raw_prob:.1f}% → {hr_prob}%") if raw_prob > 8 else None
-        else:
-            # Decision Tree needs calibration factor to correct biased training population
-            cal_factor = _model_weights.get("calibration_factor", 1.0)
-            calibrated = raw_prob * cal_factor
-            hr_prob = round(min(max(calibrated, 2.0), 28.0), 1)
-            print(f"DT: raw={raw_prob:.1f}% × cal={cal_factor:.3f} → {hr_prob}%") if raw_prob > 10 else None
+    # PA-weighted blend — 200+ PA = trust season fully
+    if pa_26 >= 200:
+        base_rate = hr_per_pa_season
+    elif pa_26 >= 150:
+        base_rate = hr_per_pa_season * 0.80 + hr_per_pa_career * 0.20
+    elif pa_26 >= 100:
+        base_rate = hr_per_pa_season * 0.60 + hr_per_pa_career * 0.40
+    elif pa_26 >= 50:
+        base_rate = hr_per_pa_season * 0.30 + hr_per_pa_career * 0.70
     else:
-        # ── Fallback: rule-based estimate while tree is training on startup ──
-        # Uses same stats tree found most important: hard_hit, iso_vs_hand,
-        # pit_hr9_vs_hand, la_season, iso_l8d, pit_hr9_season, barrel_season
-        barrel_s  = fv("barrel_pct_season")
-        hh_s      = fv("hard_hit_season")
-        iso_hand  = fv("iso_vs_hand")
-        la_s      = fv("la_season")
-        iso_l8d_v = fv("iso_l8d")
-        pit_hr9_vh = fv("pit_hr9_vs_hand")
-        pit_hr9_s  = fv("pit_hr9_season")
+        base_rate = hr_per_pa_career
 
-        # Start at league avg and adjust based on top tree features
-        base = 2.8
+    # Floor: league avg HR/PA ~2.8%
+    if base_rate <= 0:
+        base_rate = 0.028
+    base_rate = min(base_rate, 0.12)
 
-        # Batter quality (hard_hit_season most important per tree)
-        hh_med = _dt_medians.get("hard_hit_season", 46.8)
-        if hh_s > hh_med * 1.3:    base *= 2.0   # elite hard hit
-        elif hh_s > hh_med * 1.1:  base *= 1.5
-        elif hh_s < hh_med * 0.8:  base *= 0.7
+    # Small sample confidence gate
+    if total_pa < 30:   base_rate = base_rate * 0.55 + 0.028 * 0.45
+    elif total_pa < 60: base_rate = base_rate * 0.75 + 0.028 * 0.25
 
-        # ISO vs hand
-        iso_med = _dt_medians.get("iso_vs_hand", 0.239)
-        if iso_hand > iso_med * 1.4:   base *= 1.6
-        elif iso_hand > iso_med * 1.1: base *= 1.2
-        elif iso_hand < iso_med * 0.6: base *= 0.8
+    running = base_rate
 
-        # Pitcher vulnerability (pit_hr9_vs_hand)
-        pit_med = _dt_medians.get("pit_hr9_vs_hand", 1.08)
-        if pit_hr9_vh > pit_med * 1.5:   base *= 1.5
-        elif pit_hr9_vh > pit_med * 1.1: base *= 1.2
-        elif pit_hr9_vh < pit_med * 0.5: base *= 0.6
-        elif pit_hr9_vh < pit_med * 0.8: base *= 0.8
+    # ── Step 2: Barrel% — season + L8D weighted separately via safe_mult ──
+    LG_BARREL = LEAGUE_CONSTANTS["lg_barrel_pct"]
+    barrel_season = blend(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), bwc, bwp)
+    barrel_l8d    = b8d.get("barrel_pct", 0) if has_8d else 0
+    barrel_season_mult = safe_mult(barrel_season, LG_BARREL, "barrel_season_w", pa_26, 20)
+    barrel_l8d_mult    = safe_mult(barrel_l8d, LG_BARREL, "barrel_l8d_w",
+                                   b8d.get("pa", 0) if has_8d else 0, 8)
+    if has_8d and b8d.get("pa", 0) >= 8:
+        barrel_mult = barrel_season_mult * 0.60 + barrel_l8d_mult * 0.40
+    else:
+        barrel_mult = barrel_season_mult
+    barrel_use = barrel_season if barrel_season > 0 else LG_BARREL
+    running *= barrel_mult
 
-        # Apply calibration factor even to fallback
-        cal_factor = _model_weights.get("calibration_factor", 0.163)
-        hr_prob = round(min(max(base * park_factor * weather_mult, 2.0), 15.0), 1)
-        print(f"FALLBACK (tree not ready): {name} base={base:.1f} → {hr_prob}%")
+    # ── Step 3: Launch angle — season + L8D weighted separately via safe_mult ──
+    la_season = blend(bc.get("launch_angle", 0), bp.get("launch_angle", 0), bwc, bwp)
+    la_l8d    = b8d.get("launch_angle", 0) if has_8d else 0
 
-    # ── Build breakdown for display ──
-    importances = _model_weights.get("feature_importances", {})
-    top_stats = list(importances.items())[:6]
+    def la_to_raw(la):
+        if not la or la <= 0: return None
+        if 25 <= la <= 35:   return 1.00
+        elif 20 <= la < 25:  return 0.90
+        elif 35 < la <= 40:  return 0.90
+        elif 18 <= la < 20:  return 0.80
+        elif 40 < la <= 45:  return 0.80
+        else:                return 0.75
 
-    # Archetype
-    barrel_s = fv("barrel_pct_season")
-    iso_s    = fv("iso_season")
-    ev_s     = fv("ev_season")
-    if barrel_s > 15 and iso_s > 0.250:   archetype = "Power Hitter"
-    elif barrel_s > 10 and ev_s > 90:     archetype = "Line Drive Power"
-    elif iso_s < 0.120:                   archetype = "Contact Hitter"
-    else:                                 archetype = "Balanced"
+    la_s_raw = la_to_raw(la_season)
+    la_l_raw = la_to_raw(la_l8d)
+    # Apply weights as exponent on the raw LA multiplier
+    la_season_mult = (la_s_raw ** W("la_season_w")) if la_s_raw else 1.0
+    la_l8d_mult    = (la_l_raw ** W("la_l8d_w")) if la_l_raw and has_8d and b8d.get("pa",0) >= 8 else 1.0
+    if has_8d and b8d.get("pa", 0) >= 8 and la_l_raw:
+        la_mult = la_season_mult * 0.60 + la_l8d_mult * 0.40
+    else:
+        la_mult = la_season_mult
+    la_use = la_season if la_season > 0 else 20.0
+    running *= la_mult
 
-    # Trend
-    barrel_l8d = fv("barrel_pct_l8d")
-    iso_l8d    = fv("iso_l8d")
-    if barrel_l8d > barrel_s * 1.2 or iso_l8d > iso_s * 1.2: trend = "hot"
-    elif barrel_l8d < barrel_s * 0.8:                          trend = "cold"
-    else:                                                       trend = "neutral"
+    # ── Step 4: Pitcher vulnerability — season + vs-hand via safe_mult ──
+    pc = get_pitcher_stats(opp_p_name, 2026)
+    pp2 = get_pitcher_stats(opp_p_name, 2025)
+    ip_26 = pc.get("ip", 0)
+    pwc, pwp = get_pitcher_blend_weights(ip_26, pp2.get("ip", 0))
 
-    # Reasons
+    LG_HR9 = LEAGUE_CONSTANTS["lg_hr9"]
+    LG_HH  = LEAGUE_CONSTANTS["lg_hard_hit"]
+    pit_hr9_season  = blend(pc.get("hr9", 0), pp2.get("hr9", 0), pwc, pwp)
+    pit_hr9_vs_hand = p_split_vs_bat.get("hr9", 0)
+    pit_hard        = blend(pc.get("hard_hit_pct", 0), pp2.get("hard_hit_pct", 0), pwc, pwp)
+    pit_ip_vs_hand  = p_split_vs_bat.get("ip", 0)
+    total_ip        = ip_26 + pp2.get("ip", 0)
+
+    m_hr9_s  = safe_mult(pit_hr9_season,  LG_HR9, "pit_hr9_season_w",  total_ip, 10)
+    m_hr9_vs = safe_mult(pit_hr9_vs_hand, LG_HR9, "pit_hr9_vs_hand_w", pit_ip_vs_hand, 5)
+    m_hard   = safe_mult(pit_hard, LG_HH, "", total_ip, 10)
+
+    # Combine: average of available signals (don't multiply — correlated stats)
+    pit_signals = []
+    if total_ip >= 10 and pit_hr9_season > 0:  pit_signals.append(m_hr9_s)
+    if pit_ip_vs_hand >= 5 and pit_hr9_vs_hand > 0: pit_signals.append(m_hr9_vs)
+    if total_ip >= 10 and pit_hard > 0:         pit_signals.append(m_hard)
+    pit_vuln_mult = sum(pit_signals) / len(pit_signals) if pit_signals else 1.0
+    pit_vuln_mult = max(min(pit_vuln_mult, 1.80), 0.50)
+    running *= pit_vuln_mult
+
+    # ── Step 5: Batter platoon — ISO vs hand via safe_mult ──
+    iso_vs_hand   = b_split_vs_hand.get("iso", 0)
+    iso_overall   = blend(bc.get("iso", 0), bp.get("iso", 0), bwc, bwp)
+    split_pa      = b_split_vs_hand.get("pa", 0)
+    # Need both iso_vs_hand and iso_overall as ratio — use safe_mult on ratio
+    if iso_overall > 0 and iso_vs_hand > 0 and split_pa >= 30:
+        bat_platoon_raw = iso_vs_hand / iso_overall
+        bat_platoon_mult = safe_mult(bat_platoon_raw, 1.0, "bat_platoon_w",
+                                     split_pa, 30, cap_high=1.60, cap_low=0.60)
+    else:
+        bat_platoon_mult = 1.0
+    running *= bat_platoon_mult
+
+    # ── Step 6: Pitcher platoon — SLG vs hand via safe_mult ──
+    slg_vs_bat      = p_split_vs_bat.get("slg", 0)
+    p_split_opp     = get_pitcher_split(opp_p_name, "L" if bat_hand == "R" else "R")
+    split_ip_vs_bat = p_split_vs_bat.get("ip", 0)
+    slg_sources     = [x for x in [slg_vs_bat, p_split_opp.get("slg", 0)] if x > 0]
+    slg_overall_pit = sum(slg_sources) / len(slg_sources) if slg_sources else 0
+    if slg_overall_pit > 0 and slg_vs_bat > 0 and split_ip_vs_bat >= 5:
+        pit_platoon_raw  = slg_vs_bat / slg_overall_pit
+        pit_platoon_mult = safe_mult(pit_platoon_raw, 1.0, "pit_platoon_w",
+                                     split_ip_vs_bat, 5, cap_high=1.60, cap_low=0.60)
+    else:
+        pit_platoon_mult = 1.0
+    running *= pit_platoon_mult
+
+    # ── Step 7: Park multiplier ──
+    park_w = W("park_w")
+    park_mult_applied = park_factor ** park_w if park_factor > 0 else 1.0
+    running *= park_mult_applied
+
+    # ── Step 8: Weather multiplier ──
+    weather_w = W("weather_w")
+    weather_mult_applied = weather_mult ** weather_w if weather_mult > 0 else 1.0
+    running *= weather_mult_applied
+
+    # ── Step 9: Hot/cold — display signal only, NOT in model ──
+    # Removed from calculation — L8D HR count is shown on the table as a visual signal
+    # ML will determine if it actually matters. Keeping calc for breakdown display only.
+    hot_cold_mult = 1.0
+    if has_8d and b8d.get("pa", 0) >= 8:
+        pa_8d = b8d.get("pa", 0)
+        hr_8d_count = get_l8d_hr(name)
+        hr_8d_rate  = hr_8d_count / pa_8d
+        if base_rate > 0:
+            ratio = hr_8d_rate / base_rate
+            hot_cold_mult = max(min(ratio, 1.20), 0.85)
+    # NOT applied to running — hot_cold_mult stored for ML analysis only
+    # running *= hot_cold_mult  <-- removed
+
+    # ── Step 10: K% penalty — safe_mult aware ──
+    k_season = blend(bc.get("k_pct", 0), bp.get("k_pct", 0), bwc, bwp)
+    k_w = W("k_pct_w")
+    if k_season >= 35:   k_mult = 0.88 ** k_w
+    elif k_season >= 30: k_mult = 0.94 ** k_w
+    elif k_season >= 25: k_mult = 0.97 ** k_w
+    else:                k_mult = 1.0
+    if k_season == 0:    k_mult = 1.0  # missing K% — neutral
+    running *= k_mult
+
+    # ── Hard cap + bullpen blend ──
+    LG_BULLPEN_HR9 = LEAGUE_CONSTANTS["lg_bullpen_hr9"]
+    bullpen_data   = _cache.get("team_bullpen", {}).get(home_team, {})
+    bullpen_hr9    = bullpen_data.get("hr9", LG_BULLPEN_HR9)
+    bullpen_vuln   = safe_mult(bullpen_hr9, LG_BULLPEN_HR9, "bullpen_w",
+                               cap_high=1.80, cap_low=0.50)
+    # Bullpen component — uses batter skill + context + bullpen vuln
+    bullpen_component = (base_rate * barrel_mult * la_mult * bat_platoon_mult *
+                         park_mult_applied * weather_mult_applied * k_mult * bullpen_vuln)
+    bullpen_w_blend = W("bullpen_w") if W("bullpen_w") != 1.0 else 0.25
+    running = (running * (1 - bullpen_w_blend)) + (bullpen_component * bullpen_w_blend)
+
+    hr_prob = round(min(running * 100, LEAGUE_CONSTANTS["hr_prob_cap"]), 1)
+
+    # ── Build breakdown for frontend ──
+    pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
+    archetype = get_archetype(barrel_season, k_season,
+                              blend(bc.get("fb_pct", 0), bp.get("fb_pct", 0), bwc, bwp),
+                              iso_overall if iso_overall else blend(bc.get("iso",0), bp.get("iso",0), bwc, bwp))
+    trend = get_trend(b8d, bc)
+
     reasons = []
-    if barrel_s > 15:   reasons.append(f"Barrel% {barrel_s:.1f}%")
-    if iso_s > 0.250:   reasons.append(f"ISO .{int(iso_s*1000):03d}")
-    pit_hr9 = fv("pit_hr9_season")
-    if pit_hr9 > 1.4:   reasons.append(f"Pit HR/9 {pit_hr9:.2f}")
-    if trend == "hot":  reasons.append("Hot streak")
+    if barrel_season >= 12: reasons.append(f"Barrel {barrel_season:.1f}%")
+    if iso_vs_hand > 0.220: reasons.append(f"ISO vs hand .{int(iso_vs_hand*1000):03d}")
+    if pit_hr9_season > 1.3: reasons.append(f"SP {pit_hr9_season:.1f} HR/9")
+    if pit_hard > 40: reasons.append(f"SP {pit_hard:.1f}% HH")
+    if park_factor >= 1.15: reasons.append("HR-friendly park")
+    elif park_factor <= 0.90: reasons.append("Pitcher-friendly park")
 
-    # Platoon tag
-    bpm = fv("bat_platoon_mult")
-    ppm = fv("pit_platoon_mult")
     platoon_tag = None
-    if bpm >= 1.20: platoon_tag = f"Batter strong vs {opp_p_hand}HP"
-    if ppm >= 1.20: platoon_tag = (platoon_tag + " + " if platoon_tag else "") + f"SP weak vs {bat_hand}HB"
+    if bat_platoon_mult >= 1.20:
+        platoon_tag = f"Batter strong vs {opp_p_hand}HP"
+    if pit_platoon_mult >= 1.20:
+        platoon_tag = (platoon_tag + " + " if platoon_tag else "") + f"SP weak vs {bat_hand}HB"
 
-    conf = "High" if pa_26 >= 50 and has_8d else "Medium" if pa_26 >= 20 else "Low"
+    n_components = len(pit_signals)
+    conf = "High" if n_components >= 2 and pa_26 >= 50 else "Medium" if n_components >= 1 else "Low"
+    blend_note = f"{int(bwc*100)}% 2026/{int(bwp*100)}% 2025" + (" + 8d" if has_8d else "")
 
     breakdown = {
-        "model_type": _model_weights.get("model_type", "decision_tree"),
-        "tree_trained": _dt_model is not None,
-        "feature_importances": importances,
-        "top_features": top_stats,
-        "barrel_season": barrel_s,
-        "iso_season":    iso_s,
-        "ev_season":     ev_s,
-        "pit_hr9":       pit_hr9,
-        "park_factor":   park_factor,
-        "weather_mult":  weather_mult,
-        "pa_season":     pa_26,
-        "has_8d":        has_8d,
-        "bat_platoon_mult": bpm,
-        "pit_platoon_mult": ppm,
-        "pitch_bonus":   fv("pitch_matchup_score"),
-        "batter_score":  round(barrel_s / 10, 2) if barrel_s > 0 else 1.0,
-        "matchup_score": round(pit_hr9 / 1.1, 2) if pit_hr9 > 0 else 1.0,
-        "hr_season":     int(bc.get("hr", 0)),
-        "k_mult":        1.0,
-        "bullpen_hr9":   fv("bullpen_hr9"),
-        "iso_vs_hand":   fv("iso_vs_hand"),
-        "xwoba_l8d":     fv("xwoba_l8d"),
-        "xslg_l8d":      fv("xslg_l8d"),
-        "split_pa":      b_split.get("pa", 0),
-        "split_hr":      int(b_split.get("hr", 0)),
-        "split_slg":     round(b_split.get("slg", 0), 3),
-        "split_iso":     round(b_split.get("iso", 0), 3),
-        "split_woba":    round(b_split.get("woba", 0), 3),
-        "split_k_pct":   round(b_split.get("k_pct", 0), 1),
-        "hr9_season":    round(pc.get("hr9", 0), 2),
-        "hr9_split":     round(p_split.get("hr9", 0), 2),
-        "pit_hard":      round(pc.get("hard_hit_pct", 0), 1),
-        "pit_blend_note": f"2026 ({pit_ip_s:.0f} IP)",
-        "blend_note":    f"2026 ({pa_26} PA)" + (" + L8D" if has_8d else ""),
-        "active_stats":  _dt_features[:8] if _dt_features else [],
-        "stat_mults":    {"batter_score": 1.0, "matchup_score": 1.0},
-        "base_rate":     2.8,
-        "la_use":        fv("la_season"),
-        "barrel_use":    barrel_s,
-        "barrel_mult":   1.0,
-        "la_mult":       1.0,
-        "pit_vuln_mult": 1.0,
-        "hot_cold_mult": 1.0,
-        "pit_modifier":  1.0,
-        "pull_s":        fv("pull_pct_season"),
-        "hh_season":     fv("hard_hit_season"),
-        "split_ip_vs_bat": pit_ip_vh,
-        "slg_vs_bat":    round(p_split.get("slg", 0), 3) if pit_ip_vh >= 5 else 0,
-        "pitch_breakdown": [],
+        "base_rate": round(base_rate * 100, 2),
+        "barrel_mult": round(barrel_mult, 3), "la_mult": round(la_mult, 3),
+        "pit_vuln_mult": round(pit_vuln_mult, 3),
+        "bat_platoon_mult": round(bat_platoon_mult, 3), "pit_platoon_mult": round(pit_platoon_mult, 3),
+        "park_factor": round(park_factor, 3), "weather_mult": round(weather_mult, 3),
+        "hot_cold_mult": round(hot_cold_mult, 3), "k_mult": round(k_mult, 3),
+        "iso_vs_hand": round(iso_vs_hand, 3), "iso_overall": round(iso_overall, 3),
+        "split_pa": split_pa, "split_ip_vs_bat": round(split_ip_vs_bat, 1),
+        "slg_vs_bat": round(slg_vs_bat, 3) if split_ip_vs_bat >= 5 else 0,
+        "pit_slg_overall": round(slg_overall_pit, 3),
+        "split_hr": int(b_split_vs_hand.get("hr", 0)),
+        "split_slg": round(b_split_vs_hand.get("slg", 0), 3),
+        "split_woba": round(b_split_vs_hand.get("woba", 0), 3),
+        "split_k_pct": round(b_split_vs_hand.get("k_pct", 0), 1),
+        "split_brl": round(b_split_vs_hand.get("barrel_pct", 0), 1),
+        "split_iso": round(iso_vs_hand, 3), "split_ip": round(split_ip_vs_bat, 1),
+        "hr9_split": round(p_split_vs_bat.get("hr9", 0), 2),
+        "hr9_season": round(pit_hr9_season, 2), "pit_hard": round(pit_hard, 1),
+        "n_pit_components": n_components,
+        "pit_blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025 ({ip_26:.0f} IP)",
+        "barrel_use": round(barrel_use, 1), "barrel_season": round(barrel_season, 1),
+        "la_use": round(la_use, 1), "la_season": round(la_season, 1),
+        "la_8d_raw": round(la_l8d, 1), "barrel_8d_raw": round(b8d.get("barrel_pct", 0), 1),
+        "hr_season": int(bc.get("hr", 0)), "pa_season": int(pa_26), "pa_8d": int(b8d.get("pa", 0)),
+        "has_8d": has_8d, "blend_note": blend_note, "k_season": round(k_season, 1),
+        "pitch_bonus": pitch_bonus, "pitch_breakdown": pitch_details,
         "data_conf": {
-            "barrel": 1 if barrel_s > 0 and pa_26 >= 20 else 0,
-            "hard_hit": 1 if fv("hard_hit_season") > 0 and pa_26 >= 20 else 0,
+            "barrel": 1 if barrel_season > 0 and pa_26 >= 20 else 0,
+            "la": 1 if la_season > 0 and pa_26 >= 20 else 0,
+            "pit_hr9": 1 if pit_hr9_season > 0 and total_ip >= 10 else 0,
+            "pit_hr9_hand": 1 if pit_hr9_vs_hand > 0 and pit_ip_vs_hand >= 5 else 0,
+            "iso_vs_hand": 1 if iso_vs_hand > 0 and split_pa >= 30 else 0,
+            "park": 1 if park_factor != 1.0 else 0,
+            "pitch_delta": 1 if pitch_bonus != 0 else 0,
+            "bat_platoon": 1 if bat_platoon_mult != 1.0 else 0,
         },
-        "n_pit_components": 1 if pit_hr9 > 0 else 0,
+        "bullpen_hr9": round(bullpen_hr9, 2), "bullpen_vuln": round(bullpen_vuln, 3),
+        "iso_use": round(iso_vs_hand if iso_vs_hand > 0 else iso_overall, 3),
+        "pull_s": round(blend(bc.get("pull_pct", 0), bp.get("pull_pct", 0), bwc, bwp), 1),
+        "pit_modifier": round(pit_vuln_mult, 3),
+        "hr_rate_8d": round(b8d.get("hr", 0) / max(b8d.get("pa", 1), 1) * 600, 1) if has_8d else 0,
     }
-
     return hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
+def get_archetype(barrel_pct, k_pct, fb_pct, iso):
+    if barrel_pct >= 10 and k_pct >= 28: return "Boom/Bust"
+    elif barrel_pct >= 10 and k_pct < 22: return "Pure Power"
+    elif barrel_pct >= 7 and fb_pct >= 38: return "Power"
+    elif iso >= 0.180 and k_pct < 20: return "Balanced"
+    elif k_pct >= 28: return "High K"
+    else: return "Contact"
+
+def get_trend(b8d, bc):
+    if not b8d or b8d.get("pa", 0) < 3: return "Steady"
+    score = 0
+    hr_rate = b8d.get("hr_rate", 0)
+    if hr_rate > 25: score += 2
+    elif hr_rate > 12: score += 1
+    elif hr_rate == 0 and b8d.get("pa", 0) >= 10: score -= 1
+    brl_8d = b8d.get("barrel_pct", 0)
+    brl_s = bc.get("barrel_pct", 0)
+    if brl_8d > 0 and brl_s > 0:
+        diff = brl_8d - brl_s
+        if diff >= 5: score += 2
+        elif diff >= 2: score += 1
+        elif diff <= -5: score -= 2
+        elif diff <= -2: score -= 1
+    iso_8d = b8d.get("iso", 0)
+    iso_s = bc.get("iso", 0)
+    if iso_8d > 0 and iso_s > 0:
+        if iso_8d - iso_s >= 0.080: score += 1
+        elif iso_8d - iso_s <= -0.080: score -= 1
+    if score >= 2: return "Heating Up"
+    elif score <= -2: return "Cooling Off"
+    return "Steady"
 
 def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
     return compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team)
 
+def _compute_hr_probability_legacy(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult):
+    bc = get_batter_stats(name, 2026)
+    bp = get_batter_stats(name, 2025)
+    b8d = get_batter_8d(name)
+    b_split = get_batter_split(name, opp_p_hand)
+
+    pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
+    bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
+    has_8d = b8d.get("pa", 0) >= 3
+    w_s = 0.70 if has_8d else 1.0
+    w_8 = 0.30 if has_8d else 0.0
+
+    def blend3(s26, s25, d8):
+        s = blend(s26, s25, bwc, bwp)
+        return round(s * w_s + d8 * w_8, 2) if (has_8d and d8 > 0) else round(s, 2)
+
+    barrel_s = blend3(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), b8d.get("barrel_pct", 0))
+    fb_s     = blend3(bc.get("fb_pct", 0), bp.get("fb_pct", 0), 0)
+    pull_s   = blend3(bc.get("pull_pct", 0), bp.get("pull_pct", 0), b8d.get("pull_pct", 0))
+    la_s     = blend3(bc.get("launch_angle", 0), bp.get("launch_angle", 0), b8d.get("launch_angle", 0))
+    k_s      = blend3(bc.get("k_pct", 0), bp.get("k_pct", 0), 0)
+    hr_fb_s  = 0
+
+    iso_split  = b_split.get("iso", 0) if b_split.get("pa", 0) >= 20 else 0
+    iso_season = blend(bc.get("iso", 0), bp.get("iso", 0), bwc, bwp)
+    iso_base   = iso_split if iso_split > 0 else iso_season
+    iso_8d     = b8d.get("iso", 0) if has_8d else 0
+    iso_use    = round(iso_base * w_s + iso_8d * w_8, 3) if iso_8d > 0 else iso_base
+
+    hr_rate_8d    = b8d.get("hr_rate", 0)
+    barrel_season = blend(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), bwc, bwp)
+    barrel_8d_raw = b8d.get("barrel_pct", 0)
+    trend = get_trend(b8d, bc)
+
+    pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
+
+    # Step 1 — Batter score
+    s1_barrel = round(min(barrel_s / 15.0, 1.0) * 30, 2)
+    s1_iso    = round(min(iso_use / 0.280, 1.0) * 14, 2)
+    s1_fb     = 0
+    s1_pull   = round(min(pull_s / 50.0, 1.0) * 8, 2)
+    s1_la     = round(min(max(la_s - 10, 0) / 20.0, 1.0) * 9, 2) if la_s > 0 else 0
+    s1_hrfb   = 0
+    s1_hr8d   = round(min(hr_rate_8d / 40.0, 1.0) * 5, 2) if has_8d and b8d.get("pa", 0) >= 10 else 0
+
+    batter_score = s1_barrel + s1_iso + s1_pull + s1_la + s1_hr8d + pitch_bonus
+
+    total_pa = pa_26 + pa_25
+    if total_pa < 30: batter_score *= 0.55
+    elif total_pa < 60: batter_score *= 0.75
+    elif pa_26 < 10: batter_score *= 0.80
+
+    archetype = get_archetype(barrel_season, k_s, fb_s, iso_season)
+
+    # Step 2 — Pitcher modifier
+    pc = get_pitcher_stats(opp_p_name, 2026)
+    pp = get_pitcher_stats(opp_p_name, 2025)
+    ip_26 = pc.get("ip", 0); ip_25 = pp.get("ip", 0)
+    pwc, pwp = get_pitcher_blend_weights(ip_26, ip_25)
+
+    p_split  = get_pitcher_split(opp_p_name, bat_hand)
+    split_ip = p_split.get("ip", 0)
+
+    hr9_season = blend(pc.get("hr9", 0), pp.get("hr9", 0), pwc, pwp)
+    hr9_split  = p_split.get("hr9", 0) if split_ip >= 5 else 0
+
+    if hr9_split > 0 and hr9_season > 0:
+        split_ratio  = hr9_split / hr9_season
+        split_weight = min(split_ip / 30.0, 0.80)
+        pit_hr9      = hr9_season * (1 - split_weight) + hr9_split * split_weight
+        platoon_magnitude = round((split_ratio - 1.0) * 100, 1)
+    else:
+        pit_hr9 = hr9_season
+        platoon_magnitude = 0.0
+
+    pit_hard = blend(pc.get("hard_hit_pct", 0), pp.get("hard_hit_pct", 0), pwc, pwp)
+    pit_brl  = blend(pc.get("barrel_pct_allowed", 0), pp.get("barrel_pct_allowed", 0), pwc, pwp)
+    pit_fb   = blend(pc.get("fb_pct", 0), pp.get("fb_pct", 0), pwc, pwp)
+
+    m_hr9  = 1.0 + (pit_hr9 - 1.15) / 1.15 * 0.40 if pit_hr9 > 0 else 1.0
+    m_hard = 1.0 + (pit_hard - 32.0) / 32.0 * 0.25 if pit_hard > 0 else 1.0
+    m_brl  = 1.0 + (pit_brl - 7.5) / 7.5 * 0.20  if pit_brl > 0 else 1.0
+    m_fb   = 1.0 + (pit_fb - 36.0) / 36.0 * 0.15  if pit_fb > 0 else 1.0
+
+    components = [(m_hr9, 0.40, pit_hr9 > 0), (m_hard, 0.25, pit_hard > 0),
+                  (m_brl, 0.20, pit_brl > 0), (m_fb, 0.15, pit_fb > 0)]
+    active = [(m, w) for m, w, has in components if has]
+    if not active:
+        pit_modifier = 1.0
+    else:
+        total_w = sum(w for _, w in active)
+        pit_modifier = sum(m * w / total_w for m, w in active)
+    pit_modifier = round(max(min(pit_modifier, 1.65), 0.55), 3)
+    n_components = len(active)
+
+    # Step 3 — K% gate
+    k_cap = 1.0
+    if k_s >= 35: k_cap = 0.75
+    elif k_s >= 30: k_cap = 0.88
+    elif k_s >= 28: k_cap = 0.94
+    after_k = batter_score * k_cap
+
+    # Step 4 — Context
+    after_context = round(after_k * pit_modifier * park_factor * weather_mult, 1)
+
+    # Step 5 — Sigmoid
+    hr_prob = sigmoid_to_prob(after_context)
+
+    platoon_tag = None
+    if split_ip >= 5 and hr9_split > 0 and hr9_season > 0:
+        split_ratio = hr9_split / hr9_season
+        hand_label  = "LHB" if bat_hand == "L" else "RHB"
+        if split_ratio >= 1.3:
+            platoon_tag = f"SP weak vs {hand_label} ({hr9_split:.1f} HR/9)"
+        elif split_ratio <= 0.7:
+            platoon_tag = f"SP strong vs {hand_label} ({hr9_split:.1f} HR/9)"
+
+    conf       = "High" if n_components >= 3 and pa_26 >= 50 else "Medium" if n_components >= 2 else "Low"
+    blend_note = f"{int(bwc*100)}% 2026/{int(bwp*100)}% 2025" + (" + 30% 8d" if has_8d else "")
+
+    reasons = []
+    if barrel_s > 10: reasons.append(f"Barrel {barrel_s:.1f}%")
+    if iso_use > 0.200: reasons.append(f"ISO .{int(iso_use*1000):03d}")
+    if pit_hr9 > 1.3: reasons.append(f"SP {pit_hr9:.1f} HR/9")
+    if pit_hard > 38: reasons.append(f"SP {pit_hard:.1f}% HH")
+    if park_factor >= 1.15: reasons.append("HR-friendly park")
+    elif park_factor <= 0.90: reasons.append("Pitcher-friendly park")
+
+    breakdown = {
+        "barrel_s": round(barrel_s, 1), "s1_barrel": s1_barrel,
+        "barrel_season": round(barrel_season, 1), "barrel_8d": round(barrel_8d_raw, 1),
+        "iso_use": round(iso_use, 3), "s1_iso": s1_iso, "iso_8d": round(iso_8d, 3),
+        "pull_8d": round(b8d.get("pull_pct", 0), 1),
+        "la_8d": round(b8d.get("launch_angle", 0), 1),
+        "pa_8d": int(b8d.get("pa", 0)),
+        "fb_s": round(fb_s, 1), "s1_fb": s1_fb,
+        "pull_s": round(pull_s, 1), "s1_pull": s1_pull,
+        "la_s": round(la_s, 1), "s1_la": s1_la,
+        "hr_fb_s": round(hr_fb_s, 1), "s1_hrfb": s1_hrfb,
+        "hr_rate_8d": round(hr_rate_8d, 1), "s1_hr8d": s1_hr8d,
+        "has_8d": has_8d, "batter_score": round(batter_score, 1),
+        "k_s": round(k_s, 1), "k_cap": k_cap,
+        "pit_hr9": round(pit_hr9, 2), "pit_hard": round(pit_hard, 1),
+        "pit_brl": round(pit_brl, 1), "pit_modifier": pit_modifier,
+        "n_pit_components": n_components, "platoon_magnitude": platoon_magnitude,
+        "hr9_split": round(hr9_split, 2), "hr9_season": round(hr9_season, 2),
+        "split_ip": round(split_ip, 1),
+        "pitch_bonus": pitch_bonus, "pitch_breakdown": pitch_details,
+        "after_k": round(after_k, 1), "park_factor": park_factor,
+        "weather_mult": weather_mult, "after_context": after_context, "hr_prob": hr_prob,
+        "blend_note": blend_note,
+        "pit_blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025 ({ip_26:.0f} IP)",
+        # Split stats for dropdown
+        "split_brl":  round(b_split.get("barrel_pct", 0), 1),
+        "split_iso":  round(b_split.get("iso", 0), 3),
+        "split_slg":  round(b_split.get("slg", 0), 3),
+        "split_woba": round(b_split.get("woba", 0), 3),
+        "split_hr":   int(b_split.get("hr", 0)),
+        "split_pa":   int(b_split.get("pa", 0)),
+        "hr_season":  int(bc.get("hr", 0)),
+        "l8d_hr_reliable": get_l8d_hr(name),
+    }
+    return hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
+
+# ── Weather ──
 async def fetch_weather(lat, lon, game_time_utc):
     try:
         # Default to 1pm local (most common day game time)
@@ -2973,8 +2704,9 @@ def fmt_odds(o):
 
 def pit_display(p_name, p_hand):
     pc = get_pitcher_stats(p_name, 2026)
+    pp = get_pitcher_stats(p_name, 2025)
     ip_26 = pc.get("ip", 0)
-    is_new = pc.get("is_new", False)
+    pwc, pwp = get_pitcher_blend_weights(ip_26, pp.get("ip", 0))
     top_pitches = get_pitcher_top_pitches(p_name)
     vs_L = get_pitcher_split(p_name, "L")
     vs_R = get_pitcher_split(p_name, "R")
@@ -2984,18 +2716,17 @@ def pit_display(p_name, p_hand):
         last = nl.split()[-1]
         for k, v in _cache["player_ip"].items():
             if last in k: ip_data = v; break
-    k9_val  = pc.get("k9", 0)
+    k9_val  = blend(pc.get("k9", 0), pp.get("k9", 0), pwc, pwp)
     avg_ip  = ip_data.get("avg_ip", 5.0) or 5.0
     gs_val  = ip_data.get("gs", 0)
     return {
         "name": p_name, "hand": p_hand,
-        "era": round(pc.get("era", 0), 2) or None,
-        "hr9": round(pc.get("hr9", 0), 2) or None,
-        "hard_hit_pct": round(pc.get("hard_hit_pct", 0), 1) or None,
-        "barrel_pct": round(pc.get("barrel_pct_allowed", 0), 1) or None,
+        "era": round(blend(pc.get("era", 0), pp.get("era", 0), pwc, pwp), 2) or None,
+        "hr9": round(blend(pc.get("hr9", 0), pp.get("hr9", 0), pwc, pwp), 2) or None,
+        "hard_hit_pct": round(blend(pc.get("hard_hit_pct", 0), pp.get("hard_hit_pct", 0), pwc, pwp), 1) or None,
+        "barrel_pct": round(blend(pc.get("barrel_pct_allowed", 0), pp.get("barrel_pct_allowed", 0), pwc, pwp), 1) or None,
         "ip_2026": round(ip_26, 1),
-        "is_new": is_new,
-        "blend_note": f"2026 season ({ip_26:.0f} IP)" + (" — NEW" if is_new else ""),
+        "blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025",
         "vs_L_hr9":  round(vs_L.get("hr9", 0), 2) if vs_L.get("pa", 0) >= 1 else None,
         "vs_R_hr9":  round(vs_R.get("hr9", 0), 2) if vs_R.get("pa", 0) >= 1 else None,
         "vs_L_k":    round(vs_L.get("k_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
@@ -3016,6 +2747,7 @@ async def get_history():
     """Return all historical prediction/result files from GitHub"""
     if not GITHUB_TOKEN:
         return {"error": "GitHub not configured", "records": []}
+    import json
     try:
         # List all files in data/predictions/
         url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions"
@@ -3046,28 +2778,6 @@ async def get_history():
         print(f"History endpoint error: {e}")
         return {"error": str(e), "records": []}
 
-@app.get("/debug-contact")
-async def debug_contact(player: str = "Yordan Alvarez"):
-    """Debug contact log — check cache size, sample keys, and player lookup"""
-    nl = player.lower().strip()
-    last = nl.split()[-1]
-    # Direct match
-    direct = _contact_log.get(nl)
-    # Partial match
-    partial_keys = [k for k in _contact_log if last in k]
-    # Sample of what's in cache
-    sample_keys = list(_contact_log.keys())[:10]
-    return {
-        "cache_size": len(_contact_log),
-        "player_searched": player,
-        "direct_match": direct is not None,
-        "direct_events": len(direct) if direct else 0,
-        "partial_matches": partial_keys[:5],
-        "sample_cache_keys": sample_keys,
-        "contact_url": savant_contact_log_url(),
-        "events": direct or (list(_contact_log.values())[0] if _contact_log else []),
-    }
-
 @app.get("/debug-l8d")
 async def debug_l8d(player: str = "Murakami"):
     """Debug L8D data — check what Savant returns vs season stats"""
@@ -3090,7 +2800,7 @@ async def debug_l8d(player: str = "Murakami"):
         "same_as_season": b8d.get("barrel_pct") == bc.get("barrel_pct"),
     }
 
-@app.get("/recalibrate")
+@app.post("/recalibrate")
 async def manual_recalibrate():
     """Manually trigger model recalibration — requires 50+ completed records"""
     result = await recalibrate_model()
@@ -3098,268 +2808,37 @@ async def manual_recalibrate():
 
 @app.get("/model-weights")
 async def get_model_weights():
-    """Return current model weights and calibration status"""
-    season_start = date(2026, 4, 13)
-    days_since_start = (date.today() - season_start).days
+    """Return current model weights, rotation status, and model log"""
+    rotation_start = date(2026, 4, 13)
+    days_since_start = (date.today() - rotation_start).days
+    days_left = ROTATION_DAYS - get_rotation_day()
     return {
         "weights": _model_weights,
-        "calibration": {
+        "rotation": {
             "round": get_rotation_round(),
-            "last_calibrated": _model_weights.get("last_calibrated"),
-            "records_used": _model_weights.get("records_used", 0),
-            "days_since_season_start": days_since_start,
-            "auto_recalibrate": "Every Sunday 3am ET",
+            "day": get_rotation_day(),
+            "days_left": days_left,
+            "rotation_start": rotation_start.isoformat(),
+            "days_since_start": days_since_start,
         },
+        "rotation_schedule": ROTATION_SCHEDULE,
         "league_constants": LEAGUE_CONSTANTS,
     }
 
-@app.get("/save-predictions")
+@app.post("/save-predictions")
 async def manual_save_predictions():
-    """Manually trigger saving today's predictions and parlay combos"""
+    """Manually trigger saving today's predictions"""
     await save_daily_predictions()
-    await save_parlay_combinations()
     return {"status": "done", "date": date.today().isoformat()}
 
-
-@app.get("/save-parlays")
-async def manual_save_parlays(target_date: str = None):
-    """Manually trigger parlay combination saving for a specific date.
-    Example: /save-parlays?target_date=2026-04-29
-    """
-    d = target_date or date.today().isoformat()
-    await save_parlay_combinations(target_date=d)
+@app.post("/record-results")
+async def manual_record_results(target_date: str = None):
+    """Manually trigger recording results for a date"""
+    d = target_date or (date.today() - timedelta(days=1)).isoformat()
+    await record_results(d)
     return {"status": "done", "date": d}
 
-
-@app.get("/record-parlay-results")
-async def manual_record_parlay_results(target_date: str = None):
-    """Rerun parlay result recording for any date — resets both_hit to null first.
-    Example: /record-parlay-results?target_date=2026-04-29
-    Use this to fix dates where both_hit was incorrectly recorded as 0.
-    """
-    d = target_date or (date.today() - timedelta(days=1)).isoformat()
-    # First reset all both_hit to null so we repatch cleanly
-    path = f"data/parlays/{d}.json"
-    content, sha = await github_get_file(path)
-    if not content:
-        return {"error": f"No parlay file found for {d}"}
-    try:
-        data = json.loads(content)
-        combos = data.get("combos", [])
-        # Reset both_hit to null so fixed code can repatch
-        for combo in combos:
-            combo["both_hit"] = None
-        await github_put_file(path, json.dumps(data, indent=2),
-                              f"parlay reset: {d} (re-recording results)", sha)
-        # Now rerun result recording with fixed name lookup
-        await record_parlay_results(d)
-        # Fetch updated file to show results
-        updated_content, _ = await github_get_file(path)
-        updated_data = json.loads(updated_content) if updated_content else {}
-        updated_combos = updated_data.get("combos", [])
-        hit_count = sum(1 for c in updated_combos if c.get("both_hit") == 1)
-        null_count = sum(1 for c in updated_combos if c.get("both_hit") is None)
-        return {
-            "status": "done",
-            "date": d,
-            "total_combos": len(updated_combos),
-            "both_hit": hit_count,
-            "no_hit": len(updated_combos) - hit_count - null_count,
-            "still_null": null_count,
-        }
-    except Exception as e:
-        return {"error": str(e)}
-
-
-@app.get("/resave-today")
-async def resave_today_predictions():
-    """
-    Re-run today's predictions with current model weights.
-    Preserves any hit_hr results already recorded (HRs that already happened).
-    Only updates model_hr_pct and model breakdown fields — never touches hit_hr.
-    Use this after pushing a new model/LR calibration mid-day.
-    """
-    if not _cache["ready"]:
-        return {"error": "Cache not ready"}
-    today = date.today().isoformat()
-    path = f"data/predictions/{today}.json"
-
-    # Load existing file so we can preserve hit_hr values
-    existing_content, sha = await github_get_file(path)
-    existing_results = {}  # name+team -> hit_hr
-    if existing_content:
-        try:
-            ex_recs = json.loads(existing_content)
-            for r in ex_recs:
-                key = f"{r.get('name','')}|{r.get('team','')}"
-                existing_results[key] = r.get("hit_hr")  # preserve hit_hr (0, 1, DNP, or None)
-        except Exception as e:
-            print(f"resave-today: could not parse existing file: {e}")
-
-    # Run full save — this computes fresh model_hr_pct with current LR weights
-    await save_daily_predictions(force=True)
-
-    # Now re-load what was just saved and patch hit_hr values back in
-    new_content, new_sha = await github_get_file(path)
-    if not new_content:
-        return {"error": "Save ran but file not found after write"}
-
-    try:
-        new_recs = json.loads(new_content)
-        patched = 0
-        for r in new_recs:
-            key = f"{r.get('name','')}|{r.get('team','')}"
-            if key in existing_results and existing_results[key] is not None:
-                r["hit_hr"] = existing_results[key]
-                patched += 1
-        # Write patched file back
-        final_content = json.dumps(new_recs, indent=2)
-        await github_put_file(path, final_content, f"resave+patch: {today} ({patched} results preserved)", new_sha)
-        preserved = {k: v for k, v in existing_results.items() if v is not None}
-        return {
-            "status": "done",
-            "date": today,
-            "total_records": len(new_recs),
-            "results_preserved": patched,
-            "preserved_detail": preserved
-        }
-    except Exception as e:
-        return {"error": f"Patch step failed: {e}"}
-
-@app.get("/record-results")
-async def manual_record_results(target_date: str = None, force: bool = True):
-    """Manually trigger recording results for a date. force=True re-checks DNP records."""
-    d = target_date or (date.today() - timedelta(days=1)).isoformat()
-    await record_results(d, force=force)
-    return {"status": "done", "date": d, "force": force}
-
-@app.get("/rerecord-all")
-async def rerecord_all_results():
-    """Re-run record_results for all prediction files — fixes bad DNP records"""
-    try:
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(
-                f"https://api.github.com/repos/{GITHUB_REPO}/contents/data/predictions",
-                headers={"Authorization": f"token {GITHUB_TOKEN}"}
-            )
-            files = r.json()
-        results = []
-        for f in sorted(files, key=lambda x: x["name"]):
-            fname = f["name"]
-            if not fname.endswith(".json"): continue
-            d = fname.replace(".json", "")
-            # Skip today — games not finished
-            if d == date.today().isoformat(): continue
-            content, _ = await github_get_file(f"data/predictions/{fname}")
-            if not content: continue
-            try:
-                recs = json.loads(content)
-                total = len(recs)
-                bad_dnp = sum(1 for r in recs if r.get("hit_hr") == "DNP")
-                nulls   = sum(1 for r in recs if r.get("hit_hr") is None)
-                results.append({"date": d, "total": total, "dnp": bad_dnp, "null": nulls})
-                # Re-record with force=True to fix bad DNP records
-                if bad_dnp > 0 or nulls > 0:
-                    await record_results(d, force=True)
-                    print(f"Re-recorded {d} (force=True): {bad_dnp} DNP re-checked, {nulls} nulls filled")
-            except Exception as e:
-                results.append({"date": d, "error": str(e)})
-        return {"status": "complete", "dates_processed": results}
-    except Exception as e:
-        return {"error": str(e)}
-
-@app.get("/verify-results")
-async def verify_results():
-    """Show DNP/HR/miss breakdown for all prediction dates with tiered hit rates"""
-    try:
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(
-                f"https://api.github.com/repos/{GITHUB_REPO}/contents/data/predictions",
-                headers={"Authorization": f"token {GITHUB_TOKEN}"}
-            )
-            files = r.json()
-        summary = []
-        # Aggregate across all dates for overall tier analysis
-        all_recs = []
-        for f in sorted(files, key=lambda x: x["name"], reverse=True):
-            fname = f["name"]
-            if not fname.endswith(".json"): continue
-            d = fname.replace(".json", "")
-            content, _ = await github_get_file(f"data/predictions/{fname}")
-            if not content: continue
-            try:
-                recs = json.loads(content)
-                total  = len(recs)
-                hrs    = sum(1 for r in recs if r.get("hit_hr") == 1)
-                misses = sum(1 for r in recs if r.get("hit_hr") == 0)
-                dnps   = sum(1 for r in recs if r.get("hit_hr") == "DNP")
-                nulls  = sum(1 for r in recs if r.get("hit_hr") is None)
-
-                # Tier breakdown — only count non-DNP, non-null
-                def tier_hr(recs, lo, hi):
-                    t = [r for r in recs if r.get("hit_hr") in (0,1)
-                         and lo <= (r.get("model_hr_pct") or 0) < hi]
-                    h = sum(1 for r in t if r.get("hit_hr") == 1)
-                    return h, len(t)
-
-                h20, n20 = tier_hr(recs, 20, 999)
-                h15, n15 = tier_hr(recs, 15, 20)
-                h10, n10 = tier_hr(recs, 10, 15)
-                h8,  n8  = tier_hr(recs, 8,  10)
-                h5,  n5  = tier_hr(recs, 5,   8)
-
-                suspicious = dnps > total * 0.3
-                summary.append({
-                    "date": d,
-                    "total": total,
-                    "hrs": hrs,
-                    "misses": misses,
-                    "dnp": dnps,
-                    "null": nulls,
-                    "overall_hr_rate": f"{round(hrs/max(hrs+misses,1)*100,1)}%",
-                    "dnp_pct": f"{round(dnps/max(total,1)*100,1)}%",
-                    "suspicious": suspicious,
-                    "tiers": {
-                        "20pct_plus":  {"hrs": h20, "total": n20, "hit_rate": f"{round(h20/max(n20,1)*100,1)}%"},
-                        "15_to_20":    {"hrs": h15, "total": n15, "hit_rate": f"{round(h15/max(n15,1)*100,1)}%"},
-                        "10_to_15":    {"hrs": h10, "total": n10, "hit_rate": f"{round(h10/max(n10,1)*100,1)}%"},
-                        "8_to_10":     {"hrs": h8,  "total": n8,  "hit_rate": f"{round(h8/max(n8,1)*100,1)}%"},
-                        "5_to_8":      {"hrs": h5,  "total": n5,  "hit_rate": f"{round(h5/max(n5,1)*100,1)}%"},
-                    }
-                })
-                all_recs.extend([r for r in recs if r.get("hit_hr") in (0,1)])
-            except Exception:
-                continue
-
-        # Overall cumulative tier analysis
-        def cum_tier(recs, lo, hi):
-            t = [r for r in recs if lo <= (r.get("model_hr_pct") or 0) < hi]
-            h = sum(1 for r in t if r.get("hit_hr") == 1)
-            return h, len(t), round(h/max(len(t),1)*100,1)
-
-        ch20, cn20, cr20 = cum_tier(all_recs, 20, 999)
-        ch15, cn15, cr15 = cum_tier(all_recs, 15, 20)
-        ch10, cn10, cr10 = cum_tier(all_recs, 10, 15)
-        ch8,  cn8,  cr8  = cum_tier(all_recs, 8,  10)
-        ch5,  cn5,  cr5  = cum_tier(all_recs, 5,   8)
-
-        return {
-            "cumulative_tier_analysis": {
-                "20pct_plus": {"hrs": ch20, "total": cn20, "hit_rate": f"{cr20}%",
-                               "note": "Your top betting tier"},
-                "15_to_20":  {"hrs": ch15, "total": cn15, "hit_rate": f"{cr15}%",
-                               "note": "Strong plays"},
-                "10_to_15":  {"hrs": ch10, "total": cn10, "hit_rate": f"{cr10}%",
-                               "note": "Watchlist"},
-                "8_to_10":   {"hrs": ch8,  "total": cn8,  "hit_rate": f"{cr8}%",
-                               "note": "Marginal"},
-                "5_to_8":    {"hrs": ch5,  "total": cn5,  "hit_rate": f"{cr5}%",
-                               "note": "Data only — never bet"},
-            },
-            "dates": summary
-        }
-    except Exception as e:
-        return {"error": str(e)}
+@app.get("/debug-results")
 async def debug_results(target_date: str = None):
     """Show what the MLB API returned for a date vs what we predicted"""
     d = target_date or (date.today() - timedelta(days=1)).isoformat()
@@ -3391,9 +2870,8 @@ async def debug_results(target_date: str = None):
                             hr_hitters[name] = hrs
         # Load predictions for that date
         path = f"data/predictions/{d}.json"
-        import json as _json
         raw, _ = await github_get_file(path)
-        records = _json.loads(raw) if raw else []
+        records = json.loads(raw) if raw else []
         pred_names = [r["name"] for r in records]
         # Match predictions to API results
         matches = []
@@ -3419,222 +2897,6 @@ async def debug_results(target_date: str = None):
     except Exception as e:
         return {"error": str(e)}
 
-@app.get("/debug/model-state")
-async def debug_model_state():
-    """
-    Show exactly what the model is doing after recalibration:
-    - Which 8 stats are active and their weights
-    - What data source each stat reads from
-    - What changed from defaults
-    - Sample sizes used in last calibration
-    - Correlation values per stat
-    """
-
-    # ── Data source map — where each stat comes from ──
-    DATA_SOURCES = {
-        "barrel_season":     "Baseball Savant — season Statcast (barrel_batted_rate)",
-        "barrel_l8d":        "Baseball Savant — rolling 8-day Statcast window",
-        "la_season":         "Baseball Savant — season launch_angle_avg",
-        "la_l8d":            "Baseball Savant — rolling 8-day launch angle",
-        "ev_season":         "Baseball Savant — season exit_velocity_avg",
-        "ev_l8d":            "Baseball Savant — rolling 8-day exit velocity",
-        "iso_season":        "Baseball Savant — season SLG minus AVG",
-        "iso_vs_hand":       "Baseball Savant — batter split vs pitcher hand (ISO)",
-        "hard_hit_season":   "Baseball Savant — season hard_hit_percent",
-        "hard_hit_l8d":      "Baseball Savant — rolling 8-day hard hit%",
-        "pit_hr9_season":    "MLB Stats API — pitcher HR/9 from game logs",
-        "pit_hr9_vs_hand":   "Baseball Savant — pitcher splits vs batter hand (HR/9)",
-        "pit_slg_season":    "Baseball Savant — pitcher season SLG allowed",
-        "pit_slg_vs_hand":   "Baseball Savant — pitcher splits vs batter hand (SLG)",
-        "park":              "Static park HR factors table (hand-adjusted)",
-        "weather":           "Open-Meteo API — wind speed/direction/temperature",
-        "bullpen":           "MLB Stats API — team bullpen HR/9",
-        "bat_platoon":       "Baseball Savant — batter ISO vs hand / ISO overall ratio",
-        "pit_platoon":       "Baseball Savant — pitcher SLG vs hand / SLG overall ratio",
-        "pitch_delta":       "Baseball Savant — batter + pitcher pitch run values (arsenal)",
-        "k_pct":             "Baseball Savant — batter K% (penalty gate)",
-        "fb_pct_season":     "Baseball Savant — batter fly ball%",
-        "pull_pct_season":   "Baseball Savant — batter pull%",
-        "pit_fb_pct_allowed":"Baseball Savant — pitcher fly ball% allowed",
-        "hard_hit_l8d":      "Baseball Savant — rolling 8-day hard hit%",
-        "k_pct_l8d":         "Baseball Savant — rolling 8-day K%",
-        "pit_era_diff":      "MLB Stats API — pitcher ERA vs league avg",
-        "pit_k9_season":     "MLB Stats API — pitcher K/9 season",
-        "xwoba_l8d":         "Baseball Savant — rolling 8-day xwOBA",
-        "xslg_l8d":          "Baseball Savant — rolling 8-day xSLG",
-        "bat_speed_l8d":     "Baseball Savant — rolling 8-day bat speed",
-        "slg_l8d":           "Baseball Savant — rolling 8-day SLG",
-    }
-
-    weights = _model_weights
-    active_stats = weights.get("active_stats", DEFAULT_WEIGHTS["active_stats"])
-    default_stats = DEFAULT_WEIGHTS["active_stats"]
-
-    # ── Build active stat details ──
-    active_details = []
-    for stat in active_stats:
-        w_key = stat + "_w"
-        current_w = round(float(weights.get(w_key, 1.0)), 3)
-        default_w = round(float(DEFAULT_WEIGHTS.get(w_key, 1.0)), 3)
-        changed = abs(current_w - default_w) >= 0.05
-        was_default = stat in default_stats
-        source = DATA_SOURCES.get(stat, "Unknown source")
-        active_details.append({
-            "stat": stat,
-            "weight": current_w,
-            "default_weight": default_w,
-            "weight_changed": changed,
-            "direction": "up" if current_w > default_w else "down" if current_w < default_w else "unchanged",
-            "was_in_default_model": was_default,
-            "promoted": not was_default,
-            "data_source": source,
-        })
-
-    # Sort by weight descending
-    active_details.sort(key=lambda x: x["weight"], reverse=True)
-
-    # ── Stats that were dropped vs defaults ──
-    dropped_from_default = [s for s in default_stats if s not in active_stats]
-    newly_promoted = [s for s in active_stats if s not in default_stats]
-
-    # ── All weight changes from defaults ──
-    all_changes = []
-    for key in DEFAULT_WEIGHTS:
-        if not key.endswith("_w"): continue
-        old_w = round(float(DEFAULT_WEIGHTS[key]), 3)
-        new_w = round(float(weights.get(key, 1.0)), 3)
-        if abs(new_w - old_w) >= 0.05:
-            stat_name = key.replace("_w", "")
-            all_changes.append({
-                "stat": stat_name,
-                "before": old_w,
-                "after": new_w,
-                "delta": round(new_w - old_w, 3),
-                "direction": "up" if new_w > old_w else "down",
-                "data_source": DATA_SOURCES.get(stat_name, "Unknown"),
-            })
-    all_changes.sort(key=lambda x: abs(x["delta"]), reverse=True)
-
-    # ── Calibration metadata ──
-    meta = {
-        "last_calibrated": weights.get("last_calibrated"),
-        "records_used": weights.get("records_used", 0),
-        "calibration_round": weights.get("calibration_round", 0),
-        "promoted_stats": weights.get("promoted_stats", []),
-        "dropped_stats": weights.get("dropped_stats", []),
-        "recent_changes": weights.get("recent_changes", []),
-    }
-
-    # ── Sigmoid status ──
-    sigmoid_status = {
-        "status": "REMOVED — April 2026",
-        "reason": "Scores clustered 14-47, never reaching sigmoid center of 50. All outputs compressed to 5-14% band.",
-        "current_output": "direct: running * 100, floor 2%, cap 28%",
-        "previous_formula": "0.02 + sigmoid((raw-50)/18) * 0.25",
-    }
-
-    return {
-        "calibration_meta": meta,
-        "active_model": {
-            "count": len(active_details),
-            "stats": active_details,
-        },
-        "changes_from_default": {
-            "dropped": dropped_from_default,
-            "promoted": newly_promoted,
-            "weight_changes": all_changes,
-        },
-        "sigmoid": sigmoid_status,
-        "calibration": {
-            "round": get_rotation_round(),
-            "last_calibrated": _model_weights.get("last_calibrated"),
-            "records_used": _model_weights.get("records_used", 0),
-            "auto_recalibrate": "Every Sunday 3am ET",
-        },
-        "data_source_legend": DATA_SOURCES,
-    }
-
-
-@app.get("/debug/scores")
-async def debug_score_distribution():
-    """
-    Return model% distribution for today's predictions.
-    Sigmoid removed April 2026 — model_hr_pct is now the direct output.
-    """
-    import statistics
-
-    today = date.today().isoformat()
-    path = f"data/predictions/{today}.json"
-    content, _ = await github_get_file(path)
-
-    if not content:
-        return {"error": f"No predictions found for {today} — run /save-predictions first"}
-
-    try:
-        records = json.loads(content)
-    except Exception as e:
-        return {"error": f"Failed to parse predictions: {e}"}
-
-    pcts = [r["model_hr_pct"] for r in records if r.get("model_hr_pct") is not None]
-    if not pcts:
-        return {"error": "No model_hr_pct values found"}
-
-    pcts_sorted = sorted(pcts)
-    n = len(pcts)
-
-    def percentile(lst, p):
-        idx = int(len(lst) * p / 100)
-        return lst[min(idx, len(lst)-1)]
-
-    mean_pct   = round(statistics.mean(pcts), 2)
-    median_pct = round(statistics.median(pcts), 2)
-    std_pct    = round(statistics.stdev(pcts) if n > 1 else 0, 2)
-
-    diagnosis = []
-    above_8  = len([p for p in pcts if p >= 8])
-    above_10 = len([p for p in pcts if p >= 10])
-    above_15 = len([p for p in pcts if p >= 15])
-
-    if mean_pct < 6:
-        diagnosis.append(f"SKEW LOW: mean={mean_pct}% — base rates too conservative, most batters below 8% threshold")
-    elif mean_pct > 12:
-        diagnosis.append(f"SKEW HIGH: mean={mean_pct}% — outputs may be inflated")
-    else:
-        diagnosis.append(f"HEALTHY: mean={mean_pct}% — reasonable distribution")
-
-    diagnosis.append(f"Above 8%: {above_8}/{n} batters showing on board")
-    diagnosis.append(f"Above 10%: {above_10}/{n} | Above 15%: {above_15}/{n}")
-
-    player_scores = sorted([
-        {"name": r.get("name"), "team": r.get("team"),
-         "pitcher": r.get("opp_pitcher"), "model_pct": r.get("model_hr_pct")}
-        for r in records if r.get("model_hr_pct") is not None
-    ], key=lambda x: x["model_pct"], reverse=True)
-
-    return {
-        "date": today,
-        "n_predictions": n,
-        "distribution": {
-            "min": pcts_sorted[0],
-            "max": pcts_sorted[-1],
-            "mean": mean_pct,
-            "median": median_pct,
-            "std_dev": std_pct,
-            "p25": round(percentile(pcts_sorted, 25), 2),
-            "p75": round(percentile(pcts_sorted, 75), 2),
-            "p90": round(percentile(pcts_sorted, 90), 2),
-        },
-        "threshold_counts": {
-            "above_5pct": len([p for p in pcts if p >= 5]),
-            "above_8pct": above_8,
-            "above_10pct": above_10,
-            "above_15pct": above_15,
-        },
-        "diagnosis": diagnosis,
-        "all_players": player_scores,
-    }
-
-
 @app.get("/")
 def root():
     return {
@@ -3652,12 +2914,14 @@ def status():
         "last_8d_update": _cache["last_8d_update"],
         # Batter data
         "bat_2026": len(_cache["bat_2026"]),
+        "bat_2025": len(_cache["bat_2025"]),
         "bat_8d": len(_cache["bat_8d"]),
         "bat_l5g": len(_cache["bat_l5g"]),
         "bat_vs_lhp": len(_cache["bat_vs_lhp"]),
         "bat_vs_rhp": len(_cache["bat_vs_rhp"]),
         # Pitcher data
         "pit_2026": len(_cache["pit_2026"]),
+        "pit_2025": len(_cache["pit_2025"]),
         "pit_vs_lhh": len(_cache["pit_vs_lhh"]),
         "pit_vs_rhh": len(_cache["pit_vs_rhh"]),
         "pit_arsenal": len(_cache["pit_arsenal"]),
@@ -3674,65 +2938,7 @@ def status():
         "model_calibrated": _model_weights.get("last_calibrated"),
         "model_round": get_rotation_round(),
         "model_day": get_rotation_day(),
-        # Decision Tree status
-        "tree_trained": _dt_model is not None,
-        "tree_depth": _model_weights.get("tree_depth"),
-        "tree_records": _model_weights.get("records_used", 0),
-        "calibration_factor": _model_weights.get("calibration_factor", 1.0),
-        "next_depth_upgrade": _model_weights.get("next_depth_upgrade"),
     }
-
-@app.get("/reload-contact")
-async def reload_contact_get():
-    """GET endpoint to trigger contact log reload — browser friendly"""
-    asyncio.create_task(reload_contact_log())
-    return {"status": "Contact log reloading — check back in 60 seconds"}
-
-
-@app.get("/refresh-8d")
-async def manual_refresh_8d():
-    """Manually trigger full 8d refresh as background task.
-    Returns immediately — check /status after ~60s for last_8d_update timestamp.
-    Running synchronously caused Railway timeouts on the 9MB contact log fetch."""
-    asyncio.create_task(refresh_8d())
-    return {
-        "status": "refreshing — check /status in 60 seconds",
-        "current_bat_8d": len(_cache["bat_8d"]),
-        "current_contact_log": len(_contact_log),
-        "note": "last_8d_update will populate once refresh completes"
-    }
-@app.get("/clear-cache")
-async def clear_cache():
-    """Clear games cache — forces fresh rebuild on next /games call"""
-    _games_cache.clear()
-    # Spot check — does Yordan have contact data right now?
-    test = get_contact_log("Yordan Alvarez")
-    return {
-        "status": "Games cache cleared",
-        "contact_log_size": len(_contact_log),
-        "yordan_events": len(test),
-        "yordan_sample": test[0] if test else None,
-    }
-
-@app.get("/debug-contact-fetch")
-async def debug_contact_fetch():
-    """Test whether the contact log CSV URL is reachable from Railway"""
-    url = savant_contact_log_url()
-    try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
-            r = await client.get(url, headers=headers, follow_redirects=True)
-            text = r.text[:500] if r.text else ""
-            return {
-                "status_code": r.status_code,
-                "content_length": len(r.text),
-                "first_500_chars": text,
-                "is_csv": text.startswith("pitch_type") or "player_name" in text[:200],
-                "url": url,
-                "deny_reason": r.headers.get("x-deny-reason", "none"),
-            }
-    except Exception as e:
-        return {"error": str(e), "url": url}
 
 @app.post("/reload")
 async def reload_data():
@@ -3742,17 +2948,13 @@ async def reload_data():
     return {"status": "Reloading data from Baseball Savant"}
 
 async def reload_contact_log():
-    """Reload contact log — 9MB file needs 180s timeout"""
-    await asyncio.sleep(5)
-    async with httpx.AsyncClient(timeout=200) as client:
-        df = await fetch_savant_csv(savant_contact_log_url(), client, timeout=180)
+    """Fetch contact log separately after a short delay so main data loads first"""
+    await asyncio.sleep(45)
+    async with httpx.AsyncClient(timeout=120) as client:
+        df = await fetch_savant_csv(savant_contact_log_url(), client)
         if not df.empty:
             _build_contact_log(df)
-            _games_cache.clear()
             print(f"contact_log reloaded: {len(_contact_log)} players")
-        else:
-            print("contact_log reload failed — CSV empty")
-    _cache["last_8d_update"] = datetime.now().isoformat()
 
 @app.get("/games")
 async def get_games(date: str = None, refresh: bool = False):
@@ -3863,7 +3065,11 @@ async def get_games(date: str = None, refresh: bool = False):
                 name, bat_hand, opp_p_name, opp_p_hand, park_factor, batter_wx_mult, home_team)
 
             bc = get_batter_stats(name, 2026)
+            bp = get_batter_stats(name, 2025)
+            pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
+            bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
             b8d = get_batter_8d(name)
+
             bl5g = get_batter_l5g(name)
 
             all_batters.append({
@@ -3874,31 +3080,28 @@ async def get_games(date: str = None, refresh: bool = False):
                 "park_factor": round(park_factor, 2),
                 "l8d_hr_count": get_l8d_hr(name),
                 "season": {
-                    "barrel": round(bc.get("barrel_pct", 0), 1),
-                    "ev":     round(bc.get("exit_velo", 0), 1),
-                    "la":     round(bc.get("launch_angle", 0), 1),
-                    "hh":     round(bc.get("hard_hit_pct", 0), 1),
-                    "iso":    round(bc.get("iso", 0), 3),
-                    "slg":    round(bc.get("slg_percent", 0), 3),
-                    "avg":    round(bc.get("batting_avg", 0), 3),
-                    "k":      round(bc.get("k_pct", 0), 1),
-                    "pull":   round(bc.get("pull_pct", 0), 1),
+                    "barrel": round(blend(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), bwc, bwp), 1),
+                    "ev":     round(blend(bc.get("exit_velo", 0), bp.get("exit_velo", 0), bwc, bwp), 1),
+                    "la":     round(blend(bc.get("launch_angle", 0), bp.get("launch_angle", 0), bwc, bwp), 1),
+                    "hh":     round(blend(bc.get("hard_hit_pct", 0), bp.get("hard_hit_pct", 0), bwc, bwp), 1),
+                    "iso":    round(blend(bc.get("iso", 0), bp.get("iso", 0), bwc, bwp), 3),
+                    "slg":    round(blend(bc.get("slg_percent", 0), bp.get("slg_percent", 0), bwc, bwp), 3),
+                    "avg":    round(blend(bc.get("batting_avg", 0), bp.get("batting_avg", 0), bwc, bwp), 3),
+                    "k":      round(blend(bc.get("k_pct", 0), bp.get("k_pct", 0), bwc, bwp), 1),
+                    "pull":   round(blend(bc.get("pull_pct", 0), bp.get("pull_pct", 0), bwc, bwp), 1),
                     "hr":     int(bc.get("hr", 0)),
                 },
                 "l8d": {
-                    "pa":       int(b8d.get("pa", 0)),
-                    "barrel":   round(b8d.get("barrel_pct", 0), 1),
-                    "ev":       round(b8d.get("exit_velo", 0), 1),
-                    "la":       round(b8d.get("launch_angle", 0), 1),
-                    "hh":       round(b8d.get("hard_hit_pct", 0), 1),
-                    "iso":      round(b8d.get("iso", 0), 3),
-                    "slg":      round(b8d.get("slg", 0), 3),
-                    "avg":      round(b8d.get("avg", 0), 3),
-                    "pull":     round(b8d.get("pull_pct", 0), 1),
-                    "k_pct":    round(b8d.get("k_pct", 0), 1),
-                    "xwoba":    round(b8d.get("xwoba", 0), 3),
-                    "xslg":     round(b8d.get("xslg", 0), 3),
-                    "bat_speed":round(b8d.get("bat_speed", 0), 1),
+                    "pa":     int(b8d.get("pa", 0)),
+                    "barrel": round(b8d.get("barrel_pct", 0), 1),
+                    "ev":     round(b8d.get("exit_velo", 0), 1),
+                    "la":     round(b8d.get("launch_angle", 0), 1),
+                    "hh":     round(b8d.get("hard_hit_pct", 0), 1),
+                    "iso":    round(b8d.get("iso", 0), 3),
+                    "slg":    round(b8d.get("slg", 0), 3),
+                    "avg":    round(b8d.get("avg", 0), 3),
+                    "pull":   round(b8d.get("pull_pct", 0), 1),
+                    "k_pct":  round(b8d.get("k_pct", 0), 1),
                 },
                 "l5g": {
                     "ab":  int(bl5g.get("ab", 0)),
@@ -3910,7 +3113,6 @@ async def get_games(date: str = None, refresh: bool = False):
                 "dk_odds": fmt_odds(match_dk_odds(name, dk_props)),
                 "projected": is_proj, "platoon_tag": platoon_tag,
                 "contact_log": get_contact_log(name),
-                "pitch_splits": get_batter_pitch_splits(name),
                 "breakdown": breakdown,
             })
 
@@ -4029,379 +3231,52 @@ async def get_games(date: str = None, refresh: bool = False):
     _games_cache[today] = {"data": result, "ts": datetime.now()}
     return result
 
-
-
-
-@app.get("/parlay-results")
-async def parlay_results(date: str = None):
-    """Show parlay combination outcomes — hit rates for 2 and 3-leg combos."""
-    if not GITHUB_TOKEN:
-        return {"error": "No GitHub token"}
-    try:
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(
-                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/parlays",
-                headers={"Authorization": f"token {GITHUB_TOKEN}"}
-            )
-        if r.status_code != 200:
-            return {"error": "No parlay data yet — tracking starts today", "all_time": {"two_leg_combos":0,"three_leg_combos":0,"two_leg_hit_rate":"--","three_leg_hit_rate":"--"}}
-        files = r.json()
-        all_combos = []
-        target = date or datetime.now().strftime("%Y-%m-%d")
-        today_combos = []
-        for f in sorted(files, key=lambda x: x["name"], reverse=True)[:30]:
-            content, _ = await github_get_file(f"data/parlays/{f["name"]}")
-            if not content: continue
-            data = json.loads(content)
-            combos = data.get("combos", [])
-            all_combos.extend(combos)
-            if f["name"].replace(".json","") == target:
-                today_combos = combos
-        completed = [c for c in all_combos if c.get("both_hit") is not None]
-        two_leg   = [c for c in completed if c.get("n_legs")==2]
-        three_leg = [c for c in completed if c.get("n_legs")==3]
-        two_hits   = [c for c in two_leg   if c.get("both_hit")==1]
-        three_hits = [c for c in three_leg if c.get("both_hit")==1]
-        best = sorted([c for c in completed if c.get("both_hit")==1], key=lambda c: c.get("n_legs",0)*100+sum(c.get("probs",[])), reverse=True)
-        today_done = [c for c in today_combos if c.get("both_hit") is not None]
-        today_hits = [c for c in today_done if c.get("both_hit")==1]
-        return {
-            "date": target,
-            "today": {
-                "two_leg_combos": len([c for c in today_combos if c.get("n_legs")==2]),
-                "three_leg_combos": len([c for c in today_combos if c.get("n_legs")==3]),
-                "two_leg_hits": len([c for c in today_hits if c.get("n_legs")==2]),
-                "three_leg_hits": len([c for c in today_hits if c.get("n_legs")==3]),
-            },
-            "all_time": {
-                "two_leg_combos": len(two_leg),
-                "three_leg_combos": len(three_leg),
-                "two_leg_hit_rate": f"{len(two_hits)/len(two_leg)*100:.1f}%" if two_leg else "--",
-                "three_leg_hit_rate": f"{len(three_hits)/len(three_leg)*100:.1f}%" if three_leg else "--",
-                "days_tracked": len(files),
-            },
-            "best_combos": best[:5],
-        }
-    except Exception as e:
-        return {"error": str(e)}
-@app.get("/coverage-check")
-async def coverage_check():
+@app.get("/debug-weather")
+async def debug_weather(team: str = "Pittsburgh Pirates", wind_deg: int = 315, wind_speed: int = 12, temp: int = 56):
+    """Debug weather calculation for any stadium.
+    Example: /debug-weather?team=Pittsburgh+Pirates&wind_deg=315&wind_speed=12&temp=56
+    wind_deg = meteorological direction wind comes FROM (0=N, 90=E, 180=S, 270=W)
     """
-    Check coverage and build the clean stat list for Decision Tree.
-    Distinguishes between true zeros vs missing data for each stat.
-    """
-    if not GITHUB_TOKEN:
-        return {"error": "No GitHub token"}
+    stadium = STADIUMS.get(team)
+    if not stadium:
+        return {"error": f"Team not found: {team}", "available": list(STADIUMS.keys())}
+    if stadium.get("dome"):
+        return {"team": team, "dome": True, "result": "No wind effect in dome"}
 
-    try:
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(
-                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
-                headers={"Authorization": f"token {GITHUB_TOKEN}"}
-            )
-            files = r.json()
-    except Exception as e:
-        return {"error": str(e)}
+    cf_bearing = stadium.get("cf_bearing", 67)
+    hr_r = stadium.get("hr_bearing_R", (cf_bearing + 270) % 360)
+    hr_l = stadium.get("hr_bearing_L", (cf_bearing + 90) % 360)
+    wind_toward = (wind_deg + 180) % 360
 
-    all_records = []
-    for f in sorted(files, key=lambda x: x["name"]):
-        if not f["name"].endswith(".json"): continue
-        content_raw, _ = await github_get_file(f"data/predictions/{f['name']}")
-        if not content_raw: continue
-        try:
-            recs = json.loads(content_raw)
-            completed = [r for r in recs if r.get("hit_hr") in [0, 1]]
-            all_records.extend(completed)
-        except:
-            continue
+    COMPASS = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"]
+    def compass(deg): return COMPASS[round(((deg % 360) + 360) % 360 / 22.5) % 16]
 
-    if not all_records:
-        return {"error": "No completed records found"}
-
-    total = len(all_records)
-    hr_count = sum(1 for r in all_records if r.get("hit_hr") == 1)
-
-    # Stats where zero = truly missing (player/pitcher not in Savant yet)
-    ZERO_MEANS_MISSING = {
-        "barrel_pct_season", "hard_hit_season", "ev_season", "iso_season",
-        "la_season", "pull_pct_season",
-        "barrel_pct_l8d", "hard_hit_l8d", "ev_l8d", "bat_speed_l8d",
-        "xwoba_l8d", "xslg_l8d", "slg_l8d", "iso_l8d", "k_pct_l8d",
-        "la_l8d", "pa_l8d",
-    }
-
-    # Stats where zero = real data (pitcher genuinely hasn't given up HR)
-    # BUT only if IP companion field is > 0, otherwise still missing
-    ZERO_MEANS_DOMINANT = {
-        "pit_hr9_season":   "pit_ip_season",     # zero HR/9 only real if IP > 0
-        "pit_hr9_vs_hand":  "pit_ip_vs_hand",    # zero HR/9 vs hand only real if IP > 5
-        "pit_slg_vs_hand":  "pit_ip_vs_hand",    # zero SLG vs hand only real if IP > 5
-    }
-
-    # Stats that are always real (computed values, never truly missing)
-    ALWAYS_REAL = {
-        "park_factor", "weather_mult", "bullpen_hr9",
-        "bat_platoon_mult", "pit_platoon_mult",
-        "pitch_matchup_score",
-        "pit_era_season", "pit_hard_hit_season", "pit_k9_season",
-        "pit_ip_season", "pit_ip_vs_hand",
-        "iso_vs_hand", "slg_vs_hand", "pa_vs_hand",
-    }
-
-    # For each record build a clean feature vector
-    # filling zeros with the right value based on stat type
-    def clean_record(rec):
-        cleaned = {}
-        cleaned["hit_hr"] = rec["hit_hr"]
-
-        # Season averages for fallback
-        pit_hr9_season = rec.get("pit_hr9_season", 0)
-        pit_ip_season  = rec.get("pit_ip_season", 0)
-        pit_ip_vs_hand = rec.get("pit_ip_vs_hand", 0)
-
-        for stat in ZERO_MEANS_MISSING:
-            v = rec.get(stat)
-            if v is None or v == 0:
-                cleaned[stat] = None  # genuinely missing
-            else:
-                cleaned[stat] = float(v)
-
-        for stat, ip_field in ZERO_MEANS_DOMINANT.items():
-            v = rec.get(stat)
-            ip = rec.get(ip_field, 0)
-            min_ip = 5 if "vs_hand" in stat else 1
-            if ip >= min_ip:
-                # Real data — zero means dominant, keep it
-                cleaned[stat] = float(v) if v is not None else 0.0
-            else:
-                # No IP = no data — fall back to season rate
-                fallback = pit_hr9_season if "hr9" in stat else None
-                cleaned[stat] = fallback
-
-        for stat in ALWAYS_REAL:
-            v = rec.get(stat)
-            cleaned[stat] = float(v) if v is not None else None
-
-        return cleaned
-
-    cleaned_records = [clean_record(r) for r in all_records]
-
-    # Now check coverage of cleaned records
-    ALL_STATS = list(ZERO_MEANS_MISSING | set(ZERO_MEANS_DOMINANT.keys()) | ALWAYS_REAL)
-
-    coverage = {}
-    for stat in ALL_STATS:
-        real = [r for r in cleaned_records if r.get(stat) is not None]
-        pct = round(len(real) / total * 100, 1)
-        hr_rate = round(
-            sum(1 for r in real if r.get("hit_hr") == 1) / max(len(real), 1) * 100, 1
-        )
-        coverage[stat] = {
-            "coverage_pct": pct,
-            "real_records": len(real),
-            "hr_rate": hr_rate,
-            "zero_treatment": (
-                "dominant_if_ip>0" if stat in ZERO_MEANS_DOMINANT
-                else "missing" if stat in ZERO_MEANS_MISSING
-                else "always_real"
-            ),
-            "usable": pct >= 60
-        }
-
-    usable   = sorted([s for s, v in coverage.items() if v["usable"]],
-                      key=lambda s: coverage[s]["coverage_pct"], reverse=True)
-    unusable = [s for s, v in coverage.items() if not v["usable"]]
+    mult_r, label_r = calc_weather_multiplier(team, wind_speed, wind_deg, temp, "R")
+    mult_l, label_l = calc_weather_multiplier(team, wind_speed, wind_deg, temp, "L")
 
     return {
-        "total_records": total,
-        "hr_records": hr_count,
-        "hr_rate": round(hr_count / total * 100, 1),
-        "usable_for_tree": usable,
-        "unusable_drop": unusable,
-        "coverage_detail": dict(sorted(
-            coverage.items(),
-            key=lambda x: x[1]["coverage_pct"], reverse=True
-        ))
-    }
-
-
-@app.get("/debug-score")
-async def debug_score(batter: str, pitcher: str = "TBD", bat_hand: str = None, pit_hand: str = "R", home_team: str = ""):
-    """
-    Show exactly how batter score and matchup score are computed for a player.
-    Example: /debug-score?batter=Munetaka+Murakami&pitcher=Michael+Soroka&pit_hand=R
-    """
-    if not _cache["ready"]:
-        return {"error": "Cache not ready"}
-
-    # Resolve bat hand if not provided
-    if not bat_hand:
-        cached = _cache.get("player_hands", {}).get(batter.lower().strip(), {})
-        bat_hand = cached.get("bat_side", "R")
-        if bat_hand == "S": bat_hand = "L" if pit_hand == "R" else "R"
-
-    park_factor = get_park_hr_factor(home_team or "Unknown", bat_hand)
-    wx_mult = 1.0
-
-    hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf = compute_hr_probability(
-        batter, bat_hand, pitcher, pit_hand, park_factor, wx_mult, home_team
-    )
-
-    sm = breakdown.get("stat_mults", {})
-    active_stats = breakdown.get("active_stats", [])
-
-    # Pool definitions (mirrors scoring function)
-    BATTER_POOL = {
-        "barrel_season", "hard_hit_season", "ev_season", "iso_season",
-        "la_season", "pull_pct_season", "fb_pct_season", "chase_rate_season",
-        "barrel_l8d", "hard_hit_l8d", "ev_l8d", "bat_speed_l8d",
-        "xwoba_l8d", "xslg_l8d", "slg_l8d", "xslg_gap_l8d",
-        "iso_l8d", "k_pct_l8d", "la_l8d",
-    }
-    MATCHUP_POOL = {
-        "park", "weather", "iso_vs_hand", "bat_platoon", "pit_platoon",
-        "bullpen", "pitch_delta",
-        "pit_hr9_season", "pit_hr9_vs_hand", "pit_slg_vs_hand",
-        "pit_hard_hit_season", "pit_era_diff", "pit_k9_season",
-        "pit_slg_season", "pit_fb_pct", "pit_stuff_plus",
-    }
-
-    # Build per-stat breakdown
-    # stat_mults stores individual stats OR group keys (group_{stat}) for correlated groups
-    # Need to check both to find the right multiplier
-    batter_stats = []
-    matchup_stats = []
-
-    for stat in active_stats:
-        # Check direct key first, then group key, then raw_mults via group scan
-        mult = sm.get(stat)
-        if mult is None:
-            # Check if this stat was absorbed into a correlated group
-            # Groups are stored as group_{first_stat_in_group}
-            for key, val in sm.items():
-                if key.startswith("group_") and key != "group_batter_score" and key != "group_matchup_score":
-                    mult = val
-                    break
-            if mult is None:
-                mult = 1.0
-        entry = {
-            "stat": stat,
-            "multiplier": round(float(mult), 3),
-            "direction": "boost" if float(mult) > 1.05 else "suppress" if float(mult) < 0.95 else "neutral"
-        }
-        if stat in BATTER_POOL:
-            batter_stats.append(entry)
-        elif stat in MATCHUP_POOL:
-            matchup_stats.append(entry)
-
-    # Get actual scores computed by the model
-    batter_score = sm.get("batter_score") or breakdown.get("batter_score") or 1.0
-    matchup_score = sm.get("matchup_score") or breakdown.get("matchup_score") or 1.0
-
-    # Always-on multipliers (not in active_stats)
-    always_on = {
-        "park_factor": round(breakdown.get("park_factor", 1.0), 3),
-        "weather_mult": round(breakdown.get("weather_mult", 1.0), 3),
-        "k_penalty": round(breakdown.get("k_mult", 1.0), 3),
-        "pit_platoon": round(breakdown.get("pit_platoon_mult", 1.0), 3),
-        "bat_platoon": round(breakdown.get("bat_platoon_mult", 1.0), 3),
-    }
-
-    base = breakdown.get("base_rate", 0)
-    k_pen = always_on["k_penalty"]
-
-    return {
-        "batter": batter,
-        "pitcher": pitcher,
-        "bat_hand": bat_hand,
-        "pit_hand": pit_hand,
-        "hr_prob": round(hr_prob, 1),
-        "batter_score": {
-            "total": round(float(batter_score), 3),
-            "active_stats": batter_stats,
-            "formula": " × ".join([f"{s['stat']} {s['multiplier']}x" for s in batter_stats])
+        "team": team,
+        "stadium_orientation": {
+            "cf_bearing": cf_bearing,
+            "cf_direction": compass(cf_bearing),
+            "lf_bearing": hr_r,
+            "lf_direction": compass(hr_r),
+            "rf_bearing": hr_l,
+            "rf_direction": compass(hr_l),
         },
-        "matchup_score": {
-            "total": round(float(matchup_score), 3),
-            "active_stats": matchup_stats,
-            "formula": " × ".join([f"{s['stat']} {s['multiplier']}x" for s in matchup_stats])
+        "wind": {
+            "from_deg": wind_deg,
+            "from_direction": compass(wind_deg),
+            "toward_deg": wind_toward,
+            "toward_direction": compass(wind_toward),
+            "speed_mph": wind_speed,
+            "temp_f": temp,
         },
-        "always_on_multipliers": always_on,
-        "active_stats_all": active_stats,
-        "final_math": {
-            "base_rate": round(base, 2),
-            "× batter_score": round(float(batter_score), 3),
-            "× matchup_score": round(float(matchup_score), 3),
-            "× k_penalty": round(k_pen, 3),
-            "× park": always_on["park_factor"],
-            "× weather": always_on["weather_mult"],
-            "= expected": round(base * float(batter_score) * float(matchup_score) * k_pen, 1),
-            "= actual_hr_prob": round(hr_prob, 1),
-            "note": "expected vs actual differ if sigmoid or always-on caps applied"
-        }
+        "result_rhb": {"mult": mult_r, "label": label_r},
+        "result_lhb": {"mult": mult_l, "label": label_l},
+        "interpretation": f"Wind FROM {compass(wind_deg)} TOWARD {compass(wind_toward)}. CF at {compass(cf_bearing)}. LF at {compass(hr_r)}, RF at {compass(hr_l)}.",
     }
 
-
-
-@app.get("/debug-xslg-history")
-async def debug_xslg_history(days: int = 7):
-    """Show xSLG L8D distribution across recent prediction records.
-    Use to verify xSLG values are in a realistic range after the fix.
-    Example: /debug-xslg-history?days=7
-    """
-    if not GITHUB_TOKEN:
-        return {"error": "No GitHub token"}
-    try:
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(
-                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
-                headers={"Authorization": f"token {GITHUB_TOKEN}"}
-            )
-        if r.status_code != 200:
-            return {"error": "No prediction files found"}
-        files = sorted(r.json(), key=lambda x: x["name"], reverse=True)[:days]
-        all_xslg = []
-        per_day = []
-        for f in files:
-            content, _ = await github_get_file(f"data/predictions/{f['name']}")
-            if not content:
-                continue
-            records = _json.loads(content)
-            day_vals = [r.get("xslg_l8d", 0) for r in records if r.get("xslg_l8d", 0) > 0]
-            all_xslg.extend(day_vals)
-            per_day.append({
-                "date": f["name"].replace(".json", ""),
-                "n_records": len(records),
-                "n_with_xslg": len(day_vals),
-                "xslg_min":  round(min(day_vals), 3) if day_vals else 0,
-                "xslg_max":  round(max(day_vals), 3) if day_vals else 0,
-                "xslg_mean": round(sum(day_vals)/len(day_vals), 3) if day_vals else 0,
-                "xslg_median": round(sorted(day_vals)[len(day_vals)//2], 3) if day_vals else 0,
-                "above_1":   len([v for v in day_vals if v > 1.0]),
-                "above_0_5": len([v for v in day_vals if v > 0.5]),
-                "below_0_1": len([v for v in day_vals if v < 0.1]),
-                "sample": sorted(day_vals, reverse=True)[:5],
-            })
-        # Overall stats
-        overall = {
-            "total_records": len(all_xslg),
-            "mean":   round(sum(all_xslg)/len(all_xslg), 3) if all_xslg else 0,
-            "median": round(sorted(all_xslg)[len(all_xslg)//2], 3) if all_xslg else 0,
-            "min":    round(min(all_xslg), 3) if all_xslg else 0,
-            "max":    round(max(all_xslg), 3) if all_xslg else 0,
-            "above_1_0_pct":  round(len([v for v in all_xslg if v > 1.0])/len(all_xslg)*100, 1) if all_xslg else 0,
-            "above_0_5_pct":  round(len([v for v in all_xslg if v > 0.5])/len(all_xslg)*100, 1) if all_xslg else 0,
-            "below_0_1_pct":  round(len([v for v in all_xslg if v < 0.1])/len(all_xslg)*100, 1) if all_xslg else 0,
-            "verdict": "looks correct" if all_xslg and 0.3 < sum(all_xslg)/len(all_xslg) < 1.5 else "investigate — values outside expected range"
-        }
-        return {
-            "overall": overall,
-            "per_day": per_day,
-            "expected_range": "0.30 - 1.50 mean for realistic xSLG L8D values",
-            "note": "xSLG per contact event avg — above 1.0 means elite power contact, below 0.1 means fix failed"
-        }
-    except Exception as e:
-        return {"error": str(e)}
 
 @app.get("/research")
 async def research(player: str, date: str = None):
@@ -4412,27 +3287,30 @@ async def research(player: str, date: str = None):
         return {"error": "Data loading — try again in 30 seconds"}
 
     bc = get_batter_stats(player, 2026)
+    bp = get_batter_stats(player, 2025)
     b8d = get_batter_8d(player)
     bl5g = get_batter_l5g(player)
-    pa_26 = bc.get("pa", 0)
+    pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
+    bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
     has_8d = b8d.get("pa", 0) >= 3
     w_s, w_8 = (0.70, 0.30) if has_8d else (1.0, 0.0)
 
-    def blend3(s26, d8):
-        return round(s26 * w_s + d8 * w_8, 3) if (has_8d and d8 > 0) else round(s26, 3)
+    def blend3(s26, s25, d8):
+        s = blend(s26, s25, bwc, bwp)
+        return round(s * w_s + d8 * w_8, 3) if (has_8d and d8 > 0) else round(s, 3)
 
     stats = {
-        "name": player, "pa_2026": pa_26,
-        "blend_note": f"2026 season ({pa_26} PA)" + (" + L8D" if has_8d else ""),
+        "name": player, "pa_2026": pa_26, "pa_2025": pa_25,
+        "blend_note": f"{int(bwc*100)}% 2026 / {int(bwp*100)}% 2025",
         "season_2026": bc,
         "last_8d": b8d,
         "last_5g": bl5g,
         "blended": {
-            "barrel_pct":   blend3(bc.get("barrel_pct", 0), b8d.get("barrel_pct", 0)),
-            "iso":          blend3(bc.get("iso", 0), b8d.get("iso", 0)),
-            "pull_pct":     blend3(bc.get("pull_pct", 0), b8d.get("pull_pct", 0)),
-            "launch_angle": blend3(bc.get("launch_angle", 0), b8d.get("launch_angle", 0)),
-            "hard_hit_pct": blend3(bc.get("hard_hit_pct", 0), b8d.get("hard_hit_pct", 0)),
+            "barrel_pct":   blend3(bc.get("barrel_pct", 0), bp.get("barrel_pct", 0), b8d.get("barrel_pct", 0)),
+            "iso":          blend3(bc.get("iso", 0), bp.get("iso", 0), b8d.get("iso", 0)),
+            "pull_pct":     blend3(bc.get("pull_pct", 0), bp.get("pull_pct", 0), b8d.get("pull_pct", 0)),
+            "launch_angle": blend3(bc.get("launch_angle", 0), bp.get("launch_angle", 0), b8d.get("launch_angle", 0)),
+            "hard_hit_pct": blend3(bc.get("hard_hit_pct", 0), bp.get("hard_hit_pct", 0), b8d.get("hard_hit_pct", 0)),
         },
         "splits": {
             "vs_lhp": get_batter_split(player, "L"),
@@ -4458,7 +3336,9 @@ async def research(player: str, date: str = None):
                         info = await fetch_player_hand(opp_p_id)
                         opp_p_hand = info.get("pitch_hand", "R")
                     pc = get_pitcher_stats(opp_p_name, 2026)
+                    pp2 = get_pitcher_stats(opp_p_name, 2025)
                     ip_26 = pc.get("ip", 0)
+                    pwc, pwp = get_pitcher_blend_weights(ip_26, pp2.get("ip", 0))
                     pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, player)
                     matchup = {
                         "home_team": game["teams"]["home"]["team"]["name"],
@@ -4467,10 +3347,10 @@ async def research(player: str, date: str = None):
                         "pitcher_name": opp_p_name,
                         "pitcher_hand": opp_p_hand,
                         "pitcher_stats": {
-                            "era": round(pc.get("era", 0), 2),
-                            "hr9": round(pc.get("hr9", 0), 2),
-                            "hard_hit_pct": round(pc.get("hard_hit_pct", 0), 1),
-                            "barrel_pct_allowed": round(pc.get("barrel_pct_allowed", 0), 1),
+                            "era": round(blend(pc.get("era", 0), pp2.get("era", 0), pwc, pwp), 2),
+                            "hr9": round(blend(pc.get("hr9", 0), pp2.get("hr9", 0), pwc, pwp), 2),
+                            "hard_hit_pct": round(blend(pc.get("hard_hit_pct", 0), pp2.get("hard_hit_pct", 0), pwc, pwp), 1),
+                            "barrel_pct_allowed": round(blend(pc.get("barrel_pct_allowed", 0), pp2.get("barrel_pct_allowed", 0), pwc, pwp), 1),
                             "ip_2026": ip_26,
                             "blend_note": f"{int(pwc*100)}% 2026 / {int(pwp*100)}% 2025",
                         },
