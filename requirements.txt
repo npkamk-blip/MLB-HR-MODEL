@@ -5,3 +5,4 @@ pandas
 pybaseball
 scikit-learn
 numpy
+xgboost
