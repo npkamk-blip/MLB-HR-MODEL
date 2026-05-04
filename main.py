@@ -266,14 +266,15 @@ async def recalibrate_model(save_to_github: bool = True):
                    for feat, imp in zip(FEATURES, rf.feature_importances_)}
     ranked = sorted(importances.items(), key=lambda x: x[1], reverse=True)
 
-    # ── OOB score (free accuracy estimate using held-out samples) ──
-    rf_oob = RandomForestClassifier(
-        n_estimators=n_trees, max_depth=max_depth, min_samples_leaf=min_leaf,
-        max_features="sqrt", bootstrap=True, oob_score=True,
-        random_state=42, n_jobs=-1,
-    )
-    rf_oob.fit(X, y)
-    oob_score = round(float(rf_oob.oob_score_), 4)
+    # ── RF cross-val AUC — same metric as XGBoost for honest comparison ──
+    try:
+        from sklearn.model_selection import cross_val_score
+        import numpy as np
+        rf_cv_scores = cross_val_score(rf, X, y, cv=5, scoring="roc_auc", n_jobs=-1)
+        rf_auc = round(float(np.mean(rf_cv_scores)), 4)
+    except Exception:
+        rf_auc = 0.0
+    oob_score = rf_auc  # stored as oob_score for backwards compat but now AUC
 
     # ── HR rate in training data (calibration reference) ──
     hr_rate = round(sum(y) / len(y) * 100, 2)
@@ -3381,35 +3382,28 @@ def status():
 
 @app.get("/version")
 def version():
-    """Quick check — confirms what's deployed and model status for both RF and XGBoost."""
-    rf_oob  = _model_weights.get("oob_score", 0)
-    xgb_cv  = _xgb_oob
-    winning = "xgboost" if (_xgb_trained and xgb_cv > rf_oob) else "random_forest"
+    """Quick check — both models now use CV AUC for honest apples-to-apples comparison."""
+    rf_auc  = _model_weights.get("oob_score", 0)  # now CV AUC not OOB
+    xgb_auc = _xgb_oob
+    winning = "xgboost" if (_xgb_trained and xgb_auc > rf_auc) else "random_forest"
     return {
         "file_version":    "2026-05-04",
         "active_model":    winning,
+        "metric":          "cv_auc_5fold — both models on same scale (0.5=random, 1.0=perfect)",
         "rf": {
             "trained":      _rf_trained,
             "records_used": _model_weights.get("records_used", 0),
-            "oob_score":    rf_oob,
+            "cv_auc":       rf_auc,
             "params":       _model_weights.get("rf_params"),
             "top_features": _model_weights.get("top_features", []),
         },
         "xgboost": {
             "trained":      _xgb_trained,
-            "cv_auc":       xgb_cv,
-            "beats_rf":     _xgb_trained and xgb_cv > rf_oob,
-            "top_features": [k for k, _ in sorted(
-                ({f: float(v) for f, v in _model_weights.get("feature_importances", {}).items()}).items(),
-                key=lambda x: x[1], reverse=True
-            )[:5]] if _xgb_trained else [],
+            "cv_auc":       xgb_auc,
+            "beats_rf":     _xgb_trained and xgb_auc > rf_auc,
+            "gap":          round(xgb_auc - rf_auc, 4),
         },
-        "features": [
-            "XGBoost training silently in parallel with RF",
-            "day_of_season added to all prediction records",
-            "Parlay tracking active",
-            "2026-only model — no 2025 blending",
-        ]
+        "flip_condition":  "XGBoost goes live when xgb cv_auc > rf cv_auc on same 5-fold split",
     }
 
 
@@ -3423,13 +3417,14 @@ async def xgboost_status():
             import json
             try: meta.update(json.loads(content))
             except: pass
-    rf_oob = _model_weights.get("oob_score", 0)
-    meta["rf_oob_comparison"] = rf_oob
-    meta["xgb_beats_rf"] = _xgb_trained and _xgb_oob > rf_oob
+    rf_auc = _model_weights.get("oob_score", 0)  # now CV AUC
+    meta["rf_auc_comparison"] = rf_auc
+    meta["xgb_beats_rf"] = _xgb_trained and _xgb_oob > rf_auc
+    meta["metric"] = "cv_auc_5fold — both on same scale, 0.5=random 1.0=perfect"
     meta["recommendation"] = (
         "XGBoost ready to go live — flip compute_hr_probability to use XGBoost"
         if meta.get("xgb_beats_rf") else
-        f"RF still winning — XGBoost CV AUC {_xgb_oob:.3f} vs RF OOB {rf_oob:.3f}. Keep collecting data."
+        f"RF CV AUC {rf_auc:.3f} vs XGBoost CV AUC {_xgb_oob:.3f} — gap: {round(_xgb_oob - rf_auc, 3)}. Keep collecting data."
     )
     return meta
 
