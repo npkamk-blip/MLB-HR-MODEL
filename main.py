@@ -198,11 +198,11 @@ async def recalibrate_model(save_to_github: bool = True):
         "iso_season", "iso_vs_hand",
         "hard_hit_season", "hard_hit_l8d",
         "k_pct_season", "k_pct_l8d",
-        "fb_pct_season", "pull_pct_season",
+        "pull_pct_season",
         "pit_hr9_season", "pit_hr9_vs_hand",
         "pit_hard_hit_season", "pit_era_season",
         "pit_k9_season", "pit_era_diff",
-        "pit_slg_vs_hand", "pit_fb_pct_allowed",
+        "pit_slg_vs_hand",
         "park_factor", "weather_mult",
         "bat_platoon_mult", "pit_platoon_mult",
         "bullpen_vuln", "pitch_matchup_score",
@@ -381,11 +381,11 @@ async def train_xgboost(save_to_github: bool = True):
         "iso_season", "iso_vs_hand",
         "hard_hit_season", "hard_hit_l8d",
         "k_pct_season", "k_pct_l8d",
-        "fb_pct_season", "pull_pct_season",
+        "pull_pct_season",
         "pit_hr9_season", "pit_hr9_vs_hand",
         "pit_hard_hit_season", "pit_era_season",
         "pit_k9_season", "pit_era_diff",
-        "pit_slg_vs_hand", "pit_fb_pct_allowed",
+        "pit_slg_vs_hand",
         "park_factor", "weather_mult",
         "bat_platoon_mult", "pit_platoon_mult",
         "bullpen_vuln", "pitch_matchup_score",
@@ -530,9 +530,8 @@ ROTATION_SCHEDULE = {
     },
     2: {
         "active": [],  # filled after round 1 correlation analysis
-        "candidates": ["fb_pct_season","pull_pct_season","pit_fb_pct_allowed",
-                       "hard_hit_l8d","k_pct_l8d"],
-        "note": "Testing flyball%, pull%, pitcher flyball% allowed"
+        "candidates": ["pull_pct_season","hard_hit_l8d","k_pct_l8d"],
+        "note": "Testing pull%, hard hit L8D, K% L8D — fb_pct removed (never populated)"
     },
     3: {
         "active": [],
@@ -1437,6 +1436,26 @@ async def github_put_file(path: str, content: str, message: str, sha: str = None
 async def save_daily_predictions():
     """Save today's predictions to GitHub — uses same data as /games endpoint for consistency"""
     if not _cache["ready"]: return
+
+    # ── Ensure 8d data is fresh before saving ──
+    # L8D barrel%, EV, xSLG are critical features — don't save with stale data
+    needs_refresh = False
+    last_8d = _cache.get("last_8d_update")
+    if not last_8d:
+        needs_refresh = True
+    else:
+        try:
+            from datetime import datetime as dt
+            last = dt.fromisoformat(last_8d)
+            age_hours = (dt.now() - last).total_seconds() / 3600
+            if age_hours > 3:
+                needs_refresh = True
+        except: needs_refresh = True
+
+    if needs_refresh:
+        print("save_daily_predictions: 8d data stale — refreshing before save")
+        await refresh_8d()
+        await asyncio.sleep(30)  # let it populate
     today = date.today().isoformat()
     path = f"data/predictions/{today}.json"
     existing, sha = await github_get_file(path)
@@ -2560,7 +2579,6 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, 
             "hard_hit_l8d":         b8d.get("hard_hit_pct", 0),
             "k_pct_season":         bv("k_pct"),
             "k_pct_l8d":            b8d.get("k_pct", 0),
-            "fb_pct_season":        bv("fb_pct"),
             "pull_pct_season":      bv("pull_pct"),
             "pit_hr9_season":       pv("hr9"),
             "pit_hr9_vs_hand":      p_split.get("hr9", 0),
@@ -2569,7 +2587,6 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, 
             "pit_k9_season":        pv("k9"),
             "pit_era_diff":         round(pv("era") - 4.20, 2) if pv("era") > 0 else 0,
             "pit_slg_vs_hand":      p_split.get("slg", 0),
-            "pit_fb_pct_allowed":   pv("fb_pct"),
             "park_factor":          park_factor,
             "weather_mult":         weather_mult,
             "bat_platoon_mult":     breakdown.get("bat_platoon_mult", 1.0),
@@ -2629,7 +2646,6 @@ def predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mul
             "hard_hit_l8d":         b8d.get("hard_hit_pct", 0),
             "k_pct_season":         bv("k_pct"),
             "k_pct_l8d":            b8d.get("k_pct", 0),
-            "fb_pct_season":        bv("fb_pct"),
             "pull_pct_season":      bv("pull_pct"),
             "pit_hr9_season":       pv("hr9"),
             "pit_hr9_vs_hand":      p_split.get("hr9", 0),
@@ -2638,7 +2654,6 @@ def predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mul
             "pit_k9_season":        pv("k9"),
             "pit_era_diff":         round(pv("era") - 4.20, 2) if pv("era") > 0 else 0,
             "pit_slg_vs_hand":      p_split.get("slg", 0),
-            "pit_fb_pct_allowed":   pv("fb_pct"),
             "park_factor":          park_factor,
             "weather_mult":         weather_mult,
             "bat_platoon_mult":     breakdown.get("bat_platoon_mult", 1.0),
@@ -3310,11 +3325,11 @@ async def coverage_check(days: int = 7):
             "iso_season", "iso_vs_hand",
             "hard_hit_season", "hard_hit_l8d",
             "k_pct_season", "k_pct_l8d",
-            "fb_pct_season", "pull_pct_season",
+            "pull_pct_season",
             "pit_hr9_season", "pit_hr9_vs_hand",
             "pit_hard_hit_season", "pit_era_season",
             "pit_k9_season", "pit_era_diff",
-            "pit_slg_vs_hand", "pit_fb_pct_allowed",
+            "pit_slg_vs_hand",
             "park_factor", "weather_mult",
             "bat_platoon_mult", "pit_platoon_mult",
             "bullpen_vuln", "pitch_matchup_score",
