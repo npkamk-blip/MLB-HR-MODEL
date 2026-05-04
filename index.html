@@ -1264,10 +1264,16 @@ function buildBatDetail(b){
       labelsSvg += '<circle cx="'+dp[0]+'" cy="'+dp[1]+'" r="3" fill="'+dotC+'"/>';
     });
 
-    // Center — trend indicator instead of avg number
-    var trendD = trendDot(b);
-    var trendLabel = trendD==='dot-hot'?'🔥':trendD==='dot-warm'?'↑':trendD==='dot-cold'?'↓':'·';
-    var trendColor = trendD==='dot-hot'?'#ff9f0a':trendD==='dot-warm'?'#32d74b':trendD==='dot-cold'?'#ff453a':'rgba(255,255,255,0.3)';
+    // Center — trend indicator (inline since trendDot is in a different scope)
+    var l8b = b.l8d||{};
+    var s8b = b.season||{};
+    var trendD = ((l8b.barrel||0)>=(s8b.barrel||0)*1.2&&(l8b.barrel||0)>=10)||((b.l8d_hr_count||0)>=2)
+                 ? 'dot-fire'
+                 : ((b.l8d_hr_count||0)>=1||(l8b.xslg||0)>=0.700)
+                 ? 'dot-warm'
+                 : 'dot-neutral';
+    var trendLabel = trendD==='dot-fire'?'🔥':trendD==='dot-warm'?'↑':'·';
+    var trendColor = trendD==='dot-fire'?'#ff9f0a':trendD==='dot-warm'?'#32d74b':'rgba(255,255,255,0.3)';
 
     var svgStr = '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'
       + gridSvg
