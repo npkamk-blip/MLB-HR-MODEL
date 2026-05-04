@@ -3257,6 +3257,12 @@ async def manual_save_predictions():
     await save_daily_predictions()
     return {"status": "done", "date": date.today().isoformat()}
 
+@app.get("/save-predictions")
+async def manual_save_predictions_get():
+    """GET version — browser accessible"""
+    await save_daily_predictions()
+    return {"status": "done", "date": date.today().isoformat()}
+
 @app.post("/record-results")
 async def manual_record_results(target_date: str = None):
     """Manually trigger recording results for a date"""
