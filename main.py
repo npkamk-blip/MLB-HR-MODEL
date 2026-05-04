@@ -3048,6 +3048,126 @@ def pit_display(p_name, p_hand):
     }
 
 # ── API Endpoints ──
+@app.get("/dashboard")
+async def get_dashboard():
+    """
+    Dashboard data — top 8 today + running hit rate stats.
+    Calculates hit rates for top 8, top 4, and overall from last 30 days.
+    """
+    if not GITHUB_TOKEN:
+        return {"error": "GitHub not configured"}
+    import json
+    try:
+        # ── Load last 30 days of prediction records ──
+        url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions"
+        headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(url, headers=headers)
+        files = r.json() if r.is_success else []
+        all_records = []
+        dates = []
+        for f in sorted(files, key=lambda x: x["name"], reverse=True)[:30]:
+            if not f["name"].endswith(".json"): continue
+            d = f["name"].replace(".json","")
+            content, _ = await github_get_file(f"data/predictions/{f['name']}")
+            if not content: continue
+            try:
+                recs = json.loads(content)
+                for rec in recs: rec["_date"] = d
+                all_records.extend(recs)
+                dates.append(d)
+            except: continue
+
+        # ── Hit rate calculations ──
+        # Group by date, rank by model_hr_pct, calculate hit rates by rank tier
+        from collections import defaultdict
+        by_date = defaultdict(list)
+        for rec in all_records:
+            if rec.get("hit_hr") in [0, 1]:
+                by_date[rec["_date"]].append(rec)
+
+        top8_hits = 0; top8_total = 0
+        top4_hits = 0; top4_total = 0
+        overall_hits = 0; overall_total = 0
+        # 2-of-top4 rate (parlay signal)
+        two_of_top4 = 0; two_of_top4_days = 0
+        # 2-of-top8 rate
+        two_of_top8 = 0; two_of_top8_days = 0
+
+        slate_days = []
+        for d, recs in sorted(by_date.items(), reverse=True):
+            ranked = sorted(recs, key=lambda x: x.get("model_hr_pct",0), reverse=True)
+            t8 = ranked[:8]
+            t4 = ranked[:4]
+            t8_hr = sum(1 for r in t8 if r.get("hit_hr")==1)
+            t4_hr = sum(1 for r in t4 if r.get("hit_hr")==1)
+            all_hr = sum(1 for r in ranked if r.get("hit_hr")==1)
+
+            top8_hits  += t8_hr;  top8_total  += len(t8)
+            top4_hits  += t4_hr;  top4_total  += len(t4)
+            overall_hits += all_hr; overall_total += len(ranked)
+
+            if len(t4) >= 4:
+                two_of_top4_days += 1
+                if t4_hr >= 2: two_of_top4 += 1
+            if len(t8) >= 8:
+                two_of_top8_days += 1
+                if t8_hr >= 2: two_of_top8 += 1
+
+            slate_days.append({
+                "date":         d,
+                "top8_hits":    t8_hr,
+                "top8_total":   len(t8),
+                "top4_hits":    t4_hr,
+                "slate_total":  len(ranked),
+                "slate_hrs":    all_hr,
+                "top8": [{"name": r["name"], "team": r.get("team",""),
+                          "pct": r.get("model_hr_pct",0), "hit": r.get("hit_hr")} for r in t8],
+            })
+
+        def pct(hits, total):
+            return round(hits/total*100, 1) if total > 0 else 0
+
+        stats = {
+            "days_tracked":       len(slate_days),
+            "top8_hit_rate":      pct(top8_hits, top8_total),
+            "top4_hit_rate":      pct(top4_hits, top4_total),
+            "overall_hit_rate":   pct(overall_hits, overall_total),
+            "two_of_top4_rate":   pct(two_of_top4, two_of_top4_days),
+            "two_of_top8_rate":   pct(two_of_top8, two_of_top8_days),
+            "top8_total_picks":   top8_total,
+            "top8_total_hits":    top8_hits,
+        }
+
+        # ── Today's top 8 ──
+        today = date.today().isoformat()
+        today_content, _ = await github_get_file(f"data/predictions/{today}.json")
+        top8_today = []
+        if today_content:
+            try:
+                today_recs = json.loads(today_content)
+                ranked_today = sorted(
+                    [r for r in today_recs if r.get("model_hr_pct") is not None],
+                    key=lambda x: x.get("model_hr_pct", 0), reverse=True
+                )[:8]
+                top8_today = ranked_today
+            except: pass
+
+        return {
+            "stats":      stats,
+            "top8_today": top8_today,
+            "slate_days": slate_days[:14],  # last 14 days for history display
+            "model_type": "random_forest" if _rf_trained else "multiplicative",
+            "xgb_trained": _xgb_trained,
+            "xgb_cv":     _xgb_oob,
+            "rf_oob":     _model_weights.get("oob_score", 0),
+        }
+    except Exception as e:
+        print(f"Dashboard error: {e}")
+        import traceback; traceback.print_exc()
+        return {"error": str(e)}
+
+
 @app.get("/history")
 async def get_history():
     """Return all historical prediction/result files from GitHub"""
