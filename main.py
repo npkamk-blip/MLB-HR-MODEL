@@ -1,3 +1,10 @@
+# main.py — MLB HR Model by Nick
+# Version: 2026-05-04
+# Model: Random Forest (adaptive depth/trees by record count)
+# Features: RF adaptive params, save_parlay_combinations, record_parlay_results,
+#           /refresh-8d, /debug-arsenal, /parlay-results, /version, bullpen_w_blend fix
+# DO NOT overwrite with an older file — fetch from GitHub before editing.
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import httpx
@@ -207,6 +214,26 @@ async def recalibrate_model():
     X = [build_row(r) for r in completed]
     y = [int(r["hit_hr"]) for r in completed]
 
+    # ── RF params — scale with record count, never hardcoded ──
+    # More data = deeper trees + smaller leaves = model learns more nuance
+    # n_estimators grows too: more records benefit from more trees
+    if n < 200:
+        max_depth, min_leaf, n_trees = 4, 15, 100
+    elif n < 500:
+        max_depth, min_leaf, n_trees = 5, 12, 150
+    elif n < 1000:
+        max_depth, min_leaf, n_trees = 6, 10, 200
+    elif n < 2500:
+        max_depth, min_leaf, n_trees = 7, 8,  250
+    elif n < 5000:
+        max_depth, min_leaf, n_trees = 8, 6,  300
+    elif n < 10000:
+        max_depth, min_leaf, n_trees = 10, 4, 400
+    else:
+        max_depth, min_leaf, n_trees = 12, 3, 500
+
+    print(f"RF params: n={n} → depth={max_depth}, min_leaf={min_leaf}, trees={n_trees}")
+
     # ── Train Random Forest ──
     try:
         from sklearn.ensemble import RandomForestClassifier
@@ -214,13 +241,13 @@ async def recalibrate_model():
         return {"error": "sklearn not installed — add scikit-learn to requirements.txt"}
 
     rf = RandomForestClassifier(
-        n_estimators=200,
-        max_depth=5,
-        min_samples_leaf=10,
-        max_features="sqrt",
+        n_estimators=n_trees,
+        max_depth=max_depth,
+        min_samples_leaf=min_leaf,
+        max_features="sqrt",   # core RF principle — keeps trees decorrelated
         bootstrap=True,
-        random_state=42,
-        n_jobs=-1,
+        random_state=42,       # reproducibility only
+        n_jobs=-1,             # use all CPU cores
     )
     rf.fit(X, y)
 
@@ -229,9 +256,9 @@ async def recalibrate_model():
                    for feat, imp in zip(FEATURES, rf.feature_importances_)}
     ranked = sorted(importances.items(), key=lambda x: x[1], reverse=True)
 
-    # ── OOB-style accuracy estimate ──
+    # ── OOB score (free accuracy estimate using held-out samples) ──
     rf_oob = RandomForestClassifier(
-        n_estimators=200, max_depth=5, min_samples_leaf=10,
+        n_estimators=n_trees, max_depth=max_depth, min_samples_leaf=min_leaf,
         max_features="sqrt", bootstrap=True, oob_score=True,
         random_state=42, n_jobs=-1,
     )
@@ -258,6 +285,14 @@ async def recalibrate_model():
     new_weights["feature_importances"] = dict(ranked)
     new_weights["top_features"]      = [k for k, _ in ranked[:8]]
     new_weights["recent_changes"]    = [f"{k}: {v:.4f}" for k, v in ranked[:10]]
+    # Save actual params used — so frontend/status always shows what's running
+    new_weights["rf_params"] = {
+        "n_estimators": n_trees,
+        "max_depth":    max_depth,
+        "min_samples_leaf": min_leaf,
+        "max_features": "sqrt",
+        "records_used": n,
+    }
     _model_weights = new_weights
 
     await save_model_weights(new_weights)
@@ -3004,7 +3039,28 @@ def status():
         "records_used": _model_weights.get("records_used", 0),
         "rf_threshold": 50,
         "oob_score": _model_weights.get("oob_score"),
+        "rf_params": _model_weights.get("rf_params"),
         "is_retraining": False,
+    }
+
+@app.get("/version")
+def version():
+    """Quick check — confirms what's deployed and what model is running."""
+    return {
+        "file_version":  "2026-05-04",
+        "model_type":    "random_forest" if _rf_trained else "multiplicative_fallback",
+        "rf_trained":    _rf_trained,
+        "records_used":  _model_weights.get("records_used", 0),
+        "rf_params":     _model_weights.get("rf_params"),
+        "oob_score":     _model_weights.get("oob_score"),
+        "top_features":  _model_weights.get("top_features", []),
+        "last_trained":  _model_weights.get("last_calibrated"),
+        "features": [
+            "RF: adaptive depth/trees by record count",
+            "Parlay tracking: save_parlay_combinations + record_parlay_results",
+            "Endpoints: /refresh-8d, /debug-arsenal, /parlay-results",
+            "bullpen_w_blend fix (was causing negative probabilities)",
+        ]
     }
 
 @app.post("/reload")
