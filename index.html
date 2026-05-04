@@ -1101,6 +1101,10 @@ function buildBatDetail(b){
       if(!val||!med||val===0) return 50;
       return Math.min(Math.round((med/val) * 50), 100);
     }
+    function normAbs(val, min, max){ // absolute range normalization
+      if(!val) return 50;
+      return Math.min(100, Math.max(0, Math.round((val - min) / (max - min) * 100)));
+    }
     function laScore(la){
       if(!la||la===0) return 40;
       var ideal = 26.5;
@@ -1112,90 +1116,112 @@ function buildBatDetail(b){
     var brl_s  = s.barrel||bd.barrel_season||statVals.barrel_pct_season||0;
     var iso_s  = s.iso||bd.iso_season||statVals.iso_season||0;
     var ev_s   = s.ev||bd.ev_season||0;
-    var la_s   = s.la||bd.la_use||statVals.la_season||0;
-    var pull_s = s.pull||bd.pull_s||statVals.pull_pct_season||0;
     var hh_s   = s.hh||bd.hh_season||statVals.hard_hit_season||0;
 
+    // L5G — drives Form (is this player hot RIGHT NOW)
+    var l5g    = b.l5g||{};
+    var iso_l5 = l5g.iso||0;
+    var slg_l5 = l5g.slg||0;
+    var hr_l5  = l5g.hr||0;
+    var ab_l5  = l5g.ab||1;
+    // Form: compare L5G to season — trending up = high score
+    // If no L5G data fall back to L8D
+    var iso_ref = iso_s||0.162;
+    var slg_ref = s.slg||bd.slg_season||0.400;
+    var iso_trend = iso_l5>0 && iso_ref>0 ? iso_l5/iso_ref : 1.0;
+    var slg_trend = slg_l5>0 && slg_ref>0 ? slg_l5/slg_ref : 1.0;
+    var hr_rate_l5 = ab_l5>0 ? (hr_l5/ab_l5)*600 : 0;
+    // Also factor in recent xSLG for quality of contact
     var xslg_l= xslg_l8d||l.xslg||bd.xslg_l8d||0;
-    var ev_l  = l.ev||bd.ev_l8d||0;
-    var brl_l = l.barrel||bd.barrel_pct_l8d||0;
-    var spd_l = l.bat_speed||bd.bat_speed_l8d||0;
-    var hh_l  = l.hh||bd.hard_hit_l8d||statVals.hard_hit_l8d||0;
-    var la_l  = l.la||bd.la_l8d||0;
 
     var pit_hr9  = pitP.hr9||bd.pit_hr9_season||0;
     var pit_hh   = pitP.hard_hit_pct||bd.pit_hard||0;
     var pit_era  = pitP.era||bd.pit_era_season||0;
     var pit_slg  = pitP.vs_R_slg||pitP.vs_L_slg||bd.pit_slg_vs_hand||0;
+    // Pitch vulnerability — this batter vs this pitcher's actual arsenal
+    var pitch_sc = bd.pitch_matchup_score||0;  // positive = batter wins, negative = pitcher wins
 
     var pf    = bd.park_factor||pitP.park_factor||1.0;
     var wx    = bd.weather_mult||1.0;
 
+    var k_s   = s.k||statVals.k_pct_season||0;
     var k_l   = l.k_pct||statVals.k_pct_l8d||0;
-    var chase = bd.chase_rate||s.chase||0;
 
     var bat_plat = bd.bat_platoon_mult||1.0;
     var pit_plat = bd.pit_platoon_mult||1.0;
     var iso_hand = statVals.iso_vs_hand||bd.iso_vs_hand||s.iso_vs_hand||0;
-    var pitch_sc = bd.pitch_matchup_score||0;
 
     // ── Composite scores (0-100) ──
+
+    // POWER — season contact quality, how much raw power does this batter have
     var power = Math.round((
-      norm(brl_s, medians.barrel_pct_season||10, 100) * 0.35 +
-      norm(iso_s,  medians.iso_season||0.162, 100)    * 0.30 +
-      norm(ev_s,   medians.ev_season||89.7, 100)      * 0.20 +
-      laScore(la_s)                                   * 0.08 +
-      norm(pull_s, medians.pull_pct_season||40, 100)  * 0.07
+      norm(brl_s, medians.barrel_pct_season||10, 100) * 0.40 +
+      norm(ev_s,   medians.ev_season||89.7, 100)      * 0.30 +
+      norm(hh_s,  medians.hard_hit_season||38, 100)   * 0.20 +
+      norm(iso_s,  medians.iso_season||0.162, 100)    * 0.10
     ));
 
-    var form = Math.round((
-      norm(xslg_l, medians.xslg_l8d||0.545, 100)     * 0.35 +
-      norm(ev_l,   medians.ev_l8d||83.5, 100)         * 0.25 +
-      norm(brl_l,  medians.barrel_pct_l8d||7.4, 100)  * 0.20 +
-      norm(spd_l,  medians.bat_speed_l8d||70.1, 100)  * 0.10 +
-      norm(hh_l,   medians.hard_hit_l8d||27.3, 100)   * 0.05 +
-      laScore(la_l)                                   * 0.05
-    ));
+    // FORM — L5G vs season: is this player trending up or down RIGHT NOW
+    var formTrend = Math.round((iso_trend * 0.45 + slg_trend * 0.35) * 50);
+    formTrend = Math.min(100, Math.max(0, formTrend));
+    // Blend with recent xSLG quality of contact
+    var formXslg = xslg_l>0 ? norm(xslg_l, medians.xslg_l8d||0.545, 100) : 50;
+    var form = Math.round(formTrend * 0.65 + formXslg * 0.25 + (hr_rate_l5>0?Math.min(hr_rate_l5*2,100):50)*0.10);
+    form = Math.min(100, Math.max(0, form));
 
+    // MATCHUP — tonight's specific pitcher vs this batter type
+    // Pitch vulnerability (40%) is the most honest signal — does he crush the pitcher's stuff
+    var pitchVulnScore = pitch_sc !== 0
+      ? Math.min(100, Math.max(0, Math.round(50 + pitch_sc * 12)))
+      : 50;
     var matchup = Math.round((
-      norm(pit_hr9, medians.pit_hr9_season||1.0, 100) * 0.45 +
-      norm(pit_hh,  medians.pit_hard_hit_season||40.6, 100) * 0.30 +
-      normLow(pit_era, medians.pit_era_season||3.68)  * 0.15 +
-      norm(pit_slg, medians.pit_slg_vs_hand||0.36, 100) * 0.10
+      pitchVulnScore                                                      * 0.40 +
+      norm(pit_hr9, medians.pit_hr9_season||1.0, 100)                    * 0.30 +
+      norm(pit_hh,  medians.pit_hard_hit_season||38, 100)                * 0.20 +
+      (pit_era>0 ? normLow(pit_era, medians.pit_era_season||4.20) : 50)  * 0.10
     ));
 
-    var parkWx = Math.round((
-      norm(pf, 1.04, 100)  * 0.60 +
-      norm(wx, 1.00, 100)  * 0.40
-    ));
-    if(pf===1.0&&wx===1.0) parkWx = 50;
+    // PARK — does tonight's venue and weather help this batter
+    var parkScore = normAbs(pf, 0.85, 1.40);
+    var wxScore   = normAbs(wx, 0.88, 1.15);
+    var parkWx = Math.round(parkScore * 0.65 + wxScore * 0.35);
+    if(pf===1.0 && wx===1.0) parkWx = 50; // dome/neutral
 
-    var disc = Math.round((
-      normLow(k_l, medians.k_pct_l8d||21.6) * 0.60 +
-      (chase>0 ? normLow(chase, 30) * 0.40 : 50 * 0.40)
-    ));
+    // DISCIPLINE — K% penalty, inverted (low K% = high score)
+    // Use both season and L5G K%, weight recent more
+    var kRef = k_l>0 ? (k_s*0.4 + k_l*0.6) : k_s;
+    var disc = kRef>0 ? Math.min(100, Math.max(0, Math.round(normLow(kRef, medians.k_pct_season||22)))) : 50;
 
+    // PLATOON — how well does this batter match up vs this pitcher's hand
+    // ISO vs hand is the cleanest signal
+    var isoHandRatio = iso_hand>0 && iso_s>0 ? iso_hand/iso_s : 1.0;
     var platoon = Math.round((
-      norm(bat_plat, 1.0, 100)  * 0.35 +
-      norm(pit_plat, 1.0, 100)  * 0.35 +
-      norm(iso_hand, medians.iso_vs_hand||0.167, 100) * 0.20 +
-      (pitch_sc > 0 ? Math.min(pitch_sc*10+50, 100) : 50) * 0.10
+      normAbs(isoHandRatio, 0.5, 1.8)   * 0.50 +
+      normAbs(bat_plat, 0.6, 1.6)       * 0.30 +
+      normAbs(pit_plat, 0.6, 1.6)       * 0.20
     ));
+    platoon = Math.min(100, Math.max(0, platoon));
 
     var scores = [power, form, matchup, parkWx, disc, platoon];
     var labels = ['Power','Form','Matchup','Park','Discipline','Platoon'];
-    var avg = Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
 
     // ── Verdict text ──
     var strong = scores.filter(function(s){return s>=70;}).length;
     var weak   = scores.filter(function(s){return s<=35;}).length;
+    var weakLabel = labels[scores.indexOf(Math.min.apply(null,scores))];
+    var strongLabel = labels[scores.indexOf(Math.max.apply(null,scores))];
     var verdict = strong>=4 ? 'Multiple axes aligned — strong spot'
                 : strong>=2&&weak===0 ? 'Solid across the board'
-                : strong>=2 ? 'Mixed signals — watch '+ labels[scores.indexOf(Math.min.apply(null,scores))]
+                : strong>=2 ? 'Mixed signals — watch '+ weakLabel
                 : weak>=2 ? 'Thin case — model found specific edge'
                 : 'Average spot — no standout signal';
+    // Add form context
+    if(iso_trend>=1.3&&slg_trend>=1.3) verdict += ' · Trending hot';
+    else if(iso_trend<=0.7&&slg_trend<=0.7) verdict += ' · Cold streak';
+    if(pitch_sc>3) verdict += ' · Pitch matchup edge';
+    else if(pitch_sc<-3) verdict += ' · Pitcher wins the arsenal';
 
-    // ── Build canvas radar via inline SVG math ──
+    // ── Build SVG radar ──
     var canvasId = 'radar_'+Math.random().toString(36).slice(2,7);
     var size = 160, cx = size/2, cy = size/2, r = 58;
     var n = 6;
@@ -1216,13 +1242,13 @@ function buildBatDetail(b){
       for(var i=0;i<n;i++){ var p=ptOuter(i,frac); pts2.push(p[0]+','+p[1]); }
       gridSvg += '<polygon points="'+pts2.join(' ')+'" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>';
     });
-    // Spokes
     for(var i=0;i<n;i++){
       var op = ptOuter(i);
       gridSvg += '<line x1="'+cx+'" y1="'+cy+'" x2="'+op[0]+'" y2="'+op[1]+'" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>';
     }
 
-    // Data polygon
+    // Data polygon — color based on overall strength
+    var avg = Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
     var dataPts = scores.map(function(v,i){ var p=pt(i,v); return p[0]+','+p[1]; });
     var fillColor = avg>=65?'rgba(50,215,75,0.18)':avg>=45?'rgba(255,159,10,0.15)':'rgba(255,69,58,0.15)';
     var strokeColor = avg>=65?'#32d74b':avg>=45?'#ff9f0a':'#ff453a';
@@ -1238,17 +1264,23 @@ function buildBatDetail(b){
       labelsSvg += '<circle cx="'+dp[0]+'" cy="'+dp[1]+'" r="3" fill="'+dotC+'"/>';
     });
 
+    // Center — trend indicator instead of avg number
+    var trendD = trendDot(b);
+    var trendLabel = trendD==='dot-hot'?'🔥':trendD==='dot-warm'?'↑':trendD==='dot-cold'?'↓':'·';
+    var trendColor = trendD==='dot-hot'?'#ff9f0a':trendD==='dot-warm'?'#32d74b':trendD==='dot-cold'?'#ff453a':'rgba(255,255,255,0.3)';
+
     var svgStr = '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'
       + gridSvg
       + '<polygon points="'+dataPts.join(' ')+'" fill="'+fillColor+'" stroke="'+strokeColor+'" stroke-width="1.5"/>'
       + labelsSvg
-      + '<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" font-size="14" font-weight="700" fill="'+strokeColor+'" font-family="sans-serif">'+avg+'</text>'
+      + '<text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" font-size="16" fill="'+trendColor+'" font-family="sans-serif">'+trendLabel+'</text>'
       + '</svg>';
 
-    // ── Axis breakdown list ──
+    // ── Axis breakdown bars ──
     var axisRows = '';
     labels.forEach(function(lbl, i){
       var sc = scores[i];
+      // Discipline color is inverted — red means HIGH K% (bad), green means LOW K% (good)
       var barC = sc>=70?'#32d74b':sc>=45?'#ff9f0a':'#ff453a';
       var barW = sc+'%';
       axisRows += '<div style="display:flex;align-items:center;gap:6px;padding:3px 0">'
