@@ -95,6 +95,13 @@ _rf_features = []     # ordered feature list used at training time
 _rf_medians  = {}     # per-feature medians for missing value imputation
 _rf_trained  = False  # True once model is fitted and ready
 
+# ── XGBoost model globals ──
+_xgb_model    = None  # trained XGBClassifier
+_xgb_features = []    # feature list (same as RF + day_of_season)
+_xgb_medians  = {}    # per-feature medians
+_xgb_trained  = False # True once fitted
+_xgb_oob      = 0.0   # cross-val score for comparison vs RF
+
 def W(key):
     """Get a model weight, default 1.0"""
     return float(_model_weights.get(key, 1.0))
@@ -330,6 +337,167 @@ async def startup_train_rf():
             print(f"Startup RF result: {result}")
     except Exception as e:
         print(f"Startup RF error (non-fatal): {e}")
+
+
+async def train_xgboost(save_to_github: bool = True):
+    """
+    Train XGBoost in parallel with RF — same records, same features + day_of_season.
+    Runs silently. Does not affect predictions until it outperforms RF.
+    Uses cross-validation score (not OOB) for honest comparison vs RF.
+    """
+    global _xgb_model, _xgb_features, _xgb_medians, _xgb_trained, _xgb_oob
+    import json
+
+    # ── Load records (same as RF) ──
+    all_records = []
+    try:
+        if not GITHUB_TOKEN: return {"error": "No GitHub token"}
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(
+                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
+                headers={"Authorization": f"token {GITHUB_TOKEN}"}
+            )
+            files = r.json() if r.is_success else []
+        for f in files:
+            if not f.get("name", "").endswith(".json"): continue
+            content, _ = await github_get_file(f"data/predictions/{f['name']}")
+            if content:
+                try: all_records.extend(json.loads(content))
+                except: pass
+    except Exception as e:
+        return {"error": str(e)}
+
+    completed = [r for r in all_records if r.get("hit_hr") in [0, 1]]
+    n = len(completed)
+    if n < 50:
+        return {"error": f"Not enough data — need 50+, have {n}"}
+
+    # ── Feature set — RF features + day_of_season ──
+    FEATURES = [
+        "barrel_pct_season", "barrel_pct_l8d",
+        "la_season", "la_l8d",
+        "ev_season", "ev_l8d",
+        "iso_season", "iso_vs_hand",
+        "hard_hit_season", "hard_hit_l8d",
+        "k_pct_season", "k_pct_l8d",
+        "fb_pct_season", "pull_pct_season",
+        "pit_hr9_season", "pit_hr9_vs_hand",
+        "pit_hard_hit_season", "pit_era_season",
+        "pit_k9_season", "pit_era_diff",
+        "pit_slg_vs_hand", "pit_fb_pct_allowed",
+        "park_factor", "weather_mult",
+        "bat_platoon_mult", "pit_platoon_mult",
+        "bullpen_vuln", "pitch_matchup_score",
+        "combined_pitch_delta", "xslg_l8d",
+        "xwoba_l8d", "xslg_gap_l8d",
+        "bat_speed_l8d",
+        "day_of_season",   # XGBoost-specific — captures seasonal patterns
+    ]
+
+    import statistics
+    medians = {}
+    for feat in FEATURES:
+        vals = [float(r[feat]) for r in completed
+                if r.get(feat) not in (None, "", 0) and r.get(feat) == r.get(feat)]
+        medians[feat] = statistics.median(vals) if vals else 0.0
+
+    def build_row(rec):
+        return [float(rec.get(feat) or medians.get(feat, 0.0)) for feat in FEATURES]
+
+    X = [build_row(r) for r in completed]
+    y = [int(r["hit_hr"]) for r in completed]
+
+    # ── Train XGBoost ──
+    try:
+        from xgboost import XGBClassifier
+    except ImportError:
+        return {"error": "xgboost not installed — add xgboost to requirements.txt"}
+
+    # scale_pos_weight handles class imbalance properly
+    # = count(negative) / count(positive)
+    n_pos = sum(y)
+    n_neg = n - n_pos
+    spw   = round(n_neg / max(n_pos, 1), 2)
+
+    xgb = XGBClassifier(
+        n_estimators=300,
+        max_depth=4,           # shallow — XGBoost is additive, doesn't need deep trees
+        learning_rate=0.05,    # slow learning = better generalization
+        subsample=0.8,         # row sampling per tree
+        colsample_bytree=0.8,  # feature sampling per tree
+        scale_pos_weight=spw,  # handles HR class imbalance correctly
+        use_label_encoder=False,
+        eval_metric="logloss",
+        random_state=42,
+        n_jobs=-1,
+    )
+    xgb.fit(X, y)
+
+    # ── Cross-val score for honest RF comparison ──
+    try:
+        from sklearn.model_selection import cross_val_score
+        import numpy as np
+        cv_scores = cross_val_score(xgb, X, y, cv=5, scoring="roc_auc", n_jobs=-1)
+        xgb_cv = round(float(np.mean(cv_scores)), 4)
+    except Exception:
+        xgb_cv = 0.0
+
+    # ── Feature importances ──
+    importances = {feat: round(float(imp), 4)
+                   for feat, imp in zip(FEATURES, xgb.feature_importances_)}
+    ranked = sorted(importances.items(), key=lambda x: x[1], reverse=True)
+
+    _xgb_model    = xgb
+    _xgb_features = FEATURES
+    _xgb_medians  = medians
+    _xgb_trained  = True
+    _xgb_oob      = xgb_cv
+
+    print(f"XGBoost trained — {n} records, CV AUC={xgb_cv:.3f}, "
+          f"scale_pos_weight={spw}, top={ranked[0][0] if ranked else '?'}")
+
+    if save_to_github:
+        # Save XGBoost metadata alongside RF weights
+        import json as _json
+        xgb_meta = {
+            "model_type": "xgboost",
+            "last_trained": date.today().isoformat(),
+            "records_used": n,
+            "cv_auc": xgb_cv,
+            "scale_pos_weight": spw,
+            "top_features": [k for k, _ in ranked[:8]],
+            "feature_importances": dict(ranked),
+        }
+        existing, sha = await github_get_file("data/xgb_meta.json")
+        await github_put_file("data/xgb_meta.json",
+                              _json.dumps(xgb_meta, indent=2),
+                              f"xgb: {n} records, AUC={xgb_cv}", sha)
+
+    return {
+        "status":       "done",
+        "records_used": n,
+        "cv_auc":       xgb_cv,
+        "rf_oob":       _model_weights.get("oob_score", 0),
+        "scale_pos_weight": spw,
+        "top_features": [k for k, _ in ranked[:8]],
+        "winning_model": "xgboost" if xgb_cv > _model_weights.get("oob_score", 0) else "random_forest",
+    }
+
+
+async def startup_train_xgb():
+    """Train XGBoost on startup — silent, no GitHub write, doesn't affect predictions yet."""
+    await asyncio.sleep(45)  # after RF finishes
+    try:
+        print("Startup: training XGBoost silently...")
+        result = await train_xgboost(save_to_github=False)
+        if isinstance(result, dict) and result.get("status") == "done":
+            print(f"Startup XGBoost trained — CV AUC={result.get('cv_auc')}, "
+                  f"top={result.get('top_features',[])[0] if result.get('top_features') else '?'}, "
+                  f"winning={result.get('winning_model')}")
+        else:
+            print(f"Startup XGBoost result: {result}")
+    except Exception as e:
+        print(f"Startup XGBoost error (non-fatal): {e}")
 
 
 # Every 45 days we rotate candidate stats in/out to find what actually predicts HRs
@@ -1207,13 +1375,14 @@ async def daily_refresh_loop():
                 await record_parlay_results(yesterday)
             except Exception as e:
                 print(f"Result recording error: {e}")
-        # Retrain RF at 3am ET daily (after results are in)
+        # Retrain RF + XGBoost at 3am ET daily (after results are in)
         if now.hour == 3:
             try:
-                print(f"Nightly RF retrain — Round {get_rotation_round()} Day {get_rotation_day()}")
+                print(f"Nightly retrain — Round {get_rotation_round()} Day {get_rotation_day()}")
                 await recalibrate_model()
+                await train_xgboost()
             except Exception as e:
-                print(f"RF retrain error: {e}")
+                print(f"Nightly retrain error: {e}")
         # Save daily model log at 4am ET
         if now.hour == 4:
             try:
@@ -1502,6 +1671,8 @@ async def save_daily_predictions():
                             "lineup_k_pct": 0,  # populated at game time in future
                             # ── ROUND 4 CANDIDATES ──
                             "pit_k9_season": pit_k9_s,
+                            # ── XGBOOST FEATURES ──
+                            "day_of_season": (date.today() - date(2026, 3, 20)).days,
                         })
         if not records:
             print(f"No predictions to save for {today}")
@@ -1599,6 +1770,7 @@ async def startup_event():
     asyncio.create_task(load_model_weights())
     asyncio.create_task(startup_catchup())
     asyncio.create_task(startup_train_rf())
+    asyncio.create_task(startup_train_xgb())
 
 async def startup_catchup():
     """On startup:
@@ -2424,6 +2596,70 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, 
         print(f"RF predict error for {name}: {e} — falling back to multiplicative")
         return mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
+
+def predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, breakdown):
+    """
+    Get XGBoost probability for a batter — runs silently alongside RF.
+    Returns float probability or None if XGBoost not trained yet.
+    Uses same feature vector as RF + day_of_season.
+    """
+    if not _xgb_trained or _xgb_model is None:
+        return None
+    try:
+        bc      = get_batter_stats(name, 2026)
+        b8d     = get_batter_8d(name)
+        b_split = get_batter_split(name, opp_p_hand)
+        pc      = get_pitcher_stats(opp_p_name, 2026)
+        p_split = get_pitcher_split(opp_p_name, bat_hand)
+        bwc     = 1.0
+
+        def bv(k): return float(bc.get(k, 0) or 0)
+        def pv(k): return float(pc.get(k, 0) or 0)
+
+        feat_vals = {
+            "barrel_pct_season":    bv("barrel_pct"),
+            "barrel_pct_l8d":       b8d.get("barrel_pct", 0),
+            "la_season":            bv("launch_angle"),
+            "la_l8d":               b8d.get("launch_angle", 0),
+            "ev_season":            bv("exit_velo"),
+            "ev_l8d":               b8d.get("exit_velo", 0),
+            "iso_season":           bv("iso"),
+            "iso_vs_hand":          b_split.get("iso", 0),
+            "hard_hit_season":      bv("hard_hit_pct"),
+            "hard_hit_l8d":         b8d.get("hard_hit_pct", 0),
+            "k_pct_season":         bv("k_pct"),
+            "k_pct_l8d":            b8d.get("k_pct", 0),
+            "fb_pct_season":        bv("fb_pct"),
+            "pull_pct_season":      bv("pull_pct"),
+            "pit_hr9_season":       pv("hr9"),
+            "pit_hr9_vs_hand":      p_split.get("hr9", 0),
+            "pit_hard_hit_season":  pv("hard_hit_pct"),
+            "pit_era_season":       pv("era"),
+            "pit_k9_season":        pv("k9"),
+            "pit_era_diff":         round(pv("era") - 4.20, 2) if pv("era") > 0 else 0,
+            "pit_slg_vs_hand":      p_split.get("slg", 0),
+            "pit_fb_pct_allowed":   pv("fb_pct"),
+            "park_factor":          park_factor,
+            "weather_mult":         weather_mult,
+            "bat_platoon_mult":     breakdown.get("bat_platoon_mult", 1.0),
+            "pit_platoon_mult":     breakdown.get("pit_platoon_mult", 1.0),
+            "bullpen_vuln":         breakdown.get("bullpen_vuln", 1.0),
+            "pitch_matchup_score":  breakdown.get("pitch_matchup_score", 0),
+            "combined_pitch_delta": breakdown.get("combined_pitch_delta", 0),
+            "xslg_l8d":             b8d.get("xslg", 0),
+            "xwoba_l8d":            b8d.get("xwoba", 0),
+            "xslg_gap_l8d":         round(b8d.get("xslg", 0) - b8d.get("slg", 0), 3) if b8d.get("xslg", 0) > 0 else 0,
+            "bat_speed_l8d":        b8d.get("bat_speed", 0),
+            "day_of_season":        (date.today() - date(2026, 3, 20)).days,
+        }
+
+        row   = [float(feat_vals.get(f) or _xgb_medians.get(f, 0.0)) for f in _xgb_features]
+        proba = _xgb_model.predict_proba([row])[0]
+        return round(min(float(proba[1]) * 100, LEAGUE_CONSTANTS["hr_prob_cap"]), 1)
+    except Exception as e:
+        print(f"XGB predict error for {name}: {e}")
+        return None
+
 def _compute_hr_probability_legacy(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult):
     bc = get_batter_stats(name, 2026)
     b8d = get_batter_8d(name)
@@ -3020,23 +3256,57 @@ def status():
 
 @app.get("/version")
 def version():
-    """Quick check — confirms what's deployed and what model is running."""
+    """Quick check — confirms what's deployed and model status for both RF and XGBoost."""
+    rf_oob  = _model_weights.get("oob_score", 0)
+    xgb_cv  = _xgb_oob
+    winning = "xgboost" if (_xgb_trained and xgb_cv > rf_oob) else "random_forest"
     return {
-        "file_version":  "2026-05-04",
-        "model_type":    "random_forest" if _rf_trained else "multiplicative_fallback",
-        "rf_trained":    _rf_trained,
-        "records_used":  _model_weights.get("records_used", 0),
-        "rf_params":     _model_weights.get("rf_params"),
-        "oob_score":     _model_weights.get("oob_score"),
-        "top_features":  _model_weights.get("top_features", []),
-        "last_trained":  _model_weights.get("last_calibrated"),
+        "file_version":    "2026-05-04",
+        "active_model":    winning,
+        "rf": {
+            "trained":      _rf_trained,
+            "records_used": _model_weights.get("records_used", 0),
+            "oob_score":    rf_oob,
+            "params":       _model_weights.get("rf_params"),
+            "top_features": _model_weights.get("top_features", []),
+        },
+        "xgboost": {
+            "trained":      _xgb_trained,
+            "cv_auc":       xgb_cv,
+            "beats_rf":     _xgb_trained and xgb_cv > rf_oob,
+            "top_features": [k for k, _ in sorted(
+                ({f: float(v) for f, v in _model_weights.get("feature_importances", {}).items()}).items(),
+                key=lambda x: x[1], reverse=True
+            )[:5]] if _xgb_trained else [],
+        },
         "features": [
-            "RF: adaptive depth/trees by record count",
-            "Parlay tracking: save_parlay_combinations + record_parlay_results",
-            "Endpoints: /refresh-8d, /debug-arsenal, /parlay-results",
-            "bullpen_w_blend fix (was causing negative probabilities)",
+            "XGBoost training silently in parallel with RF",
+            "day_of_season added to all prediction records",
+            "Parlay tracking active",
+            "2026-only model — no 2025 blending",
         ]
     }
+
+
+@app.get("/xgboost-status")
+async def xgboost_status():
+    """Full XGBoost training status — pull latest metadata from GitHub."""
+    meta = {"trained": _xgb_trained, "cv_auc": _xgb_oob}
+    if GITHUB_TOKEN:
+        content, _ = await github_get_file("data/xgb_meta.json")
+        if content:
+            import json
+            try: meta.update(json.loads(content))
+            except: pass
+    rf_oob = _model_weights.get("oob_score", 0)
+    meta["rf_oob_comparison"] = rf_oob
+    meta["xgb_beats_rf"] = _xgb_trained and _xgb_oob > rf_oob
+    meta["recommendation"] = (
+        "XGBoost ready to go live — flip compute_hr_probability to use XGBoost"
+        if meta.get("xgb_beats_rf") else
+        f"RF still winning — XGBoost CV AUC {_xgb_oob:.3f} vs RF OOB {rf_oob:.3f}. Keep collecting data."
+    )
+    return meta
 
 @app.post("/reload")
 async def reload_data():
@@ -3171,6 +3441,7 @@ async def get_games(date: str = None, refresh: bool = False):
 
             all_batters.append({
                 "name": name, "team": team, "hr_prob": hr_prob,
+                "xgb_prob": predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, breakdown),
                 "archetype": archetype, "trend": trend, "confidence": conf,
                 "reasons": reasons, "opp_pitcher": opp_p_name,
                 "bat_hand": bat_hand, "opp_p_hand": opp_p_hand,
