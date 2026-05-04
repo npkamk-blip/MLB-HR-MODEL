@@ -58,15 +58,15 @@
   "promoted_stats": [],
   "dropped_stats": [],
   "recent_changes": [
-    "iso_season: 0.0755",
-    "pull_pct_season: 0.0618",
-    "hard_hit_season: 0.0602",
-    "barrel_pct_season: 0.0563",
-    "ev_season: 0.0509",
-    "bat_speed_l8d: 0.0426",
-    "bullpen_vuln: 0.0406",
-    "hard_hit_l8d: 0.0365",
-    "iso_vs_hand: 0.0358",
-    "la_l8d: 0.0344"
+    "pull_pct_season: 0.0534",
+    "iso_season: 0.0479",
+    "hard_hit_season: 0.0477",
+    "bat_speed_l8d: 0.0434",
+    "ev_season: 0.0431",
+    "barrel_pct_season: 0.0428",
+    "la_l8d: 0.0403",
+    "iso_vs_hand: 0.0357",
+    "k_pct_season: 0.0342",
+    "la_season: 0.0337"
   ]
 }
