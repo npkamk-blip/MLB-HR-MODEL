@@ -146,6 +146,8 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
 .l8d-warm{color:var(--y)}
 .l8d-none{color:var(--muted2)}
 .bat-pct{font-size:15px;font-weight:800;min-width:42px;text-align:right;flex-shrink:0;font-family:'Barlow Condensed',sans-serif}
+.bat-xgb{font-size:11px;font-weight:700;min-width:38px;text-align:right;flex-shrink:0;font-family:'Barlow Condensed',sans-serif;color:var(--purple);opacity:0.8;position:relative}
+.xgb-lbl{font-size:8px;color:var(--purple);opacity:0.6;margin-left:1px;vertical-align:super}
 .pct-elite{color:var(--text)}
 .pct-high{color:var(--g)}
 .pct-mid{color:var(--y)}
@@ -946,8 +948,13 @@ function buildBatterTable(games){
         sec+='</div>';
         // L8D HR
         sec+='<div class="bat-l8d '+l8dHrCls(l8hr)+'">'+(l8hr>0?l8hr+'HR':'—')+'</div>';
-        // Probability
+        // RF Probability
         sec+='<div class="bat-pct '+pc+'">'+pct+'%</div>';
+        // XGBoost probability — shown only when trained, purely informational
+        var xgbPct=b.xgb_prob!=null?b.xgb_prob:null;
+        if(xgbPct!=null){
+          sec+='<div class="bat-xgb" title="XGBoost probability (learning)">'+xgbPct+'%<span class="xgb-lbl">XG</span></div>';
+        }
         sec+='</div>';
         // Detail panel
         sec+='<div class="gc-detail" id="'+rowId+'" style="display:none">'+buildBatDetail(b)+'</div>';
