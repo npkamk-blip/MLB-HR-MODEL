@@ -79,6 +79,12 @@ DEFAULT_WEIGHTS = {
 }
 _model_weights = DEFAULT_WEIGHTS.copy()
 
+# ── Random Forest model globals ──
+_rf_model    = None   # trained sklearn RandomForestClassifier
+_rf_features = []     # ordered feature list used at training time
+_rf_medians  = {}     # per-feature medians for missing value imputation
+_rf_trained  = False  # True once model is fitted and ready
+
 def W(key):
     """Get a model weight, default 1.0"""
     return float(_model_weights.get(key, 1.0))
@@ -128,18 +134,18 @@ async def save_model_log(weights_dict):
 
 async def recalibrate_model():
     """
-    Run logistic regression on all history records.
-    Update the 22 weights. Auto-promote candidates with correlation > 0.15.
-    Enforce 8 stat hard cap — weakest gets replaced by strong candidate.
-    Save updated weights + model log to GitHub.
+    Train Random Forest on all completed prediction records.
+    Locked params: 200 estimators, max_depth=5, min_samples_leaf=10,
+    max_features='sqrt', bootstrap=True, random_state=42, n_jobs=-1.
+    Missing values filled with per-feature medians.
+    Feature importances saved to model_weights.json for frontend display.
     """
-    global _model_weights
-    import json, math
-    # Pull all history files
+    global _model_weights, _rf_model, _rf_features, _rf_medians, _rf_trained
+    import json
+
+    # ── Load all prediction records from GitHub ──
     all_records = []
     try:
-        keys_data, _ = await github_get_file("data/predictions")
-        # list files via GitHub API
         if not GITHUB_TOKEN: return {"error": "No GitHub token"}
         async with httpx.AsyncClient(timeout=30) as client:
             r = await client.get(
@@ -148,7 +154,7 @@ async def recalibrate_model():
             )
             files = r.json() if r.is_success else []
         for f in files:
-            if not f.get("name","").endswith(".json"): continue
+            if not f.get("name", "").endswith(".json"): continue
             content, _ = await github_get_file(f"data/predictions/{f['name']}")
             if content:
                 try:
@@ -156,162 +162,133 @@ async def recalibrate_model():
                     all_records.extend(recs)
                 except: pass
     except Exception as e:
-        print(f"Recalibration data load error: {e}")
+        print(f"RF data load error: {e}")
         return {"error": str(e)}
 
-    # Filter to completed non-DNP records
+    # ── Filter to completed records only ──
     completed = [r for r in all_records if r.get("hit_hr") in [0, 1]]
     n = len(completed)
     if n < 50:
-        return {"error": f"Not enough data — need 50+ records, have {n}"}
+        return {"error": f"Not enough data — need 50+, have {n}"}
 
-    print(f"Recalibrating on {n} completed records")
+    print(f"Training Random Forest on {n} completed records")
 
-    # ── Point-biserial correlation for each stat ──
-    def correlate(records, key):
-        vals = [(r[key], r["hit_hr"]) for r in records if r.get(key) is not None and r.get(key) != 0]
-        if len(vals) < 20: return None
-        xs = [v[0] for v in vals]
-        ys = [v[1] for v in vals]
-        n2 = len(xs)
-        mx = sum(xs)/n2; my = sum(ys)/n2
-        num = sum((x-mx)*(y-my) for x,y in zip(xs,ys))
-        dx = math.sqrt(sum((x-mx)**2 for x in xs))
-        dy = math.sqrt(sum((y-my)**2 for y in ys))
-        if dx*dy == 0: return None
-        return round(num/(dx*dy), 4)
-
-    # All stats to evaluate
-    all_stats = [
-        # Active model stats
-        "barrel_season_w",   "barrel_l8d_w",
-        "la_season_w",       "la_l8d_w",
-        "ev_season_w",       "ev_l8d_w",
-        "iso_season_w",      "iso_vs_hand_w",
-        "hard_hit_season_w", "hard_hit_l8d_w",
-        "pit_hr9_season_w",  "pit_hr9_vs_hand_w",
-        "pit_slg_season_w",  "pit_slg_vs_hand_w",
-        "park_w",            "weather_w",
-        "bullpen_w",         "bat_platoon_w",
-        "pit_platoon_w",     "pitch_delta_w",
-        "k_pct_w",
-        # Round 2 candidates
-        "fb_pct_season",     "pull_pct_season",
-        "pit_fb_pct_allowed","hard_hit_l8d",
-        "k_pct_l8d",
-        # Round 3 candidates
-        "pit_era_diff",
-        # Round 4 candidates
-        "pit_k9_season",
+    # ── Feature set — all numeric fields stored in prediction records ──
+    FEATURES = [
+        "barrel_pct_season", "barrel_pct_l8d",
+        "la_season", "la_l8d",
+        "ev_season", "ev_l8d",
+        "iso_season", "iso_vs_hand",
+        "hard_hit_season", "hard_hit_l8d",
+        "k_pct_season", "k_pct_l8d",
+        "fb_pct_season", "pull_pct_season",
+        "pit_hr9_season", "pit_hr9_vs_hand",
+        "pit_hard_hit_season", "pit_era_season",
+        "pit_k9_season", "pit_era_diff",
+        "pit_slg_vs_hand", "pit_fb_pct_allowed",
+        "park_factor", "weather_mult",
+        "bat_platoon_mult", "pit_platoon_mult",
+        "bullpen_vuln", "pitch_matchup_score",
+        "combined_pitch_delta", "xslg_l8d",
+        "xwoba_l8d", "xslg_gap_l8d",
+        "bat_speed_l8d",
     ]
 
-    # Map weight keys to stored field names
-    stat_field_map = {
-        "barrel_season_w": "barrel_pct_season",
-        "barrel_l8d_w": "barrel_pct_l8d",
-        "la_season_w": "la_season",
-        "la_l8d_w": "la_l8d",
-        "ev_season_w": "ev_season",
-        "ev_l8d_w": "ev_l8d",
-        "iso_season_w": "iso_season",
-        "iso_vs_hand_w": "iso_vs_hand",
-        "hard_hit_season_w": "hard_hit_season",
-        "hard_hit_l8d_w": "hard_hit_l8d",
-        "pit_hr9_season_w": "pit_hr9_season",
-        "pit_hr9_vs_hand_w": "pit_hr9_vs_hand",
-        "pit_slg_season_w": "pit_slg_season",
-        "pit_slg_vs_hand_w": "pit_slg_vs_hand",
-        "park_w": "park_factor",
-        "weather_w": "weather_mult",
-        "bullpen_w": "bullpen_vuln",
-        "bat_platoon_w": "bat_platoon_mult",
-        "pit_platoon_w": "pit_platoon_mult",
-        "pitch_delta_w": "combined_pitch_delta",
-        "k_pct_w": "k_pct_season",
-        "fb_pct_season": "fb_pct_season",
-        "pull_pct_season": "pull_pct_season",
-        "pit_fb_pct_allowed": "pit_fb_pct_allowed",
-        "k_pct_l8d": "k_pct_l8d",
-        "pit_era_diff": "pit_era_diff",
-        "pit_hr_fb_pct": "pit_hr_fb_pct",
-        "pit_k9_season": "pit_k9_season",
-    }
+    # ── Build X, y — impute missing with per-feature median ──
+    import statistics
+    medians = {}
+    for feat in FEATURES:
+        vals = [float(r[feat]) for r in completed if r.get(feat) not in (None, 0, "") and r.get(feat) == r.get(feat)]
+        medians[feat] = statistics.median(vals) if vals else 0.0
 
-    correlations = {}
-    for stat_key in all_stats:
-        field = stat_field_map.get(stat_key, stat_key)
-        corr = correlate(completed, field)
-        if corr is not None:
-            correlations[stat_key] = corr
+    def build_row(rec):
+        return [float(rec.get(feat) or medians.get(feat, 0.0)) for feat in FEATURES]
 
-    # ── Convert correlations to weights ──
-    # New weight = 1.0 + (correlation * 2.0) clamped to 0.3 - 2.5
-    new_weights = _model_weights.copy()
-    changes = []
-    for stat_key, corr in correlations.items():
-        if not stat_key.endswith("_w"): continue
-        old_w = W(stat_key)
-        new_w = round(max(0.3, min(2.5, 1.0 + corr * 2.0)), 3)
-        new_weights[stat_key] = new_w
-        if abs(new_w - old_w) >= 0.05:
-            direction = "up" if new_w > old_w else "down"
-            changes.append(f"{stat_key}: {old_w:.2f} -> {new_w:.2f} ({direction})")
+    X = [build_row(r) for r in completed]
+    y = [int(r["hit_hr"]) for r in completed]
 
-    # ── Determine active 8 stats ──
-    # Rank all stats by correlation, keep top 8, enforce cap
-    ranked = sorted(
-        [(k, v) for k, v in correlations.items() if k.endswith("_w")],
-        key=lambda x: abs(x[1]), reverse=True
+    # ── Train Random Forest ──
+    try:
+        from sklearn.ensemble import RandomForestClassifier
+    except ImportError:
+        return {"error": "sklearn not installed — add scikit-learn to requirements.txt"}
+
+    rf = RandomForestClassifier(
+        n_estimators=200,
+        max_depth=5,
+        min_samples_leaf=10,
+        max_features="sqrt",
+        bootstrap=True,
+        random_state=42,
+        n_jobs=-1,
     )
-    new_active = [k.replace("_w","") for k,v in ranked[:8]]
+    rf.fit(X, y)
 
-    # ── Auto-promote candidates with corr > 0.15 ──
-    promoted = []
-    dropped = []
-    candidates = {k: v for k, v in correlations.items() if not k.endswith("_w") and abs(v) >= 0.15}
-    current_active = _model_weights.get("active_stats", DEFAULT_WEIGHTS["active_stats"])
+    # ── Feature importances ──
+    importances = {feat: round(float(imp), 4)
+                   for feat, imp in zip(FEATURES, rf.feature_importances_)}
+    ranked = sorted(importances.items(), key=lambda x: x[1], reverse=True)
 
-    for cand_key, cand_corr in sorted(candidates.items(), key=lambda x: abs(x[1]), reverse=True):
-        if len(new_active) >= 8:
-            # Find weakest active stat to displace
-            weakest = min(
-                [(k, correlations.get(k+"_w", 0)) for k in new_active],
-                key=lambda x: abs(x[1])
-            )
-            if abs(cand_corr) > abs(weakest[1]):
-                dropped.append(weakest[0])
-                new_active.remove(weakest[0])
-                new_active.append(cand_key)
-                promoted.append(cand_key)
-                # Add weight for newly promoted stat
-                new_weights[cand_key + "_w"] = round(max(0.3, min(2.5, 1.0 + cand_corr * 2.0)), 3)
-        else:
-            new_active.append(cand_key)
-            promoted.append(cand_key)
+    # ── OOB-style accuracy estimate ──
+    rf_oob = RandomForestClassifier(
+        n_estimators=200, max_depth=5, min_samples_leaf=10,
+        max_features="sqrt", bootstrap=True, oob_score=True,
+        random_state=42, n_jobs=-1,
+    )
+    rf_oob.fit(X, y)
+    oob_score = round(float(rf_oob.oob_score_), 4)
 
-    # ── Save updated weights ──
-    new_weights["active_stats"] = new_active
-    new_weights["last_calibrated"] = date.today().isoformat()
-    new_weights["records_used"] = n
+    # ── HR rate in training data (calibration reference) ──
+    hr_rate = round(sum(y) / len(y) * 100, 2)
+
+    # ── Persist model state ──
+    _rf_model    = rf
+    _rf_features = FEATURES
+    _rf_medians  = medians
+    _rf_trained  = True
+
+    # ── Save weights/metadata to GitHub ──
+    new_weights = _model_weights.copy()
+    new_weights["last_calibrated"]   = date.today().isoformat()
+    new_weights["records_used"]      = n
     new_weights["calibration_round"] = get_rotation_round()
-    new_weights["promoted_stats"] = promoted
-    new_weights["dropped_stats"] = dropped
-    new_weights["recent_changes"] = changes[:20]
-
+    new_weights["model_type"]        = "random_forest"
+    new_weights["oob_score"]         = oob_score
+    new_weights["hr_rate"]           = hr_rate
+    new_weights["feature_importances"] = dict(ranked)
+    new_weights["top_features"]      = [k for k, _ in ranked[:8]]
+    new_weights["recent_changes"]    = [f"{k}: {v:.4f}" for k, v in ranked[:10]]
     _model_weights = new_weights
 
     await save_model_weights(new_weights)
     await save_model_log(new_weights)
 
-    print(f"Recalibration complete — {len(changes)} weight changes, {len(promoted)} promotions, {len(dropped)} drops")
+    print(f"RF trained — {n} records, OOB={oob_score:.3f}, HR rate={hr_rate}%")
+    print(f"Top features: {[k for k,_ in ranked[:5]]}")
     return {
+        "status":       "done",
         "records_used": n,
-        "weight_changes": len(changes),
-        "promoted": promoted,
-        "dropped": dropped,
-        "top_predictors": [k for k,v in ranked[:5]],
-        "changes": changes[:10],
+        "oob_score":    oob_score,
+        "hr_rate":      hr_rate,
+        "top_features": [k for k, _ in ranked[:8]],
+        "feature_importances": dict(ranked[:10]),
     }
+
+
+async def startup_train_rf():
+    """Train RF on startup from saved GitHub records — restores model after redeploy."""
+    global _rf_trained
+    await asyncio.sleep(20)  # let Savant data load first
+    try:
+        print("Startup: training Random Forest from saved records...")
+        result = await recalibrate_model()
+        if isinstance(result, dict) and result.get("status") == "done":
+            print(f"Startup RF trained — {result.get('records_used')} records, "
+                  f"OOB={result.get('oob_score')}, top={result.get('top_features',[])[0] if result.get('top_features') else '?'}")
+        else:
+            print(f"Startup RF result: {result}")
+    except Exception as e:
+        print(f"Startup RF error (non-fatal): {e}")
 
 
 # Every 45 days we rotate candidate stats in/out to find what actually predicts HRs
@@ -1186,6 +1163,7 @@ async def daily_refresh_loop():
         if now.hour == 11:
             try:
                 await save_daily_predictions()
+                await save_parlay_combinations()
             except Exception as e:
                 print(f"Prediction save error: {e}")
         # Record results at 2am ET — all games finished
@@ -1193,15 +1171,16 @@ async def daily_refresh_loop():
             try:
                 yesterday = (date.today() - timedelta(days=1)).isoformat()
                 await record_results(yesterday)
+                await record_parlay_results(yesterday)
             except Exception as e:
                 print(f"Result recording error: {e}")
-        # Auto-recalibrate on Day 45 of each rotation round at 3am ET
-        if now.hour == 3 and get_rotation_day() == 0 and get_rotation_round() > 1:
+        # Retrain RF at 3am ET daily (after results are in)
+        if now.hour == 3:
             try:
-                print(f"Auto-recalibrating — Round {get_rotation_round()} Day 0")
+                print(f"Nightly RF retrain — Round {get_rotation_round()} Day {get_rotation_day()}")
                 await recalibrate_model()
             except Exception as e:
-                print(f"Auto-recalibrate error: {e}")
+                print(f"RF retrain error: {e}")
         # Save daily model log at 4am ET
         if now.hour == 4:
             try:
@@ -1588,6 +1567,7 @@ async def startup_event():
     asyncio.create_task(daily_refresh_loop())
     asyncio.create_task(load_model_weights())
     asyncio.create_task(startup_catchup())
+    asyncio.create_task(startup_train_rf())
 
 async def startup_catchup():
     """On startup:
@@ -2242,7 +2222,9 @@ def compute_hr_prob_multiplicative(
     # Bullpen component — uses batter skill + context + bullpen vuln
     bullpen_component = (base_rate * barrel_mult * la_mult * bat_platoon_mult *
                          park_mult_applied * weather_mult_applied * k_mult * bullpen_vuln)
-    bullpen_w_blend = W("bullpen_w") if W("bullpen_w") != 1.0 else 0.25
+    # Bullpen blend is always 25% — bullpen_w is an exponent applied in safe_mult above,
+    # NOT a blend fraction. Using it as a fraction would break math when bullpen_w > 1.0.
+    bullpen_w_blend = 0.25
     running = (running * (1 - bullpen_w_blend)) + (bullpen_component * bullpen_w_blend)
 
     hr_prob = round(min(running * 100, LEAGUE_CONSTANTS["hr_prob_cap"]), 1)
@@ -2350,7 +2332,84 @@ def get_trend(b8d, bc):
     return "Steady"
 
 def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
-    return compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team)
+    """
+    Main prediction entry point.
+    When RF is trained: uses pure Random Forest probability.
+    Falls back to multiplicative model when RF not yet trained.
+    """
+    # Always compute multiplicative — used as fallback and for breakdown data
+    mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf = \
+        compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team)
+
+    if not _rf_trained or _rf_model is None:
+        return mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
+
+    # ── Build RF feature vector ──
+    try:
+        bc  = get_batter_stats(name, 2026)
+        bp  = get_batter_stats(name, 2025)
+        b8d = get_batter_8d(name)
+        b_split = get_batter_split(name, opp_p_hand)
+        pc  = get_pitcher_stats(opp_p_name, 2026)
+        pp2 = get_pitcher_stats(opp_p_name, 2025)
+        p_split = get_pitcher_split(opp_p_name, bat_hand)
+        pa_26 = bc.get("pa", 0); pa_25 = bp.get("pa", 0)
+        bwc, bwp = get_batter_blend_weights(pa_26, pa_25)
+        ip_26 = pc.get("ip", 0)
+        pwc, pwp = get_pitcher_blend_weights(ip_26, pp2.get("ip", 0))
+        pitch_score, _ = compute_pitch_matchup(opp_p_name, name)
+
+        def bv(k): return blend(bc.get(k, 0), bp.get(k, 0), bwc, bwp)
+        def pv(k): return blend(pc.get(k, 0), pp2.get(k, 0), pwc, pwp)
+
+        feat_vals = {
+            "barrel_pct_season":    bv("barrel_pct"),
+            "barrel_pct_l8d":       b8d.get("barrel_pct", 0),
+            "la_season":            bv("launch_angle"),
+            "la_l8d":               b8d.get("launch_angle", 0),
+            "ev_season":            bv("exit_velo"),
+            "ev_l8d":               b8d.get("exit_velo", 0),
+            "iso_season":           bv("iso"),
+            "iso_vs_hand":          b_split.get("iso", 0),
+            "hard_hit_season":      bv("hard_hit_pct"),
+            "hard_hit_l8d":         b8d.get("hard_hit_pct", 0),
+            "k_pct_season":         bv("k_pct"),
+            "k_pct_l8d":            b8d.get("k_pct", 0),
+            "fb_pct_season":        bv("fb_pct"),
+            "pull_pct_season":      bv("pull_pct"),
+            "pit_hr9_season":       pv("hr9"),
+            "pit_hr9_vs_hand":      p_split.get("hr9", 0),
+            "pit_hard_hit_season":  pv("hard_hit_pct"),
+            "pit_era_season":       pv("era"),
+            "pit_k9_season":        pv("k9"),
+            "pit_era_diff":         round(pv("era") - 4.20, 2) if pv("era") > 0 else 0,
+            "pit_slg_vs_hand":      p_split.get("slg", 0),
+            "pit_fb_pct_allowed":   pv("fb_pct"),
+            "park_factor":          park_factor,
+            "weather_mult":         weather_mult,
+            "bat_platoon_mult":     breakdown.get("bat_platoon_mult", 1.0),
+            "pit_platoon_mult":     breakdown.get("pit_platoon_mult", 1.0),
+            "bullpen_vuln":         breakdown.get("bullpen_vuln", 1.0),
+            "pitch_matchup_score":  pitch_score,
+            "combined_pitch_delta": breakdown.get("combined_pitch_delta", 0),
+            "xslg_l8d":             b8d.get("xslg", 0),
+            "xwoba_l8d":            b8d.get("xwoba", 0),
+            "xslg_gap_l8d":         round(b8d.get("xslg", 0) - b8d.get("slg", 0), 3) if b8d.get("xslg", 0) > 0 else 0,
+            "bat_speed_l8d":        b8d.get("bat_speed", 0),
+        }
+
+        row = [float(feat_vals.get(f) or _rf_medians.get(f, 0.0)) for f in _rf_features]
+        proba = _rf_model.predict_proba([row])[0]
+        rf_prob = round(min(float(proba[1]) * 100, LEAGUE_CONSTANTS["hr_prob_cap"]), 1)
+
+        breakdown["rf_prob"]   = rf_prob
+        breakdown["mult_prob"] = mult_prob  # kept for debugging only
+
+        return rf_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
+
+    except Exception as e:
+        print(f"RF predict error for {name}: {e} — falling back to multiplicative")
+        return mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
 def _compute_hr_probability_legacy(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult):
     bc = get_batter_stats(name, 2026)
@@ -2938,12 +2997,14 @@ def status():
         "model_calibrated": _model_weights.get("last_calibrated"),
         "model_round": get_rotation_round(),
         "model_day": get_rotation_day(),
-        # Model state — tree_trained=True means predictions are available
-        # For LR model, weights load instantly so always ready once cache is ready
-        "tree_trained": _cache["ready"],
-        "model_type": "logistic_regression",
+        # Model state
+        "tree_trained": _rf_trained,
+        "model_type": "random_forest" if _rf_trained else "multiplicative",
         "model_version": f"round-{get_rotation_round()}-day-{get_rotation_day()}",
-        "is_retraining": False,  # LR retrains in background, never blocks
+        "records_used": _model_weights.get("records_used", 0),
+        "rf_threshold": 50,
+        "oob_score": _model_weights.get("oob_score"),
+        "is_retraining": False,
     }
 
 @app.post("/reload")
@@ -3369,6 +3430,171 @@ async def research(player: str, date: str = None):
         print(f"Research matchup error: {e}")
 
     return {"player": stats, "matchup": matchup, "date": today}
+
+
+# ── /refresh-8d ──────────────────────────────────────────────────────────────
+@app.get("/refresh-8d")
+async def manual_refresh_8d():
+    """Manually trigger 8-day rolling data refresh (Statcast + MLB API)."""
+    asyncio.create_task(refresh_8d())
+    _cache["last_8d_update"] = datetime.now().isoformat()
+    return {"status": "8d refresh triggered", "ts": _cache["last_8d_update"]}
+
+
+# ── /debug-arsenal ───────────────────────────────────────────────────────────
+@app.get("/debug-arsenal")
+async def debug_arsenal(player: str = "Freddie Freeman", pitcher: str = "Logan Webb"):
+    """Debug bat_arsenal and pit_arsenal column names and matchup values."""
+    bat_df = _cache.get("bat_arsenal", pd.DataFrame())
+    pit_df = _cache.get("pit_arsenal", pd.DataFrame())
+    bat_cols = list(bat_df.columns) if not bat_df.empty else []
+    pit_cols = list(pit_df.columns) if not pit_df.empty else []
+    bat_row = fuzzy_match(player, bat_df)
+    pit_row = fuzzy_match(pitcher, pit_df)
+    score, details = compute_pitch_matchup(pitcher, player)
+    return {
+        "bat_arsenal_columns": bat_cols,
+        "pit_arsenal_columns": pit_cols,
+        "bat_row_sample": dict(bat_row) if bat_row is not None else None,
+        "pit_row_sample": dict(pit_row) if pit_row is not None else None,
+        "pitch_matchup_score": score,
+        "pitch_matchup_details": details,
+    }
+
+
+# ── Parlay combination tracking ───────────────────────────────────────────────
+async def save_parlay_combinations():
+    """
+    Called at 12pm daily after save_daily_predictions().
+    Takes top picks (≥7%), generates all 2-leg and 3-leg combos,
+    saves to data/parlays/{date}.json on GitHub.
+    """
+    if not GITHUB_TOKEN: return
+    today = date.today().isoformat()
+    path  = f"data/parlays/{today}.json"
+    existing, sha = await github_get_file(path)
+    if existing:
+        print(f"Parlay combos already saved for {today}")
+        return
+    try:
+        import json, itertools
+        pred_content, _ = await github_get_file(f"data/predictions/{today}.json")
+        if not pred_content: return
+        preds = json.loads(pred_content)
+        top   = sorted([p for p in preds if (p.get("model_hr_pct") or 0) >= 7],
+                       key=lambda x: x.get("model_hr_pct", 0), reverse=True)[:15]
+        top3  = top[:10]  # 3-leg combos from top 10 only
+
+        def combo_obj(legs):
+            return {
+                "legs":     [{"name": p["name"], "team": p.get("team",""), "pct": p.get("model_hr_pct",0)} for p in legs],
+                "n_legs":   len(legs),
+                "both_hit": None,  # patched at 2am by record_parlay_results
+            }
+
+        combos  = [combo_obj(list(c)) for c in itertools.combinations(top,  2)]
+        combos += [combo_obj(list(c)) for c in itertools.combinations(top3, 3)]
+        content = json.dumps(combos, indent=2)
+        await github_put_file(path, content, f"parlays: {today} ({len(combos)} combos)", sha)
+        print(f"Saved {len(combos)} parlay combos for {today}")
+    except Exception as e:
+        print(f"save_parlay_combinations error: {e}")
+
+
+async def record_parlay_results(target_date: str):
+    """
+    Called at 2am inside record_results() after individual outcomes are patched.
+    Reads today's prediction file for hit_hr outcomes, patches both_hit into combos.
+    """
+    if not GITHUB_TOKEN: return
+    path = f"data/parlays/{target_date}.json"
+    existing, sha = await github_get_file(path)
+    if not existing: return
+    try:
+        import json
+        combos = json.loads(existing)
+        pred_content, _ = await github_get_file(f"data/predictions/{target_date}.json")
+        if not pred_content: return
+        preds    = json.loads(pred_content)
+        hit_map  = {(r.get("name") or ""): r.get("hit_hr") for r in preds if r.get("name")}
+        updated  = 0
+        for combo in combos:
+            outcomes = [hit_map.get(leg["name"]) for leg in combo.get("legs", [])]
+            if all(o is not None for o in outcomes):
+                combo["both_hit"] = int(all(o == 1 for o in outcomes))
+                updated += 1
+        content = json.dumps(combos, indent=2)
+        await github_put_file(path, content, f"parlay results: {target_date}", sha)
+        print(f"Patched {updated}/{len(combos)} parlay combos for {target_date}")
+    except Exception as e:
+        print(f"record_parlay_results error: {e}")
+
+
+@app.get("/parlay-results")
+async def parlay_results_endpoint(days: int = 30):
+    """
+    Aggregate parlay combination hit rates across tracked days.
+    Returns today's combos, all-time hit rates, and best winning combos.
+    """
+    if not GITHUB_TOKEN:
+        return {"error": "No GitHub token"}
+    try:
+        import json
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(
+                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/parlays",
+                headers={"Authorization": f"token {GITHUB_TOKEN}"}
+            )
+            files = r.json() if r.is_success else []
+        all_combos = []
+        dates_loaded = []
+        for f in sorted(files, key=lambda x: x.get("name",""), reverse=True)[:days]:
+            if not f.get("name","").endswith(".json"): continue
+            content, _ = await github_get_file(f"data/parlays/{f['name']}")
+            if content:
+                try:
+                    day_combos = json.loads(content)
+                    for c in day_combos:
+                        c["_date"] = f["name"].replace(".json","")
+                    all_combos.extend(day_combos)
+                    dates_loaded.append(f["name"].replace(".json",""))
+                except: pass
+
+        completed = [c for c in all_combos if c.get("both_hit") is not None]
+        two_leg   = [c for c in completed if c.get("n_legs") == 2]
+        three_leg = [c for c in completed if c.get("n_legs") == 3]
+        two_hits  = [c for c in two_leg   if c.get("both_hit") == 1]
+        three_hits= [c for c in three_leg if c.get("both_hit") == 1]
+
+        # Best combos by hit count
+        combo_counts = {}
+        for c in two_hits + three_hits:
+            key = tuple(sorted(leg["name"] for leg in c.get("legs", [])))
+            combo_counts[key] = combo_counts.get(key, 0) + 1
+        best = sorted(combo_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+
+        today_str   = date.today().isoformat()
+        today_combos = [c for c in all_combos if c.get("_date") == today_str]
+
+        return {
+            "today": {
+                "date":         today_str,
+                "total_combos": len(today_combos),
+                "two_leg":      len([c for c in today_combos if c.get("n_legs") == 2]),
+                "three_leg":    len([c for c in today_combos if c.get("n_legs") == 3]),
+            },
+            "all_time": {
+                "days_tracked":        len(dates_loaded),
+                "two_leg_combos":      len(two_leg),
+                "three_leg_combos":    len(three_leg),
+                "two_leg_hit_rate":    f"{len(two_hits)/len(two_leg)*100:.1f}%" if two_leg else "--",
+                "three_leg_hit_rate":  f"{len(three_hits)/len(three_leg)*100:.1f}%" if three_leg else "--",
+            },
+            "best_combos": [{"players": list(k), "hits": v} for k, v in best],
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
