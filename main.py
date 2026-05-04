@@ -2938,6 +2938,12 @@ def status():
         "model_calibrated": _model_weights.get("last_calibrated"),
         "model_round": get_rotation_round(),
         "model_day": get_rotation_day(),
+        # Model state — tree_trained=True means predictions are available
+        # For LR model, weights load instantly so always ready once cache is ready
+        "tree_trained": _cache["ready"],
+        "model_type": "logistic_regression",
+        "model_version": f"round-{get_rotation_round()}-day-{get_rotation_day()}",
+        "is_retraining": False,  # LR retrains in background, never blocks
     }
 
 @app.post("/reload")
