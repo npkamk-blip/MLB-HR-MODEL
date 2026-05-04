@@ -15,6 +15,9 @@ import os
 import threading
 import asyncio
 import uvicorn
+import json
+import statistics
+import itertools
 from datetime import date, timedelta, datetime
 from collections import defaultdict
 
@@ -139,7 +142,7 @@ async def save_model_log(weights_dict):
     existing, sha = await github_get_file(path)
     await github_put_file(path, json.dumps(log, indent=2), f"model log: {today}", sha)
 
-async def recalibrate_model():
+async def recalibrate_model(save_to_github: bool = True):
     """
     Train Random Forest on all completed prediction records.
     Locked params: 200 estimators, max_depth=5, min_samples_leaf=10,
@@ -295,8 +298,11 @@ async def recalibrate_model():
     }
     _model_weights = new_weights
 
-    await save_model_weights(new_weights)
-    await save_model_log(new_weights)
+    if save_to_github:
+        await save_model_weights(new_weights)
+        await save_model_log(new_weights)
+    else:
+        print("RF trained (startup — skipping GitHub write to prevent deploy loop)")
 
     print(f"RF trained — {n} records, OOB={oob_score:.3f}, HR rate={hr_rate}%")
     print(f"Top features: {[k for k,_ in ranked[:5]]}")
@@ -311,12 +317,12 @@ async def recalibrate_model():
 
 
 async def startup_train_rf():
-    """Train RF on startup from saved GitHub records — restores model after redeploy."""
+    """Train RF on startup — no GitHub write so we don't trigger infinite redeploy loop."""
     global _rf_trained
     await asyncio.sleep(20)  # let Savant data load first
     try:
         print("Startup: training Random Forest from saved records...")
-        result = await recalibrate_model()
+        result = await recalibrate_model(save_to_github=False)
         if isinstance(result, dict) and result.get("status") == "done":
             print(f"Startup RF trained — {result.get('records_used')} records, "
                   f"OOB={result.get('oob_score')}, top={result.get('top_features',[])[0] if result.get('top_features') else '?'}")
