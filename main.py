@@ -421,12 +421,11 @@ async def train_xgboost(save_to_github: bool = True):
 
     xgb = XGBClassifier(
         n_estimators=300,
-        max_depth=4,           # shallow — XGBoost is additive, doesn't need deep trees
-        learning_rate=0.05,    # slow learning = better generalization
-        subsample=0.8,         # row sampling per tree
-        colsample_bytree=0.8,  # feature sampling per tree
-        scale_pos_weight=spw,  # handles HR class imbalance correctly
-        use_label_encoder=False,
+        max_depth=4,
+        learning_rate=0.05,
+        subsample=0.8,
+        colsample_bytree=0.8,
+        scale_pos_weight=spw,
         eval_metric="logloss",
         random_state=42,
         n_jobs=-1,
@@ -3441,7 +3440,7 @@ async def get_games(date: str = None, refresh: bool = False):
 
             all_batters.append({
                 "name": name, "team": team, "hr_prob": hr_prob,
-                "xgb_prob": predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, breakdown),
+                "xgb_prob": predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, batter_wx_mult, breakdown),
                 "archetype": archetype, "trend": trend, "confidence": conf,
                 "reasons": reasons, "opp_pitcher": opp_p_name,
                 "bat_hand": bat_hand, "opp_p_hand": opp_p_hand,
