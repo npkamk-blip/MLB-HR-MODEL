@@ -3271,6 +3271,97 @@ async def manual_record_results(target_date: str = None):
     await record_results(d)
     return {"status": "done", "date": d}
 
+@app.get("/coverage-check")
+async def coverage_check(days: int = 7):
+    """
+    Data health check — for each feature field in prediction records,
+    shows how many players have real values vs zero/null/blank.
+    Tells you exactly what the model is and isn't seeing.
+    """
+    if not GITHUB_TOKEN:
+        return {"error": "No GitHub token"}
+    import json
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(
+                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
+                headers={"Authorization": f"token {GITHUB_TOKEN}"}
+            )
+            files = r.json() if r.is_success else []
+
+        all_records = []
+        for f in sorted(files, key=lambda x: x["name"], reverse=True)[:days]:
+            if not f["name"].endswith(".json"): continue
+            content, _ = await github_get_file(f"data/predictions/{f['name']}")
+            if content:
+                try: all_records.extend(json.loads(content))
+                except: pass
+
+        if not all_records:
+            return {"error": "No records found"}
+
+        n = len(all_records)
+
+        # Fields to check — everything the model uses
+        FIELDS = [
+            "barrel_pct_season", "barrel_pct_l8d",
+            "la_season", "la_l8d",
+            "ev_season", "ev_l8d",
+            "iso_season", "iso_vs_hand",
+            "hard_hit_season", "hard_hit_l8d",
+            "k_pct_season", "k_pct_l8d",
+            "fb_pct_season", "pull_pct_season",
+            "pit_hr9_season", "pit_hr9_vs_hand",
+            "pit_hard_hit_season", "pit_era_season",
+            "pit_k9_season", "pit_era_diff",
+            "pit_slg_vs_hand", "pit_fb_pct_allowed",
+            "park_factor", "weather_mult",
+            "bat_platoon_mult", "pit_platoon_mult",
+            "bullpen_vuln", "pitch_matchup_score",
+            "combined_pitch_delta", "xslg_l8d",
+            "xwoba_l8d", "xslg_gap_l8d",
+            "bat_speed_l8d", "day_of_season",
+            "hit_hr",
+        ]
+
+        coverage = {}
+        for field in FIELDS:
+            populated = sum(1 for r in all_records
+                          if r.get(field) not in (None, 0, "", "DNP")
+                          and r.get(field) == r.get(field))  # not NaN
+            missing   = n - populated
+            coverage[field] = {
+                "populated":  populated,
+                "missing":    missing,
+                "pct":        round(populated / n * 100, 1),
+                "status":     "✅" if populated/n >= 0.80
+                              else "⚠️" if populated/n >= 0.50
+                              else "❌"
+            }
+
+        # Sort by coverage % ascending so worst fields show first
+        sorted_coverage = dict(sorted(coverage.items(),
+                                      key=lambda x: x[1]["pct"]))
+
+        # Summary
+        good   = sum(1 for v in coverage.values() if v["pct"] >= 80)
+        warn   = sum(1 for v in coverage.values() if 50 <= v["pct"] < 80)
+        bad    = sum(1 for v in coverage.values() if v["pct"] < 50)
+
+        return {
+            "records_checked": n,
+            "days_checked":    days,
+            "summary": {
+                "good_80pct_plus":  good,
+                "warning_50_80pct": warn,
+                "bad_under_50pct":  bad,
+            },
+            "fields": sorted_coverage,
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+
 @app.get("/debug-results")
 async def debug_results(target_date: str = None):
     """Show what the MLB API returned for a date vs what we predicted"""
