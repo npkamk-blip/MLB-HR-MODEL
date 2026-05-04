@@ -3316,6 +3316,10 @@ async def coverage_check(days: int = 7):
             return {"error": "No records found"}
 
         n = len(all_records)
+        dnp_count    = sum(1 for r in all_records if r.get("hit_hr") == "DNP")
+        completed    = sum(1 for r in all_records if r.get("hit_hr") in [0, 1])
+        pending      = sum(1 for r in all_records if r.get("hit_hr") is None)
+        hr_count     = sum(1 for r in all_records if r.get("hit_hr") == 1)
 
         # Fields to check — everything the model uses
         FIELDS = [
@@ -3366,6 +3370,15 @@ async def coverage_check(days: int = 7):
         return {
             "records_checked": n,
             "days_checked":    days,
+            "outcome_breakdown": {
+                "completed":  completed,
+                "hr_hits":    hr_count,
+                "no_hr":      completed - hr_count,
+                "dnp":        dnp_count,
+                "pending":    pending,
+                "hr_rate_completed": f"{round(hr_count/completed*100,1)}%" if completed > 0 else "0%",
+                "dnp_rate":   f"{round(dnp_count/n*100,1)}%",
+            },
             "summary": {
                 "good_80pct_plus":  good,
                 "warning_50_80pct": warn,
