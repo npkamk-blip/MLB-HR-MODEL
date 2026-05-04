@@ -451,7 +451,7 @@ function buildDashboard(d){
   h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">';
   h += '<div style="font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em">Active Model</div>';
   h += '<div style="font-family:Barlow Condensed,sans-serif;font-size:15px;font-weight:800;color:'+modelC+'">'+modelLbl+'</div>';
-  if(d.rf_oob) h += '<div style="font-size:11px;color:var(--muted)">RF OOB <span style="color:var(--text);font-weight:600">'+Math.round(d.rf_oob*100)+'%</span></div>';
+  if(d.rf_oob) h += '<div style="font-size:11px;color:var(--muted)">RF CV AUC <span style="color:var(--text);font-weight:600">'+d.rf_oob.toFixed(3)+'</span></div>';
   if(d.xgb_trained) h += '<div style="font-size:11px;color:var(--muted)">XGB CV AUC <span style="color:var(--purple);font-weight:600">'+d.xgb_cv.toFixed(3)+'</span></div>';
   if(d.xgb_trained && d.xgb_cv <= d.rf_oob) h += '<div style="font-size:10px;color:var(--muted2)">XGBoost learning — flips live when it beats RF</div>';
   h += '</div>';
