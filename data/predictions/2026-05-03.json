@@ -9,7 +9,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.2,
     "la_season": 11.9,
     "ev_season": 86.0,
@@ -85,7 +85,8 @@
       "park": 49,
       "discipline": 54,
       "platoon": 53
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -97,7 +98,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 7.7,
     "la_season": 14.1,
     "ev_season": 86.3,
@@ -173,7 +174,8 @@
       "park": 49,
       "discipline": 42,
       "platoon": 51
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -185,7 +187,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.0,
     "la_season": 15.8,
     "ev_season": 85.3,
@@ -261,7 +263,8 @@
       "park": 49,
       "discipline": 54,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -273,7 +276,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 13.3,
     "la_season": 22.2,
     "ev_season": 86.8,
@@ -349,7 +352,8 @@
       "park": 49,
       "discipline": 56,
       "platoon": 52
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -361,7 +365,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 17.9,
     "ev_season": 86.4,
@@ -437,7 +441,8 @@
       "park": 49,
       "discipline": 74,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -449,7 +454,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 8.0,
     "la_season": 20.4,
     "ev_season": 88.4,
@@ -525,7 +530,8 @@
       "park": 49,
       "discipline": 82,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -537,7 +543,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.8,
     "la_season": 11.1,
     "ev_season": 92.8,
@@ -613,7 +619,8 @@
       "park": 49,
       "discipline": 45,
       "platoon": 51
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -625,7 +632,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.4,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 14.5,
     "la_season": 18.0,
     "ev_season": 92.8,
@@ -701,7 +708,8 @@
       "park": 49,
       "discipline": 62,
       "platoon": 57
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -713,7 +721,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 5.6,
     "la_season": 24.4,
     "ev_season": 89.9,
@@ -789,7 +797,8 @@
       "park": 49,
       "discipline": 40,
       "platoon": 46
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -801,7 +810,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.5,
     "la_season": 13.6,
     "ev_season": 88.3,
@@ -877,7 +886,8 @@
       "park": 49,
       "discipline": 87,
       "platoon": 52
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -889,7 +899,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 8.8,
     "ev_season": 81.8,
@@ -965,7 +975,8 @@
       "park": 49,
       "discipline": 33,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -977,7 +988,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.8,
     "la_season": 8.4,
     "ev_season": 91.3,
@@ -1053,7 +1064,8 @@
       "park": 49,
       "discipline": 79,
       "platoon": 44
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -1065,7 +1077,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 10.6,
     "ev_season": 96.0,
@@ -1141,7 +1153,8 @@
       "park": 49,
       "discipline": 60,
       "platoon": 52
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -1153,7 +1166,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.5,
     "la_season": 9.8,
     "ev_season": 86.2,
@@ -1229,7 +1242,8 @@
       "park": 49,
       "discipline": 100,
       "platoon": 48
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -1241,7 +1255,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.9,
     "la_season": 15.5,
     "ev_season": 88.8,
@@ -1317,7 +1331,8 @@
       "park": 49,
       "discipline": 55,
       "platoon": 54
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -1329,7 +1344,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 18.5,
     "la_season": 23.2,
     "ev_season": 88.8,
@@ -1405,7 +1420,8 @@
       "park": 49,
       "discipline": 48,
       "platoon": 63
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -1417,7 +1433,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 26.3,
     "ev_season": 82.8,
@@ -1493,7 +1509,8 @@
       "park": 49,
       "discipline": 66,
       "platoon": 45
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -1505,7 +1522,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 9.8,
     "la_season": 17.2,
     "ev_season": 89.0,
@@ -1581,7 +1598,8 @@
       "park": 49,
       "discipline": 61,
       "platoon": 48
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -1593,7 +1611,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 14.6,
     "la_season": 14.1,
     "ev_season": 91.3,
@@ -1669,7 +1687,8 @@
       "park": 49,
       "discipline": 49,
       "platoon": 53
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -1681,7 +1700,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.9,
     "la_season": 17.8,
     "ev_season": 84.5,
@@ -1757,7 +1776,8 @@
       "park": 49,
       "discipline": 55,
       "platoon": 44
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -1769,7 +1789,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.3,
     "la_season": 6.8,
     "ev_season": 89.3,
@@ -1845,7 +1865,8 @@
       "park": 49,
       "discipline": 44,
       "platoon": 47
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -1857,7 +1878,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.8,
     "la_season": 16.7,
     "ev_season": 89.2,
@@ -1933,7 +1954,8 @@
       "park": 49,
       "discipline": 40,
       "platoon": 58
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -1945,7 +1967,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 15.2,
     "la_season": 23.1,
     "ev_season": 90.8,
@@ -2021,7 +2043,8 @@
       "park": 49,
       "discipline": 58,
       "platoon": 53
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -2033,7 +2056,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.6,
     "la_season": 11.5,
     "ev_season": 86.6,
@@ -2109,7 +2132,8 @@
       "park": 49,
       "discipline": 53,
       "platoon": 52
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -2121,7 +2145,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 11.4,
     "la_season": 7.5,
     "ev_season": 89.7,
@@ -2197,7 +2221,8 @@
       "park": 49,
       "discipline": 31,
       "platoon": 51
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -2209,7 +2234,7 @@
     "home_team": "Minnesota Twins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.4,
     "la_season": 9.2,
     "ev_season": 87.4,
@@ -2285,7 +2310,8 @@
       "park": 49,
       "discipline": 51,
       "platoon": 53
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -2297,7 +2323,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 14.3,
     "la_season": 29.4,
     "ev_season": 88.0,
@@ -2373,7 +2399,8 @@
       "park": 52,
       "discipline": 29,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -2385,7 +2412,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.3,
     "la_season": 4.8,
     "ev_season": 86.9,
@@ -2461,7 +2488,8 @@
       "park": 52,
       "discipline": 44,
       "platoon": 55
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -2473,7 +2501,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 14.7,
     "la_season": 10.6,
     "ev_season": 88.5,
@@ -2549,7 +2577,8 @@
       "park": 52,
       "discipline": 34,
       "platoon": 49
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -2561,7 +2590,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.0,
     "la_season": 7.3,
     "ev_season": 89.7,
@@ -2637,7 +2666,8 @@
       "park": 52,
       "discipline": 52,
       "platoon": 60
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -2649,7 +2679,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 2.3,
     "la_season": 12.7,
     "ev_season": 87.0,
@@ -2725,7 +2755,8 @@
       "park": 52,
       "discipline": 63,
       "platoon": 60
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -2737,7 +2768,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.5,
     "la_season": 12.8,
     "ev_season": 90.3,
@@ -2813,7 +2844,8 @@
       "park": 52,
       "discipline": 60,
       "platoon": 59
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -2825,7 +2857,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 21.8,
     "ev_season": 92.7,
@@ -2901,7 +2933,8 @@
       "park": 52,
       "discipline": 43,
       "platoon": 54
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -2913,7 +2946,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 18.3,
     "ev_season": 83.7,
@@ -2989,7 +3022,8 @@
       "park": 52,
       "discipline": 56,
       "platoon": 53
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -3001,7 +3035,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.6,
     "la_season": 24.8,
     "ev_season": 87.4,
@@ -3077,7 +3111,8 @@
       "park": 52,
       "discipline": 80,
       "platoon": 48
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -3089,7 +3124,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.5,
     "la_season": 5.4,
     "ev_season": 85.4,
@@ -3165,7 +3200,8 @@
       "park": 52,
       "discipline": 67,
       "platoon": 45
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -3177,7 +3213,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 20.0,
     "la_season": 48.1,
     "ev_season": 90.9,
@@ -3253,7 +3289,8 @@
       "park": 52,
       "discipline": 44,
       "platoon": 50
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -3265,7 +3302,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 3.6,
     "la_season": 6.9,
     "ev_season": 88.1,
@@ -3341,7 +3378,8 @@
       "park": 52,
       "discipline": 61,
       "platoon": 46
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -3353,7 +3391,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 17.4,
     "la_season": 18.7,
     "ev_season": 93.5,
@@ -3429,7 +3467,8 @@
       "park": 52,
       "discipline": 79,
       "platoon": 65
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -3441,7 +3480,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.3,
     "la_season": 19.5,
     "ev_season": 90.9,
@@ -3517,7 +3556,8 @@
       "park": 52,
       "discipline": 65,
       "platoon": 47
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -3529,7 +3569,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 1.2,
     "la_season": 5.2,
     "ev_season": 86.0,
@@ -3605,7 +3645,8 @@
       "park": 52,
       "discipline": 84,
       "platoon": 46
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -3617,7 +3658,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.5,
     "la_season": 15.9,
     "ev_season": 92.4,
@@ -3693,7 +3734,8 @@
       "park": 52,
       "discipline": 34,
       "platoon": 47
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -3705,7 +3747,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.8,
     "la_season": 11.8,
     "ev_season": 88.6,
@@ -3781,7 +3823,8 @@
       "park": 52,
       "discipline": 40,
       "platoon": 43
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -3793,7 +3836,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 3.1,
     "la_season": 16.0,
     "ev_season": 87.9,
@@ -3869,7 +3912,8 @@
       "park": 52,
       "discipline": 77,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -3881,7 +3925,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 3.6,
     "la_season": 21.1,
     "ev_season": 81.7,
@@ -3957,7 +4001,8 @@
       "park": 52,
       "discipline": 54,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -3969,7 +4014,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.4,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 10.5,
     "la_season": 11.9,
     "ev_season": 89.9,
@@ -4045,7 +4090,8 @@
       "park": 52,
       "discipline": 57,
       "platoon": 46
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -4057,7 +4103,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.1,
     "la_season": 9.7,
     "ev_season": 87.8,
@@ -4133,7 +4179,8 @@
       "park": 52,
       "discipline": 86,
       "platoon": 45
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -4145,7 +4192,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 5.2,
     "ev_season": 90.2,
@@ -4221,7 +4268,8 @@
       "park": 52,
       "discipline": 86,
       "platoon": 42
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -4233,7 +4281,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.8,
     "la_season": 8.2,
     "ev_season": 92.2,
@@ -4309,7 +4357,8 @@
       "park": 52,
       "discipline": 50,
       "platoon": 47
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -4321,7 +4370,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 3.4,
     "la_season": 12.3,
     "ev_season": 89.5,
@@ -4397,7 +4446,8 @@
       "park": 52,
       "discipline": 46,
       "platoon": 46
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -4409,7 +4459,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 17.8,
     "la_season": 17.1,
     "ev_season": 92.7,
@@ -4485,7 +4535,8 @@
       "park": 52,
       "discipline": 42,
       "platoon": 54
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -4497,7 +4548,7 @@
     "home_team": "Boston Red Sox",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.5,
     "la_season": 14.5,
     "ev_season": 89.9,
@@ -4573,7 +4624,8 @@
       "park": 52,
       "discipline": 82,
       "platoon": 53
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -4585,7 +4637,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 12.1,
     "la_season": 18.7,
     "ev_season": 89.5,
@@ -4661,7 +4713,8 @@
       "park": 47,
       "discipline": 82,
       "platoon": 50
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -4673,7 +4726,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 16.1,
     "la_season": 15.2,
     "ev_season": 94.8,
@@ -4749,7 +4802,8 @@
       "park": 47,
       "discipline": 48,
       "platoon": 58
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -4761,7 +4815,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.5,
     "la_season": 18.6,
     "ev_season": 97.0,
@@ -4837,7 +4891,8 @@
       "park": 47,
       "discipline": 82,
       "platoon": 63
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -4849,7 +4904,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 10.0,
     "ev_season": 81.9,
@@ -4925,7 +4980,8 @@
       "park": 47,
       "discipline": 56,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -4937,7 +4993,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 11.8,
     "la_season": 18.4,
     "ev_season": 91.6,
@@ -5013,7 +5069,8 @@
       "park": 47,
       "discipline": 46,
       "platoon": 43
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -5025,7 +5082,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.5,
     "la_season": 21.1,
     "ev_season": 87.7,
@@ -5101,7 +5158,8 @@
       "park": 47,
       "discipline": 47,
       "platoon": 46
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -5113,7 +5171,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.3,
     "la_season": 14.9,
     "ev_season": 92.0,
@@ -5189,7 +5247,8 @@
       "park": 47,
       "discipline": 65,
       "platoon": 62
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -5201,7 +5260,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 26.1,
     "ev_season": 87.1,
@@ -5277,7 +5336,8 @@
       "park": 47,
       "discipline": 27,
       "platoon": 48
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -5289,7 +5349,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 19.8,
     "la_season": 14.5,
     "ev_season": 91.1,
@@ -5365,7 +5425,8 @@
       "park": 47,
       "discipline": 57,
       "platoon": 58
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -5377,7 +5438,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 15.5,
     "la_season": 18.9,
     "ev_season": 90.0,
@@ -5453,7 +5514,8 @@
       "park": 47,
       "discipline": 65,
       "platoon": 53
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -5465,7 +5527,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 2.3,
     "la_season": 19.1,
     "ev_season": 87.5,
@@ -5541,7 +5603,8 @@
       "park": 47,
       "discipline": 57,
       "platoon": 47
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -5553,7 +5616,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 13.5,
     "la_season": 24.3,
     "ev_season": 93.9,
@@ -5629,7 +5692,8 @@
       "park": 47,
       "discipline": 59,
       "platoon": 49
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -5641,7 +5705,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.7,
     "la_season": 30.1,
     "ev_season": 90.3,
@@ -5717,7 +5781,8 @@
       "park": 47,
       "discipline": 53,
       "platoon": 53
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -5729,7 +5794,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 2.9,
     "ev_season": 82.6,
@@ -5805,7 +5870,8 @@
       "park": 47,
       "discipline": 19,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -5817,7 +5883,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.4,
     "la_season": 16.8,
     "ev_season": 88.7,
@@ -5893,7 +5959,8 @@
       "park": 47,
       "discipline": 44,
       "platoon": 60
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -5905,7 +5972,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.0,
     "la_season": 7.7,
     "ev_season": 91.7,
@@ -5981,7 +6048,8 @@
       "park": 47,
       "discipline": 49,
       "platoon": 51
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -5993,7 +6061,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 7.4,
     "la_season": 16.4,
     "ev_season": 89.9,
@@ -6069,7 +6137,8 @@
       "park": 47,
       "discipline": 51,
       "platoon": 51
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -6081,7 +6150,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 0.7,
     "ev_season": 83.5,
@@ -6157,7 +6226,8 @@
       "park": 47,
       "discipline": 30,
       "platoon": 42
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -6169,7 +6239,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.0,
     "la_season": 16.5,
     "ev_season": 85.1,
@@ -6245,7 +6315,8 @@
       "park": 47,
       "discipline": 39,
       "platoon": 49
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -6257,7 +6328,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.1,
     "la_season": 6.6,
     "ev_season": 87.7,
@@ -6333,7 +6404,8 @@
       "park": 47,
       "discipline": 43,
       "platoon": 48
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -6345,7 +6417,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.6,
     "la_season": 24.5,
     "ev_season": 88.4,
@@ -6421,7 +6493,8 @@
       "park": 47,
       "discipline": 43,
       "platoon": 47
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -6433,7 +6506,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 1.1,
     "la_season": 5.5,
     "ev_season": 86.5,
@@ -6509,7 +6582,8 @@
       "park": 47,
       "discipline": 59,
       "platoon": 44
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -6521,7 +6595,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 4.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 21.5,
     "la_season": 8.1,
     "ev_season": 96.3,
@@ -6597,7 +6671,8 @@
       "park": 47,
       "discipline": 33,
       "platoon": 53
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -6609,7 +6684,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.6,
     "la_season": 10.5,
     "ev_season": 90.7,
@@ -6685,7 +6760,8 @@
       "park": 47,
       "discipline": 49,
       "platoon": 53
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -6697,7 +6773,7 @@
     "home_team": "Pittsburgh Pirates",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 1.4,
     "la_season": 14.7,
     "ev_season": 85.5,
@@ -6773,7 +6849,8 @@
       "park": 47,
       "discipline": 84,
       "platoon": 51
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -6785,7 +6862,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.4,
     "la_season": 19.3,
     "ev_season": 89.0,
@@ -6861,7 +6938,8 @@
       "park": 51,
       "discipline": 62,
       "platoon": 62
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -6873,7 +6951,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 2.2,
     "la_season": 10.6,
     "ev_season": 92.3,
@@ -6949,7 +7027,8 @@
       "park": 51,
       "discipline": 36,
       "platoon": 50
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -6961,7 +7040,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.5,
     "la_season": 19.5,
     "ev_season": 89.0,
@@ -7037,7 +7116,8 @@
       "park": 51,
       "discipline": 40,
       "platoon": 60
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -7049,7 +7129,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 10.0,
     "la_season": 2.5,
     "ev_season": 85.5,
@@ -7125,7 +7205,8 @@
       "park": 51,
       "discipline": 40,
       "platoon": 52
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -7137,7 +7218,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 6.5,
     "la_season": 16.0,
     "ev_season": 87.1,
@@ -7213,7 +7294,8 @@
       "park": 51,
       "discipline": 54,
       "platoon": 51
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -7225,7 +7307,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 11.1,
     "la_season": 17.2,
     "ev_season": 89.5,
@@ -7301,7 +7383,8 @@
       "park": 51,
       "discipline": 37,
       "platoon": 62
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -7313,7 +7396,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.1,
     "la_season": 5.8,
     "ev_season": 88.6,
@@ -7389,7 +7472,8 @@
       "park": 51,
       "discipline": 51,
       "platoon": 49
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -7401,7 +7485,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 5.6,
     "la_season": 18.8,
     "ev_season": 87.5,
@@ -7477,7 +7561,8 @@
       "park": 51,
       "discipline": 56,
       "platoon": 48
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -7489,7 +7574,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.4,
     "la_season": 13.0,
     "ev_season": 94.8,
@@ -7565,7 +7650,8 @@
       "park": 51,
       "discipline": 78,
       "platoon": 49
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -7577,7 +7663,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.8,
     "la_season": 18.4,
     "ev_season": 92.3,
@@ -7653,7 +7739,8 @@
       "park": 51,
       "discipline": 42,
       "platoon": 54
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -7665,7 +7752,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.3,
     "la_season": 14.9,
     "ev_season": 89.7,
@@ -7741,7 +7828,8 @@
       "park": 51,
       "discipline": 86,
       "platoon": 57
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -7753,7 +7841,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.4,
     "la_season": 28.1,
     "ev_season": 89.6,
@@ -7829,7 +7917,8 @@
       "park": 51,
       "discipline": 60,
       "platoon": 52
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -7841,7 +7930,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.5,
     "la_season": 24.1,
     "ev_season": 93.6,
@@ -7917,7 +8006,8 @@
       "park": 51,
       "discipline": 76,
       "platoon": 48
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -7929,7 +8019,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 7.8,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 26.3,
     "la_season": 13.9,
     "ev_season": 92.7,
@@ -8005,7 +8095,8 @@
       "park": 51,
       "discipline": 49,
       "platoon": 59
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -8017,7 +8108,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 4.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 12.2,
     "la_season": 12.6,
     "ev_season": 91.0,
@@ -8093,7 +8184,8 @@
       "park": 51,
       "discipline": 46,
       "platoon": 53
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -8105,7 +8197,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 4.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 5.1,
     "la_season": 15.3,
     "ev_season": 91.2,
@@ -8181,7 +8273,8 @@
       "park": 51,
       "discipline": 83,
       "platoon": 50
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -8193,7 +8286,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.4,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 20.3,
     "la_season": 11.3,
     "ev_season": 94.7,
@@ -8269,7 +8362,8 @@
       "park": 51,
       "discipline": 69,
       "platoon": 61
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -8281,7 +8375,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 4.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.4,
     "la_season": 19.0,
     "ev_season": 89.2,
@@ -8357,7 +8451,8 @@
       "park": 51,
       "discipline": 59,
       "platoon": 52
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -8369,7 +8464,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.5,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 9.5,
     "la_season": 10.8,
     "ev_season": 91.9,
@@ -8445,7 +8540,8 @@
       "park": 51,
       "discipline": 42,
       "platoon": 47
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -8457,7 +8553,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.4,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 0.0,
     "la_season": 5.1,
     "ev_season": 86.5,
@@ -8533,7 +8629,8 @@
       "park": 51,
       "discipline": 50,
       "platoon": 50
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -8545,7 +8642,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.6,
     "la_season": 17.5,
     "ev_season": 89.3,
@@ -8621,7 +8718,8 @@
       "park": 51,
       "discipline": 51,
       "platoon": 48
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -8633,7 +8731,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.6,
     "la_season": 9.8,
     "ev_season": 83.4,
@@ -8709,7 +8807,8 @@
       "park": 51,
       "discipline": 58,
       "platoon": 46
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -8721,7 +8820,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0,
     "la_season": 0,
     "ev_season": 0,
@@ -8797,7 +8896,8 @@
       "park": 51,
       "discipline": 50,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -8809,7 +8909,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 7.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 20.8,
     "la_season": 9.3,
     "ev_season": 89.6,
@@ -8885,7 +8985,8 @@
       "park": 51,
       "discipline": 49,
       "platoon": 60
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -8897,7 +8998,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 5.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.9,
     "la_season": 9.3,
     "ev_season": 92.5,
@@ -8973,7 +9074,8 @@
       "park": 51,
       "discipline": 45,
       "platoon": 47
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -8985,7 +9087,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 4.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.0,
     "la_season": 17.6,
     "ev_season": 91.5,
@@ -9061,7 +9163,8 @@
       "park": 51,
       "discipline": 74,
       "platoon": 53
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -9073,7 +9176,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 2.9,
     "la_season": 17.6,
     "ev_season": 84.4,
@@ -9149,7 +9252,8 @@
       "park": 46,
       "discipline": 50,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -9161,7 +9265,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 2.0,
     "la_season": 1.2,
     "ev_season": 85.0,
@@ -9237,7 +9341,8 @@
       "park": 46,
       "discipline": 38,
       "platoon": 45
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -9249,7 +9354,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 5.6,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 11.1,
     "la_season": 9.2,
     "ev_season": 92.6,
@@ -9325,7 +9430,8 @@
       "park": 46,
       "discipline": 62,
       "platoon": 55
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -9337,7 +9443,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.0,
     "la_season": 10.8,
     "ev_season": 84.6,
@@ -9413,7 +9519,8 @@
       "park": 46,
       "discipline": 53,
       "platoon": 42
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -9425,7 +9532,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 15.2,
     "la_season": 5.3,
     "ev_season": 90.3,
@@ -9501,7 +9608,8 @@
       "park": 46,
       "discipline": 50,
       "platoon": 48
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -9513,7 +9621,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 14.9,
     "la_season": 15.8,
     "ev_season": 89.5,
@@ -9589,7 +9697,8 @@
       "park": 46,
       "discipline": 67,
       "platoon": 53
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -9601,7 +9710,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": -1.8,
     "ev_season": 85.7,
@@ -9677,7 +9786,8 @@
       "park": 46,
       "discipline": 32,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -9689,7 +9799,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 5.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.1,
     "la_season": 9.9,
     "ev_season": 93.2,
@@ -9765,7 +9875,8 @@
       "park": 46,
       "discipline": 60,
       "platoon": 54
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -9777,7 +9888,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.8,
     "la_season": 7.1,
     "ev_season": 86.4,
@@ -9853,7 +9964,8 @@
       "park": 46,
       "discipline": 65,
       "platoon": 50
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -9865,7 +9977,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.3,
     "la_season": 6.4,
     "ev_season": 87.0,
@@ -9941,7 +10053,8 @@
       "park": 46,
       "discipline": 82,
       "platoon": 47
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -9953,7 +10066,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.8,
     "la_season": 7.9,
     "ev_season": 85.0,
@@ -10029,7 +10142,8 @@
       "park": 46,
       "discipline": 88,
       "platoon": 47
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -10041,7 +10155,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.6,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 16.7,
     "ev_season": 82.9,
@@ -10117,7 +10231,8 @@
       "park": 46,
       "discipline": 70,
       "platoon": 52
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -10129,7 +10244,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.8,
     "la_season": 13.6,
     "ev_season": 89.4,
@@ -10205,7 +10320,8 @@
       "park": 46,
       "discipline": 80,
       "platoon": 49
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -10217,7 +10333,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 12.2,
     "la_season": 2.9,
     "ev_season": 89.7,
@@ -10293,7 +10409,8 @@
       "park": 46,
       "discipline": 38,
       "platoon": 47
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -10305,7 +10422,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.4,
     "la_season": 15.3,
     "ev_season": 89.6,
@@ -10381,7 +10498,8 @@
       "park": 46,
       "discipline": 45,
       "platoon": 60
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -10393,7 +10511,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 9.3,
     "la_season": 11.5,
     "ev_season": 88.6,
@@ -10469,7 +10587,8 @@
       "park": 46,
       "discipline": 54,
       "platoon": 56
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -10481,7 +10600,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.8,
     "la_season": 16.4,
     "ev_season": 87.7,
@@ -10557,7 +10676,8 @@
       "park": 46,
       "discipline": 41,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -10569,7 +10689,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 2.6,
     "la_season": 8.8,
     "ev_season": 80.1,
@@ -10645,7 +10765,8 @@
       "park": 46,
       "discipline": 37,
       "platoon": 42
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -10657,7 +10778,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.7,
     "la_season": 8.7,
     "ev_season": 89.0,
@@ -10733,7 +10854,8 @@
       "park": 46,
       "discipline": 51,
       "platoon": 47
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -10745,7 +10867,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 28.4,
     "la_season": 9.7,
     "ev_season": 97.4,
@@ -10821,7 +10943,8 @@
       "park": 46,
       "discipline": 45,
       "platoon": 58
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -10833,7 +10956,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 12.5,
     "la_season": 0.1,
     "ev_season": 89.6,
@@ -10909,7 +11032,8 @@
       "park": 46,
       "discipline": 34,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -10921,7 +11045,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 1.7,
     "la_season": 9.6,
     "ev_season": 82.5,
@@ -10997,7 +11121,8 @@
       "park": 46,
       "discipline": 62,
       "platoon": 43
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -11009,7 +11134,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 2.9,
     "la_season": 13.1,
     "ev_season": 90.7,
@@ -11085,7 +11210,8 @@
       "park": 46,
       "discipline": 33,
       "platoon": 46
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -11097,7 +11223,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 4.2,
     "la_season": 15.5,
     "ev_season": 88.4,
@@ -11173,7 +11299,8 @@
       "park": 46,
       "discipline": 55,
       "platoon": 44
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -11185,7 +11312,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 5.8,
     "la_season": 10.8,
     "ev_season": 92.1,
@@ -11261,7 +11388,8 @@
       "park": 46,
       "discipline": 51,
       "platoon": 47
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -11273,7 +11401,7 @@
     "home_team": "Washington Nationals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 6.6,
     "ev_season": 84.5,
@@ -11349,7 +11477,8 @@
       "park": 46,
       "discipline": 54,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -11361,7 +11490,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 14.1,
     "la_season": 22.5,
     "ev_season": 89.4,
@@ -11437,7 +11566,8 @@
       "park": 47,
       "discipline": 70,
       "platoon": 52
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -11449,7 +11579,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 23.4,
     "ev_season": 87.8,
@@ -11525,7 +11655,8 @@
       "park": 47,
       "discipline": 53,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -11537,7 +11668,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 5.7,
     "la_season": 12.6,
     "ev_season": 87.6,
@@ -11613,7 +11744,8 @@
       "park": 47,
       "discipline": 63,
       "platoon": 50
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -11625,7 +11757,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0,
     "la_season": 0,
     "ev_season": 0,
@@ -11701,7 +11833,8 @@
       "park": 47,
       "discipline": 39,
       "platoon": 50
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -11713,7 +11846,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 5.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 15.6,
     "la_season": 9.3,
     "ev_season": 93.2,
@@ -11789,7 +11922,8 @@
       "park": 47,
       "discipline": 41,
       "platoon": 53
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -11801,7 +11935,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.2,
     "la_season": 6.2,
     "ev_season": 86.3,
@@ -11877,7 +12011,8 @@
       "park": 47,
       "discipline": 36,
       "platoon": 44
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -11889,7 +12024,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.0,
     "la_season": 12.2,
     "ev_season": 88.8,
@@ -11965,7 +12100,8 @@
       "park": 47,
       "discipline": 73,
       "platoon": 47
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -11977,7 +12113,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 13.5,
     "ev_season": 86.6,
@@ -12053,7 +12189,8 @@
       "park": 47,
       "discipline": 79,
       "platoon": 47
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -12065,7 +12202,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.4,
     "la_season": 7.3,
     "ev_season": 87.6,
@@ -12141,7 +12278,8 @@
       "park": 47,
       "discipline": 41,
       "platoon": 47
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -12153,7 +12291,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 5.3,
     "la_season": 12.4,
     "ev_season": 90.9,
@@ -12229,7 +12367,8 @@
       "park": 47,
       "discipline": 43,
       "platoon": 52
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -12241,7 +12380,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.1,
     "la_season": 10.6,
     "ev_season": 90.1,
@@ -12317,7 +12456,8 @@
       "park": 47,
       "discipline": 41,
       "platoon": 45
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -12329,7 +12469,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0,
     "la_season": 0,
     "ev_season": 0,
@@ -12405,7 +12545,8 @@
       "park": 47,
       "discipline": 33,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -12417,7 +12558,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.5,
     "la_season": 22.2,
     "ev_season": 88.5,
@@ -12493,7 +12634,8 @@
       "park": 47,
       "discipline": 38,
       "platoon": 43
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -12505,7 +12647,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 5.7,
     "ev_season": 87.4,
@@ -12581,7 +12723,8 @@
       "park": 47,
       "discipline": 50,
       "platoon": 43
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -12593,7 +12736,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 2.7,
     "la_season": 32.1,
     "ev_season": 87.8,
@@ -12669,7 +12812,8 @@
       "park": 47,
       "discipline": 58,
       "platoon": 48
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -12681,7 +12825,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 2.0,
     "ev_season": 83.7,
@@ -12757,7 +12901,8 @@
       "park": 47,
       "discipline": 74,
       "platoon": 42
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -12769,7 +12914,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 6.5,
     "ev_season": 84.4,
@@ -12845,7 +12990,8 @@
       "park": 47,
       "discipline": 43,
       "platoon": 43
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -12857,7 +13003,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.9,
     "la_season": 22.2,
     "ev_season": 84.9,
@@ -12933,7 +13079,8 @@
       "park": 47,
       "discipline": 54,
       "platoon": 52
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -12945,7 +13092,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.3,
     "la_season": 15.6,
     "ev_season": 90.2,
@@ -13021,7 +13168,8 @@
       "park": 47,
       "discipline": 40,
       "platoon": 55
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -13033,7 +13181,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 5.8,
     "la_season": 15.8,
     "ev_season": 87.8,
@@ -13109,7 +13257,8 @@
       "park": 47,
       "discipline": 51,
       "platoon": 45
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -13121,7 +13270,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.2,
     "la_season": 13.4,
     "ev_season": 91.6,
@@ -13197,7 +13346,8 @@
       "park": 47,
       "discipline": 50,
       "platoon": 58
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -13209,7 +13359,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 1.5,
     "la_season": 6.4,
     "ev_season": 87.8,
@@ -13285,7 +13435,8 @@
       "park": 47,
       "discipline": 67,
       "platoon": 54
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -13297,7 +13448,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 5.4,
     "la_season": 8.9,
     "ev_season": 86.8,
@@ -13373,7 +13524,8 @@
       "park": 47,
       "discipline": 47,
       "platoon": 46
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -13385,7 +13537,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 17.7,
     "ev_season": 88.5,
@@ -13461,7 +13613,8 @@
       "park": 47,
       "discipline": 82,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -13473,7 +13626,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 18.0,
     "ev_season": 82.8,
@@ -13549,7 +13702,8 @@
       "park": 47,
       "discipline": 45,
       "platoon": 44
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -13561,7 +13715,7 @@
     "home_team": "Tampa Bay Rays",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 5.9,
     "la_season": 5.3,
     "ev_season": 90.3,
@@ -13637,7 +13791,8 @@
       "park": 47,
       "discipline": 84,
       "platoon": 49
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -13649,7 +13804,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 8.3,
     "la_season": 14.2,
     "ev_season": 92.8,
@@ -13725,7 +13880,8 @@
       "park": 46,
       "discipline": 49,
       "platoon": 48
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -13737,7 +13893,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 1.1,
     "la_season": 10.9,
     "ev_season": 88.9,
@@ -13813,7 +13969,8 @@
       "park": 46,
       "discipline": 64,
       "platoon": 43
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -13825,7 +13982,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.2,
     "la_season": 12.6,
     "ev_season": 91.1,
@@ -13901,7 +14058,8 @@
       "park": 46,
       "discipline": 56,
       "platoon": 53
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -13913,7 +14071,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.5,
     "la_season": 14.2,
     "ev_season": 88.1,
@@ -13989,7 +14147,8 @@
       "park": 46,
       "discipline": 45,
       "platoon": 53
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -14001,7 +14160,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.1,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 4.1,
     "la_season": 13.0,
     "ev_season": 90.1,
@@ -14077,7 +14236,8 @@
       "park": 46,
       "discipline": 42,
       "platoon": 44
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -14089,7 +14249,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 5.4,
     "la_season": 9.9,
     "ev_season": 89.5,
@@ -14165,7 +14325,8 @@
       "park": 46,
       "discipline": 40,
       "platoon": 54
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -14177,7 +14338,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 9.4,
     "ev_season": 88.8,
@@ -14253,7 +14414,8 @@
       "park": 46,
       "discipline": 49,
       "platoon": 51
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -14265,7 +14427,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 12.3,
     "ev_season": 93.0,
@@ -14341,7 +14503,8 @@
       "park": 46,
       "discipline": 42,
       "platoon": 51
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -14353,7 +14516,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 2.3,
     "la_season": 9.2,
     "ev_season": 88.4,
@@ -14429,7 +14592,8 @@
       "park": 46,
       "discipline": 52,
       "platoon": 49
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -14441,7 +14605,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 1.4,
     "la_season": 0.9,
     "ev_season": 88.7,
@@ -14517,7 +14681,8 @@
       "park": 46,
       "discipline": 62,
       "platoon": 48
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -14529,7 +14694,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 6.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 21.1,
     "la_season": 22.0,
     "ev_season": 93.2,
@@ -14605,7 +14770,8 @@
       "park": 46,
       "discipline": 47,
       "platoon": 60
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -14617,7 +14783,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 2.5,
     "la_season": 26.5,
     "ev_season": 86.4,
@@ -14693,7 +14859,8 @@
       "park": 46,
       "discipline": 45,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -14705,7 +14872,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 5.1,
     "la_season": 14.6,
     "ev_season": 89.8,
@@ -14781,7 +14948,8 @@
       "park": 46,
       "discipline": 48,
       "platoon": 49
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -14793,7 +14961,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.9,
     "la_season": 7.0,
     "ev_season": 88.9,
@@ -14869,7 +15037,8 @@
       "park": 46,
       "discipline": 52,
       "platoon": 59
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -14881,7 +15050,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0,
     "la_season": 0,
     "ev_season": 0,
@@ -14957,7 +15126,8 @@
       "park": 46,
       "discipline": 46,
       "platoon": 50
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -14969,7 +15139,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.5,
     "la_season": 15.7,
     "ev_season": 88.1,
@@ -15045,7 +15215,8 @@
       "park": 46,
       "discipline": 44,
       "platoon": 43
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -15057,7 +15228,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.5,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 4.2,
     "la_season": 15.5,
     "ev_season": 88.4,
@@ -15133,7 +15304,8 @@
       "park": 46,
       "discipline": 55,
       "platoon": 60
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -15145,7 +15317,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 4.1,
     "la_season": 21.1,
     "ev_season": 84.0,
@@ -15221,7 +15393,8 @@
       "park": 46,
       "discipline": 52,
       "platoon": 50
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -15233,7 +15406,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 2.3,
     "la_season": 17.9,
     "ev_season": 88.3,
@@ -15309,7 +15482,8 @@
       "park": 46,
       "discipline": 50,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -15321,7 +15495,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 1.8,
     "la_season": 11.0,
     "ev_season": 87.4,
@@ -15397,7 +15571,8 @@
       "park": 46,
       "discipline": 63,
       "platoon": 46
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -15409,7 +15584,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.6,
     "la_season": 5.7,
     "ev_season": 92.6,
@@ -15485,7 +15660,8 @@
       "park": 46,
       "discipline": 40,
       "platoon": 50
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -15497,7 +15673,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": -6.2,
     "ev_season": 86.1,
@@ -15573,7 +15749,8 @@
       "park": 46,
       "discipline": 71,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -15585,7 +15762,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 7.8,
     "la_season": 11.7,
     "ev_season": 88.2,
@@ -15661,7 +15838,8 @@
       "park": 46,
       "discipline": 86,
       "platoon": 54
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -15673,7 +15851,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.2,
     "la_season": 6.8,
     "ev_season": 92.5,
@@ -15749,7 +15927,8 @@
       "park": 46,
       "discipline": 42,
       "platoon": 55
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -15761,7 +15940,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.8,
     "la_season": 14.7,
     "ev_season": 90.3,
@@ -15837,7 +16016,8 @@
       "park": 46,
       "discipline": 35,
       "platoon": 49
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -15849,7 +16029,7 @@
     "home_team": "Miami Marlins",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.8,
     "la_season": 10.2,
     "ev_season": 88.6,
@@ -15925,7 +16105,8 @@
       "park": 46,
       "discipline": 89,
       "platoon": 43
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -15937,7 +16118,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 13.5,
     "ev_season": 85.4,
@@ -16013,7 +16194,8 @@
       "park": 49,
       "discipline": 83,
       "platoon": 45
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -16025,7 +16207,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.1,
     "la_season": 8.3,
     "ev_season": 90.1,
@@ -16101,7 +16283,8 @@
       "park": 49,
       "discipline": 55,
       "platoon": 45
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -16113,7 +16296,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 5.6,
     "la_season": 15.9,
     "ev_season": 90.4,
@@ -16189,7 +16372,8 @@
       "park": 49,
       "discipline": 50,
       "platoon": 50
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -16201,7 +16385,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 4.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 15.2,
     "la_season": 24.5,
     "ev_season": 92.1,
@@ -16277,7 +16461,8 @@
       "park": 49,
       "discipline": 46,
       "platoon": 61
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -16289,7 +16474,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.2,
     "la_season": 11.6,
     "ev_season": 92.1,
@@ -16365,7 +16550,8 @@
       "park": 49,
       "discipline": 75,
       "platoon": 50
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -16377,7 +16563,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.5,
     "la_season": 12.4,
     "ev_season": 86.4,
@@ -16453,7 +16639,8 @@
       "park": 49,
       "discipline": 62,
       "platoon": 50
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -16465,7 +16652,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.7,
     "la_season": 16.2,
     "ev_season": 89.4,
@@ -16541,7 +16728,8 @@
       "park": 49,
       "discipline": 70,
       "platoon": 47
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -16553,7 +16741,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.3,
     "la_season": 10.5,
     "ev_season": 92.5,
@@ -16629,7 +16817,8 @@
       "park": 49,
       "discipline": 34,
       "platoon": 58
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -16641,7 +16830,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 7.0,
     "la_season": 10.6,
     "ev_season": 88.4,
@@ -16717,7 +16906,8 @@
       "park": 49,
       "discipline": 78,
       "platoon": 51
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -16729,7 +16919,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 6.4,
     "ev_season": 88.3,
@@ -16805,7 +16995,8 @@
       "park": 49,
       "discipline": 58,
       "platoon": 55
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -16817,7 +17008,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 20.5,
     "la_season": 13.0,
     "ev_season": 94.4,
@@ -16893,7 +17084,8 @@
       "park": 49,
       "discipline": 41,
       "platoon": 52
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -16905,7 +17097,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.4,
     "la_season": 13.7,
     "ev_season": 90.0,
@@ -16981,7 +17173,8 @@
       "park": 49,
       "discipline": 54,
       "platoon": 50
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -16993,7 +17186,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.8,
     "la_season": 19.4,
     "ev_season": 88.8,
@@ -17069,7 +17262,8 @@
       "park": 49,
       "discipline": 70,
       "platoon": 48
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -17081,7 +17275,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.5,
     "la_season": 8.5,
     "ev_season": 91.4,
@@ -17157,7 +17351,8 @@
       "park": 49,
       "discipline": 53,
       "platoon": 50
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -17169,7 +17364,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.8,
     "la_season": 10.2,
     "ev_season": 90.6,
@@ -17245,7 +17440,8 @@
       "park": 49,
       "discipline": 56,
       "platoon": 51
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -17257,7 +17453,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.3,
     "la_season": 18.0,
     "ev_season": 89.8,
@@ -17333,7 +17529,8 @@
       "park": 49,
       "discipline": 69,
       "platoon": 52
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -17345,7 +17542,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 4.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 20.0,
     "la_season": 13.0,
     "ev_season": 95.5,
@@ -17421,7 +17618,8 @@
       "park": 49,
       "discipline": 43,
       "platoon": 63
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -17433,7 +17631,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 24.3,
     "ev_season": 87.2,
@@ -17509,7 +17707,8 @@
       "park": 49,
       "discipline": 66,
       "platoon": 62
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -17521,7 +17720,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 2.6,
     "la_season": 17.2,
     "ev_season": 86.1,
@@ -17597,7 +17796,8 @@
       "park": 49,
       "discipline": 58,
       "platoon": 51
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -17609,7 +17809,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.4,
     "la_season": 11.2,
     "ev_season": 87.0,
@@ -17685,7 +17885,8 @@
       "park": 49,
       "discipline": 44,
       "platoon": 51
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -17697,7 +17898,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 6.5,
     "la_season": 18.4,
     "ev_season": 87.6,
@@ -17773,7 +17974,8 @@
       "park": 49,
       "discipline": 49,
       "platoon": 47
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -17785,7 +17987,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.5,
     "la_season": 11.3,
     "ev_season": 85.0,
@@ -17861,7 +18063,8 @@
       "park": 49,
       "discipline": 42,
       "platoon": 44
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -17873,7 +18076,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.5,
     "la_season": 14.1,
     "ev_season": 90.0,
@@ -17949,7 +18152,8 @@
       "park": 49,
       "discipline": 71,
       "platoon": 62
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -17961,7 +18165,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 2.9,
     "la_season": 12.3,
     "ev_season": 89.5,
@@ -18037,7 +18241,8 @@
       "park": 49,
       "discipline": 33,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -18049,7 +18254,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 1.6,
     "la_season": 4.0,
     "ev_season": 87.5,
@@ -18125,7 +18330,8 @@
       "park": 49,
       "discipline": 44,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -18137,7 +18343,7 @@
     "home_team": "St. Louis Cardinals",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 9.9,
     "ev_season": 88.8,
@@ -18213,7 +18419,8 @@
       "park": 49,
       "discipline": 43,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -18225,7 +18432,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 7.3,
     "la_season": 13.1,
     "ev_season": 87.5,
@@ -18301,7 +18508,8 @@
       "park": 52,
       "discipline": 38,
       "platoon": 50
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -18313,7 +18521,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 7.5,
     "la_season": 12.6,
     "ev_season": 89.4,
@@ -18389,7 +18597,8 @@
       "park": 52,
       "discipline": 51,
       "platoon": 48
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -18401,7 +18610,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.0,
     "la_season": 8.2,
     "ev_season": 90.0,
@@ -18477,7 +18686,8 @@
       "park": 52,
       "discipline": 38,
       "platoon": 60
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -18489,7 +18699,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 11.4,
     "la_season": 22.3,
     "ev_season": 88.2,
@@ -18565,7 +18775,8 @@
       "park": 52,
       "discipline": 42,
       "platoon": 50
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -18577,7 +18788,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.6,
     "la_season": 10.0,
     "ev_season": 86.2,
@@ -18653,7 +18864,8 @@
       "park": 52,
       "discipline": 66,
       "platoon": 54
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -18665,7 +18877,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.0,
     "la_season": 6.9,
     "ev_season": 87.8,
@@ -18741,7 +18953,8 @@
       "park": 52,
       "discipline": 76,
       "platoon": 62
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -18753,7 +18966,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 6.3,
     "la_season": 10.4,
     "ev_season": 90.7,
@@ -18829,7 +19042,8 @@
       "park": 52,
       "discipline": 32,
       "platoon": 43
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -18841,7 +19055,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.1,
     "la_season": 10.4,
     "ev_season": 85.7,
@@ -18917,7 +19131,8 @@
       "park": 52,
       "discipline": 51,
       "platoon": 57
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -18929,7 +19144,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 5.9,
     "la_season": 13.9,
     "ev_season": 89.6,
@@ -19005,7 +19220,8 @@
       "park": 52,
       "discipline": 61,
       "platoon": 43
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -19017,7 +19233,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.6,
     "la_season": 7.5,
     "ev_season": 92.4,
@@ -19093,7 +19309,8 @@
       "park": 52,
       "discipline": 51,
       "platoon": 44
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -19105,7 +19322,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.3,
     "la_season": 10.1,
     "ev_season": 84.8,
@@ -19181,7 +19398,8 @@
       "park": 52,
       "discipline": 54,
       "platoon": 45
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -19193,7 +19411,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.6,
     "la_season": 20.3,
     "ev_season": 83.4,
@@ -19269,7 +19487,8 @@
       "park": 52,
       "discipline": 59,
       "platoon": 48
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -19281,7 +19500,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 2.8,
     "la_season": 10.5,
     "ev_season": 86.6,
@@ -19357,7 +19576,8 @@
       "park": 52,
       "discipline": 40,
       "platoon": 48
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -19369,7 +19589,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.4,
     "la_season": 15.2,
     "ev_season": 90.2,
@@ -19445,7 +19665,8 @@
       "park": 52,
       "discipline": 76,
       "platoon": 49
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -19457,7 +19678,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.9,
     "la_season": 14.6,
     "ev_season": 91.3,
@@ -19533,7 +19754,8 @@
       "park": 52,
       "discipline": 63,
       "platoon": 48
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -19545,7 +19767,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 4.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.0,
     "la_season": 13.0,
     "ev_season": 90.5,
@@ -19621,7 +19843,8 @@
       "park": 52,
       "discipline": 68,
       "platoon": 51
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -19633,7 +19856,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 4.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.3,
     "la_season": 11.7,
     "ev_season": 88.5,
@@ -19709,7 +19932,8 @@
       "park": 52,
       "discipline": 49,
       "platoon": 60
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -19721,7 +19945,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 6.3,
     "la_season": 12.7,
     "ev_season": 86.7,
@@ -19797,7 +20021,8 @@
       "park": 52,
       "discipline": 50,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -19809,7 +20034,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.1,
     "la_season": 13.3,
     "ev_season": 85.8,
@@ -19885,7 +20110,8 @@
       "park": 52,
       "discipline": 45,
       "platoon": 46
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -19897,7 +20123,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 9.5,
     "la_season": 11.8,
     "ev_season": 94.1,
@@ -19973,7 +20199,8 @@
       "park": 52,
       "discipline": 55,
       "platoon": 52
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -19985,7 +20212,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 5.4,
     "la_season": 19.0,
     "ev_season": 84.7,
@@ -20061,7 +20288,8 @@
       "park": 52,
       "discipline": 56,
       "platoon": 53
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -20073,7 +20301,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.5,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 11.3,
     "la_season": 12.0,
     "ev_season": 91.5,
@@ -20149,7 +20377,8 @@
       "park": 52,
       "discipline": 78,
       "platoon": 60
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -20161,7 +20390,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.2,
     "la_season": 6.8,
     "ev_season": 92.5,
@@ -20237,7 +20466,8 @@
       "park": 52,
       "discipline": 42,
       "platoon": 51
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -20249,7 +20479,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 2.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 2.6,
     "la_season": 16.5,
     "ev_season": 86.4,
@@ -20325,7 +20555,8 @@
       "park": 52,
       "discipline": 79,
       "platoon": 49
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -20337,7 +20568,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 3.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.2,
     "la_season": 18.3,
     "ev_season": 91.3,
@@ -20413,7 +20644,8 @@
       "park": 52,
       "discipline": 32,
       "platoon": 46
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -20425,7 +20657,7 @@
     "home_team": "Chicago Cubs",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 4.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.0,
     "la_season": 18.4,
     "ev_season": 89.8,
@@ -20501,7 +20733,8 @@
       "park": 52,
       "discipline": 60,
       "platoon": 56
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -20513,7 +20746,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 11.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.7,
     "la_season": 18.3,
     "ev_season": 90.3,
@@ -20589,7 +20822,8 @@
       "park": 60,
       "discipline": 35,
       "platoon": 49
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -20601,7 +20835,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.6,
     "la_season": 17.5,
     "ev_season": 89.6,
@@ -20677,7 +20911,8 @@
       "park": 60,
       "discipline": 72,
       "platoon": 51
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -20689,7 +20924,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.5,
     "la_season": 11.8,
     "ev_season": 91.0,
@@ -20765,7 +21000,8 @@
       "park": 60,
       "discipline": 43,
       "platoon": 55
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -20777,7 +21013,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.6,
     "la_season": 9.8,
     "ev_season": 86.0,
@@ -20853,7 +21089,8 @@
       "park": 60,
       "discipline": 46,
       "platoon": 51
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -20865,7 +21102,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.2,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 3.3,
     "la_season": 17.0,
     "ev_season": 85.0,
@@ -20941,7 +21178,8 @@
       "park": 60,
       "discipline": 64,
       "platoon": 46
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -20953,7 +21191,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 13.9,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 10.5,
     "la_season": 10.9,
     "ev_season": 91.3,
@@ -21029,7 +21267,8 @@
       "park": 60,
       "discipline": 28,
       "platoon": 50
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -21041,7 +21280,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 7.0,
     "ev_season": 81.6,
@@ -21117,7 +21356,8 @@
       "park": 60,
       "discipline": 31,
       "platoon": 47
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -21129,7 +21369,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 23.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 18.8,
     "la_season": 16.8,
     "ev_season": 92.9,
@@ -21205,7 +21445,8 @@
       "park": 60,
       "discipline": 71,
       "platoon": 60
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -21217,7 +21458,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.4,
     "la_season": 16.8,
     "ev_season": 87.5,
@@ -21293,7 +21534,8 @@
       "park": 60,
       "discipline": 68,
       "platoon": 45
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -21305,7 +21547,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 21.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 18.8,
     "la_season": 7.1,
     "ev_season": 94.9,
@@ -21381,7 +21623,8 @@
       "park": 60,
       "discipline": 54,
       "platoon": 49
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -21393,7 +21636,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.0,
     "la_season": 10.5,
     "ev_season": 90.1,
@@ -21469,7 +21712,8 @@
       "park": 60,
       "discipline": 46,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -21481,7 +21725,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.4,
     "la_season": 16.8,
     "ev_season": 87.0,
@@ -21557,7 +21801,8 @@
       "park": 60,
       "discipline": 76,
       "platoon": 58
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -21569,7 +21814,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.5,
     "la_season": 15.9,
     "ev_season": 89.1,
@@ -21645,7 +21890,8 @@
       "park": 60,
       "discipline": 52,
       "platoon": 47
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -21657,7 +21903,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 3.8,
     "la_season": 10.7,
     "ev_season": 89.4,
@@ -21733,7 +21979,8 @@
       "park": 60,
       "discipline": 35,
       "platoon": 44
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -21745,7 +21992,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 21.9,
     "ev_season": 86.7,
@@ -21821,7 +22068,8 @@
       "park": 60,
       "discipline": 51,
       "platoon": 46
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -21833,7 +22081,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.3,
     "la_season": 6.0,
     "ev_season": 91.1,
@@ -21909,7 +22157,8 @@
       "park": 60,
       "discipline": 53,
       "platoon": 49
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -21921,7 +22170,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.4,
     "la_season": 15.1,
     "ev_season": 87.0,
@@ -21997,7 +22246,8 @@
       "park": 60,
       "discipline": 34,
       "platoon": 46
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -22009,7 +22259,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 24.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 16.7,
     "la_season": 23.2,
     "ev_season": 93.9,
@@ -22085,7 +22335,8 @@
       "park": 60,
       "discipline": 33,
       "platoon": 59
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -22097,7 +22348,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.0,
     "la_season": 13.4,
     "ev_season": 84.7,
@@ -22173,7 +22424,8 @@
       "park": 60,
       "discipline": 76,
       "platoon": 46
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -22185,7 +22437,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.7,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 2.1,
     "la_season": 14.9,
     "ev_season": 85.0,
@@ -22261,7 +22513,8 @@
       "park": 60,
       "discipline": 37,
       "platoon": 42
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -22273,7 +22526,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 11.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 7.2,
     "la_season": 13.0,
     "ev_season": 90.2,
@@ -22349,7 +22602,8 @@
       "park": 60,
       "discipline": 49,
       "platoon": 45
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -22361,7 +22615,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 19.2,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 12.9,
     "la_season": 23.2,
     "ev_season": 89.8,
@@ -22437,7 +22691,8 @@
       "park": 60,
       "discipline": 40,
       "platoon": 60
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -22449,7 +22704,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 11.3,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 8.1,
     "la_season": 11.5,
     "ev_season": 86.5,
@@ -22525,7 +22780,8 @@
       "park": 60,
       "discipline": 67,
       "platoon": 51
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -22537,7 +22793,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 2.5,
     "la_season": 11.2,
     "ev_season": 89.2,
@@ -22613,7 +22869,8 @@
       "park": 60,
       "discipline": 48,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -22625,7 +22882,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 10.7,
     "ev_season": 87.7,
@@ -22701,7 +22958,8 @@
       "park": 60,
       "discipline": 79,
       "platoon": 41
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -22713,7 +22971,7 @@
     "home_team": "Colorado Rockies",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 11.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.7,
     "la_season": 18.8,
     "ev_season": 88.5,
@@ -22789,7 +23047,8 @@
       "park": 60,
       "discipline": 47,
       "platoon": 46
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -22801,7 +23060,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 11.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 10.1,
     "la_season": 16.5,
     "ev_season": 88.1,
@@ -22877,7 +23136,8 @@
       "park": 50,
       "discipline": 42,
       "platoon": 56
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -22889,7 +23149,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 2.1,
     "ev_season": 86.2,
@@ -22965,7 +23225,8 @@
       "park": 50,
       "discipline": 45,
       "platoon": 46
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -22977,7 +23238,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.5,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 9.3,
     "la_season": 18.1,
     "ev_season": 89.2,
@@ -23053,7 +23314,8 @@
       "park": 50,
       "discipline": 45,
       "platoon": 43
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -23065,7 +23327,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 6.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 2.1,
     "la_season": 10.5,
     "ev_season": 85.0,
@@ -23141,7 +23403,8 @@
       "park": 50,
       "discipline": 79,
       "platoon": 46
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -23153,7 +23416,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.7,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 8.6,
     "la_season": 16.4,
     "ev_season": 89.8,
@@ -23229,7 +23492,8 @@
       "park": 50,
       "discipline": 89,
       "platoon": 57
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -23241,7 +23505,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.3,
     "la_season": 14.9,
     "ev_season": 90.1,
@@ -23317,7 +23581,8 @@
       "park": 50,
       "discipline": 36,
       "platoon": 55
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -23329,7 +23594,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 13.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 9.5,
     "la_season": 23.2,
     "ev_season": 88.2,
@@ -23405,7 +23670,8 @@
       "park": 50,
       "discipline": 45,
       "platoon": 56
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -23417,7 +23683,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.9,
     "la_season": 23.0,
     "ev_season": 90.1,
@@ -23493,7 +23759,8 @@
       "park": 50,
       "discipline": 67,
       "platoon": 48
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -23505,7 +23772,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.1,
     "la_season": 16.4,
     "ev_season": 87.9,
@@ -23581,7 +23848,8 @@
       "park": 50,
       "discipline": 48,
       "platoon": 46
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -23593,7 +23861,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 14.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 10.6,
     "la_season": 22.8,
     "ev_season": 90.4,
@@ -23669,7 +23937,8 @@
       "park": 50,
       "discipline": 50,
       "platoon": 54
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -23681,7 +23950,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 6.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 1.0,
     "la_season": 13.0,
     "ev_season": 82.3,
@@ -23757,7 +24026,8 @@
       "park": 50,
       "discipline": 81,
       "platoon": 45
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -23769,7 +24039,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 15.0,
     "ev_season": 93.0,
@@ -23845,7 +24115,8 @@
       "park": 50,
       "discipline": 54,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -23857,7 +24128,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.4,
     "la_season": 24.6,
     "ev_season": 84.8,
@@ -23933,7 +24204,8 @@
       "park": 50,
       "discipline": 46,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -23945,7 +24217,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 15.4,
     "la_season": 16.6,
     "ev_season": 87.8,
@@ -24021,7 +24293,8 @@
       "park": 50,
       "discipline": 45,
       "platoon": 51
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -24033,7 +24306,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0,
     "la_season": 0,
     "ev_season": 0,
@@ -24109,7 +24382,8 @@
       "park": 50,
       "discipline": 60,
       "platoon": 53
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -24121,7 +24395,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 14.3,
     "la_season": 6.4,
     "ev_season": 91.8,
@@ -24197,7 +24471,8 @@
       "park": 50,
       "discipline": 73,
       "platoon": 61
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -24209,7 +24484,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.4,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 0.0,
     "la_season": 26.6,
     "ev_season": 91.8,
@@ -24285,7 +24560,8 @@
       "park": 50,
       "discipline": 63,
       "platoon": 51
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -24297,7 +24573,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 6.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 15.7,
     "ev_season": 84.6,
@@ -24373,7 +24649,8 @@
       "park": 50,
       "discipline": 76,
       "platoon": 48
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -24385,7 +24662,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 5.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 1.7,
     "la_season": 8.1,
     "ev_season": 85.3,
@@ -24461,7 +24738,8 @@
       "park": 50,
       "discipline": 74,
       "platoon": 47
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -24473,7 +24751,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 6.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 1.2,
     "la_season": 10.9,
     "ev_season": 86.7,
@@ -24549,7 +24827,8 @@
       "park": 50,
       "discipline": 82,
       "platoon": 46
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -24561,7 +24840,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.4,
     "la_season": 7.6,
     "ev_season": 90.0,
@@ -24637,7 +24916,8 @@
       "park": 50,
       "discipline": 48,
       "platoon": 43
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -24649,7 +24929,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 17.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 20.3,
     "la_season": 15.8,
     "ev_season": 95.8,
@@ -24725,7 +25005,8 @@
       "park": 50,
       "discipline": 49,
       "platoon": 45
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -24737,7 +25018,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 21.7,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 14.4,
     "la_season": 19.4,
     "ev_season": 93.0,
@@ -24813,7 +25094,8 @@
       "park": 50,
       "discipline": 77,
       "platoon": 62
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -24825,7 +25107,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.5,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 12.5,
     "la_season": 14.4,
     "ev_season": 89.9,
@@ -24901,7 +25183,8 @@
       "park": 50,
       "discipline": 59,
       "platoon": 46
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -24913,7 +25196,7 @@
     "home_team": "Athletics",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.7,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 3.4,
     "la_season": 15.6,
     "ev_season": 91.1,
@@ -24989,7 +25272,8 @@
       "park": 50,
       "discipline": 59,
       "platoon": 52
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -25001,7 +25285,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 5.6,
     "la_season": 14.9,
     "ev_season": 85.9,
@@ -25077,7 +25361,8 @@
       "park": 47,
       "discipline": 47,
       "platoon": 50
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -25089,7 +25374,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.8,
     "la_season": 6.2,
     "ev_season": 91.9,
@@ -25165,7 +25450,8 @@
       "park": 47,
       "discipline": 60,
       "platoon": 43
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -25177,7 +25463,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.6,
     "la_season": 6.1,
     "ev_season": 89.8,
@@ -25253,7 +25539,8 @@
       "park": 47,
       "discipline": 55,
       "platoon": 46
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -25265,7 +25552,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.2,
     "la_season": 8.9,
     "ev_season": 90.6,
@@ -25341,7 +25628,8 @@
       "park": 47,
       "discipline": 54,
       "platoon": 46
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -25353,7 +25641,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 14.9,
     "la_season": 8.3,
     "ev_season": 89.4,
@@ -25429,7 +25717,8 @@
       "park": 47,
       "discipline": 41,
       "platoon": 53
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -25441,7 +25730,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 14.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 25.0,
     "la_season": 12.6,
     "ev_season": 93.2,
@@ -25517,7 +25806,8 @@
       "park": 47,
       "discipline": 83,
       "platoon": 58
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -25529,7 +25819,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 10.8,
     "ev_season": 89.3,
@@ -25605,7 +25895,8 @@
       "park": 47,
       "discipline": 55,
       "platoon": 46
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -25617,7 +25908,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 22.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 15.8,
     "la_season": 25.7,
     "ev_season": 97.8,
@@ -25693,7 +25984,8 @@
       "park": 47,
       "discipline": 38,
       "platoon": 61
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -25705,7 +25997,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.5,
     "la_season": 19.4,
     "ev_season": 86.9,
@@ -25781,7 +26073,8 @@
       "park": 47,
       "discipline": 57,
       "platoon": 45
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -25793,7 +26086,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 7.0,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 3.4,
     "la_season": 11.3,
     "ev_season": 88.4,
@@ -25869,7 +26162,8 @@
       "park": 47,
       "discipline": 43,
       "platoon": 46
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -25881,7 +26175,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.5,
     "la_season": 8.2,
     "ev_season": 89.9,
@@ -25957,7 +26251,8 @@
       "park": 47,
       "discipline": 29,
       "platoon": 47
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -25969,7 +26264,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.4,
     "la_season": 20.6,
     "ev_season": 86.2,
@@ -26045,7 +26340,8 @@
       "park": 47,
       "discipline": 61,
       "platoon": 52
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -26057,7 +26353,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 7.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 2.6,
     "la_season": 15.2,
     "ev_season": 83.5,
@@ -26133,7 +26429,8 @@
       "park": 47,
       "discipline": 46,
       "platoon": 52
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -26145,7 +26442,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 10.5,
     "la_season": 4.7,
     "ev_season": 89.3,
@@ -26221,7 +26518,8 @@
       "park": 47,
       "discipline": 31,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -26233,7 +26531,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 5.8,
     "la_season": 18.3,
     "ev_season": 90.3,
@@ -26309,7 +26607,8 @@
       "park": 47,
       "discipline": 44,
       "platoon": 41
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -26321,7 +26620,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.7,
     "la_season": 16.9,
     "ev_season": 88.9,
@@ -26397,7 +26696,8 @@
       "park": 47,
       "discipline": 56,
       "platoon": 59
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -26409,7 +26709,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.9,
     "la_season": 22.2,
     "ev_season": 87.4,
@@ -26485,7 +26785,8 @@
       "park": 47,
       "discipline": 45,
       "platoon": 52
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -26497,7 +26798,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 20.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 25.0,
     "la_season": 20.6,
     "ev_season": 92.7,
@@ -26573,7 +26874,8 @@
       "park": 47,
       "discipline": 58,
       "platoon": 59
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -26585,7 +26887,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 6.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 2.0,
     "la_season": 8.5,
     "ev_season": 86.4,
@@ -26661,7 +26963,8 @@
       "park": 47,
       "discipline": 74,
       "platoon": 50
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -26673,7 +26976,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 7.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.0,
     "la_season": 14.0,
     "ev_season": 88.5,
@@ -26749,7 +27052,8 @@
       "park": 47,
       "discipline": 39,
       "platoon": 47
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -26761,7 +27065,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0,
     "la_season": 0,
     "ev_season": 0,
@@ -26837,7 +27141,8 @@
       "park": 47,
       "discipline": 50,
       "platoon": 50
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -26849,7 +27154,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 13.6,
     "la_season": 17.0,
     "ev_season": 86.3,
@@ -26925,7 +27230,8 @@
       "park": 47,
       "discipline": 74,
       "platoon": 43
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -26937,7 +27243,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.1,
     "la_season": 12.9,
     "ev_season": 89.3,
@@ -27013,7 +27319,8 @@
       "park": 47,
       "discipline": 85,
       "platoon": 57
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -27025,7 +27332,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 7.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 10.0,
     "la_season": 14.0,
     "ev_season": 90.0,
@@ -27101,7 +27408,8 @@
       "park": 47,
       "discipline": 48,
       "platoon": 50
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -27113,7 +27421,7 @@
     "home_team": "Los Angeles Angels",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.8,
     "la_season": 20.4,
     "ev_season": 88.7,
@@ -27189,7 +27497,8 @@
       "park": 47,
       "discipline": 34,
       "platoon": 53
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -27201,7 +27510,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.7,
     "la_season": 18.4,
     "ev_season": 92.6,
@@ -27277,7 +27586,8 @@
       "park": 47,
       "discipline": 78,
       "platoon": 45
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -27289,7 +27599,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.3,
     "la_season": 17.1,
     "ev_season": 91.2,
@@ -27365,7 +27675,8 @@
       "park": 47,
       "discipline": 47,
       "platoon": 57
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -27377,7 +27688,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 16.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 20.0,
     "la_season": 17.5,
     "ev_season": 90.7,
@@ -27453,7 +27764,8 @@
       "park": 47,
       "discipline": 78,
       "platoon": 54
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -27465,7 +27777,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 5.6,
     "la_season": 22.8,
     "ev_season": 88.4,
@@ -27541,7 +27853,8 @@
       "park": 47,
       "discipline": 61,
       "platoon": 47
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -27553,7 +27866,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 17.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 17.2,
     "la_season": 4.7,
     "ev_season": 94.9,
@@ -27629,7 +27942,8 @@
       "park": 47,
       "discipline": 37,
       "platoon": 51
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -27641,7 +27955,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.7,
     "la_season": 11.9,
     "ev_season": 87.6,
@@ -27717,7 +28031,8 @@
       "park": 47,
       "discipline": 39,
       "platoon": 55
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -27729,7 +28044,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 2.1,
     "la_season": 25.2,
     "ev_season": 85.6,
@@ -27805,7 +28120,8 @@
       "park": 47,
       "discipline": 74,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -27817,7 +28133,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.4,
     "la_season": 10.9,
     "ev_season": 90.1,
@@ -27893,7 +28209,8 @@
       "park": 47,
       "discipline": 59,
       "platoon": 47
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -27905,7 +28222,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.0,
     "la_season": 17.5,
     "ev_season": 89.5,
@@ -27981,7 +28298,8 @@
       "park": 47,
       "discipline": 44,
       "platoon": 50
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -27993,7 +28311,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 3.6,
     "la_season": 11.6,
     "ev_season": 87.5,
@@ -28069,7 +28387,8 @@
       "park": 47,
       "discipline": 94,
       "platoon": 47
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -28081,7 +28400,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.1,
     "la_season": 16.6,
     "ev_season": 87.7,
@@ -28157,7 +28476,8 @@
       "park": 47,
       "discipline": 44,
       "platoon": 48
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -28169,7 +28489,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.5,
     "la_season": 3.0,
     "ev_season": 91.0,
@@ -28245,7 +28565,8 @@
       "park": 47,
       "discipline": 42,
       "platoon": 51
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -28257,7 +28578,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.1,
     "la_season": 18.1,
     "ev_season": 88.5,
@@ -28333,7 +28654,8 @@
       "park": 47,
       "discipline": 49,
       "platoon": 54
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -28345,7 +28667,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 15.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 13.6,
     "la_season": 22.4,
     "ev_season": 87.0,
@@ -28421,7 +28743,8 @@
       "park": 47,
       "discipline": 42,
       "platoon": 46
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -28433,7 +28756,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 7.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.9,
     "la_season": 19.3,
     "ev_season": 87.9,
@@ -28509,7 +28832,8 @@
       "park": 47,
       "discipline": 63,
       "platoon": 55
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -28521,7 +28845,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 20.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 18.2,
     "la_season": 19.4,
     "ev_season": 95.7,
@@ -28597,7 +28921,8 @@
       "park": 47,
       "discipline": 36,
       "platoon": 63
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -28609,7 +28934,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 14.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 17.3,
     "la_season": 22.9,
     "ev_season": 95.6,
@@ -28685,7 +29010,8 @@
       "park": 47,
       "discipline": 39,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -28697,7 +29023,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 7.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.4,
     "la_season": 15.2,
     "ev_season": 89.1,
@@ -28773,7 +29099,8 @@
       "park": 47,
       "discipline": 94,
       "platoon": 48
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -28785,7 +29112,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 7.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.3,
     "la_season": 17.6,
     "ev_season": 87.2,
@@ -28861,7 +29188,8 @@
       "park": 47,
       "discipline": 55,
       "platoon": 50
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -28873,7 +29201,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.2,
     "la_season": 9.2,
     "ev_season": 88.5,
@@ -28949,7 +29277,8 @@
       "park": 47,
       "discipline": 57,
       "platoon": 62
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -28961,7 +29290,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 2.0,
     "la_season": 19.4,
     "ev_season": 86.3,
@@ -29037,7 +29366,8 @@
       "park": 47,
       "discipline": 55,
       "platoon": 50
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -29049,7 +29379,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 15.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 19.6,
     "la_season": 16.5,
     "ev_season": 93.0,
@@ -29125,7 +29455,8 @@
       "park": 47,
       "discipline": 31,
       "platoon": 50
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -29137,7 +29468,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 8.3,
     "la_season": 13.0,
     "ev_season": 90.9,
@@ -29213,7 +29544,8 @@
       "park": 47,
       "discipline": 50,
       "platoon": 43
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -29225,7 +29557,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.8,
     "la_season": 7.3,
     "ev_season": 90.2,
@@ -29301,7 +29633,8 @@
       "park": 47,
       "discipline": 39,
       "platoon": 57
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -29313,7 +29646,7 @@
     "home_team": "Seattle Mariners",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.3,
     "la_season": 28.1,
     "ev_season": 87.8,
@@ -29389,7 +29722,8 @@
       "park": 47,
       "discipline": 71,
       "platoon": 53
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -29401,7 +29735,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.0,
     "la_season": 20.6,
     "ev_season": 89.2,
@@ -29477,7 +29811,8 @@
       "park": 46,
       "discipline": 35,
       "platoon": 51
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -29489,7 +29824,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.5,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 3.3,
     "la_season": -1.3,
     "ev_season": 87.0,
@@ -29565,7 +29900,8 @@
       "park": 46,
       "discipline": 37,
       "platoon": 46
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -29577,7 +29913,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 7.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 4.5,
     "la_season": 8.4,
     "ev_season": 88.0,
@@ -29653,7 +29989,8 @@
       "park": 46,
       "discipline": 52,
       "platoon": 44
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -29665,7 +30002,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 16.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 15.8,
     "la_season": 20.9,
     "ev_season": 89.8,
@@ -29741,7 +30078,8 @@
       "park": 46,
       "discipline": 57,
       "platoon": 54
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -29753,7 +30091,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 4.2,
     "la_season": 10.3,
     "ev_season": 85.5,
@@ -29829,7 +30167,8 @@
       "park": 46,
       "discipline": 35,
       "platoon": 50
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -29841,7 +30180,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 11.1,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 33.3,
     "la_season": 3.1,
     "ev_season": 90.4,
@@ -29917,7 +30256,8 @@
       "park": 46,
       "discipline": 89,
       "platoon": 60
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -29929,7 +30269,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 5.7,
     "ev_season": 89.4,
@@ -30005,7 +30345,8 @@
       "park": 46,
       "discipline": 51,
       "platoon": 41
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -30017,7 +30358,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0,
     "la_season": 0,
     "ev_season": 0,
@@ -30093,7 +30434,8 @@
       "park": 46,
       "discipline": 33,
       "platoon": 50
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -30105,7 +30447,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.2,
     "la_season": 3.4,
     "ev_season": 88.2,
@@ -30181,7 +30523,8 @@
       "park": 46,
       "discipline": 49,
       "platoon": 41
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -30193,7 +30536,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 11.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.2,
     "la_season": 16.8,
     "ev_season": 89.6,
@@ -30269,7 +30612,8 @@
       "park": 46,
       "discipline": 71,
       "platoon": 46
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -30281,7 +30625,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 24.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 23.5,
     "la_season": 17.7,
     "ev_season": 95.6,
@@ -30357,7 +30701,8 @@
       "park": 46,
       "discipline": 46,
       "platoon": 60
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -30369,7 +30714,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.1,
     "la_season": 15.1,
     "ev_season": 87.5,
@@ -30445,7 +30790,8 @@
       "park": 46,
       "discipline": 86,
       "platoon": 53
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -30457,7 +30803,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.9,
     "la_season": 19.7,
     "ev_season": 89.3,
@@ -30533,7 +30879,8 @@
       "park": 46,
       "discipline": 74,
       "platoon": 43
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -30545,7 +30892,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 21.3,
     "ev_season": 84.1,
@@ -30621,7 +30968,8 @@
       "park": 46,
       "discipline": 41,
       "platoon": 50
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -30633,7 +30981,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.6,
     "la_season": 3.5,
     "ev_season": 93.6,
@@ -30709,7 +31057,8 @@
       "park": 46,
       "discipline": 45,
       "platoon": 52
-    }
+    },
+    "actual_ab": 5
   },
   {
     "date": "2026-05-03",
@@ -30721,7 +31070,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 13.5,
     "ev_season": 86.9,
@@ -30797,7 +31146,8 @@
       "park": 46,
       "discipline": 45,
       "platoon": 53
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -30809,7 +31159,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.5,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 10.6,
     "la_season": 10.7,
     "ev_season": 88.8,
@@ -30885,7 +31235,8 @@
       "park": 46,
       "discipline": 53,
       "platoon": 52
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -30897,7 +31248,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.5,
     "la_season": 13.0,
     "ev_season": 88.6,
@@ -30973,7 +31324,8 @@
       "park": 46,
       "discipline": 37,
       "platoon": 49
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -30985,7 +31337,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 5.9,
     "la_season": 7.1,
     "ev_season": 88.2,
@@ -31061,7 +31413,8 @@
       "park": 46,
       "discipline": 58,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -31073,7 +31426,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 13.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 12.1,
     "la_season": 9.8,
     "ev_season": 87.6,
@@ -31149,7 +31502,8 @@
       "park": 46,
       "discipline": 43,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -31161,7 +31515,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.2,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 6.3,
     "la_season": 9.2,
     "ev_season": 88.9,
@@ -31237,7 +31591,8 @@
       "park": 46,
       "discipline": 54,
       "platoon": 52
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -31249,7 +31604,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.5,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 3.4,
     "la_season": 11.5,
     "ev_season": 89.1,
@@ -31325,7 +31680,8 @@
       "park": 46,
       "discipline": 67,
       "platoon": 46
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -31337,7 +31693,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.1,
     "la_season": 15.7,
     "ev_season": 88.3,
@@ -31413,7 +31769,8 @@
       "park": 46,
       "discipline": 34,
       "platoon": 50
-    }
+    },
+    "actual_ab": 2
   },
   {
     "date": "2026-05-03",
@@ -31425,7 +31782,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.0,
     "la_season": 8.8,
     "ev_season": 89.0,
@@ -31501,7 +31858,8 @@
       "park": 46,
       "discipline": 36,
       "platoon": 45
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -31513,7 +31871,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 15.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 15.6,
     "la_season": 8.5,
     "ev_season": 91.8,
@@ -31589,7 +31947,8 @@
       "park": 46,
       "discipline": 80,
       "platoon": 45
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -31601,7 +31960,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 8.8,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 7.4,
     "la_season": 10.9,
     "ev_season": 88.7,
@@ -31677,7 +32036,8 @@
       "park": 46,
       "discipline": 44,
       "platoon": 44
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -31689,7 +32049,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 13.6,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 24.0,
     "ev_season": 86.5,
@@ -31765,7 +32125,8 @@
       "park": 49,
       "discipline": 52,
       "platoon": 55
-    }
+    },
+    "actual_ab": 1
   },
   {
     "date": "2026-05-03",
@@ -31777,7 +32138,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 11.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.0,
     "la_season": 22.4,
     "ev_season": 88.1,
@@ -31853,7 +32214,8 @@
       "park": 49,
       "discipline": 41,
       "platoon": 53
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -31865,7 +32227,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 10.0,
     "la_season": 11.0,
     "ev_season": 91.1,
@@ -31941,7 +32303,8 @@
       "park": 49,
       "discipline": 66,
       "platoon": 51
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -31953,7 +32316,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.3,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 14.8,
     "la_season": 12.3,
     "ev_season": 90.3,
@@ -32029,7 +32392,8 @@
       "park": 49,
       "discipline": 46,
       "platoon": 46
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -32041,7 +32405,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 16.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 6.5,
     "la_season": 22.8,
     "ev_season": 87.5,
@@ -32117,7 +32481,8 @@
       "park": 49,
       "discipline": 44,
       "platoon": 44
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -32129,7 +32494,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.7,
     "la_season": 23.1,
     "ev_season": 88.5,
@@ -32205,7 +32570,8 @@
       "park": 49,
       "discipline": 52,
       "platoon": 54
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -32217,7 +32583,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.8,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 4.1,
     "la_season": 17.0,
     "ev_season": 91.4,
@@ -32293,7 +32659,8 @@
       "park": 49,
       "discipline": 78,
       "platoon": 44
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -32305,7 +32672,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 13.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 9.2,
     "la_season": 10.3,
     "ev_season": 89.0,
@@ -32381,7 +32748,8 @@
       "park": 49,
       "discipline": 39,
       "platoon": 47
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -32393,7 +32761,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 11.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 3.6,
     "la_season": 17.9,
     "ev_season": 92.6,
@@ -32469,7 +32837,8 @@
       "park": 49,
       "discipline": 63,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -32481,7 +32850,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 12.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 5.7,
     "la_season": 11.9,
     "ev_season": 92.1,
@@ -32557,7 +32926,8 @@
       "park": 49,
       "discipline": 74,
       "platoon": 52
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -32569,7 +32939,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.1,
     "la_season": 15.8,
     "ev_season": 88.2,
@@ -32645,7 +33015,8 @@
       "park": 49,
       "discipline": 55,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -32657,7 +33028,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 15.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.3,
     "la_season": 21.1,
     "ev_season": 92.1,
@@ -32733,7 +33104,8 @@
       "park": 49,
       "discipline": 42,
       "platoon": 50
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -32745,7 +33117,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 11.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 25.2,
     "ev_season": 85.9,
@@ -32821,7 +33193,8 @@
       "park": 49,
       "discipline": 34,
       "platoon": 50
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -32833,7 +33206,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 11.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 6.8,
     "la_season": 12.0,
     "ev_season": 93.7,
@@ -32909,7 +33282,8 @@
       "park": 49,
       "discipline": 66,
       "platoon": 45
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -32921,7 +33295,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 17.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 16.7,
     "la_season": 10.6,
     "ev_season": 91.0,
@@ -32997,7 +33371,8 @@
       "park": 49,
       "discipline": 55,
       "platoon": 58
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -33009,7 +33384,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 6.4,
     "la_season": 5.3,
     "ev_season": 83.3,
@@ -33085,7 +33460,8 @@
       "park": 49,
       "discipline": 91,
       "platoon": 49
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -33097,7 +33473,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 11.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 16.7,
     "la_season": 18.8,
     "ev_season": 89.4,
@@ -33173,7 +33549,8 @@
       "park": 49,
       "discipline": 44,
       "platoon": 47
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -33185,7 +33562,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0,
     "la_season": 0,
     "ev_season": 0,
@@ -33261,7 +33638,8 @@
       "park": 49,
       "discipline": 74,
       "platoon": 53
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -33273,7 +33651,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 16.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 20.0,
     "la_season": 15.3,
     "ev_season": 93.7,
@@ -33349,7 +33727,8 @@
       "park": 49,
       "discipline": 37,
       "platoon": 53
-    }
+    },
+    "actual_ab": 0
   },
   {
     "date": "2026-05-03",
@@ -33361,7 +33740,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 15.7,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.6,
     "la_season": 34.7,
     "ev_season": 88.3,
@@ -33437,7 +33816,8 @@
       "park": 49,
       "discipline": 44,
       "platoon": 42
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -33449,7 +33829,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 17.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 13.0,
     "la_season": 21.2,
     "ev_season": 93.2,
@@ -33525,7 +33905,8 @@
       "park": 49,
       "discipline": 45,
       "platoon": 59
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -33537,7 +33918,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 10.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.6,
     "la_season": 19.1,
     "ev_season": 88.4,
@@ -33613,7 +33994,8 @@
       "park": 49,
       "discipline": 72,
       "platoon": 56
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -33625,7 +34007,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 3.6,
     "la_season": 12.5,
     "ev_season": 88.0,
@@ -33701,7 +34083,8 @@
       "park": 49,
       "discipline": 77,
       "platoon": 49
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -33713,7 +34096,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 14.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 14.8,
     "la_season": 13.7,
     "ev_season": 89.7,
@@ -33789,7 +34172,8 @@
       "park": 49,
       "discipline": 43,
       "platoon": 51
-    }
+    },
+    "actual_ab": 3
   },
   {
     "date": "2026-05-03",
@@ -33801,7 +34185,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 15.9,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 14.5,
     "la_season": 16.2,
     "ev_season": 91.4,
@@ -33877,7 +34261,8 @@
       "park": 49,
       "discipline": 66,
       "platoon": 56
-    }
+    },
+    "actual_ab": 4
   },
   {
     "date": "2026-05-03",
@@ -33889,7 +34274,7 @@
     "home_team": "Detroit Tigers",
     "lineup_source": "bat_8d_roster",
     "model_hr_pct": 9.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 11.1,
     "la_season": 16.9,
     "ev_season": 89.7,
@@ -33965,6 +34350,7 @@
       "park": 49,
       "discipline": 86,
       "platoon": 47
-    }
+    },
+    "actual_ab": 3
   }
 ]
