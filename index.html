@@ -1839,17 +1839,20 @@ async function load(forceRefresh){
       ['batter-main','pitcher-main','game-main'].forEach(function(id){document.getElementById(id).innerHTML=nm;});
       btn.disabled=false;return;
     }
-    // Check tree status — show banner if still training
+    // Check if data is ready — silent retry if not, no blocking banner
     try {
       var stResp = await fetch(API+'/status');
       var stData = await stResp.json();
-      if(!stData.tree_trained) {
+      if(!stData.ready || !stData.tree_trained) {
+        // Show subtle loading state — auto retry every 8 seconds silently
+        var retryIn = stData.tree_trained === false ? 20 : 8;
         document.getElementById('batter-main').innerHTML =
-          '<div class="err" style="background:rgba(255,200,0,0.1);border-color:var(--y);color:var(--y)">' +
-          'Model training on startup — refresh in 15 seconds for full predictions.' +
+          '<div style="text-align:center;padding:40px 20px;color:var(--muted2)">' +
+          '<div style="font-size:13px;margin-bottom:6px">Loading data...</div>' +
+          '<div style="font-size:11px">Retrying automatically</div>' +
           '</div>';
         btn.disabled=false;
-        setTimeout(function(){ load(true); }, 15000);
+        setTimeout(function(){ load(true); }, retryIn * 1000);
         return;
       }
     } catch(e) {}
@@ -1857,6 +1860,17 @@ async function load(forceRefresh){
     buildPitcherTable(allGames);
     buildGameTable(allGames);
     upd.textContent='Updated '+new Date().toLocaleTimeString()+' \u00b7 '+dateStr;
+    // Show model version so you know what round you're on
+    try {
+      var stResp2 = await fetch(API+'/status');
+      var stData2 = await stResp2.json();
+      if(stData2.model_round) {
+        upd.textContent += ' \u00b7 Round '+stData2.model_round+' Day '+stData2.model_day;
+      }
+      if(stData2.is_retraining) {
+        upd.textContent += ' \u00b7 Retraining...';
+      }
+    } catch(e) {}
   }catch(e){document.getElementById('batter-main').innerHTML='<div class="err"><strong>Error:</strong> '+e.message+'</div>';}
   btn.disabled=false;
 }
