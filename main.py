@@ -1737,10 +1737,13 @@ async def record_results(target_date: str):
             for game in game_date.get("games", []):
                 game_state    = game.get("status", {}).get("abstractGameState", "")
                 detailed_state = game.get("status", {}).get("detailedState", "")
-                finished = {"Final", "Completed", "Completed Early", "Game Over"}
-                if game_state not in finished and detailed_state not in finished:
-                    print(f"Skipping game {game.get('gamePk')} — state: {game_state}/{detailed_state}")
+                code          = game.get("status", {}).get("statusCode", "")
+                # Skip only games that are clearly not finished
+                not_finished = {"Preview", "Live", "Postponed", "Suspended", "Cancelled", "Warmup"}
+                if game_state in not_finished:
+                    print(f"Skipping game {game.get('gamePk')} — state: {game_state}/{detailed_state}/{code}")
                     continue
+                print(f"Processing game {game.get('gamePk')} — state: {game_state}/{detailed_state}/{code}")
                 gid = game["gamePk"]
                 try:
                     async with httpx.AsyncClient(timeout=10) as client:
