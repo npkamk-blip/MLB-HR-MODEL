@@ -1,0 +1,4202 @@
+[
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Byron Buxton",
+        "team": "Minnesota Twins",
+        "pct": 24.3
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Mickey Moniak",
+        "team": "Colorado Rockies",
+        "pct": 24.2
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Shea Langeliers",
+        "team": "Athletics",
+        "pct": 23.8
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "pct": 23.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "pct": 23.4
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Byron Buxton",
+        "team": "Minnesota Twins",
+        "pct": 24.3
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Mickey Moniak",
+        "team": "Colorado Rockies",
+        "pct": 24.2
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Shea Langeliers",
+        "team": "Athletics",
+        "pct": 23.8
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "pct": 23.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "pct": 23.4
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Byron Buxton",
+        "team": "Minnesota Twins",
+        "pct": 24.3
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Mickey Moniak",
+        "team": "Colorado Rockies",
+        "pct": 24.2
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Shea Langeliers",
+        "team": "Athletics",
+        "pct": 23.8
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "pct": 23.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "pct": 23.4
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Byron Buxton",
+        "team": "Minnesota Twins",
+        "pct": 24.3
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Mickey Moniak",
+        "team": "Colorado Rockies",
+        "pct": 24.2
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Shea Langeliers",
+        "team": "Athletics",
+        "pct": 23.8
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "pct": 23.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "pct": 23.4
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Byron Buxton",
+        "team": "Minnesota Twins",
+        "pct": 24.3
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Mickey Moniak",
+        "team": "Colorado Rockies",
+        "pct": 24.2
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Shea Langeliers",
+        "team": "Athletics",
+        "pct": 23.8
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "pct": 23.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "pct": 23.4
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Byron Buxton",
+        "team": "Minnesota Twins",
+        "pct": 24.3
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Mickey Moniak",
+        "team": "Colorado Rockies",
+        "pct": 24.2
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Shea Langeliers",
+        "team": "Athletics",
+        "pct": 23.8
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "pct": 23.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "pct": 23.4
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Byron Buxton",
+        "team": "Minnesota Twins",
+        "pct": 24.3
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Mickey Moniak",
+        "team": "Colorado Rockies",
+        "pct": 24.2
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Shea Langeliers",
+        "team": "Athletics",
+        "pct": 23.8
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "pct": 23.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "pct": 23.4
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Byron Buxton",
+        "team": "Minnesota Twins",
+        "pct": 24.3
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Mickey Moniak",
+        "team": "Colorado Rockies",
+        "pct": 24.2
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Shea Langeliers",
+        "team": "Athletics",
+        "pct": 23.8
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "pct": 23.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "pct": 23.4
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      },
+      {
+        "name": "Byron Buxton",
+        "team": "Minnesota Twins",
+        "pct": 24.3
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      },
+      {
+        "name": "Mickey Moniak",
+        "team": "Colorado Rockies",
+        "pct": 24.2
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      },
+      {
+        "name": "Shea Langeliers",
+        "team": "Athletics",
+        "pct": 23.8
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      },
+      {
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "pct": 23.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      },
+      {
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "pct": 23.4
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      },
+      {
+        "name": "Byron Buxton",
+        "team": "Minnesota Twins",
+        "pct": 24.3
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      },
+      {
+        "name": "Mickey Moniak",
+        "team": "Colorado Rockies",
+        "pct": 24.2
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      },
+      {
+        "name": "Shea Langeliers",
+        "team": "Athletics",
+        "pct": 23.8
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      },
+      {
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "pct": 23.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      },
+      {
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "pct": 23.4
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Byron Buxton",
+        "team": "Minnesota Twins",
+        "pct": 24.3
+      },
+      {
+        "name": "Mickey Moniak",
+        "team": "Colorado Rockies",
+        "pct": 24.2
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Byron Buxton",
+        "team": "Minnesota Twins",
+        "pct": 24.3
+      },
+      {
+        "name": "Shea Langeliers",
+        "team": "Athletics",
+        "pct": 23.8
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Byron Buxton",
+        "team": "Minnesota Twins",
+        "pct": 24.3
+      },
+      {
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "pct": 23.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Byron Buxton",
+        "team": "Minnesota Twins",
+        "pct": 24.3
+      },
+      {
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "pct": 23.4
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Mickey Moniak",
+        "team": "Colorado Rockies",
+        "pct": 24.2
+      },
+      {
+        "name": "Shea Langeliers",
+        "team": "Athletics",
+        "pct": 23.8
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Mickey Moniak",
+        "team": "Colorado Rockies",
+        "pct": 24.2
+      },
+      {
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "pct": 23.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Mickey Moniak",
+        "team": "Colorado Rockies",
+        "pct": 24.2
+      },
+      {
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "pct": 23.4
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Shea Langeliers",
+        "team": "Athletics",
+        "pct": 23.8
+      },
+      {
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "pct": 23.7
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Shea Langeliers",
+        "team": "Athletics",
+        "pct": 23.8
+      },
+      {
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "pct": 23.4
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "pct": 23.7
+      },
+      {
+        "name": "Colson Montgomery",
+        "team": "Chicago White Sox",
+        "pct": 23.4
+      }
+    ],
+    "n_legs": 2,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Ben Rice",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Aaron Judge",
+        "team": "New York Yankees",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Jordan Walker",
+        "team": "St. Louis Cardinals",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "MJ Melendez",
+        "team": "New York Mets",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Munetaka Murakami",
+        "team": "Chicago White Sox",
+        "pct": 28.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "Hunter Goodman",
+        "team": "Colorado Rockies",
+        "pct": 27.0
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "JJ Bleday",
+        "team": "Cincinnati Reds",
+        "pct": 25.7
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  },
+  {
+    "legs": [
+      {
+        "name": "James Wood",
+        "team": "Washington Nationals",
+        "pct": 25.1
+      },
+      {
+        "name": "Kyle Schwarber",
+        "team": "Philadelphia Phillies",
+        "pct": 24.7
+      },
+      {
+        "name": "Yordan Alvarez",
+        "team": "Houston Astros",
+        "pct": 24.6
+      }
+    ],
+    "n_legs": 3,
+    "both_hit": null
+  }
+]
