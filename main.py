@@ -1751,40 +1751,50 @@ async def record_results(target_date: str):
                             if int(stats.get("homeRuns", 0) or 0) > 0:
                                 hr_hitters.add(name.lower())
                 except Exception: continue
-        # Update records with actual results — DNP if fewer than 2 AB
+        # Update records — patch nulls AND fix any 0s that should be 1s
+        # (handles case where 2am run recorded 0 before West Coast game finished)
         updated = 0
         dnp_count = 0
         for rec in records:
-            if rec.get("hit_hr") is None:
-                nl = rec["name"].lower()
-                ab = actual_ab.get(nl, 0)
-                # Check partial name match too
-                if ab == 0:
-                    last = nl.split()[-1]
-                    for k, v in actual_ab.items():
-                        if last in k:
-                            ab = v
-                            break
-                # Check HR first — a player can hit a HR with only 1 AB
+            nl = rec["name"].lower()
+            # Fix false negatives — already recorded as 0 but actually hit a HR
+            if rec.get("hit_hr") == 0:
                 hit = nl in hr_hitters
                 if not hit:
                     last = nl.split()[-1]
                     hit = any(last in k for k in hr_hitters)
-
                 if hit:
-                    # Always record the HR regardless of AB count
                     rec["hit_hr"] = 1
-                    rec["actual_ab"] = ab
                     updated += 1
-                elif ab < 2:
-                    # Didn't hit HR and had fewer than 2 ABs — DNP or pinch appearance
-                    rec["hit_hr"] = "DNP"
-                    rec["actual_ab"] = ab
-                    dnp_count += 1
-                else:
-                    rec["hit_hr"] = 0
-                    rec["actual_ab"] = ab
-                    updated += 1
+                    print(f"Corrected false negative: {rec['name']} → hit_hr: 1")
+                continue
+            if rec.get("hit_hr") is not None:
+                continue  # already recorded (and not a false negative), skip
+            # Handle null records
+            nl2 = rec["name"].lower()
+            ab = actual_ab.get(nl2, 0)
+            if ab == 0:
+                last = nl2.split()[-1]
+                for k, v in actual_ab.items():
+                    if last in k:
+                        ab = v
+                        break
+            hit = nl2 in hr_hitters
+            if not hit:
+                last = nl2.split()[-1]
+                hit = any(last in k for k in hr_hitters)
+            if hit:
+                rec["hit_hr"] = 1
+                rec["actual_ab"] = ab
+                updated += 1
+            elif ab < 2:
+                rec["hit_hr"] = "DNP"
+                rec["actual_ab"] = ab
+                dnp_count += 1
+            else:
+                rec["hit_hr"] = 0
+                rec["actual_ab"] = ab
+                updated += 1
         content_updated = json.dumps(records, indent=2)
         await github_put_file(path, content_updated, f"results: {target_date} ({len(hr_hitters)} HRs, {dnp_count} DNP)", sha)
         print(f"Recorded results for {target_date}: {len(hr_hitters)} HR hitters, {dnp_count} DNP, {updated} records updated")
