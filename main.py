@@ -1735,7 +1735,12 @@ async def record_results(target_date: str):
         actual_ab = {}  # name.lower() -> ab count
         for game_date in sched.get("dates", []):
             for game in game_date.get("games", []):
-                if game.get("status", {}).get("abstractGameState") != "Final": continue
+                game_state    = game.get("status", {}).get("abstractGameState", "")
+                detailed_state = game.get("status", {}).get("detailedState", "")
+                finished = {"Final", "Completed", "Completed Early", "Game Over"}
+                if game_state not in finished and detailed_state not in finished:
+                    print(f"Skipping game {game.get('gamePk')} — state: {game_state}/{detailed_state}")
+                    continue
                 gid = game["gamePk"]
                 try:
                     async with httpx.AsyncClient(timeout=10) as client:
