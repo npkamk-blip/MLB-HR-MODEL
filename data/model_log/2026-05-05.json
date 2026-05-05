@@ -54,19 +54,19 @@
     "iso_vs_hand"
   ],
   "last_calibrated": "2026-05-05",
-  "records_used": 3591,
+  "records_used": 3628,
   "promoted_stats": [],
   "dropped_stats": [],
   "recent_changes": [
-    "iso_season: 0.0511",
-    "pull_pct_season: 0.0495",
-    "hard_hit_season: 0.0468",
-    "barrel_pct_season: 0.0429",
-    "bat_speed_l8d: 0.0419",
-    "ev_season: 0.0410",
-    "la_l8d: 0.0369",
-    "la_season: 0.0361",
-    "iso_vs_hand: 0.0361",
-    "hard_hit_l8d: 0.0349"
+    "iso_season: 0.0537",
+    "hard_hit_season: 0.0522",
+    "bat_speed_l8d: 0.0500",
+    "barrel_pct_season: 0.0450",
+    "ev_season: 0.0421",
+    "combined_pitch_delta: 0.0401",
+    "la_l8d: 0.0388",
+    "pull_pct_season: 0.0388",
+    "iso_vs_hand: 0.0366",
+    "la_season: 0.0347"
   ]
 }
