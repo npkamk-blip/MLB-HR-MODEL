@@ -392,7 +392,7 @@ async def train_xgboost(save_to_github: bool = True):
         "combined_pitch_delta", "xslg_l8d",
         "xwoba_l8d", "xslg_gap_l8d",
         "bat_speed_l8d",
-        "day_of_season",   # XGBoost-specific — captures seasonal patterns
+        "day_of_season",   # XGBoost-specific — captures seasonal patterns — captures seasonal patterns
     ]
 
     import statistics
@@ -519,7 +519,7 @@ def get_rotation_day():
 ROTATION_SCHEDULE = {
     1: {
         "active": ["barrel_pct_season","barrel_pct_l8d","la_season","la_l8d",
-                   "ev_season","iso_vs_hand","iso_season","l8d_hr",
+                   "ev_season","iso_vs_hand","iso_season",
                    "pit_hr9_vs_hand","pit_hr9_season","pit_slg_vs_hand",
                    "pit_hard_hit_season","pitch_matchup_score",
                    "bullpen_vuln","bat_platoon_mult","pit_platoon_mult",
@@ -2664,46 +2664,47 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, 
         return mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
 
-def predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, breakdown):
+def predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, breakdown,
+                bc=None, b8d=None, b_split=None, pc=None, p_split=None):
     """
-    Get XGBoost probability for a batter — runs silently alongside RF.
-    Returns float probability or None if XGBoost not trained yet.
-    Uses same feature vector as RF + day_of_season.
+    Get XGBoost probability for a batter.
+    Accepts pre-fetched stat dicts to avoid double-lookup performance hit.
+    Falls back to fetching if not provided.
     """
     if not _xgb_trained or _xgb_model is None:
         return None
     try:
-        bc      = get_batter_stats(name, 2026)
-        b8d     = get_batter_8d(name)
-        b_split = get_batter_split(name, opp_p_hand)
-        pc      = get_pitcher_stats(opp_p_name, 2026)
-        p_split = get_pitcher_split(opp_p_name, bat_hand)
-        bwc     = 1.0
+        # Use pre-fetched stats if provided, otherwise fetch
+        _bc      = bc      or get_batter_stats(name, 2026)
+        _b8d     = b8d     or get_batter_8d(name)
+        _b_split = b_split or get_batter_split(name, opp_p_hand)
+        _pc      = pc      or get_pitcher_stats(opp_p_name, 2026)
+        _p_split = p_split or get_pitcher_split(opp_p_name, bat_hand)
 
-        def bv(k): return float(bc.get(k, 0) or 0)
-        def pv(k): return float(pc.get(k, 0) or 0)
+        def bv(k): return float(_bc.get(k, 0) or 0)
+        def pv(k): return float(_pc.get(k, 0) or 0)
 
         feat_vals = {
             "barrel_pct_season":    bv("barrel_pct"),
-            "barrel_pct_l8d":       b8d.get("barrel_pct", 0),
+            "barrel_pct_l8d":       _b8d.get("barrel_pct", 0),
             "la_season":            bv("launch_angle"),
-            "la_l8d":               b8d.get("launch_angle", 0),
+            "la_l8d":               _b8d.get("launch_angle", 0),
             "ev_season":            bv("exit_velo"),
-            "ev_l8d":               b8d.get("exit_velo", 0),
+            "ev_l8d":               _b8d.get("exit_velo", 0),
             "iso_season":           bv("iso"),
-            "iso_vs_hand":          b_split.get("iso", 0),
+            "iso_vs_hand":          _b_split.get("iso", 0),
             "hard_hit_season":      bv("hard_hit_pct"),
-            "hard_hit_l8d":         b8d.get("hard_hit_pct", 0),
+            "hard_hit_l8d":         _b8d.get("hard_hit_pct", 0),
             "k_pct_season":         bv("k_pct"),
-            "k_pct_l8d":            b8d.get("k_pct", 0),
+            "k_pct_l8d":            _b8d.get("k_pct", 0),
             "pull_pct_season":      bv("pull_pct"),
             "pit_hr9_season":       pv("hr9"),
-            "pit_hr9_vs_hand":      p_split.get("hr9", 0),
+            "pit_hr9_vs_hand":      _p_split.get("hr9", 0),
             "pit_hard_hit_season":  pv("hard_hit_pct"),
             "pit_era_season":       pv("era"),
             "pit_k9_season":        pv("k9"),
             "pit_era_diff":         round(pv("era") - 4.20, 2) if pv("era") > 0 else 0,
-            "pit_slg_vs_hand":      p_split.get("slg", 0),
+            "pit_slg_vs_hand":      _p_split.get("slg", 0),
             "park_factor":          park_factor,
             "weather_mult":         weather_mult,
             "bat_platoon_mult":     breakdown.get("bat_platoon_mult", 1.0),
@@ -2711,16 +2712,16 @@ def predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mul
             "bullpen_vuln":         breakdown.get("bullpen_vuln", 1.0),
             "pitch_matchup_score":  breakdown.get("pitch_matchup_score", 0),
             "combined_pitch_delta": breakdown.get("combined_pitch_delta", 0),
-            "xslg_l8d":             b8d.get("xslg", 0),
-            "xwoba_l8d":            b8d.get("xwoba", 0),
-            "xslg_gap_l8d":         round(b8d.get("xslg", 0) - b8d.get("slg", 0), 3) if b8d.get("xslg", 0) > 0 else 0,
-            "bat_speed_l8d":        b8d.get("bat_speed", 0),
+            "xslg_l8d":             _b8d.get("xslg", 0),
+            "xwoba_l8d":            _b8d.get("xwoba", 0),
+            "xslg_gap_l8d":         round(_b8d.get("xslg", 0) - _b8d.get("slg", 0), 3) if _b8d.get("xslg", 0) > 0 else 0,
+            "bat_speed_l8d":        _b8d.get("bat_speed", 0),
             "day_of_season":        (date.today() - date(2026, 3, 20)).days,
         }
 
         row   = [float(feat_vals.get(f) or _xgb_medians.get(f, 0.0)) for f in _xgb_features]
         proba = _xgb_model.predict_proba([row])[0]
-        return round(min(float(proba[1]) * 100, LEAGUE_CONSTANTS["hr_prob_cap"]), 1)
+        return round(float(proba[1]) * 100, 1)
     except Exception as e:
         print(f"XGB predict error for {name}: {e}")
         return None
@@ -3826,12 +3827,16 @@ async def get_games(date: str = None, refresh: bool = False):
             pa_26 = bc.get("pa", 0); pa_25 = 0
             bwc = 1.0
             b8d = get_batter_8d(name)
+            b_split = get_batter_split(name, opp_p_hand)
+            pc = get_pitcher_stats(opp_p_name, 2026)
+            p_split = get_pitcher_split(opp_p_name, bat_hand)
 
             bl5g = get_batter_l5g(name)
 
             all_batters.append({
                 "name": name, "team": team, "hr_prob": hr_prob,
-                "xgb_prob": predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, batter_wx_mult, breakdown),
+                "xgb_prob": predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, batter_wx_mult, breakdown,
+                                         bc=bc, b8d=b8d, b_split=b_split, pc=pc, p_split=p_split),
                 "archetype": archetype, "trend": trend, "confidence": conf,
                 "reasons": reasons, "opp_pitcher": opp_p_name,
                 "bat_hand": bat_hand, "opp_p_hand": opp_p_hand,
