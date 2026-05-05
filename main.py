@@ -1366,7 +1366,7 @@ async def daily_refresh_loop():
                 await save_parlay_combinations()
             except Exception as e:
                 print(f"Prediction save error: {e}")
-        # Record results at 2am ET — all games finished
+        # Record results at 2am ET — catches most games
         if now.hour == 2:
             try:
                 yesterday = (date.today() - timedelta(days=1)).isoformat()
@@ -1382,6 +1382,15 @@ async def daily_refresh_loop():
                 await train_xgboost()
             except Exception as e:
                 print(f"Nightly retrain error: {e}")
+        # 4am second pass — catches West Coast late games (end ~12:30am PT = 3:30am ET)
+        if now.hour == 4:
+            try:
+                yesterday = (date.today() - timedelta(days=1)).isoformat()
+                print("4am second pass — patching West Coast late game results")
+                await record_results(yesterday)
+                await record_parlay_results(yesterday)
+            except Exception as e:
+                print(f"4am result recording error: {e}")
         # Save daily model log at 4am ET
         if now.hour == 4:
             try:
@@ -1756,19 +1765,26 @@ async def record_results(target_date: str):
                         if last in k:
                             ab = v
                             break
-                if ab < 2:
+                # Check HR first — a player can hit a HR with only 1 AB
+                hit = nl in hr_hitters
+                if not hit:
+                    last = nl.split()[-1]
+                    hit = any(last in k for k in hr_hitters)
+
+                if hit:
+                    # Always record the HR regardless of AB count
+                    rec["hit_hr"] = 1
+                    rec["actual_ab"] = ab
+                    updated += 1
+                elif ab < 2:
+                    # Didn't hit HR and had fewer than 2 ABs — DNP or pinch appearance
                     rec["hit_hr"] = "DNP"
                     rec["actual_ab"] = ab
                     dnp_count += 1
                 else:
-                    # Exact match first, then partial last name match for foreign players
-                    hit = nl in hr_hitters
-                    if not hit:
-                        last = nl.split()[-1]
-                        hit = any(last in k for k in hr_hitters)
-                    rec["hit_hr"] = 1 if hit else 0
+                    rec["hit_hr"] = 0
                     rec["actual_ab"] = ab
-                updated += 1
+                    updated += 1
         content_updated = json.dumps(records, indent=2)
         await github_put_file(path, content_updated, f"results: {target_date} ({len(hr_hitters)} HRs, {dnp_count} DNP)", sha)
         print(f"Recorded results for {target_date}: {len(hr_hitters)} HR hitters, {dnp_count} DNP, {updated} records updated")
