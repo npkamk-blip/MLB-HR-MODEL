@@ -1359,13 +1359,13 @@ async def daily_refresh_loop():
                 await load_all_savant_data()
             except Exception as e:
                 print(f"Daily refresh error: {e}")
-        # Save predictions at 1pm ET (18:00 UTC) — lineups mostly confirmed
-        if now.hour == 11:
+        # Hourly lineup confirmation check — saves top 8 per game as lineups confirm
+        # Runs every hour 10am-8pm ET, replacing noon-only save
+        if 10 <= now.hour <= 20:
             try:
-                await save_daily_predictions()
-                await save_parlay_combinations()
+                await check_lineup_confirmations()
             except Exception as e:
-                print(f"Prediction save error: {e}")
+                print(f"Lineup confirmation error: {e}")
         # Record results at 2am ET — catches most games
         if now.hour == 2:
             try:
@@ -1443,11 +1443,15 @@ async def github_put_file(path: str, content: str, message: str, sha: str = None
         return False
 
 async def save_daily_predictions():
-    """Save today's predictions to GitHub — uses same data as /games endpoint for consistency"""
+    """
+    Save today's top 8 predictions per game to GitHub.
+    Only saves games with CONFIRMED lineups — never projected.
+    Merges with existing file so confirmed games accumulate throughout the day.
+    Called hourly so games get added as lineups confirm.
+    """
     if not _cache["ready"]: return
 
     # ── Ensure 8d data is fresh before saving ──
-    # L8D barrel%, EV, xSLG are critical features — don't save with stale data
     needs_refresh = False
     last_8d = _cache.get("last_8d_update")
     if not last_8d:
@@ -1466,25 +1470,34 @@ async def save_daily_predictions():
         await refresh_8d()
         await asyncio.sleep(30)  # let it populate
     today = date.today().isoformat()
-    path = f"data/predictions/{today}.json"
+    path  = f"data/predictions/{today}.json"
+
+    # Load existing file — we merge, not overwrite
+    # This way confirmed games accumulate as lineups post throughout the day
+    import json
     existing, sha = await github_get_file(path)
-    # Allow overwrite if hit_hr is still null (predictions not yet recorded)
+    existing_records = []
+    already_confirmed_games = set()
     if existing:
-        import json
         try:
-            ex_recs = json.loads(existing)
-            if any(r.get("hit_hr") is not None for r in ex_recs):
-                print(f"Predictions already recorded for {today} — skipping")
+            existing_records = json.loads(existing)
+            # Don't re-save games that already have confirmed records
+            for r in existing_records:
+                if r.get("lineup_source") == "confirmed":
+                    already_confirmed_games.add(r.get("home_team","") + r.get("opp_pitcher",""))
+            # If outcomes already recorded, don't touch this file
+            if any(r.get("hit_hr") is not None for r in existing_records):
+                print(f"Predictions already have outcomes for {today} — skipping")
                 return
-            print(f"Overwriting pending predictions for {today}")
-        except Exception:
-            pass
+        except: pass
+
     try:
-        # Fetch today's schedule
         async with httpx.AsyncClient(timeout=30) as client:
             r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
             data = r.json()
-        records = []
+        new_records = []
+        games_confirmed = 0
+        games_skipped_projected = 0
         for game_date in data.get("dates", []):
             for game in game_date.get("games", []):
                 if game.get("status", {}).get("abstractGameState") == "Final": continue
@@ -1541,6 +1554,17 @@ async def save_daily_predictions():
                     (lineup_away, away_team, home_p.get("fullName","TBD"), home_p_hand, lineup_away_source),
                     (lineup_home, home_team, away_p.get("fullName","TBD"), away_p_hand, lineup_home_source),
                 ]:
+                    # Only save confirmed lineups — never projected
+                    if lineup_src != "confirmed":
+                        games_skipped_projected += 1
+                        continue
+
+                    # Skip games already saved in this file
+                    game_key = home_team + opp_p_name
+                    if game_key in already_confirmed_games:
+                        continue
+
+                    game_candidates = []
                     for batter in batters:
                         if "person" in batter:
                             name = batter.get("person", {}).get("fullName", "")
@@ -1558,7 +1582,7 @@ async def save_daily_predictions():
                         wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
                         hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(
                             name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult, home_team)
-                        if hr_prob < 5: continue
+                        # No threshold — take all batters, select top 8 at end
                         top_pitches = get_pitcher_top_pitches(opp_p_name)[:2]
                         pitch1 = top_pitches[0] if len(top_pitches) > 0 else {}
                         pitch2 = top_pitches[1] if len(top_pitches) > 1 else {}
@@ -1607,7 +1631,7 @@ async def save_daily_predictions():
                         pit_slg_vs  = round(p_split2.get("slg",0), 3)
                         pit_k_vs    = round(p_split2.get("k_pct",0), 1)
                         pit_ip_vs   = round(p_split2.get("ip",0), 1)
-                        records.append({
+                        game_candidates.append({
                             # Identity
                             "date": today, "name": name, "team": team,
                             "opp_pitcher": opp_p_name, "opp_pitcher_hand": opp_p_hand,
@@ -1702,16 +1726,216 @@ async def save_daily_predictions():
                             # ── XGBOOST FEATURES ──
                             "day_of_season": (date.today() - date(2026, 3, 20)).days,
                         })
-        if not records:
-            print(f"No predictions to save for {today}")
+                    # Take top 8 from this game side by model probability
+                    top8 = sorted(game_candidates, key=lambda x: x["model_hr_pct"], reverse=True)[:8]
+                    new_records.extend(top8)
+                    if top8:
+                        games_confirmed += 1
+                        print(f"  Confirmed top {len(top8)} for {team} vs {opp_p_name}")
+        # Merge new confirmed records with existing
+        all_records = existing_records + new_records
+        if not new_records:
+            print(f"No new confirmed lineups found for {today} — {games_skipped_projected} games still projected")
             return
-        import json
-        content = json.dumps(records, indent=2)
-        await github_put_file(path, content, f"predictions: {today} ({len(records)} batters)", sha)
-        print(f"Saved {len(records)} predictions for {today}")
+        content = json.dumps(all_records, indent=2)
+        await github_put_file(path, content,
+                              f"predictions: {today} ({len(all_records)} total, +{len(new_records)} new confirmed)",
+                              sha)
+        print(f"Saved {len(new_records)} new confirmed predictions for {today} "
+              f"({games_confirmed} games, {games_skipped_projected} still projected)")
     except Exception as e:
         print(f"save_daily_predictions error: {e}")
         import traceback; traceback.print_exc()
+
+async def check_lineup_confirmations():
+    """
+    Runs hourly — checks today's games for newly confirmed lineups.
+    When a game's lineup is confirmed, saves top 8 for that game.
+    Merges with existing saved records without duplicating.
+    """
+    if not _cache["ready"] or not GITHUB_TOKEN: return
+    today = date.today().isoformat()
+    path  = f"data/predictions/{today}.json"
+
+    # Load existing saved records to avoid duplicates
+    existing_content, sha = await github_get_file(path)
+    import json
+    existing_records = []
+    already_saved_games = set()
+    if existing_content:
+        try:
+            existing_records = json.loads(existing_content)
+            # Track which game/team combos already saved
+            for r in existing_records:
+                if r.get("lineup_source") == "confirmed":
+                    key = f"{r.get('team','')}-{r.get('opp_pitcher','')}"
+                    already_saved_games.add(key)
+        except: pass
+
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
+            data = r.json()
+
+        new_records = []
+        for game_date in data.get("dates", []):
+            for game in game_date.get("games", []):
+                state = game.get("status", {}).get("abstractGameState", "")
+                if state == "Final": continue
+
+                gid = game["gamePk"]
+                home_team = game["teams"]["home"]["team"]["name"]
+                away_team = game["teams"]["away"]["team"]["name"]
+                away_team_id = game["teams"]["away"]["team"]["id"]
+                home_team_id = game["teams"]["home"]["team"]["id"]
+                away_p = game["teams"]["away"].get("probablePitcher", {})
+                home_p = game["teams"]["home"].get("probablePitcher", {})
+                gtime = game.get("gameDate", "")
+
+                # Check if confirmed lineup available
+                try:
+                    async with httpx.AsyncClient(timeout=10) as box_client:
+                        r2 = await box_client.get(f"{MLB_API}/game/{gid}/boxscore")
+                        box = r2.json()
+                    teams = box.get("teams", {})
+                    def extract(side):
+                        players = teams.get(side, {}).get("players", {})
+                        return sorted(
+                            [p for p in players.values() if p.get("battingOrder") and int(p["battingOrder"]) <= 900],
+                            key=lambda x: int(x["battingOrder"])
+                        )[:9]
+                    confirmed_away = extract("away")
+                    confirmed_home = extract("home")
+                except: continue
+
+                away_p_hand = home_p_hand = "R"
+                if away_p.get("id"):
+                    info = await fetch_player_hand(away_p.get("id"))
+                    away_p_hand = info.get("pitch_hand", "R")
+                if home_p.get("id"):
+                    info = await fetch_player_hand(home_p.get("id"))
+                    home_p_hand = info.get("pitch_hand", "R")
+
+                stadium = STADIUMS.get(home_team, {})
+                temp, wind_speed, wind_dir = 70, 0, 0
+                if not stadium.get("dome") and stadium.get("lat"):
+                    temp, wind_speed, wind_dir = await fetch_weather(stadium["lat"], stadium["lon"], gtime)
+
+                for batters, team, opp_p_name, opp_p_hand in [
+                    (confirmed_away, away_team, home_p.get("fullName","TBD"), home_p_hand),
+                    (confirmed_home, home_team, away_p.get("fullName","TBD"), away_p_hand),
+                ]:
+                    if not batters: continue
+                    game_key = f"{team}-{opp_p_name}"
+                    if game_key in already_saved_games:
+                        continue  # already saved confirmed lineup for this game
+
+                    game_records = []
+                    for batter in batters:
+                        name = batter.get("person", {}).get("fullName", "")
+                        pid  = batter.get("person", {}).get("id")
+                        if not name: continue
+                        bat_hand = "R"
+                        if pid:
+                            info = await fetch_player_hand(pid)
+                            bat_hand = info.get("bat_side", "R")
+                        if bat_hand == "S": bat_hand = "L" if opp_p_hand == "R" else "R"
+                        park_factor = get_park_hr_factor(home_team, bat_hand)
+                        wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
+                        hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(
+                            name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult, home_team)
+                        # No threshold — take all 9 batters, select top 8 at end
+
+                        bc2 = get_batter_stats(name, 2026)
+                        pa26 = bc2.get("pa", 0)
+                        bwc2 = get_batter_blend_weights(pa26, 0)
+                        b8d2 = get_batter_8d(name)
+                        b_split2 = get_batter_split(name, opp_p_hand)
+                        pc2 = get_pitcher_stats(opp_p_name, 2026)
+                        p_split2 = get_pitcher_split(opp_p_name, bat_hand)
+                        pitch_score, _ = compute_pitch_matchup(opp_p_name, name)
+                        top_pitches = get_pitcher_top_pitches(opp_p_name)[:2]
+                        pitch1 = top_pitches[0] if top_pitches else {}
+                        pitch2 = top_pitches[1] if len(top_pitches) > 1 else {}
+                        pa_data = get_avg_pa_per_game(name)
+
+                        game_records.append({
+                            "date": today, "name": name, "team": team,
+                            "opp_pitcher": opp_p_name, "opp_pitcher_hand": opp_p_hand,
+                            "bat_hand": bat_hand, "home_team": home_team,
+                            "lineup_source": "confirmed",
+                            "model_hr_pct": hr_prob, "hit_hr": None,
+                            "barrel_pct_season": round(bc2.get("barrel_pct",0), 1),
+                            "la_season": round(bc2.get("launch_angle",0), 1),
+                            "ev_season": round(bc2.get("exit_velo",0), 1),
+                            "iso_season": round(bc2.get("iso",0), 3),
+                            "hard_hit_season": round(bc2.get("hard_hit_pct",0), 1),
+                            "k_pct_season": round(bc2.get("k_pct",0), 1),
+                            "hr_season": int(bc2.get("hr",0)),
+                            "pa_season": pa26,
+                            "barrel_pct_l8d": round(b8d2.get("barrel_pct",0), 1),
+                            "la_l8d": round(b8d2.get("launch_angle",0), 1),
+                            "ev_l8d": round(b8d2.get("exit_velo",0), 1),
+                            "iso_l8d": round(b8d2.get("iso",0), 3),
+                            "hard_hit_l8d": round(b8d2.get("hard_hit_pct",0), 1),
+                            "pa_l8d": int(b8d2.get("pa",0)),
+                            "l8d_hr": get_l8d_hr(name),
+                            "slg_l8d": round(b8d2.get("slg",0), 3),
+                            "xslg_l8d": round(b8d2.get("xslg",0), 3),
+                            "xslg_gap_l8d": round(b8d2.get("xslg",0) - b8d2.get("slg",0), 3) if b8d2.get("xslg",0) > 0 else 0,
+                            "xwoba_l8d": round(b8d2.get("xwoba",0), 3),
+                            "bat_speed_l8d": round(b8d2.get("bat_speed",0), 1),
+                            "iso_vs_hand": round(b_split2.get("iso",0), 3),
+                            "slg_vs_hand": round(b_split2.get("slg",0), 3),
+                            "hr_vs_hand": int(b_split2.get("hr",0)),
+                            "pa_vs_hand": int(b_split2.get("pa",0)),
+                            "pit_hr9_season": round(pc2.get("hr9",0), 2),
+                            "pit_era_season": round(pc2.get("era",0), 2),
+                            "pit_hard_hit_season": round(pc2.get("hard_hit_pct",0), 1),
+                            "pit_k9_season": round(pc2.get("k9",0), 1),
+                            "pit_hr9_vs_hand": round(p_split2.get("hr9",0), 2),
+                            "pit_slg_vs_hand": round(p_split2.get("slg",0), 3),
+                            "park_factor": breakdown.get("park_factor",1.0),
+                            "weather_mult": breakdown.get("weather_mult",1.0),
+                            "bullpen_vuln": breakdown.get("bullpen_vuln",1.0),
+                            "bat_platoon_mult": breakdown.get("bat_platoon_mult",1.0),
+                            "pit_platoon_mult": breakdown.get("pit_platoon_mult",1.0),
+                            "pitch_matchup_score": round(pitch_score,2),
+                            "combined_pitch_delta": round(
+                                (pitch1.get("usage",0)/100*(pitch1.get("batter_rv",0)-pitch1.get("pit_rv",0)) if pitch1 else 0) +
+                                (pitch2.get("usage",0)/100*(pitch2.get("batter_rv",0)-pitch2.get("pit_rv",0)) if pitch2 else 0), 2),
+                            "pit_era_diff": round(pc2.get("era",0) - 4.20, 2) if pc2.get("era",0) > 0 else 0,
+                            "pull_pct_season": round(bc2.get("pull_pct",0), 1),
+                            "games_played": pa_data.get("games",0),
+                            "rotation_round": get_rotation_round(),
+                            "rotation_day": get_rotation_day(),
+                            "day_of_season": (date.today() - date(2026, 3, 20)).days,
+                        })
+
+                    # Top 8 from this team
+                    top8 = sorted(game_records, key=lambda x: x["model_hr_pct"], reverse=True)[:8]
+                    new_records.extend(top8)
+                    if top8:
+                        print(f"  Lineup confirmed: {team} vs {opp_p_name} — saved top {len(top8)}")
+
+        if new_records:
+            # Merge with existing — remove any projected records for same games, add confirmed
+            confirmed_keys = {f"{r['team']}-{r['opp_pitcher']}" for r in new_records}
+            # Keep existing records that aren't being replaced by confirmed
+            kept = [r for r in existing_records
+                    if f"{r.get('team','')}-{r.get('opp_pitcher','')}" not in confirmed_keys]
+            merged = kept + new_records
+            content = json.dumps(merged, indent=2)
+            await github_put_file(path, content,
+                f"lineups confirmed: {today} ({len(new_records)} new, {len(merged)} total)", sha)
+            print(f"Lineup check: saved {len(new_records)} new confirmed records, {len(merged)} total")
+        else:
+            print(f"Lineup check: no new confirmations yet")
+
+    except Exception as e:
+        print(f"check_lineup_confirmations error: {e}")
+        import traceback; traceback.print_exc()
+
 
 async def record_results(target_date: str):
     """Fetch actual HR results for target_date and update the predictions file"""
@@ -3334,6 +3558,12 @@ async def manual_save_predictions():
 async def manual_save_predictions_get():
     """GET version — browser accessible"""
     await save_daily_predictions()
+    return {"status": "done", "date": date.today().isoformat()}
+
+@app.get("/check-lineups")
+async def manual_check_lineups():
+    """Manually trigger lineup confirmation check"""
+    await check_lineup_confirmations()
     return {"status": "done", "date": date.today().isoformat()}
 
 @app.post("/record-results")
