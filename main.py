@@ -3270,7 +3270,13 @@ async def debug_l8d(player: str = "Murakami"):
 
 @app.post("/recalibrate")
 async def manual_recalibrate():
-    """Manually trigger model recalibration — requires 50+ completed records"""
+    """Manually trigger model recalibration"""
+    result = await recalibrate_model()
+    return result
+
+@app.get("/recalibrate")
+async def manual_recalibrate_get():
+    """GET version — browser accessible"""
     result = await recalibrate_model()
     return result
 
@@ -3310,6 +3316,14 @@ async def manual_record_results(target_date: str = None):
     """Manually trigger recording results for a date"""
     d = target_date or (date.today() - timedelta(days=1)).isoformat()
     await record_results(d)
+    return {"status": "done", "date": d}
+
+@app.get("/record-results")
+async def manual_record_results_get(target_date: str = None):
+    """GET version — browser accessible"""
+    d = target_date or (date.today() - timedelta(days=1)).isoformat()
+    await record_results(d)
+    await record_parlay_results(d)
     return {"status": "done", "date": d}
 
 @app.get("/coverage-check")
