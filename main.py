@@ -1746,8 +1746,8 @@ async def record_results(target_date: str):
                 print(f"Processing game {game.get('gamePk')} — state: {game_state}/{detailed_state}/{code}")
                 gid = game["gamePk"]
                 try:
-                    async with httpx.AsyncClient(timeout=10) as client:
-                        r2 = await client.get(f"{MLB_API}/game/{gid}/boxscore")
+                    async with httpx.AsyncClient(timeout=10) as box_client:
+                        r2 = await box_client.get(f"{MLB_API}/game/{gid}/boxscore")
                         box = r2.json()
                     for side in ["away", "home"]:
                         for _, p in box.get("teams", {}).get(side, {}).get("players", {}).items():
@@ -1758,7 +1758,9 @@ async def record_results(target_date: str):
                             actual_ab[name.lower()] = ab
                             if int(stats.get("homeRuns", 0) or 0) > 0:
                                 hr_hitters.add(name.lower())
-                except Exception: continue
+                except Exception as box_err:
+                    print(f"Boxscore error for game {gid}: {box_err}")
+                    continue
         # Update records — patch nulls, fix false negatives (0s that should be 1s),
         # and fix DNPs that actually hit HRs (West Coast late game timing issue)
         updated = 0
@@ -3348,7 +3350,51 @@ async def manual_record_results_get(target_date: str = None):
     await record_parlay_results(d)
     return {"status": "done", "date": d}
 
-@app.get("/debug-boxscore")
+@app.get("/cleanup-results")
+async def cleanup_results(days: int = 30):
+    """
+    Reprocess result recording for any date that has DNP records.
+    Fixes historical data corruption from the client shadowing bug.
+    Run once after deploying the boxscore client fix.
+    """
+    if not GITHUB_TOKEN:
+        return {"error": "No GitHub token"}
+    import json
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(
+                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
+                headers={"Authorization": f"token {GITHUB_TOKEN}"}
+            )
+            files = r.json() if r.is_success else []
+
+        results = []
+        for f in sorted(files, key=lambda x: x["name"], reverse=True)[:days]:
+            if not f["name"].endswith(".json"): continue
+            d = f["name"].replace(".json", "")
+            # Skip today and future dates
+            if d >= date.today().isoformat(): continue
+            content, _ = await github_get_file(f"data/predictions/{f['name']}")
+            if not content: continue
+            try:
+                recs = json.loads(content)
+            except: continue
+            dnp_count = sum(1 for r in recs if r.get("hit_hr") == "DNP")
+            null_count = sum(1 for r in recs if r.get("hit_hr") is None)
+            if dnp_count > 0 or null_count > 0:
+                print(f"Reprocessing {d} — {dnp_count} DNPs, {null_count} nulls")
+                await record_results(d)
+                results.append({"date": d, "dnp": dnp_count, "null": null_count, "status": "reprocessed"})
+            else:
+                results.append({"date": d, "status": "clean"})
+
+        return {
+            "processed": len([r for r in results if r.get("status") == "reprocessed"]),
+            "clean":     len([r for r in results if r.get("status") == "clean"]),
+            "details":   results,
+        }
+    except Exception as e:
+        return {"error": str(e)}
 async def debug_boxscore(target_date: str = None):
     """Show all player names returned by MLB API boxscore for a date — for debugging DNP issues."""
     d = target_date or (date.today() - timedelta(days=1)).isoformat()
