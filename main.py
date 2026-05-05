@@ -3348,7 +3348,50 @@ async def manual_record_results_get(target_date: str = None):
     await record_parlay_results(d)
     return {"status": "done", "date": d}
 
-@app.get("/coverage-check")
+@app.get("/debug-boxscore")
+async def debug_boxscore(target_date: str = None):
+    """Show all player names returned by MLB API boxscore for a date — for debugging DNP issues."""
+    d = target_date or (date.today() - timedelta(days=1)).isoformat()
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={d}&hydrate=team")
+            sched = r.json()
+        games = []
+        for game_date in sched.get("dates", []):
+            for game in game_date.get("games", []):
+                gid = game["gamePk"]
+                away = game.get("teams", {}).get("away", {}).get("team", {}).get("name", "")
+                home = game.get("teams", {}).get("home", {}).get("team", {}).get("name", "")
+                state = game.get("status", {}).get("abstractGameState", "")
+                detailed = game.get("status", {}).get("detailedState", "")
+                try:
+                    async with httpx.AsyncClient(timeout=10) as client2:
+                        r2 = await client2.get(f"{MLB_API}/game/{gid}/boxscore")
+                        box = r2.json()
+                    players = []
+                    hr_hitters = []
+                    for side in ["away", "home"]:
+                        for _, p in box.get("teams", {}).get(side, {}).get("players", {}).items():
+                            stats = p.get("stats", {}).get("batting", {})
+                            name = p.get("person", {}).get("fullName", "")
+                            ab = int(stats.get("atBats", 0) or 0)
+                            hrs = int(stats.get("homeRuns", 0) or 0)
+                            if name:
+                                players.append({"name": name, "ab": ab, "hr": hrs})
+                                if hrs > 0:
+                                    hr_hitters.append(name)
+                    games.append({
+                        "game_id": gid,
+                        "matchup": f"{away} @ {home}",
+                        "state": f"{state}/{detailed}",
+                        "hr_hitters": hr_hitters,
+                        "all_players": players,
+                    })
+                except Exception as e:
+                    games.append({"game_id": gid, "matchup": f"{away} @ {home}", "error": str(e)})
+        return {"date": d, "games": games}
+    except Exception as e:
+        return {"error": str(e)}
 async def coverage_check(days: int = 7):
     """
     Data health check — for each feature field in prediction records,
