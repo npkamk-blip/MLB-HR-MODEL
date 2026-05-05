@@ -1759,13 +1759,26 @@ async def record_results(target_date: str):
                             if int(stats.get("homeRuns", 0) or 0) > 0:
                                 hr_hitters.add(name.lower())
                 except Exception: continue
-        # Update records — patch nulls AND fix any 0s that should be 1s
-        # (handles case where 2am run recorded 0 before West Coast game finished)
+        # Update records — patch nulls, fix false negatives (0s that should be 1s),
+        # and fix DNPs that actually hit HRs (West Coast late game timing issue)
         updated = 0
         dnp_count = 0
         for rec in records:
             nl = rec["name"].lower()
-            # Fix false negatives — already recorded as 0 but actually hit a HR
+
+            # Fix DNP records that actually hit a HR — West Coast timing issue
+            if rec.get("hit_hr") == "DNP":
+                hit = nl in hr_hitters
+                if not hit:
+                    last = nl.split()[-1]
+                    hit = any(last in k for k in hr_hitters)
+                if hit:
+                    rec["hit_hr"] = 1
+                    updated += 1
+                    print(f"Corrected DNP→HR: {rec['name']} actually hit a HR")
+                continue
+
+            # Fix false negatives — recorded as 0 but actually hit a HR
             if rec.get("hit_hr") == 0:
                 hit = nl in hr_hitters
                 if not hit:
@@ -1774,10 +1787,11 @@ async def record_results(target_date: str):
                 if hit:
                     rec["hit_hr"] = 1
                     updated += 1
-                    print(f"Corrected false negative: {rec['name']} → hit_hr: 1")
+                    print(f"Corrected 0→HR: {rec['name']} actually hit a HR")
                 continue
+
             if rec.get("hit_hr") is not None:
-                continue  # already recorded (and not a false negative), skip
+                continue  # already recorded correctly, skip
             # Handle null records
             nl2 = rec["name"].lower()
             ab = actual_ab.get(nl2, 0)
