@@ -922,9 +922,11 @@ function buildBatterTable(games){
     var pf=g.park_factor||g.away_pitcher&&g.away_pitcher.park_factor||1.0;
     var awayP=g.away_pitcher||{};
     var homeP=g.home_pitcher||{};
-    var awayHr9s=awayP.hr9||1.2;
-    var homeHr9s=homeP.hr9||1.2;
-    var projHR=Math.round((awayHr9s+homeHr9s)*pf*wxMult*10)/10;
+    var awayP2=g.away_pitcher||{};var homeP2=g.home_pitcher||{};
+    var aHr9=awayP2.hr9||1.2; var hHr9=homeP2.hr9||1.2;
+    var aIP=awayP2.avg_ip||5.5; var hIP=homeP2.avg_ip||5.5;
+    var aBpHr9=awayP2.bullpen_hr9||1.2; var hBpHr9=homeP2.bullpen_hr9||1.2;
+    var projHR=Math.round(((hHr9/9)*hIP+(hBpHr9/9)*(9-hIP)+(aHr9/9)*aIP+(aBpHr9/9)*(9-aIP))*pf*wxMult*10)/10;
     totalProjHR+=projHR;
   });
   var slateColor=totalProjHR>=32?'var(--g)':totalProjHR>=22?'var(--y)':'var(--muted)';
@@ -970,11 +972,23 @@ function buildBatterTable(games){
     if(!awayBatters.length&&!homeBatters.length)return;
     totalBatters+=awayBatters.length+homeBatters.length;
 
-    // ── Projected HR for this game ──
+    // ── Projected HR: starter innings + bullpen innings ──
     var awayHr9=awayP.hr9||1.2;
     var homeHr9=homeP.hr9||1.2;
-    var awayProj=Math.round(homeHr9*pf*wxMult*10)/10; // away batters face home pitcher
-    var homeProj=Math.round(awayHr9*pf*wxMult*10)/10;
+    var awayIP=awayP.avg_ip||5.5;
+    var homeIP=homeP.avg_ip||5.5;
+    var awayBpHr9=awayP.bullpen_hr9||1.2;
+    var homeBpHr9=homeP.bullpen_hr9||1.2;
+    var awayBpIP=Math.max(0, 9-awayIP);
+    var homeBpIP=Math.max(0, 9-homeIP);
+    // away batters face home pitcher + home bullpen
+    var awayStarterProj=(homeHr9/9)*homeIP*pf*wxMult;
+    var awayBullpenProj=(homeBpHr9/9)*homeBpIP*pf*wxMult;
+    var awayProj=Math.round((awayStarterProj+awayBullpenProj)*10)/10;
+    // home batters face away pitcher + away bullpen
+    var homeStarterProj=(awayHr9/9)*awayIP*pf*wxMult;
+    var homeBullpenProj=(awayBpHr9/9)*awayBpIP*pf*wxMult;
+    var homeProj=Math.round((homeStarterProj+homeBullpenProj)*10)/10;
     var gameProj=Math.round((awayProj+homeProj)*10)/10;
     var projC=gameProj>=2.8?'var(--g)':gameProj>=2.0?'var(--y)':'var(--muted)';
     var projLabel=gameProj>=2.8?'IDEAL':gameProj>=2.0?'NORMAL':'LOW';
