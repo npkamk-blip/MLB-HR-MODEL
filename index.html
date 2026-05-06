@@ -14,7 +14,7 @@
   --accent:#f5f5f5;--blue:#0a84ff;--text:#f5f5f5;
   --muted:#8e8e93;--muted2:#636366;--danger:#ff453a;--warn:#ff9f0a;--purple:#bf5af2;
   --g:#32d74b;--y:#ff9f0a;--r:#ff453a;
-  /* Pink/red gradient for stat coloring — top 10% = hot pink, bottom = dark red */
+  /* Pink/red gradient for stat coloring - top 10% = hot pink, bottom = dark red */
   --b10:#ff6eb4;--b25:#e0445a;--b50:#b02030;--b75:#6b1020;
 }
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px}
@@ -313,25 +313,25 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
     <div id="batter-main"><div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div></div>
   </div>
 </div>
-<!-- pitchers-panel hidden — adding back later -->
+<!-- pitchers-panel hidden - adding back later -->
 <div id="pitchers-panel" style="display:none">
   <div class="container"><div id="pitcher-main"></div></div>
 </div>
-<!-- games-panel hidden — adding back later -->
+<!-- games-panel hidden - adding back later -->
 <div id="games-panel" style="display:none">
   <div class="container"><div id="game-main"></div></div>
 </div>
-<!-- parlays-panel — data collection running, UI coming soon -->
+<!-- parlays-panel - data collection running, UI coming soon -->
 <div id="parlays-panel" class="tab-panel">
   <div class="container" style="max-width:700px;margin:60px auto;text-align:center;padding:40px 20px">
     <div style="font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:800;color:var(--accent);letter-spacing:.04em">PARLAYS</div>
-    <div style="font-size:13px;color:var(--muted);margin-top:8px;margin-bottom:32px">Coming soon — combination engine in training</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:8px;margin-bottom:32px">Coming soon - combination engine in training</div>
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px">
       <div style="font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px">What's being built</div>
       <div style="display:flex;flex-direction:column;gap:12px;text-align:left">
         <div style="display:flex;align-items:flex-start;gap:12px">
           <div style="font-size:18px">⚡</div>
-          <div><div style="font-size:12px;font-weight:600;color:var(--text)">Parlay Builder</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Pick any player — Sharp finds the best legs to add. Not a list. A reason.</div></div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--text)">Parlay Builder</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Pick any player - Sharp finds the best legs to add. Not a list. A reason.</div></div>
         </div>
         <div style="display:flex;align-items:flex-start;gap:12px">
           <div style="font-size:18px">🧠</div>
@@ -412,7 +412,7 @@ function buildDashboard(d){
   h+=sCard('2-of-Top-4 Days',p2r+'%','Parlay signal',p2r>=20?'var(--g)':p2r>=12?'var(--y)':'var(--r)');
   h+=sCard('2-of-Top-8 Days',p2t8+'%','Wider parlay',p2t8>=20?'var(--g)':p2t8>=12?'var(--y)':'var(--r)');
   h+=sCard('Slate Hit Rate',ovr+'%','All tracked','var(--muted)');
-  h+=sCard('Days Tracked',daysT,'Since '+(days.length>0?days[days.length-1].date:'—'),'var(--text)');
+  h+=sCard('Days Tracked',daysT,'Since '+(days.length>0?days[days.length-1].date:'-'),'var(--text)');
   h+='</div>';
   var modelC=d.xgb_trained&&d.xgb_cv>d.rf_oob?'var(--purple)':'var(--blue)';
   var modelLbl=d.xgb_trained&&d.xgb_cv>d.rf_oob?'XGBoost':'Random Forest';
@@ -421,11 +421,11 @@ function buildDashboard(d){
   h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:800;color:'+modelC+'">'+modelLbl+'</div>';
   if(d.rf_oob)h+='<div style="font-size:11px;color:var(--muted)">RF AUC <span style="color:var(--text);font-weight:600">'+d.rf_oob.toFixed(3)+'</span></div>';
   if(d.xgb_trained)h+='<div style="font-size:11px;color:var(--muted)">XGB AUC <span style="color:var(--purple);font-weight:600">'+d.xgb_cv.toFixed(3)+'</span></div>';
-  if(d.xgb_trained&&d.xgb_cv<=d.rf_oob)h+='<div style="font-size:10px;color:var(--muted2)">XGBoost learning — flips live when AUC beats RF</div>';
+  if(d.xgb_trained&&d.xgb_cv<=d.rf_oob)h+='<div style="font-size:10px;color:var(--muted2)">XGBoost learning - flips live when AUC beats RF</div>';
   h+='</div>';
   h+='<div style="margin-bottom:18px"><div style="font-family:Barlow Condensed,sans-serif;font-size:15px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin-bottom:10px">Today\'s Top 8</div>';
   if(!top8.length){
-    h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;text-align:center;color:var(--muted2);font-size:13px">Confirmed lineups save hourly — check back later</div>';
+    h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;text-align:center;color:var(--muted2);font-size:13px">Confirmed lineups save hourly - check back later</div>';
   }else{
     h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px">';
     top8.forEach(function(p,i){
@@ -466,7 +466,7 @@ async function loadParlayTab(){
   try{
     var r=await fetch(API+'/parlay-results');
     var d=await r.json();
-    if(d.error){el.innerHTML='<span style="color:var(--muted2)">Combination tracking starts today — check back tomorrow</span>';return;}
+    if(d.error){el.innerHTML='<span style="color:var(--muted2)">Combination tracking starts today - check back tomorrow</span>';return;}
     var all2=d.all_time&&d.all_time.two_leg_combos||0;
     var all3=d.all_time&&d.all_time.three_leg_combos||0;
     var hr2=d.all_time&&d.all_time.two_leg_hit_rate||'--';
@@ -548,7 +548,7 @@ function renderModelTab(md,hd){
   var weights=md.weights||{};
   var calInfo=md.calibration||{};
 
-  // ── Model metadata — handles both Decision Tree and Random Forest ──
+  // ── Model metadata - handles both Decision Tree and Random Forest ──
   var modelType      = weights.model_type||'decision_tree';
   var isForest       = modelType === 'random_forest';
   var treeDepth      = weights.tree_depth||4;
@@ -567,7 +567,7 @@ function renderModelTab(md,hd){
   // ── History: filter to current calibration round ──
   var allCompleted=[];
   if(hd&&hd.records)allCompleted=hd.records.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
-  // Tier stats scoped to current round only — resets each Sunday
+  // Tier stats scoped to current round only - resets each Sunday
   var roundCompleted = allCompleted.filter(function(r){
     return (r.rotation_round||1) === calRound;
   });
@@ -621,12 +621,12 @@ function renderModelTab(md,hd){
   if(hrRates.length>0){
     h+='<div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px">';
     // For Random Forest: show realistic output range (individual tree leaves go to 90%+
-    // but averaged across 200 trees outputs cluster 2-25%) — cap display at 30%
+    // but averaged across 200 trees outputs cluster 2-25%) - cap display at 30%
     var dispRates = isForest ? hrRates.filter(function(r){return r<=30;}) : hrRates;
     var totalRates = hrRates.length;
     var capped = hrRates.length - dispRates.length;
     h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">'
-      +(isForest?'Leaf probability range — per-tree distribution':'Leaf HR Rate Distribution')
+      +(isForest?'Leaf probability range - per-tree distribution':'Leaf HR Rate Distribution')
       +' ('+(dispRates.length)+(capped>0?' shown, '+capped+' outliers hidden':' leaves')+')</div>';
     h+='<div style="display:flex;align-items:flex-end;gap:2px;height:36px">';
     var buckets=[0,0,0,0,0,0,0];
@@ -650,7 +650,7 @@ function renderModelTab(md,hd){
       h+='<div style="flex:1;font-size:7px;color:var(--muted2);text-align:center">'+l+'</div>';
     });
     h+='</div>'
-    +(capped>0?'<div style="font-size:9px;color:var(--muted2);margin-top:4px">'+capped+' extreme leaves (>30%) in individual trees hidden — Forest averages these out</div>':'')
+    +(capped>0?'<div style="font-size:9px;color:var(--muted2);margin-top:4px">'+capped+' extreme leaves (>30%) in individual trees hidden - Forest averages these out</div>':'')
     +'</div>';
   }
 
@@ -660,7 +660,7 @@ function renderModelTab(md,hd){
   h+='<div class="model-card">';
   h+='<div class="model-card-title"><span>Feature Importance</span><span style="font-weight:400;color:var(--muted2)">'+(isForest?'averaged across 200 trees':'tree split weight')+'</span></div>';
   if(!featList.length){
-    h+='<div style="font-size:11px;color:var(--muted);padding:8px 0">No importance data yet — tree needs training.</div>';
+    h+='<div style="font-size:11px;color:var(--muted);padding:8px 0">No importance data yet - tree needs training.</div>';
   }
   featList.slice(0,15).forEach(function(s,i){
     var pct=maxImp>0?Math.round(s.imp/maxImp*100):0;
@@ -674,7 +674,7 @@ function renderModelTab(md,hd){
   });
   h+='</div>';
 
-  // ── Tier Performance — scoped to current round ──
+  // ── Tier Performance - scoped to current round ──
   var tierSince = roundCompleted.length>=5 ? 'Round '+calRound : 'all time';
   h+='<div class="model-card">';
   h+='<div class="model-card-title"><span>Hit Rate by Tier</span><span style="font-weight:400;color:var(--muted2);font-size:10px">'+tierSince+' · non-DNP</span></div>';
@@ -785,7 +785,7 @@ function buildBatterTable(games){
   if(!games||!games.length){el.innerHTML='<div class="no-data">No games today.</div>';return;}
 
   // ── Helper functions ──
-  // ── Relative-to-median coloring — auto-adjusts as season progresses ──
+  // ── Relative-to-median coloring - auto-adjusts as season progresses ──
   function getMedians(){
     var fw=modelWeightsData&&modelWeightsData.weights&&modelWeightsData.weights.feature_medians;
     return fw||{barrel_pct_season:10.2,la_season:14.0,ev_l8d:83.7,xslg_l8d:0.549};
@@ -801,7 +801,7 @@ function buildBatterTable(games){
     if(invert?(ratio>1.15):(ratio<0.80))return'pill-r';
     return'pill-m';
   }
-  // LA uses window logic not median — 18-35deg is always the HR zone
+  // LA uses window logic not median - 18-35deg is always the HR zone
   function laCls2(la){return(la>=18&&la<=35)?'pill-g':(la>=10&&la<18)||(la>35&&la<=45)?'pill-y':'pill-r';}
   function evCls(ev){return medCls(ev,'ev_l8d',false);}
   function brlCls(b){return medCls(b,'barrel_pct_season',false);}
@@ -907,6 +907,33 @@ function buildBatterTable(games){
   var totalBatters=0;
   var h='';
 
+  // ── Slate header ──
+  var totalProjHR = 0;
+  games.forEach(function(g){
+    var wx=g.weather||{};
+    var wxMult=wx.mult||1.0;
+    var pf=g.park_factor||g.away_pitcher&&g.away_pitcher.park_factor||1.0;
+    var awayP=g.away_pitcher||{};
+    var homeP=g.home_pitcher||{};
+    var avgHr9=((awayP.hr9||awayP.era&&1.2||1.2)+(homeP.hr9||homeP.era&&1.2||1.2))/2;
+    var projHR=Math.round((avgHr9/9)*27*2*pf*wxMult*10)/10;
+    totalProjHR+=projHR;
+  });
+  var slateColor=totalProjHR>=35?'var(--g)':totalProjHR>=25?'var(--y)':'var(--muted)';
+  var slateLabel=totalProjHR>=35?'strong day':totalProjHR>=25?'average day':'low HR day';
+  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding:0 2px">';
+  h+='<div style="font-size:11px;color:var(--muted2)">'+games.length+' games today</div>';
+  h+='<div style="font-size:11px;color:var(--muted2)">Slate total: <span style="color:'+slateColor+';font-weight:600">'+totalProjHR.toFixed(0)+' proj. HRs</span> - '+slateLabel+'</div>';
+  h+='</div>';
+
+  // ── Column header ──
+  h+='<div style="display:grid;grid-template-columns:210px 75px 85px 1fr 1fr;gap:0;border-radius:6px 6px 0 0;overflow:hidden;border:0.5px solid var(--border)">';
+  ['Game','Proj HRs','Wind','Away Batters','Home Batters'].forEach(function(lbl){
+    h+='<div style="background:var(--s2);padding:5px 8px;font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;border-bottom:0.5px solid var(--border)">'+lbl+'</div>';
+  });
+  h+='</div>';
+
+  // ── Game rows ──
   games.forEach(function(g,gi){
     var awayP=g.away_pitcher||{};
     var homeP=g.home_pitcher||{};
@@ -916,136 +943,194 @@ function buildBatterTable(games){
     var gtime=g.time||'';
     var timeStr='';
     if(gtime){try{var d=new Date(gtime);timeStr=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'America/New_York'});}catch(e){}}
-    var pf=awayP.park_factor||homeP.park_factor||g.park_factor||0;
+    var pf=awayP.park_factor||homeP.park_factor||g.park_factor||1.0;
+    var wxMult=wx.mult||1.0;
+    var isDome=(wx.label||'').toLowerCase().includes('dome');
 
-    // Get all batters above threshold — split by team
     var allCands=g.top_hr_candidates||[];
-    var awayBatters=allCands.filter(function(b){return b.team===awayTeam;}).sort(function(a,b){return(b.hr_prob||0)-(a.hr_prob||0);}).slice(0,4);
-    var homeBatters=allCands.filter(function(b){return b.team===homeTeam;}).sort(function(a,b){return(b.hr_prob||0)-(a.hr_prob||0);}).slice(0,4);
+    var awayBatters=allCands.filter(function(b){return b.team===awayTeam;}).sort(function(a,b){return(b.hr_prob||0)-(a.hr_prob||0);});
+    var homeBatters=allCands.filter(function(b){return b.team===homeTeam;}).sort(function(a,b){return(b.hr_prob||0)-(a.hr_prob||0);});
 
     if(!awayBatters.length&&!homeBatters.length)return;
     totalBatters+=awayBatters.length+homeBatters.length;
 
-    // ── Game card ──
-    h+='<div class="gc">';
+    // ── Projected HR for this game ──
+    var awayHr9=awayP.hr9||1.2;
+    var homeHr9=homeP.hr9||1.2;
+    var awayProj=Math.round((homeHr9/9)*27*pf*wxMult*10)/10; // away batters face home pitcher
+    var homeProj=Math.round((awayHr9/9)*27*pf*wxMult*10)/10;
+    var gameProj=Math.round((awayProj+homeProj)*10)/10;
+    var projC=gameProj>=3.0?'var(--g)':gameProj>=2.0?'var(--y)':'var(--muted)';
+    var projLabel=gameProj>=3.0?'IDEAL':gameProj>=2.0?'NORMAL':'LOW';
 
-    // Game header
-    h+='<div class="gc-hdr">';
-    h+='<div class="gc-title-row">';
-    h+='<span class="gc-title">'+awayTeam+' <span style="color:var(--muted2);font-size:11px;font-weight:400">@</span> '+homeTeam+'</span>';
-    if(timeStr)h+='<span class="gc-time">'+timeStr+' ET</span>';
-    h+='</div>';
-    h+='<div class="gc-chips">'+wxChip(wx)+parkChip(pf)+'</div>';
-    h+='</div>';
+    // ── Wind direction arrow (rotated SVG) ──
+    function windArrow(wx,isDome){
+      if(isDome)return'<div style="text-align:center;font-size:10px;color:var(--muted2)">Dome</div>';
+      var wind=wx.wind_speed||0;
+      var label=wx.label||'';
+      var l=label.toLowerCase();
+      if(wind<4)return'<div style="text-align:center;font-size:10px;color:var(--muted2)">Calm</div>';
+      var align=labelToAlign(label);
+      var arrowC=align>=0.5?'var(--g)':align>=0.1?'var(--y)':align<=-0.4?'var(--r)':'var(--muted2)';
+      // Determine rotation - 0=up=out to CF, 180=down=blowing in
+      var rot=0;
+      if(l.includes('blowing in')||l.includes('slightly in'))rot=180;
+      else if(l.includes('out to lf'))rot=-45;
+      else if(l.includes('out to rf'))rot=45;
+      else if(l.includes('toward lf'))rot=135;
+      else if(l.includes('toward rf'))rot=-135;
+      else if(l.includes('cross'))rot=90;
+      var shortLabel=l.includes('out')?'OUT':l.includes('in')?'IN':'CROSS';
+      return'<div style="display:flex;flex-direction:column;align-items:center;gap:3px">'
+        +'<svg width="32" height="32" viewBox="0 0 32 32" style="transform:rotate('+rot+'deg)">'
+        +'<rect x="6" y="6" width="20" height="20" rx="2" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1" transform="rotate(45 16 16)"/>'
+        +'<circle cx="16" cy="16" r="2" fill="rgba(255,255,255,0.3)"/>'
+        +'<line x1="16" y1="16" x2="16" y2="4" stroke="'+arrowC+'" stroke-width="2" stroke-linecap="round"/>'
+        +'<polygon points="16,1 13,7 19,7" fill="'+arrowC+'"/>'
+        +'</svg>'
+        +'<div style="font-size:10px;font-weight:600;color:'+arrowC+'">'+wind+'mph '+shortLabel+'</div>'
+        +'</div>';
+    }
 
-    // ── Away batters — facing home pitcher ──
-    function renderPitcherSection(pitcher, batters, matchupLabel){
-      if(!batters.length)return'';
-      var sec='';
-      var hr9_rhh=pitcher.vs_R_hr9||0;
-      var hr9_lhh=pitcher.vs_L_hr9||0;
-      var hh=pitcher.hard_hit_pct||0;
-      var era=pitcher.era||0;
-      var hand=pitcher.hand||'R';
-      var pitName=pitcher.name||'TBD';
-      var pitIsNew=pitcher.is_new||false;
+    // ── Pitcher info with HR/9 splits ──
+    function pitcherInfo(p){
+      if(!p||!p.name)return'<div style="font-size:11px;color:var(--muted2)">TBD</div>';
+      var hand=p.hand||'R';
+      var handCls=hand==='L'?'lhp':'rhp';
+      var rhr9=p.vs_R_hr9||0;
+      var lhr9=p.vs_L_hr9||0;
+      var rCls=hr9Cls(rhr9);
+      var lCls=hr9Cls(lhr9);
+      return'<div style="margin-bottom:5px">'
+        +'<div style="display:flex;align-items:center;gap:4px;margin-bottom:3px">'
+        +'<span style="font-size:12px;font-weight:600;color:var(--text)">'+p.name+'</span>'
+        +'<span class="hand-tag '+handCls+'">'+hand+'HP</span>'
+        +'</div>'
+        +'<div style="display:flex;gap:8px">'
+        +'<div style="font-size:10px;color:var(--muted2)">vs RHH <span class="hr9-val '+rCls+'" style="font-size:10px">'+(rhr9>0?rhr9.toFixed(1):'--')+'</span></div>'
+        +'<div style="font-size:10px;color:var(--muted2)">vs LHH <span class="hr9-val '+lCls+'" style="font-size:10px">'+(lhr9>0?lhr9.toFixed(1):'--')+'</span></div>'
+        +'</div>'
+        +'</div>';
+    }
 
-      // Pitcher bar
-      sec+='<div class="pit-bar">';
-      sec+='<div class="pit-info">';
-      sec+='<div class="pit-name">'+pitName+' <span class="hand-tag '+(hand==='L'?'lhp':'rhp')+'">'+hand+'HP</span>'+(pitIsNew?'<span class="new-tag">NEW</span>':'')+'</div>';
-      sec+='<div class="pit-matchup">'+matchupLabel+'</div>';
+    // ── Compact batter list ──
+    function batterList(batters,pitcher,side,rowPrefix){
+      if(!batters.length)return'<div style="font-size:11px;color:var(--muted2);padding:8px">No data</div>';
+      // Check if lineup is confirmed
+      var isConfirmed=batters.some(function(b){return b.lineup_source==='confirmed'||b.batting_slot>0;});
+      var orderLabel=isConfirmed
+        ?'<span style="color:var(--g);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Confirmed Order</span>'
+        :'<span style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">Projected Order</span>';
+
+      var sec='<div style="padding:6px 8px">';
+      // Column header
+      sec+=orderLabel;
+      sec+='<div style="display:grid;grid-template-columns:14px 1fr 38px 30px 30px 38px;gap:2px;padding:3px 0 4px;border-bottom:0.5px solid var(--border2);margin-top:4px">';
+      sec+='<div style="font-size:8px;color:var(--muted2)"></div>';
+      sec+='<div style="font-size:8px;color:var(--muted2)">Batter</div>';
+      sec+='<div style="font-size:8px;color:var(--muted2);text-align:right">xSLG</div>';
+      sec+='<div style="font-size:8px;color:var(--muted2);text-align:right">Brl</div>';
+      sec+='<div style="font-size:8px;color:var(--muted2);text-align:right">LA</div>';
+      sec+='<div style="font-size:8px;color:var(--muted2);text-align:right">HR%</div>';
       sec+='</div>';
-      sec+='<div class="pit-stats">';
-      // ERA
-      var eraCls=era>=5?'stat-hot':era>=4?'stat-warm':era>0?'stat-ok':'stat-muted';
-      sec+='<div class="pit-stat"><div class="pit-stat-lbl">ERA</div><div class="pit-stat-val '+eraCls+'">'+(era>0?era.toFixed(2):'--')+'</div></div>';
-      // HH%
-      var hhCls=hh>=45?'stat-hot':hh>=40?'stat-warm':hh>0?'stat-ok':'stat-muted';
-      sec+='<div class="pit-stat"><div class="pit-stat-lbl">HH%</div><div class="pit-stat-val '+hhCls+'">'+(hh>0?hh+'%':'--')+'</div></div>';
-      // HR/9 splits
-      sec+='<div class="pit-divider"></div>';
-      sec+='<div class="pit-stat">';
-      sec+='<div class="pit-stat-lbl">HR/9</div>';
-      sec+='<div class="hr9-splits">';
-      sec+='<div class="hr9-block"><div class="hr9-label">vs RHH</div><div class="hr9-val '+hr9Cls(hr9_rhh)+'">'+(hr9_rhh>0?hr9_rhh.toFixed(1):'--')+'</div></div>';
-      sec+='<div class="hr9-block"><div class="hr9-label">vs LHH</div><div class="hr9-val '+hr9Cls(hr9_lhh)+'">'+(hr9_lhh>0?hr9_lhh.toFixed(1):'--')+'</div></div>';
-      sec+='</div></div>';
-      sec+='</div></div>';
 
-      // Batter rows — attach _full and _pitP so buildBatDetail works correctly
-      batters.forEach(function(b,bi){
-        b._full = b;          // buildBatDetail reads b._full.season etc
-        b._pitP = pitcher;    // buildBatDetail reads b._pitP for pitcher strip
+      var showN=Math.min(batters.length,5);
+      batters.slice(0,showN).forEach(function(b,bi){
+        b._full=b; b._pitP=pitcher;
         var s=b.season||{};var l8=b.l8d||{};var bd=b.breakdown||{};
-        var brl=s.barrel||s.barrel_pct||bd.barrel_season||bd.barrel_use||0;
-        var la=s.la||bd.la_use||0;
-        var ev=l8.ev||bd.ev_l8d||0;
         var xslg=l8.xslg||bd.xslg_l8d||0;
-        var l8hr=b.l8d_hr_count||0;
+        var brl=s.barrel||s.barrel_pct||bd.barrel_season||0;
+        var la=s.la||bd.la_use||0;
         var pct=b.hr_prob||0;
-        var hand=b.bat_hand||'R';
-        var dot=trendDot(b);
         var pc=pctCls2(pct);
-        var rowId='gc-'+gi+'-bat-'+bi+'-'+matchupLabel.replace(/\s/g,'');
+        var slot=b.batting_slot&&b.batting_slot>0?b.batting_slot:bi+1;
+        var rowId=rowPrefix+'-'+bi;
+        var isTop=bi===0;
+        var rowBg=isTop?'background:rgba(50,215,75,0.06);border-radius:4px;':'';
 
-        sec+='<div class="bat-row" data-rowid="'+rowId+'" onclick="toggleGcDetail(this.dataset.rowid)">';
-        sec+='<div class="bat-left">';
-        sec+='<div class="bat-trend-dot '+dot+'"></div>';
-        sec+='<div>';
-        var slotStr=b.batting_slot&&b.batting_slot>0?'<span class="bat-slot">#'+b.batting_slot+'</span>':'';
-        sec+='<div class="bat-name">'+b.name+slotStr+'<span class="hand-tag '+(hand==='L'?'lhb':'rhb')+'" style="margin-left:6px">'+hand+'</span></div>';
-        sec+='<div class="bat-team">'+b.team+'</div>';
-        sec+='</div></div>';
-        // Four stat pills
-        // Wind advantage chip — check if wind favors this batter's pull side
-        var wxLabel=(wx.label||'').toLowerCase();
-        var windSpd=wx.wind_speed||0;
-        var windAdv='';
-        if(windSpd>=4){
-          // Check if wind favors this specific batter's pull side
-          var rfOut=wxLabel.includes('out to rf')||wxLabel.includes('toward rf');
-          var lfOut=wxLabel.includes('out to lf')||wxLabel.includes('toward lf');
-          var cfOut=wxLabel.includes('out to cf')||wxLabel.includes('blowing out');
-          var windIn=wxLabel.includes('blowing in')||wxLabel.includes('slightly in');
-          var lhbFav=(rfOut&&hand==='L')||(lfOut&&hand==='R')||cfOut;
-          var rhbFav=(lfOut&&hand==='R')||(rfOut&&hand==='L')||cfOut;
-          if((hand==='L'&&rfOut)||(hand==='R'&&lfOut)||cfOut)
-            windAdv='<span class="spill pill-g" title="Wind favors pull side">&#128168;<span class="spill-lbl">Wind</span></span>';
-          else if(windIn)
-            windAdv='<span class="spill pill-r" title="Wind blowing in">&#128168;<span class="spill-lbl">Wind</span></span>';
-        }
-        sec+='<div class="stat-pills">';
-        if(windAdv)sec+=windAdv;
-        sec+='<span class="spill '+brlCls(brl)+'" title="Barrel% Season vs median '+((getMedians().barrel_pct_season||0).toFixed(1))+'%">'+(brl>0?brl.toFixed(1)+'%':'--')+'<span class="spill-lbl">Brl</span></span>';
-        sec+='<span class="spill '+laCls2(la)+'" title="Launch Angle Season (HR window 18-35°)">'+(la>0?la.toFixed(0)+'&#176;':'--')+'<span class="spill-lbl">LA</span></span>';
-        sec+='<span class="spill '+evCls(ev)+'" title="Exit Velo L8D vs median '+((getMedians().ev_l8d||0).toFixed(1))+' mph">'+(ev>0?ev.toFixed(0):'--')+'<span class="spill-lbl">EV</span></span>';
-        sec+='<span class="spill '+xslgCls(xslg)+'" title="xSLG L8D vs median '+fmtXslg(getMedians().xslg_l8d||0)+'">'+fmtXslg(xslg)+'<span class="spill-lbl">xSLG</span></span>';
+        sec+='<div style="'+rowBg+'" onclick="toggleGcDetail(\''+rowId+'\')" style="cursor:pointer">';
+        sec+='<div style="display:grid;grid-template-columns:14px 1fr 38px 30px 30px 38px;gap:2px;padding:3px 2px;cursor:pointer;align-items:center">';
+        sec+='<div style="font-size:9px;color:var(--muted2);text-align:center">'+slot+'</div>';
+        sec+='<div style="font-size:12px;font-weight:'+(isTop?'600':'400')+';color:'+(isTop?'var(--text)':'var(--muted)')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+b.name+'</div>';
+        sec+='<div style="font-size:10px;color:var(--muted);text-align:right">'+fmtXslg(xslg)+'</div>';
+        sec+='<div style="font-size:10px;color:var(--muted);text-align:right">'+(brl>0?brl.toFixed(1)+'%':'--')+'</div>';
+        sec+='<div style="font-size:10px;color:var(--muted);text-align:right">'+(la>0?la.toFixed(0)+'°':'--')+'</div>';
+        sec+='<div class="bat-pct '+pc+'" style="font-size:12px;text-align:right">'+pct+'%</div>';
         sec+='</div>';
-        // L8D HR
-        sec+='<div class="bat-l8d '+l8dHrCls(l8hr)+'">'+(l8hr>0?l8hr+'HR':'—')+'</div>';
-        // RF Probability
-        sec+='<div class="bat-pct '+pc+'">'+pct+'%</div>';
-        // XGBoost probability — shown only when trained, purely informational
-        var xgbPct=b.xgb_prob!=null?b.xgb_prob:null;
-        if(xgbPct!=null){
-          sec+='<div class="bat-xgb" title="XGBoost probability (learning)">'+xgbPct+'%<span class="xgb-lbl">XG</span></div>';
-        }
-        sec+='</div>';
-        // Detail panel
         sec+='<div class="gc-detail" id="'+rowId+'" style="display:none">'+buildBatDetail(b)+'</div>';
+        sec+='</div>';
       });
 
+      if(batters.length>showN){
+        sec+='<div style="text-align:center;padding:4px;font-size:10px;color:var(--muted2);cursor:pointer;border:0.5px solid var(--border2);border-radius:4px;margin-top:4px" onclick="this.parentNode.querySelectorAll(\'.extra-bat\').forEach(function(e){e.style.display=e.style.display===\'none\'?\'block\':\'none\'});this.textContent=this.textContent.includes(\'+\')?\'show less\':\'+ '+(batters.length-showN)+' more\'">'+(batters.length-showN)+' more</div>';
+        batters.slice(showN).forEach(function(b,bi){
+          b._full=b; b._pitP=pitcher;
+          var s=b.season||{};var l8=b.l8d||{};var bd=b.breakdown||{};
+          var xslg=l8.xslg||bd.xslg_l8d||0;
+          var brl=s.barrel||s.barrel_pct||bd.barrel_season||0;
+          var la=s.la||bd.la_use||0;
+          var pct=b.hr_prob||0;
+          var pc=pctCls2(pct);
+          var slot=b.batting_slot&&b.batting_slot>0?b.batting_slot:showN+bi+1;
+          var rowId=rowPrefix+'-extra-'+bi;
+          sec+='<div class="extra-bat" style="display:none">';
+          sec+='<div style="display:grid;grid-template-columns:14px 1fr 38px 30px 30px 38px;gap:2px;padding:3px 2px;cursor:pointer;align-items:center" onclick="toggleGcDetail(\''+rowId+'\')">';
+          sec+='<div style="font-size:9px;color:var(--muted2);text-align:center">'+slot+'</div>';
+          sec+='<div style="font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+b.name+'</div>';
+          sec+='<div style="font-size:10px;color:var(--muted);text-align:right">'+fmtXslg(xslg)+'</div>';
+          sec+='<div style="font-size:10px;color:var(--muted);text-align:right">'+(brl>0?brl.toFixed(1)+'%':'--')+'</div>';
+          sec+='<div style="font-size:10px;color:var(--muted);text-align:right">'+(la>0?la.toFixed(0)+'°':'--')+'</div>';
+          sec+='<div class="bat-pct '+pc+'" style="font-size:12px;text-align:right">'+pct+'%</div>';
+          sec+='</div>';
+          sec+='<div class="gc-detail" id="'+rowId+'" style="display:none">'+buildBatDetail(b)+'</div>';
+          sec+='</div>';
+        });
+      }
+      sec+='</div>';
       return sec;
     }
 
-    h+=renderPitcherSection(homeP, awayBatters, awayTeam+' batters');
-    h+=renderPitcherSection(awayP, homeBatters, homeTeam+' batters');
+    var rowBorder=gi>0?'border-top:0.5px solid var(--border)':'';
+    h+='<div style="display:grid;grid-template-columns:210px 75px 85px 1fr 1fr;gap:0;border:0.5px solid var(--border);border-top:none">';
+
+    // Col 1 - Game info
+    h+='<div style="padding:10px 10px;'+rowBorder+'">';
+    h+='<div style="font-size:11px;color:var(--muted2);margin-bottom:3px">'+timeStr+' ET</div>';
+    h+='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px">'+awayTeam+' <span style="color:var(--muted2);font-weight:400;font-size:11px">@</span> '+homeTeam+'</div>';
+    h+=pitcherInfo(homeP);
+    h+='<div style="border-top:0.5px solid var(--border2);margin:6px 0"></div>';
+    h+=pitcherInfo(awayP);
+    h+='</div>';
+
+    // Col 2 - Projected HRs
+    h+='<div style="padding:10px 8px;border-left:0.5px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">';
+    h+='<div style="font-size:24px;font-weight:600;color:'+projC+'">'+gameProj.toFixed(1)+'</div>';
+    h+='<div style="font-size:10px;color:var(--muted2)">';
+    h+='<span>'+awayProj.toFixed(1)+'</span><span style="color:var(--border)"> / </span><span>'+homeProj.toFixed(1)+'</span>';
+    h+='</div>';
+    h+='<div style="font-size:9px;font-weight:700;color:'+projC+'">'+projLabel+'</div>';
+    h+='</div>';
+
+    // Col 3 - Wind
+    h+='<div style="padding:10px 8px;border-left:0.5px solid var(--border);display:flex;align-items:center;justify-content:center">';
+    h+=windArrow(wx,isDome);
+    h+='</div>';
+
+    // Col 4 - Away batters
+    h+='<div style="border-left:0.5px solid var(--border)">';
+    h+=batterList(awayBatters,homeP,'away',gi+'-away');
+    h+='</div>';
+
+    // Col 5 - Home batters
+    h+='<div style="border-left:0.5px solid var(--border)">';
+    h+=batterList(homeBatters,awayP,'home',gi+'-home');
+    h+='</div>';
+
     h+='</div>';
   });
 
   if(!totalBatters){el.innerHTML='<div class="no-data">No batters above threshold today.</div>';return;}
-  el.innerHTML='<div class="gc-wrap">'+h+'</div>';
+  el.innerHTML='<div class="gc-wrap" style="border-radius:8px;overflow:hidden">'+h+'</div>';
 }
 
 function toggleDD(el){
@@ -1092,7 +1177,7 @@ function buildBatDetail(b){
   var fi = bd.feature_importances||{};
   var fiList = Object.entries(fi).sort(function(a,b){return b[1]-a[1];});
 
-  // ── Stat value map — what we actually have for this batter ──
+  // ── Stat value map - what we actually have for this batter ──
   var xslg_l8d  = l.xslg||bd.xslg_l8d||0;
   var xwoba_l8d = l.xwoba||bd.xwoba_l8d||0;
   var bat_speed = l.bat_speed||bd.bat_speed_l8d||0;
@@ -1126,7 +1211,7 @@ function buildBatDetail(b){
     pit_hr9_season:'Pit HR/9 Season', pit_hr9_vs_hand:'Pit HR/9 vs Hand',
   };
 
-  // Invert logic — lower is better for batter for these
+  // Invert logic - lower is better for batter for these
   var INVERT = {k_pct_l8d:true, pit_hard_hit_season:false, pit_hr9_season:false, pit_hr9_vs_hand:false};
 
   // Format by stat type
@@ -1162,7 +1247,7 @@ function buildBatDetail(b){
 
   // ── LEFT: Feature-importance driven stat display ──
   var h='<div class="detail-wrap">';
-  // ── RIGHT: Radar Chart — Uncle Nicky Signature ──
+  // ── RIGHT: Radar Chart - Uncle Nicky Signature ──
   // 6-axis composite radar showing why this batter scored what he did
   // Each axis is a composite of multiple underlying stats
 
@@ -1265,11 +1350,11 @@ function buildBatDetail(b){
     // ── Verdict text ──
     var strong = scores.filter(function(s){return s>=70;}).length;
     var weak   = scores.filter(function(s){return s<=35;}).length;
-    var verdict = strong>=4 ? 'Multiple axes aligned — strong spot'
+    var verdict = strong>=4 ? 'Multiple axes aligned - strong spot'
                 : strong>=2&&weak===0 ? 'Solid across the board'
-                : strong>=2 ? 'Mixed signals — watch '+ labels[scores.indexOf(Math.min.apply(null,scores))]
-                : weak>=2 ? 'Thin case — model found specific edge'
-                : 'Average spot — no standout signal';
+                : strong>=2 ? 'Mixed signals - watch '+ labels[scores.indexOf(Math.min.apply(null,scores))]
+                : weak>=2 ? 'Thin case - model found specific edge'
+                : 'Average spot - no standout signal';
 
     // ── Build canvas radar via inline SVG math ──
     var canvasId = 'radar_'+Math.random().toString(36).slice(2,7);
@@ -1427,11 +1512,11 @@ function buildBatDetail(b){
     h+='</div>';
   }
 
-  // ── Deep Dive — collapsible raw stats ──
+  // ── Deep Dive - collapsible raw stats ──
   var ddId = 'dd_'+b.name.replace(/ /g,'_')+'_'+Math.random().toString(36).slice(2,5);
   h+='<div style="border:1px solid var(--border2);border-radius:8px;overflow:hidden">';
   h+='<div data-ddid="'+ddId+'" onclick="toggleDD(this)" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;background:var(--surface);user-select:none">';
-  h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.09em">Deep Dive — Raw Model Inputs</div>';
+  h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.09em">Deep Dive - Raw Model Inputs</div>';
   h+='<span class="dd-arrow" style="font-size:10px;color:var(--muted2)">▼</span>';
   h+='</div>';
   h+='<div id="'+ddId+'" style="display:none;padding:10px 12px;background:var(--s3)">';
@@ -1798,7 +1883,7 @@ function renderHistory(yesterdayRecs, weekRecs, weekDates, yStr) {
 
   // ── SECTION 1: Yesterday's Results ──
   h += '<div style="margin-bottom:20px">';
-  h += '<div class="section-hdr"><div class="section-title">Yesterday — '+yStr+'</div>';
+  h += '<div class="section-hdr"><div class="section-title">Yesterday - '+yStr+'</div>';
   h += '<div style="display:flex;gap:8px">';
   h += '<button class="refresh-btn" style="font-size:11px;padding:4px 10px" onclick="manualRecord()">Record Results</button>';
   h += '</div></div>';
@@ -1859,7 +1944,7 @@ function renderHistory(yesterdayRecs, weekRecs, weekDates, yStr) {
 
   // ── SECTION 2: 7-Day Tier Hit Rates ──
   h += '<div style="margin-bottom:20px">';
-  h += '<div class="section-hdr"><div class="section-title">Last 7 Days — Tier Performance</div></div>';
+  h += '<div class="section-hdr"><div class="section-title">Last 7 Days - Tier Performance</div></div>';
 
   var settled = weekRecs.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
 
@@ -1883,10 +1968,10 @@ function renderHistory(yesterdayRecs, weekRecs, weekDates, yStr) {
   if(!settled.length){
     h += '<div style="padding:20px;color:var(--muted2);font-size:13px;text-align:center">No settled records in the last 7 days yet.</div>';
   } else {
-    h += tierRow('Elite — 18%+',   18, null, 'var(--text)');
-    h += tierRow('Strong — 12-18%', 12, 18,  'var(--g)');
-    h += tierRow('Moderate — 8-12%', 8, 12,  'var(--y)');
-    h += tierRow('Low — Under 8%',   0,  8,  'var(--muted)');
+    h += tierRow('Elite - 18%+',   18, null, 'var(--text)');
+    h += tierRow('Strong - 12-18%', 12, 18,  'var(--g)');
+    h += tierRow('Moderate - 8-12%', 8, 12,  'var(--y)');
+    h += tierRow('Low - Under 8%',   0,  8,  'var(--muted)');
 
     // Day by day summary
     h += '<div style="margin-top:14px">';
@@ -1938,7 +2023,7 @@ async function loadMoreHistory(){
     var completed = records.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
     var hits = completed.filter(function(r){return r.hit_hr===1;});
     var h = '<div style="padding:12px;background:var(--surface);border:0.5px solid var(--border2);border-radius:8px;margin-bottom:16px;font-size:12px;color:var(--muted)">';
-    h += 'Full history — '+records.length+' records, '+completed.length+' settled, '+hits.length+' HRs ('+
+    h += 'Full history - '+records.length+' records, '+completed.length+' settled, '+hits.length+' HRs ('+
       (completed.length>0?(hits.length/completed.length*100).toFixed(1)+'%':'--')+' hit rate)</div>';
     var sorted = completed.slice().sort(function(a,b){return b.model_hr_pct-a.model_hr_pct;});
     sorted.forEach(function(r){
@@ -2022,12 +2107,12 @@ async function load(forceRefresh){
       ['batter-main','pitcher-main','game-main'].forEach(function(id){document.getElementById(id).innerHTML=nm;});
       btn.disabled=false;return;
     }
-    // Check if data is ready — silent retry if not, no blocking banner
+    // Check if data is ready - silent retry if not, no blocking banner
     try {
       var stResp = await fetch(API+'/status');
       var stData = await stResp.json();
       if(!stData.ready || !stData.tree_trained) {
-        // Show subtle loading state — auto retry every 8 seconds silently
+        // Show subtle loading state - auto retry every 8 seconds silently
         var retryIn = stData.tree_trained === false ? 20 : 8;
         document.getElementById('batter-main').innerHTML =
           '<div style="text-align:center;padding:40px 20px;color:var(--muted2)">' +
