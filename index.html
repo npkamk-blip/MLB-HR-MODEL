@@ -911,7 +911,14 @@ function buildBatterTable(games){
   var totalProjHR = 0;
   games.forEach(function(g){
     var wx=g.weather||{};
-    var wxMult=wx.mult||1.0;
+    var wxLbl=(wx.label||'').toLowerCase();
+    var windS=wx.wind_speed||0;
+    var wxMult=1.0;
+    if(!wxLbl.includes('dome')&&windS>=5){
+      var al=labelToAlign(wx.label||'');
+      var sf=windS<10?0.3:windS<16?0.7:1.0;
+      wxMult=1.0+(al*sf*0.12);
+    }
     var pf=g.park_factor||g.away_pitcher&&g.away_pitcher.park_factor||1.0;
     var awayP=g.away_pitcher||{};
     var homeP=g.home_pitcher||{};
@@ -945,8 +952,16 @@ function buildBatterTable(games){
     var timeStr='';
     if(gtime){try{var d=new Date(gtime);timeStr=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'America/New_York'});}catch(e){}}
     var pf=awayP.park_factor||homeP.park_factor||g.park_factor||1.0;
-    var wxMult=wx.mult||1.0;
-    var isDome=(wx.label||'').toLowerCase().includes('dome');
+    var wxLabel=(wx.label||'').toLowerCase();
+    var windSpd=wx.wind_speed||0;
+    var isDome=wxLabel.includes('dome');
+    // Calculate weather multiplier from wind label — mirrors backend calc_weather_multiplier
+    var wxMult=1.0;
+    if(!isDome && windSpd>=5){
+      var align=labelToAlign(wx.label||'');
+      var speedFactor=windSpd<10?0.3:windSpd<16?0.7:1.0;
+      wxMult=1.0+(align*speedFactor*0.12);
+    }
 
     var allCands=g.top_hr_candidates||[];
     var awayBatters=allCands.filter(function(b){return b.team===awayTeam;}).sort(function(a,b){return(b.hr_prob||0)-(a.hr_prob||0);});
