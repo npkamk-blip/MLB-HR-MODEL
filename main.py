@@ -3338,6 +3338,7 @@ def pit_display(p_name, p_hand):
         "gs": gs_val,
     }
 
+
 # ── API Endpoints ──
 @app.get("/dashboard")
 async def get_dashboard():
@@ -4169,15 +4170,18 @@ async def get_games(date: str = None, refresh: bool = False):
         # Build pitcher display objects with K data attached
         away_pit_obj = pit_display(away_p.get("fullName", "TBD"), away_p_hand)
         home_pit_obj = pit_display(home_p.get("fullName", "TBD"), home_p_hand)
-        for obj, exp_k, k_prop, k_edge, opp_t, opp_lk in [
-            (away_pit_obj, away_exp_k, away_k_prop, away_k_edge, home_team, home_lineup_k),
-            (home_pit_obj, home_exp_k, home_k_prop, home_k_edge, away_team, away_lineup_k),
+        for obj, exp_k, k_prop, k_edge, opp_t, opp_lk, team in [
+            (away_pit_obj, away_exp_k, away_k_prop, away_k_edge, home_team, home_lineup_k, away_team),
+            (home_pit_obj, home_exp_k, home_k_prop, home_k_edge, away_team, away_lineup_k, home_team),
         ]:
-            obj["exp_k"]       = exp_k
-            obj["k_prop"]      = k_prop
-            obj["k_edge"]      = k_edge
-            obj["opp_team"]    = opp_t
+            obj["exp_k"]        = exp_k
+            obj["k_prop"]       = k_prop
+            obj["k_edge"]       = k_edge
+            obj["opp_team"]     = opp_t
             obj["opp_lineup_k"] = opp_lk
+            # Bullpen HR/9 for the team this pitcher plays for
+            bp = _cache.get("team_bullpen", {}).get(team, {})
+            obj["bullpen_hr9"]  = round(bp.get("hr9", LEAGUE_CONSTANTS.get("lg_bullpen_hr9", 1.20)), 2)
 
         games_out.append({
             "game_id": gid, "away": away_team, "home": home_team, "time": gtime,
