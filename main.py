@@ -1,4593 +1,2078 @@
-# main.py — MLB HR Model by Nick
-# Version: 2026-05-04
-# Model: Random Forest (adaptive depth/trees by record count)
-# Features: RF adaptive params, save_parlay_combinations, record_parlay_results,
-#           /refresh-8d, /debug-arsenal, /parlay-results, /version, bullpen_w_blend fix
-# DO NOT overwrite with an older file — fetch from GitHub before editing.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>MLB Home Run Model by Nick</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1c1c1e;--surface:#2c2c2e;--s2:#242426;--s3:#1c1c1e;--card2:#252527;
+  --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.06);
+  --accent:#f5f5f5;--blue:#0a84ff;--text:#f5f5f5;
+  --muted:#8e8e93;--muted2:#636366;--danger:#ff453a;--warn:#ff9f0a;--purple:#bf5af2;
+  --g:#32d74b;--y:#ff9f0a;--r:#ff453a;
+  /* Pink/red gradient for stat coloring — top 10% = hot pink, bottom = dark red */
+  --b10:#ff6eb4;--b25:#e0445a;--b50:#b02030;--b75:#6b1020;
+}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px}
+header{border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;background:var(--bg)}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:var(--text);text-transform:uppercase;letter-spacing:.05em}
+.logo-sub{font-size:11px;color:var(--muted);border-left:1px solid var(--border);padding-left:10px;text-transform:uppercase;letter-spacing:.1em}
+.hdr-r{display:flex;align-items:center;gap:10px}
+.date-nav{display:flex;align-items:center;gap:6px}
+.date-btn{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:18px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.date-btn:hover{border-color:var(--muted);color:var(--text)}
+.date-lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.refresh-btn{background:var(--text);color:#1c1c1e;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;cursor:pointer}
+.refresh-btn:hover{opacity:.85}
+.refresh-btn:disabled{opacity:.4;cursor:not-allowed}
+.upd{font-size:11px;color:var(--muted2)}
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 20px;position:sticky;top:49px;z-index:99;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;cursor:pointer;transition:all .15s;margin-bottom:-1px;white-space:nowrap}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--text);border-bottom-color:var(--text)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.container{max-width:1300px;margin:0 auto;padding:12px 10px}
+@media(min-width:600px){.container{padding:16px}}
+.loading{text-align:center;padding:60px 20px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:18px;letter-spacing:.1em}
+.dots{display:inline-flex;gap:6px;margin-left:10px}
+.dots span{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:dot .8s infinite alternate}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes dot{from{opacity:.2}to{opacity:1}}
+.err{background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);border-radius:8px;padding:16px;color:var(--danger);margin:20px 0}
+.no-data{text-align:center;padding:40px;color:var(--muted2);font-size:13px}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text)}
+.section-count{font-size:11px;color:var(--muted2)}
+.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{background:var(--s2);padding:8px 10px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{color:var(--text)}
+thead th.sort-asc::after{content:' ▲';color:var(--muted)}
+thead th.sort-desc::after{content:' ▼';color:var(--muted)}
+thead th.num{text-align:right}
+tbody tr{border-bottom:1px solid var(--border2);cursor:pointer;transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tbody tr.detail-row{cursor:default;background:var(--s3)}
+tbody tr.detail-row:hover{background:var(--s3)}
+td{padding:8px 10px;vertical-align:middle}
+td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600}
+.player-name{font-weight:600;font-size:13px}
+.player-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.hand-tag{display:inline-block;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;text-transform:uppercase}
+.rhb{background:rgba(255,59,48,0.12);color:#ff453a;border:1px solid rgba(255,59,48,0.2)}
+.lhb{background:rgba(77,166,255,.12);color:var(--blue);border:1px solid rgba(77,166,255,.25)}
+.rhp{background:rgba(255,59,48,0.12);color:#ff453a;border:1px solid rgba(255,59,48,0.2)}
+.lhp{background:rgba(77,166,255,.12);color:var(--blue);border:1px solid rgba(77,166,255,.25)}
+.sc{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600}
+.sc-g{color:var(--g)}
+.sc-y{color:var(--y)}
+.sc-r{color:var(--r)}
+.sc-n{color:var(--muted2)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:3px;vertical-align:middle}
+.dot-g{background:var(--g)}
+.dot-y{background:var(--y)}
+.dot-r{background:var(--r)}
+.dot-n{background:var(--muted2)}
+.prob-big{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800}
+.p-elite{color:var(--accent)}
+.p-high{color:var(--g)}
+.p-mid{color:var(--y)}
+.p-low{color:var(--muted)}
+.l8d-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+.l8d-hot{background:rgba(57,211,83,.12);color:var(--g);border:1px solid rgba(57,211,83,.25)}
+.l8d-ok{background:rgba(255,170,51,.1);color:var(--y);border:1px solid rgba(255,170,51,.2)}
+.l8d-cold{background:#1a1a1a;color:var(--muted2);border:1px solid var(--border2)}
+.detail-wrap{padding:12px 16px;background:var(--s3)}
+/* ── Game Card Layout ── */
+.gc-wrap{display:flex;flex-direction:column;gap:14px}
+.gc{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.gc-hdr{padding:10px 14px;border-bottom:1px solid var(--border2)}
+.gc-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.gc-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.02em}
+.gc-time{font-size:11px;color:var(--muted2)}
+.gc-chips{display:flex;gap:5px;flex-wrap:wrap}
+.gchip{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;white-space:nowrap}
+.chip-g{background:rgba(50,215,75,.12);color:var(--g);border:1px solid rgba(50,215,75,.2)}
+.chip-r{background:rgba(255,77,77,.10);color:var(--r);border:1px solid rgba(255,77,77,.2)}
+.chip-n{background:var(--s2);color:var(--muted);border:1px solid var(--border2)}
+.pit-bar{display:flex;align-items:center;gap:12px;padding:8px 14px;background:var(--s2);border-bottom:1px solid var(--border2)}
+.pit-info{flex:1;min-width:0}
+.pit-name{font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px}
+.pit-matchup{font-size:10px;color:var(--muted2);margin-top:1px}
+.pit-stats{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.pit-stat{text-align:center}
+.pit-stat-lbl{font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em}
+.pit-stat-val{font-size:13px;font-weight:600;margin-top:2px}
+.pit-divider{width:1px;height:32px;background:var(--border2);flex-shrink:0}
+.hr9-splits{display:flex;gap:10px;margin-top:2px}
+.hr9-block{text-align:center}
+.hr9-label{font-size:8px;color:var(--muted2);text-transform:uppercase;letter-spacing:.04em}
+.hr9-val{font-size:13px;font-weight:700;margin-top:1px}
+.hr9-hot{color:var(--r)}
+.hr9-warm{color:var(--y)}
+.hr9-ok{color:var(--muted)}
+.hr9-cold{color:var(--g)}
+.stat-hot{color:var(--r)}
+.stat-warm{color:var(--y)}
+.stat-ok{color:var(--muted)}
+.stat-muted{color:var(--muted2)}
+.new-tag{font-size:9px;background:var(--warn);color:#000;border-radius:3px;padding:1px 4px;font-weight:700}
+.bat-row{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border2);cursor:pointer;transition:background .1s}
+.bat-row:hover{background:var(--s2)}
+.bat-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.bat-trend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-fire{background:var(--r)}
+.dot-warm{background:var(--y)}
+.dot-neutral{background:var(--muted2)}
+.bat-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bat-team{font-size:10px;color:var(--muted2);margin-top:1px}
+.bat-slot{font-size:9px;color:var(--muted2);font-weight:400;margin-left:5px;font-family:var(--font-sans)}
+.stat-pills{display:flex;gap:4px;flex-shrink:0}
+.spill{font-size:11px;font-weight:700;padding:3px 7px;border-radius:5px;display:flex;flex-direction:column;align-items:center;min-width:42px;font-family:'Barlow Condensed',sans-serif}
+.spill-lbl{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;opacity:.7;margin-top:1px}
+.pill-g{background:rgba(57,211,83,.12);color:var(--g);border:1px solid rgba(57,211,83,.2)}
+.pill-y{background:rgba(255,170,51,.10);color:var(--y);border:1px solid rgba(255,170,51,.2)}
+.pill-m{background:var(--s2);color:var(--muted);border:1px solid var(--border2)}
+.pill-r{background:rgba(255,77,77,.08);color:var(--r);border:1px solid rgba(255,77,77,.15)}
+.bat-l8d{font-size:11px;font-weight:700;min-width:32px;text-align:center;flex-shrink:0;font-family:'Barlow Condensed',sans-serif}
+.l8d-fire{color:var(--r)}
+.l8d-warm{color:var(--y)}
+.l8d-none{color:var(--muted2)}
+.bat-pct{font-size:15px;font-weight:800;min-width:42px;text-align:right;flex-shrink:0;font-family:'Barlow Condensed',sans-serif}
+.bat-xgb{font-size:11px;font-weight:700;min-width:38px;text-align:right;flex-shrink:0;font-family:'Barlow Condensed',sans-serif;color:var(--purple);opacity:0.8;position:relative}
+.xgb-lbl{font-size:8px;color:var(--purple);opacity:0.6;margin-left:1px;vertical-align:super}
+.pct-elite{color:var(--text)}
+.pct-high{color:var(--g)}
+.pct-mid{color:var(--y)}
+.pct-ok{color:var(--muted)}
+.pct-low{color:var(--muted2)}
+.gc-detail{border-top:1px solid var(--border2);background:var(--s3)}
+.dstat-wrap{background:var(--surface);border:1px solid var(--border2);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.drow{display:grid;grid-template-columns:90px 1fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border2);padding:6px 10px;align-items:center}
+.drow:last-child{border-bottom:none}
+.drow-hdr{background:var(--s2)}
+.drow-hdr .drow-s,.drow-hdr .drow-l,.drow-hdr .drow-sp{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;text-align:center}
+.drow-lbl{font-size:11px;color:var(--muted);font-weight:500}
+.drow-s,.drow-l,.drow-sp{text-align:center}
+.drow-note{font-size:9px;color:var(--muted2);grid-column:span 1;text-align:right}
+.dmodel-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.dmodel-block{background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;display:flex;flex-direction:column;align-items:center;min-width:60px}
+.dmodel-lbl{font-size:8px;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.detail-block{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:10px 12px}
+.detail-block-title{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.clog-wrap{background:var(--surface);border:1px solid var(--border2);border-radius:8px;overflow:hidden;margin-top:10px}
+.clog-title{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;padding:8px 12px;border-bottom:1px solid var(--border2)}
+.clog-table{width:100%;border-collapse:collapse;font-size:11px}
+.clog-table th{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;text-align:left;border-bottom:1px solid var(--border2)}
+.clog-table th.num{text-align:right}
+.clog-table td{padding:5px 10px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--fg);font-family:'Barlow Condensed',sans-serif;font-size:13px}
+.clog-table td.num{text-align:right}
+.clog-table tr:last-child td{border-bottom:none}
+.clog-hr td{background:rgba(0,255,100,.06)}
+.clog-xbh td{background:rgba(255,200,0,.04)}
+.clog-out td{opacity:.7}
+.clog-result-hr{color:var(--g);font-weight:700}
+.clog-result-xbh{color:var(--y);font-weight:600}
+.clog-result-out{color:var(--muted)}
+.clog-ev-hot{color:var(--g)}
+.clog-ev-warm{color:var(--y)}
+.clog-ev-cold{color:var(--muted)}
+.chip-row{display:flex;flex-wrap:wrap;gap:4px}
+.chip{display:inline-flex;flex-direction:column;align-items:center;background:#1a1a1a;border:1px solid var(--border2);border-radius:6px;padding:5px 8px;min-width:54px}
+.chip-lbl{font-size:8px;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.chip-val{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700}
+.chip-val.g{color:var(--g)}
+.chip-val.y{color:var(--y)}
+.chip-val.r{color:var(--r)}
+.chip-val.n{color:var(--muted2)}
+.edge-pos{color:var(--g);font-weight:700}
+.edge-neg{color:var(--r)}
+.edge-neu{color:var(--muted2)}
+.consistency-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px}
+.con-solid{background:rgba(57,211,83,.1);color:var(--g);border:1px solid rgba(57,211,83,.2)}
+.con-mod{background:rgba(255,170,51,.1);color:var(--y);border:1px solid rgba(255,170,51,.2)}
+.con-small{background:rgba(255,170,51,.08);color:var(--warn);border:1px solid rgba(255,170,51,.15)}
+.con-none{background:#1a1a1a;color:var(--muted2);border:1px solid var(--border2)}
+.team-a{color:var(--blue)}
+.team-h{color:var(--warn)}
+.at-sep{color:var(--muted2);margin:0 4px}
+.ou-over{color:var(--r)}
+.ou-under{color:var(--blue)}
+.ou-push{color:var(--muted)}
+.exp-runs-big{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700}
+.search-row{display:flex;gap:8px;margin-bottom:20px}
+.search-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;padding:10px 14px;outline:none}
+.search-input:focus{border-color:var(--accent)}
+.search-btn{background:var(--accent);color:#0a0a0a;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:10px 20px;cursor:pointer}
+.r-chip{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;min-width:64px;text-align:center;display:inline-block;margin:3px}
+.r-chip-lbl{font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.r-chip-val{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700}
+.r-section{margin-bottom:16px}
+.r-section-title{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.research-result{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.r-header{background:var(--s2);padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.r-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800}
+.r-body{padding:16px 18px}
+/* History */
+.hist-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.hist-stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.hist-stat-val{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--accent)}
+.hist-stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+.hist-hit{background:rgba(57,211,83,.08);border-color:rgba(57,211,83,.2)}
+.hist-hit .hist-stat-val{color:var(--g)}
+.hist-miss{background:rgba(255,77,77,.05)}
+.cal-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.cal-day{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border2);font-family:'Barlow Condensed',sans-serif}
+.cal-day:hover{border-color:var(--accent)}
+.cal-day.has-data{background:var(--s2)}
+.cal-day.selected{border-color:var(--accent);background:rgba(200,241,53,.1);color:var(--accent)}
+.cal-day.no-data{color:var(--muted2)}
+.acc-bar-wrap{background:var(--border2);border-radius:4px;height:8px;margin-top:6px;overflow:hidden}
+.acc-bar{height:100%;border-radius:4px;background:var(--accent);transition:width .4s}
+.corr-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border2)}
+.corr-row:last-child{border-bottom:none}
+.corr-lbl{font-size:12px;color:var(--muted);width:140px;flex-shrink:0}
+.corr-bar-wrap{flex:1;background:var(--border2);border-radius:4px;height:6px}
+.corr-bar{height:100%;border-radius:4px;transition:width .4s}
+.corr-val{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;width:40px;text-align:right}
+.hit-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px}
+.hit-yes{background:rgba(57,211,83,.12);color:var(--g);border:1px solid rgba(57,211,83,.25)}
+.hit-no{background:#1a1a1a;color:var(--muted2);border:1px solid var(--border2)}
+.hit-pending{background:rgba(255,170,51,.08);color:var(--warn);border:1px solid rgba(255,170,51,.2)}
+.data-conf{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.03em}
+.conf-full{background:rgba(57,211,83,.15);color:var(--g);border:1px solid rgba(57,211,83,.3)}
+.conf-good{background:rgba(255,200,0,.12);color:var(--y);border:1px solid rgba(255,200,0,.25)}
+.conf-warn{background:rgba(255,100,0,.12);color:var(--warn);border:1px solid rgba(255,100,0,.2)}
+.conf-low{background:#1a1a1a;color:var(--muted2);border:1px solid var(--border2)}
+.model-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:768px){.model-layout{grid-template-columns:1fr}}
+.model-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.model-card-title{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.weight-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border2)}
+.weight-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.weight-rank{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--muted2);width:18px;flex-shrink:0}
+.weight-name{font-size:11px;color:var(--fg);width:130px;flex-shrink:0}
+.weight-bar-wrap{flex:1;height:6px;background:var(--border2);border-radius:3px;overflow:hidden}
+.weight-bar{height:100%;border-radius:3px;transition:width .3s}
+.weight-val{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;width:38px;text-align:right;flex-shrink:0}
+.weight-delta{font-size:10px;width:42px;text-align:right;flex-shrink:0}
+.stat-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid var(--border2)}
+.stat-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.stat-rank{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted2);width:22px;flex-shrink:0;text-align:right}
+.stat-name{font-size:11px;width:150px;flex-shrink:0}
+.stat-bar-wrap{flex:1;height:4px;background:var(--border2);border-radius:2px;overflow:hidden}
+.stat-bar{height:100%;border-radius:2px}
+.stat-corr{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;width:38px;text-align:right;flex-shrink:0}
+.stat-badge{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0}
+.badge-active{background:rgba(57,211,83,.15);color:var(--g);border:1px solid rgba(57,211,83,.3)}
+.badge-candidate{background:rgba(255,200,0,.12);color:var(--y);border:1px solid rgba(255,200,0,.25)}
+.badge-promoted{background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.3)}
+.badge-dropped{background:rgba(255,59,48,.12);color:var(--r);border:1px solid rgba(255,59,48,.25)}
+.recal-btn{background:var(--accent);color:#000;font-weight:700;font-size:11px;padding:5px 12px;border-radius:6px;border:none;cursor:pointer;letter-spacing:.04em}
+.recal-btn:disabled{background:var(--muted2);cursor:not-allowed}
+</style>
+</head>
+<body>
+<header>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="logo">Uncle Nicky</div>
+    <div class="logo-sub">MLB HR Model</div>
+  </div>
+  <div class="hdr-r">
+    <div class="date-nav">
+      <button class="date-btn" onclick="changeDate(-1)">&#8249;</button>
+      <span class="date-lbl" id="dateLbl"></span>
+      <button class="date-btn" onclick="changeDate(1)">&#8250;</button>
+    </div>
+    <button class="refresh-btn" id="refreshBtn" onclick="load(true)">Refresh</button>
+    <button class="refresh-btn" style="background:var(--s2);color:var(--accent);border:1px solid var(--accent)" onclick="reloadContact()">⚡ Contact</button>
+    <span class="upd" id="upd"></span>
+  </div>
+</header>
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('dashboard',this)">Dashboard</button>
+  <button class="tab" onclick="switchTab('batters',this)">Batters</button>
+  <button class="tab" onclick="switchTab('parlays',this)">Parlays</button>
+  <button class="tab" onclick="switchTab('history',this)">History</button>
+  <button class="tab" onclick="switchTab('model',this)">Model</button>
+</div>
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-import httpx
-import pandas as pd
-import io
-import math
-import os
-import threading
-import asyncio
-import uvicorn
-import json
-import statistics
-import itertools
-from datetime import date, timedelta, datetime
-from collections import defaultdict
+<div id="dashboard-panel" class="tab-panel active">
+  <div class="container"><div id="dashboard-main"><div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div></div></div>
+</div>
+<div id="batters-panel" class="tab-panel">
+  <div class="container">
+    <div id="batter-main"><div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div></div>
+  </div>
+</div>
+<!-- pitchers-panel hidden — adding back later -->
+<div id="pitchers-panel" style="display:none">
+  <div class="container"><div id="pitcher-main"></div></div>
+</div>
+<!-- games-panel hidden — adding back later -->
+<div id="games-panel" style="display:none">
+  <div class="container"><div id="game-main"></div></div>
+</div>
+<!-- parlays-panel — data collection running, UI coming soon -->
+<div id="parlays-panel" class="tab-panel">
+  <div class="container" style="max-width:700px;margin:60px auto;text-align:center;padding:40px 20px">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:800;color:var(--accent);letter-spacing:.04em">PARLAYS</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:8px;margin-bottom:32px">Coming soon — combination engine in training</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px">
+      <div style="font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px">What's being built</div>
+      <div style="display:flex;flex-direction:column;gap:12px;text-align:left">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="font-size:18px">⚡</div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--text)">Parlay Builder</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Pick any player — Sharp finds the best legs to add. Not a list. A reason.</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="font-size:18px">🧠</div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--text)">Combination Learning</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Every day the model saves every 2 and 3-leg combination and tracks what hits. Real correlation data, not guesswork.</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="font-size:18px">📈</div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--text)">Daily Card</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Top plays in plain English. Best 2-leg. Best 3-leg. Best 5-leg shot. Every morning.</div></div>
+        </div>
+      </div>
+    </div>
+    <div id="parlay-combo-count" style="font-size:11px;color:var(--muted2)">Loading combination data...</div>
+  </div>
+</div>
+<div id="history-panel" class="tab-panel">
+  <div class="container">
+    <div id="history-main"><div class="no-data">Loading history...</div></div>
+  </div>
+</div>
+<div id="model-panel" class="tab-panel">
+  <div class="container">
+    <div id="model-main"><div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div></div>
+  </div>
+</div>
+<div id="research-panel" style="display:none">
+  <div class="container">
+    <div class="search-row">
+      <input class="search-input" id="searchInput" placeholder="Search player name..." onkeydown="if(event.key==='Enter')searchPlayer()">
+      <button class="search-btn" onclick="searchPlayer()">Search</button>
+    </div>
+    <div id="research-result"></div>
+  </div>
+</div>
 
-app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+<script>
+var API_BASE = 'https://web-production-c0e4.up.railway.app';
+var API=API_BASE;
+var allGames=[];
+var selectedDate=new Date();
+var sortCol='hr_prob',sortDir=-1;
+var pitSortCol='exp_k',pitSortDir=-1;
 
-MLB_API = "https://statsapi.mlb.com/api/v1"
-ODDS_API_KEY = os.environ.get("ODDS_API_KEY", "")
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
-GITHUB_REPO = "npkamk-blip/MLB-HR-MODEL"
-GITHUB_API = "https://api.github.com"
+function formatDateForAPI(d){var y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day;}
+function fmtDateLabel(d){return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
+function changeDate(n){selectedDate=new Date(selectedDate);selectedDate.setDate(selectedDate.getDate()+n);document.getElementById('dateLbl').textContent=fmtDateLabel(selectedDate);load();}
+function fmtTime(iso){if(!iso)return'--';try{var d=new Date(iso);return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'America/New_York'});}catch(e){return'--';}}
 
-# ── League Constants (update each April) ──
-LEAGUE_CONSTANTS = {
-    "lg_barrel_pct":   8.0,    # league avg barrel%
-    "lg_hr9":          1.10,   # league avg HR/9
-    "lg_hard_hit":     38.0,   # league avg hard hit%
-    "lg_bullpen_hr9":  1.20,   # league avg bullpen HR/9
-    "lg_hr_per_pa":    0.028,  # league avg HR/PA (~10% per game at 3.8 PA/game)
-    "lg_era":          4.20,   # league avg ERA
-    "max_hr_per_pa":   0.12,   # ceiling on any batter base rate
-    "hr_prob_cap":     28.0,   # hard cap on model output %
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById(id+'-panel').classList.add('active');
+  btn.classList.add('active');
+  if(id==='dashboard') loadDashboard();
+  if(id==='history'&&!historyData) loadHistory();
+  if(id==='model') loadModelTab();
+  if(id==='parlays') loadParlayTab();
 }
 
-# ── Model Weights (learned from ML, updated every 45 days) ──
-# All start at 1.0 — neutral. Recalibration moves them based on what predicted HRs.
-# Exponent weights: effective_mult = raw_mult ** weight
-# weight > 1.0 = stat matters MORE than assumed
-# weight < 1.0 = stat matters LESS than assumed
-DEFAULT_WEIGHTS = {
-    # Batter contact quality
-    "barrel_season_w":    1.0,
-    "barrel_l8d_w":       1.0,
-    "la_season_w":        1.0,
-    "la_l8d_w":           1.0,
-    "ev_season_w":        1.0,
-    "ev_l8d_w":           1.0,
-    "iso_season_w":       1.0,
-    "iso_vs_hand_w":      1.0,
-    "hard_hit_season_w":  1.0,
-    "hard_hit_l8d_w":     1.0,
-    # Pitcher vulnerability
-    "pit_hr9_season_w":   1.0,
-    "pit_hr9_vs_hand_w":  1.0,
-    "pit_slg_season_w":   1.0,
-    "pit_slg_vs_hand_w":  1.0,
-    # Context
-    "park_w":             1.0,
-    "weather_w":          1.0,
-    "bullpen_w":          1.0,
-    "bat_platoon_w":      1.0,
-    "pit_platoon_w":      1.0,
-    # Pitch matchup
-    "pitch_delta_w":      1.0,
-    # K% penalty
-    "k_pct_w":            1.0,
-    # Active stats list (which 8 are in the model)
-    "active_stats": [
-        "barrel_season", "la_season", "pit_hr9_vs_hand",
-        "iso_vs_hand", "park", "weather", "pitch_delta", "bat_platoon"
-    ],
-    # Metadata
-    "last_calibrated":    None,
-    "records_used":       0,
-    "calibration_round":  0,
-    "promoted_stats":     [],
-    "dropped_stats":      [],
-    "recent_changes":     [],
-}
-_model_weights = DEFAULT_WEIGHTS.copy()
-
-# ── Random Forest model globals ──
-_rf_model    = None   # trained sklearn RandomForestClassifier
-_rf_features = []     # ordered feature list used at training time
-_rf_medians  = {}     # per-feature medians for missing value imputation
-_rf_trained  = False  # True once model is fitted and ready
-
-# ── XGBoost model globals ──
-_xgb_model    = None  # trained XGBClassifier
-_xgb_features = []    # feature list
-_xgb_medians  = {}    # per-feature medians
-_xgb_trained  = False # True once fitted
-_xgb_oob      = 0.0   # cross-val AUC
-_xgb_base_rate = 0.0  # model's self-learned base rate (from expected_value)
-_xgb_explainer = None # shap.TreeExplainer — built after training
-
-def W(key):
-    """Get a model weight, default 1.0"""
-    return float(_model_weights.get(key, 1.0))
-
-async def load_model_weights():
-    """Load learned weights from GitHub on startup"""
-    global _model_weights
-    content, _ = await github_get_file("data/model_weights.json")
-    if content:
-        try:
-            import json
-            w = json.loads(content)
-            _model_weights = {**DEFAULT_WEIGHTS, **w}
-            print(f"Loaded model weights — round {w.get('calibration_round',0)}, {w.get('records_used',0)} records")
-        except Exception as e:
-            print(f"Weight load error: {e}")
-    else:
-        print("No model weights found — using defaults (1.0)")
-
-async def save_model_weights(weights_dict, changes=None):
-    """Save updated weights to GitHub"""
-    import json
-    existing, sha = await github_get_file("data/model_weights.json")
-    content = json.dumps(weights_dict, indent=2)
-    msg = f"weights: round {weights_dict.get('calibration_round',0)}, {weights_dict.get('records_used',0)} records"
-    await github_put_file("data/model_weights.json", content, msg, sha)
-
-async def save_model_log(weights_dict):
-    """Save daily model log snapshot to GitHub"""
-    import json
-    today = date.today().isoformat()
-    path = f"data/model_log/{today}.json"
-    log = {
-        "date": today,
-        "rotation_round": get_rotation_round(),
-        "rotation_day": get_rotation_day(),
-        "weights": {k: v for k, v in weights_dict.items() if k.endswith("_w")},
-        "active_stats": weights_dict.get("active_stats", DEFAULT_WEIGHTS["active_stats"]),
-        "last_calibrated": weights_dict.get("last_calibrated"),
-        "records_used": weights_dict.get("records_used", 0),
-        "promoted_stats": weights_dict.get("promoted_stats", []),
-        "dropped_stats": weights_dict.get("dropped_stats", []),
-        "recent_changes": weights_dict.get("recent_changes", []),
-    }
-    existing, sha = await github_get_file(path)
-    await github_put_file(path, json.dumps(log, indent=2), f"model log: {today}", sha)
-
-async def recalibrate_model(save_to_github: bool = True):
-    """
-    Train Random Forest on all completed prediction records.
-    Locked params: 200 estimators, max_depth=5, min_samples_leaf=10,
-    max_features='sqrt', bootstrap=True, random_state=42, n_jobs=-1.
-    Missing values filled with per-feature medians.
-    Feature importances saved to model_weights.json for frontend display.
-    """
-    global _model_weights, _rf_model, _rf_features, _rf_medians, _rf_trained
-    import json
-
-    # ── Load all prediction records from GitHub ──
-    all_records = []
-    try:
-        if not GITHUB_TOKEN: return {"error": "No GitHub token"}
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(
-                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
-                headers={"Authorization": f"token {GITHUB_TOKEN}"}
-            )
-            files = r.json() if r.is_success else []
-        for f in files:
-            if not f.get("name", "").endswith(".json"): continue
-            content, _ = await github_get_file(f"data/predictions/{f['name']}")
-            if content:
-                try:
-                    recs = json.loads(content)
-                    all_records.extend(recs)
-                except: pass
-    except Exception as e:
-        print(f"RF data load error: {e}")
-        return {"error": str(e)}
-
-    # ── Filter to completed records only ──
-    completed = [r for r in all_records if r.get("hit_hr") in [0, 1]]
-    n = len(completed)
-    if n < 50:
-        return {"error": f"Not enough data — need 50+, have {n}"}
-
-    print(f"Training Random Forest on {n} completed records")
-
-    # ── Feature set — all numeric fields stored in prediction records ──
-    FEATURES = [
-        "barrel_pct_season", "barrel_pct_l8d",
-        "la_season", "la_l8d",
-        "ev_season", "ev_l8d",
-        "iso_season", "iso_vs_hand",
-        "hard_hit_season", "hard_hit_l8d",
-        "k_pct_season", "k_pct_l8d",
-        "pull_pct_season",
-        "pit_hr9_season", "pit_hr9_vs_hand",
-        "pit_hard_hit_season", "pit_era_season",
-        "pit_k9_season", "pit_era_diff",
-        "pit_slg_vs_hand",
-        "park_factor", "weather_mult",
-        "bat_platoon_mult", "pit_platoon_mult",
-        "bullpen_vuln", "pitch_matchup_score",
-        "combined_pitch_delta", "xslg_l8d",
-        "xwoba_l8d", "xslg_gap_l8d",
-        "bat_speed_l8d",
-    ]
-
-    # ── Build X, y — impute missing with per-feature median ──
-    import statistics
-    medians = {}
-    for feat in FEATURES:
-        vals = [float(r[feat]) for r in completed if r.get(feat) not in (None, 0, "") and r.get(feat) == r.get(feat)]
-        medians[feat] = statistics.median(vals) if vals else 0.0
-
-    def build_row(rec):
-        return [float(rec.get(feat) or medians.get(feat, 0.0)) for feat in FEATURES]
-
-    X = [build_row(r) for r in completed]
-    y = [int(r["hit_hr"]) for r in completed]
-
-    # ── RF params — scale with record count, never hardcoded ──
-    # More data = deeper trees + smaller leaves = model learns more nuance
-    # n_estimators grows too: more records benefit from more trees
-    if n < 200:
-        max_depth, min_leaf, n_trees = 4, 15, 100
-    elif n < 500:
-        max_depth, min_leaf, n_trees = 5, 12, 150
-    elif n < 1000:
-        max_depth, min_leaf, n_trees = 6, 10, 200
-    elif n < 2500:
-        max_depth, min_leaf, n_trees = 7, 8,  250
-    elif n < 5000:
-        max_depth, min_leaf, n_trees = 8, 6,  300
-    elif n < 10000:
-        max_depth, min_leaf, n_trees = 10, 4, 400
-    else:
-        max_depth, min_leaf, n_trees = 12, 3, 500
-
-    print(f"RF params: n={n} → depth={max_depth}, min_leaf={min_leaf}, trees={n_trees}")
-
-    # ── Train Random Forest ──
-    try:
-        from sklearn.ensemble import RandomForestClassifier
-    except ImportError:
-        return {"error": "sklearn not installed — add scikit-learn to requirements.txt"}
-
-    rf = RandomForestClassifier(
-        n_estimators=n_trees,
-        max_depth=max_depth,
-        min_samples_leaf=min_leaf,
-        max_features="sqrt",   # core RF principle — keeps trees decorrelated
-        bootstrap=True,
-        random_state=42,       # reproducibility only
-        n_jobs=-1,             # use all CPU cores
-    )
-    rf.fit(X, y)
-
-    # ── Feature importances ──
-    importances = {feat: round(float(imp), 4)
-                   for feat, imp in zip(FEATURES, rf.feature_importances_)}
-    ranked = sorted(importances.items(), key=lambda x: x[1], reverse=True)
-
-    # ── RF cross-val AUC — same metric as XGBoost for honest comparison ──
-    try:
-        from sklearn.model_selection import cross_val_score
-        import numpy as np
-        rf_cv_scores = cross_val_score(rf, X, y, cv=5, scoring="roc_auc", n_jobs=-1)
-        rf_auc = round(float(np.mean(rf_cv_scores)), 4)
-    except Exception:
-        rf_auc = 0.0
-    oob_score = rf_auc  # stored as oob_score for backwards compat but now AUC
-
-    # ── HR rate in training data (calibration reference) ──
-    hr_rate = round(sum(y) / len(y) * 100, 2)
-
-    # ── Persist model state ──
-    _rf_model    = rf
-    _rf_features = FEATURES
-    _rf_medians  = medians
-    _rf_trained  = True
-
-    # ── Save weights/metadata to GitHub ──
-    new_weights = _model_weights.copy()
-    new_weights["last_calibrated"]   = date.today().isoformat()
-    new_weights["records_used"]      = n
-    new_weights["calibration_round"] = get_rotation_round()
-    new_weights["model_type"]        = "random_forest"
-    new_weights["oob_score"]         = oob_score
-    new_weights["hr_rate"]           = hr_rate
-    new_weights["feature_importances"] = dict(ranked)
-    new_weights["top_features"]      = [k for k, _ in ranked[:8]]
-    new_weights["recent_changes"]    = [f"{k}: {v:.4f}" for k, v in ranked[:10]]
-    # Save actual params used — so frontend/status always shows what's running
-    new_weights["rf_params"] = {
-        "n_estimators": n_trees,
-        "max_depth":    max_depth,
-        "min_samples_leaf": min_leaf,
-        "max_features": "sqrt",
-        "records_used": n,
-    }
-    _model_weights = new_weights
-
-    if save_to_github:
-        await save_model_weights(new_weights)
-        await save_model_log(new_weights)
-    else:
-        print("RF trained (startup — skipping GitHub write to prevent deploy loop)")
-
-    print(f"RF trained — {n} records, OOB={oob_score:.3f}, HR rate={hr_rate}%")
-    print(f"Top features: {[k for k,_ in ranked[:5]]}")
-    return {
-        "status":       "done",
-        "records_used": n,
-        "oob_score":    oob_score,
-        "hr_rate":      hr_rate,
-        "top_features": [k for k, _ in ranked[:8]],
-        "feature_importances": dict(ranked[:10]),
-    }
-
-
-async def startup_train_rf():
-    """Train RF on startup — no GitHub write so we don't trigger infinite redeploy loop."""
-    global _rf_trained
-    await asyncio.sleep(20)  # let Savant data load first
-    try:
-        print("Startup: training Random Forest from saved records...")
-        result = await recalibrate_model(save_to_github=False)
-        if isinstance(result, dict) and result.get("status") == "done":
-            print(f"Startup RF trained — {result.get('records_used')} records, "
-                  f"OOB={result.get('oob_score')}, top={result.get('top_features',[])[0] if result.get('top_features') else '?'}")
-        else:
-            print(f"Startup RF result: {result}")
-    except Exception as e:
-        print(f"Startup RF error (non-fatal): {e}")
-
-
-async def train_xgboost(save_to_github: bool = True):
-    """
-    Train XGBoost in parallel with RF — same records, same features + day_of_season.
-    Runs silently. Does not affect predictions until it outperforms RF.
-    Uses cross-validation score (not OOB) for honest comparison vs RF.
-    """
-    global _xgb_model, _xgb_features, _xgb_medians, _xgb_trained, _xgb_oob, _xgb_base_rate, _xgb_explainer
-    import json
-
-    # ── Load records (same as RF) ──
-    all_records = []
-    try:
-        if not GITHUB_TOKEN: return {"error": "No GitHub token"}
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(
-                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
-                headers={"Authorization": f"token {GITHUB_TOKEN}"}
-            )
-            files = r.json() if r.is_success else []
-        for f in files:
-            if not f.get("name", "").endswith(".json"): continue
-            content, _ = await github_get_file(f"data/predictions/{f['name']}")
-            if content:
-                try: all_records.extend(json.loads(content))
-                except: pass
-    except Exception as e:
-        return {"error": str(e)}
-
-    completed = [r for r in all_records if r.get("hit_hr") in [0, 1]]
-    n = len(completed)
-    if n < 50:
-        return {"error": f"Not enough data — need 50+, have {n}"}
-
-    # ── Feature set — RF features + day_of_season ──
-    FEATURES = [
-        "barrel_pct_season", "barrel_pct_l8d",
-        "la_season", "la_l8d",
-        "ev_season", "ev_l8d",
-        "iso_season", "iso_vs_hand",
-        "hard_hit_season", "hard_hit_l8d",
-        "k_pct_season", "k_pct_l8d",
-        "pull_pct_season",
-        "pit_hr9_season", "pit_hr9_vs_hand",
-        "pit_hard_hit_season", "pit_era_season",
-        "pit_k9_season", "pit_era_diff",
-        "pit_slg_vs_hand",
-        "park_factor", "weather_mult",
-        "bat_platoon_mult", "pit_platoon_mult",
-        "bullpen_vuln", "pitch_matchup_score",
-        "combined_pitch_delta", "xslg_l8d",
-        "xwoba_l8d", "xslg_gap_l8d",
-        "bat_speed_l8d",
-        "day_of_season",   # XGBoost-specific — captures seasonal patterns — captures seasonal patterns
-    ]
-
-    import statistics
-    medians = {}
-    for feat in FEATURES:
-        vals = [float(r[feat]) for r in completed
-                if r.get(feat) not in (None, "", 0) and r.get(feat) == r.get(feat)]
-        medians[feat] = statistics.median(vals) if vals else 0.0
-
-    def build_row(rec):
-        return [float(rec.get(feat) or medians.get(feat, 0.0)) for feat in FEATURES]
-
-    X = [build_row(r) for r in completed]
-    y = [int(r["hit_hr"]) for r in completed]
-
-    # ── Train XGBoost ──
-    try:
-        from xgboost import XGBClassifier
-    except ImportError:
-        return {"error": "xgboost not installed — add xgboost to requirements.txt"}
-
-    # scale_pos_weight handles class imbalance properly
-    # = count(negative) / count(positive)
-    n_pos = sum(y)
-    n_neg = n - n_pos
-    spw   = round(n_neg / max(n_pos, 1), 2)
-
-    xgb = XGBClassifier(
-        n_estimators=300,
-        max_depth=4,
-        learning_rate=0.05,
-        subsample=0.8,
-        colsample_bytree=0.8,
-        scale_pos_weight=spw,
-        eval_metric="logloss",
-        random_state=42,
-        n_jobs=-1,
-    )
-    xgb.fit(X, y)
-
-    # ── Cross-val score for honest RF comparison ──
-    try:
-        from sklearn.model_selection import cross_val_score
-        import numpy as np
-        cv_scores = cross_val_score(xgb, X, y, cv=5, scoring="roc_auc", n_jobs=-1)
-        xgb_cv = round(float(np.mean(cv_scores)), 4)
-    except Exception:
-        xgb_cv = 0.0
-
-    # ── Feature importances ──
-    importances = {feat: round(float(imp), 4)
-                   for feat, imp in zip(FEATURES, xgb.feature_importances_)}
-    ranked = sorted(importances.items(), key=lambda x: x[1], reverse=True)
-
-    _xgb_model    = xgb
-    _xgb_features = FEATURES
-    _xgb_medians  = medians
-    _xgb_trained  = True
-    _xgb_oob      = xgb_cv
-
-    # ── Build SHAP explainer and extract self-learned base rate ──
-    try:
-        import shap as _shap, numpy as np
-        explainer = _shap.TreeExplainer(xgb)
-        base_log_odds = float(explainer.expected_value)
-        base_prob = round(float(1 / (1 + np.exp(-base_log_odds))) * 100, 2)
-        _xgb_explainer = explainer
-        _xgb_base_rate = base_prob
-        print(f"SHAP explainer built — base rate: {base_prob}% (log-odds: {base_log_odds:.3f})")
-    except Exception as e:
-        print(f"SHAP build error (non-fatal): {e}")
-        _xgb_base_rate = round(sum(y) / len(y) * 100, 2)
-
-    print(f"XGBoost trained — {n} records, CV AUC={xgb_cv:.3f}, "
-          f"base_rate={_xgb_base_rate}%, top={ranked[0][0] if ranked else '?'}")
-
-    if save_to_github:
-        # Save XGBoost metadata alongside RF weights
-        import json as _json
-        xgb_meta = {
-            "model_type": "xgboost",
-            "last_trained": date.today().isoformat(),
-            "records_used": n,
-            "cv_auc": xgb_cv,
-            "scale_pos_weight": spw,
-            "top_features": [k for k, _ in ranked[:8]],
-            "feature_importances": dict(ranked),
-        }
-        existing, sha = await github_get_file("data/xgb_meta.json")
-        await github_put_file("data/xgb_meta.json",
-                              _json.dumps(xgb_meta, indent=2),
-                              f"xgb: {n} records, AUC={xgb_cv}", sha)
-
-    return {
-        "status":       "done",
-        "records_used": n,
-        "cv_auc":       xgb_cv,
-        "rf_oob":       _model_weights.get("oob_score", 0),
-        "scale_pos_weight": spw,
-        "top_features": [k for k, _ in ranked[:8]],
-        "winning_model": "xgboost" if xgb_cv > _model_weights.get("oob_score", 0) else "random_forest",
-    }
-
-
-async def startup_train_xgb():
-    """Train XGBoost on startup — silent, no GitHub write, doesn't affect predictions yet."""
-    await asyncio.sleep(45)  # after RF finishes
-    try:
-        print("Startup: training XGBoost silently...")
-        result = await train_xgboost(save_to_github=False)
-        if isinstance(result, dict) and result.get("status") == "done":
-            print(f"Startup XGBoost trained — CV AUC={result.get('cv_auc')}, "
-                  f"top={result.get('top_features',[])[0] if result.get('top_features') else '?'}, "
-                  f"winning={result.get('winning_model')}")
-        else:
-            print(f"Startup XGBoost result: {result}")
-    except Exception as e:
-        print(f"Startup XGBoost error (non-fatal): {e}")
-
-
-# Every 45 days we rotate candidate stats in/out to find what actually predicts HRs
-# Round start date: April 13, 2026 (first day of data collection)
-ROTATION_START = date(2026, 4, 13)
-ROTATION_DAYS  = 45
-
-def get_rotation_round():
-    """Return current rotation round number (1-based)"""
-    delta = (date.today() - ROTATION_START).days
-    return max(1, delta // ROTATION_DAYS + 1)
-
-def get_rotation_day():
-    """Return days into current rotation round"""
-    delta = (date.today() - ROTATION_START).days
-    return delta % ROTATION_DAYS
-
-# Stats being evaluated per round
-ROTATION_SCHEDULE = {
-    1: {
-        "active": ["barrel_pct_season","barrel_pct_l8d","la_season","la_l8d",
-                   "ev_season","iso_vs_hand","iso_season",
-                   "pit_hr9_vs_hand","pit_hr9_season","pit_slg_vs_hand",
-                   "pit_hard_hit_season","pitch_matchup_score",
-                   "bullpen_vuln","bat_platoon_mult","pit_platoon_mult",
-                   "park_factor","weather_mult","hot_cold_mult","k_pct_season",
-],
-        "candidates": [],  # nothing new yet, establishing baseline
-        "note": "Baseline round — establishing correlations for all core stats"
-    },
-    2: {
-        "active": [],  # filled after round 1 correlation analysis
-        "candidates": ["pull_pct_season","hard_hit_l8d","k_pct_l8d"],
-        "note": "Testing pull%, hard hit L8D, K% L8D — fb_pct removed (never populated)"
-    },
-    3: {
-        "active": [],
-        "candidates": ["hard_hit_l8d", "k_pct_l8d", "pit_hr_fb_pct"],
-        "note": "Testing Hard Hit% L8D, K% L8D, Pitcher HR/FB%"
-    },
-    4: {
-        "active": [],
-        "candidates": ["batter_vs_pit_career_ab","batter_vs_pit_career_hr",
-                       "pit_days_rest","game_time_hour"],
-        "note": "Testing H2H career history, days rest, game time"
-    },
+var dashboardData=null;
+async function loadDashboard(){
+  var el=document.getElementById('dashboard-main');
+  el.innerHTML='<div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div>';
+  try{
+    var r=await fetch(API+'/dashboard');
+    var d=await r.json();
+    if(d.error){el.innerHTML='<div class="err"><b>Error:</b> '+d.error+'</div>';return;}
+    dashboardData=d; el.innerHTML=buildDashboard(d);
+  }catch(e){el.innerHTML='<div class="err"><b>Error:</b> Failed to fetch</div>';}
 }
 
-
-SAVANT_BASE = "https://baseballsavant.mlb.com"
-
-def savant_batter_url(year=None, min_pa=10, extra=""):
-    yr = year or current_season()
-    return (f"{SAVANT_BASE}/leaderboard/custom?year={yr}&type=batter&filter=&sort=4"
-            f"&sortDir=desc&min={min_pa}&selections=pa,ab,hit,home_run,strikeout,"
-            f"k_percent,slg_percent,batting_avg,barrel_batted_rate,exit_velocity_avg,"
-            f"launch_angle_avg,hard_hit_percent,pull_percent,n_fb_percent{extra}&csv=true")
-
-def savant_pitcher_url(year=None, min_pa=5, extra=""):
-    yr = year or current_season()
-    return (f"{SAVANT_BASE}/leaderboard/custom?year={yr}&type=pitcher&filter=&sort=4"
-            f"&sortDir=desc&min={min_pa}&selections=pa,home_run,barrel_batted_rate,"
-            f"exit_velocity_avg,hard_hit_percent,k_percent,p_era,n_fb_percent{extra}&csv=true")
-
-def savant_pitch_arsenal_url(ptype="pitcher", year=None, min_pa=1):
-    yr = year or current_season()
-    return (f"{SAVANT_BASE}/leaderboard/pitch-arsenal-stats?type={ptype}"
-            f"&pitchType=&year={yr}&team=&min={min_pa}&csv=true")
-
-def current_season():
-    """Return current MLB season year"""
-    today = date.today()
-    # MLB season runs roughly March-November
-    return today.year if today.month >= 3 else today.year - 1
-
-def savant_contact_log_url():
-    """Pitch-by-pitch URL — only batted ball contact events, minimal columns for speed."""
-    cutoff = (date.today() - timedelta(days=8)).isoformat()
-    today_str = (date.today() + timedelta(days=1)).isoformat()
-    # hfAB=54 filters to balls in play only (no strikes/balls) — much smaller dataset
-    # Only request columns we need for contact log
-    # hfAB=54 = "in_play" filter — returns only batted ball events (~8k rows vs 25k)
-    # This reduces download from 16MB to ~5MB, preventing Railway timeout
-    return (f"{SAVANT_BASE}/statcast_search/csv?all=true"
-            f"&hfPT=&hfAB=54%7C&hfGT=R%7C&hfPR=&hfZ=&hfStadium=&hfBBL=&hfNewZones=&hfPull="
-            f"&hfC=&hfSea={current_season()}%7C&hfSit=&player_type=batter&hfOuts=&hfOpponent="
-            f"&pitcher_throws=&batter_stands=&hfSA=&game_date_gt={cutoff}"
-            f"&game_date_lt={today_str}&hfMon=&hfInfield=&team=&position=&hfRO="
-            f"&home_road=&hfFlag=&metric_1=&hfInn=&min_pitches=0&min_results=0"
-            f"&group_by=pitch&sort_col=game_date&player_event_sort=api_p_release_speed"
-            f"&sort_order=desc&min_pas=0&type=details")
-
-def savant_8d_url():
-    """Statcast pitch-by-pitch search — reliable date filtering, includes bat speed + xStats.
-    We aggregate this ourselves rather than relying on the broken leaderboard date filter."""
-    cutoff = (date.today() - timedelta(days=8)).isoformat()
-    today_str = (date.today() + timedelta(days=1)).isoformat()  # tomorrow to include today's games
-    return (f"{SAVANT_BASE}/statcast_search/csv?all=true"
-            f"&hfPT=&hfAB=&hfGT=R%7C&hfPR=&hfZ=&hfStadium=&hfBBL=&hfNewZones=&hfPull="
-            f"&hfC=&hfSea={current_season()}%7C&hfSit=&player_type=batter&hfOuts=&hfOpponent="
-            f"&pitcher_throws=&batter_stands=&hfSA=&game_date_gt={cutoff}"
-            f"&game_date_lt={today_str}&hfMon=&hfInfield=&team=&position=&hfRO="
-            f"&home_road=&hfFlag=&metric_1=&hfInn=&min_pitches=0&min_results=0"
-            f"&group_by=name&sort_col=xwoba&player_event_sort=api_p_release_speed"
-            f"&sort_order=desc&min_pas=0&type=details")
-
-_cache = {
-    "bat_2026":     pd.DataFrame(),
-    "bat_8d":       pd.DataFrame(),
-    "bat_l5g":      {},
-    "bat_l8d_hr":   {},
-    "bat_games":    {},
-    "bat_vs_lhp":   pd.DataFrame(),
-    "bat_vs_rhp":   pd.DataFrame(),
-    "pit_2026":     pd.DataFrame(),
-    "pit_vs_lhh":   pd.DataFrame(),
-    "pit_vs_rhh":   pd.DataFrame(),
-    "pit_arsenal":  pd.DataFrame(),
-    "bat_arsenal":  pd.DataFrame(),
-    "team_hitting":  {},
-    "team_pitching": {},
-    "team_bullpen":  {},
-    "player_hands": {},
-    "player_ip":    {},
-    "ready":        False,
-    "last_updated": None,
-    "last_8d_update": None,
+function buildDashboard(d){
+  var stats=d.stats||{},top8=d.top8_today||[],days=d.slate_days||[],h='';
+  h+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px">';
+  function sCard(l,v,s,c){return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 15px"><div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">'+l+'</div><div style="font-family:Barlow Condensed,sans-serif;font-size:26px;font-weight:800;color:'+(c||'var(--text)')+'">'+v+'</div>'+(s?'<div style="font-size:10px;color:var(--muted);margin-top:1px">'+s+'</div>':'')+'</div>';}
+  var t8r=stats.top8_hit_rate||0,t4r=stats.top4_hit_rate||0,p2r=stats.two_of_top4_rate||0,p2t8=stats.two_of_top8_rate||0,ovr=stats.overall_hit_rate||0,daysT=stats.days_tracked||0;
+  h+=sCard('Top 8 Hit Rate',t8r+'%',(stats.top8_total_hits||0)+' HRs / '+(stats.top8_total_picks||0)+' picks',t8r>=25?'var(--g)':t8r>=15?'var(--y)':'var(--r)');
+  h+=sCard('Top 4 Hit Rate',t4r+'%','Last '+daysT+' days',t4r>=25?'var(--g)':t4r>=15?'var(--y)':'var(--r)');
+  h+=sCard('2-of-Top-4 Days',p2r+'%','Parlay signal',p2r>=20?'var(--g)':p2r>=12?'var(--y)':'var(--r)');
+  h+=sCard('2-of-Top-8 Days',p2t8+'%','Wider parlay',p2t8>=20?'var(--g)':p2t8>=12?'var(--y)':'var(--r)');
+  h+=sCard('Slate Hit Rate',ovr+'%','All tracked','var(--muted)');
+  h+=sCard('Days Tracked',daysT,'Since '+(days.length>0?days[days.length-1].date:'—'),'var(--text)');
+  h+='</div>';
+  var modelC=d.xgb_trained&&d.xgb_cv>d.rf_oob?'var(--purple)':'var(--blue)';
+  var modelLbl=d.xgb_trained&&d.xgb_cv>d.rf_oob?'XGBoost':'Random Forest';
+  h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 15px;margin-bottom:18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap">';
+  h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em">Active Model</div>';
+  h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:800;color:'+modelC+'">'+modelLbl+'</div>';
+  if(d.rf_oob)h+='<div style="font-size:11px;color:var(--muted)">RF AUC <span style="color:var(--text);font-weight:600">'+d.rf_oob.toFixed(3)+'</span></div>';
+  if(d.xgb_trained)h+='<div style="font-size:11px;color:var(--muted)">XGB AUC <span style="color:var(--purple);font-weight:600">'+d.xgb_cv.toFixed(3)+'</span></div>';
+  if(d.xgb_trained&&d.xgb_cv<=d.rf_oob)h+='<div style="font-size:10px;color:var(--muted2)">XGBoost learning — flips live when AUC beats RF</div>';
+  h+='</div>';
+  h+='<div style="margin-bottom:18px"><div style="font-family:Barlow Condensed,sans-serif;font-size:15px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin-bottom:10px">Today\'s Top 8</div>';
+  if(!top8.length){
+    h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;text-align:center;color:var(--muted2);font-size:13px">Confirmed lineups save hourly — check back later</div>';
+  }else{
+    h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px">';
+    top8.forEach(function(p,i){
+      var pct=p.model_hr_pct||0,pc=pct>=18?'var(--g)':pct>=12?'var(--y)':'var(--muted)';
+      var hit=p.hit_hr,hitB=hit===1?'<span style="background:rgba(50,215,75,.15);color:var(--g);border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700;margin-left:5px">HR ✓</span>':hit===0?'<span style="background:rgba(255,69,58,.1);color:var(--r);border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700;margin-left:5px">✗</span>':'';
+      var rankC=i===0?'#ffd60a':i===1?'#e5e5ea':i===2?'#cd7f32':'var(--muted2)';
+      h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 15px;display:flex;align-items:center;gap:10px">';
+      h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:18px;font-weight:800;color:'+rankC+';width:22px;flex-shrink:0">'+(i+1)+'</div>';
+      h+='<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.name+hitB+'</div>';
+      h+='<div style="font-size:10px;color:var(--muted);margin-top:1px">'+(p.team||'')+(p.opp_pitcher?' · vs '+p.opp_pitcher:'')+'</div></div>';
+      h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:20px;font-weight:800;color:'+pc+'">'+pct+'%</div></div>';
+    });
+    h+='</div>';
+  }
+  h+='</div>';
+  if(days.length){
+    h+='<div style="margin-bottom:18px"><div style="font-family:Barlow Condensed,sans-serif;font-size:15px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin-bottom:10px">Recent Record</div>';
+    h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden">';
+    h+='<div style="display:grid;grid-template-columns:90px 1fr 70px 65px;padding:7px 14px;border-bottom:1px solid var(--border2)">';
+    ['Date','Top 8','Hits','Rate'].forEach(function(l){h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em">'+l+'</div>';});
+    h+='</div>';
+    days.slice(0,14).forEach(function(day){
+      var rate=day.top8_total>0?Math.round(day.top8_hits/day.top8_total*100):0;
+      var rc=rate>=25?'var(--g)':rate>=12?'var(--y)':'var(--r)';
+      var dots='';(day.top8||[]).forEach(function(p){var dc=p.hit===1?'var(--g)':p.hit===0?'rgba(255,255,255,0.15)':'rgba(255,255,255,0.08)';dots+='<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+dc+';margin-right:2px"></span>';});
+      h+='<div style="display:grid;grid-template-columns:90px 1fr 70px 65px;padding:9px 14px;border-bottom:1px solid var(--border2)">';
+      h+='<div style="font-size:11px;color:var(--muted)">'+day.date.slice(5)+'</div><div>'+dots+'</div>';
+      h+='<div style="font-size:11px;color:var(--text);font-weight:600">'+day.top8_hits+' / '+day.top8_total+'</div>';
+      h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:800;color:'+rc+'">'+rate+'%</div></div>';
+    });
+    h+='</div></div>';
+  }
+  return h;
 }
 
-_games_cache = {}   # { date_str: { "data": ..., "ts": datetime } }
-_contact_log = {}   # { player_name_lower: [ {date, pitch_type, ev, la, dist, bat_speed, result}, ... ] }
-GAMES_CACHE_TTL = 900  # 15 minutes in seconds
-
-PARK_HR_FACTORS = {
-    "Colorado Rockies":      {"L":1.40,"R":1.40},
-    "Cincinnati Reds":       {"L":1.30,"R":1.25},
-    "Baltimore Orioles":     {"L":1.22,"R":1.18},
-    "New York Yankees":      {"L":1.25,"R":1.12},
-    "Philadelphia Phillies": {"L":1.18,"R":1.12},
-    "Boston Red Sox":        {"L":1.08,"R":1.18},
-    "Chicago Cubs":          {"L":1.12,"R":1.10},
-    "Atlanta Braves":        {"L":1.10,"R":1.12},
-    "Texas Rangers":         {"L":1.10,"R":1.08},
-    "Milwaukee Brewers":     {"L":1.08,"R":1.08},
-    "Arizona Diamondbacks":  {"L":1.08,"R":1.08},
-    "Toronto Blue Jays":     {"L":1.05,"R":1.07},
-    "Houston Astros":        {"L":1.04,"R":1.02},
-    "Los Angeles Dodgers":   {"L":1.02,"R":1.04},
-    "Minnesota Twins":       {"L":1.02,"R":1.02},
-    "Kansas City Royals":    {"L":1.05,"R":1.05},
-    "Chicago White Sox":     {"L":1.02,"R":1.02},
-    "Cleveland Guardians":   {"L":0.98,"R":0.97},
-    "Detroit Tigers":        {"L":0.97,"R":0.95},
-    "St. Louis Cardinals":   {"L":0.97,"R":0.98},
-    "Washington Nationals":  {"L":0.97,"R":0.96},
-    "Pittsburgh Pirates":    {"L":0.96,"R":0.98},
-    "New York Mets":         {"L":0.94,"R":0.96},
-    "Los Angeles Angels":    {"L":0.96,"R":0.93},
-    "Tampa Bay Rays":        {"L":0.94,"R":0.94},
-    "Seattle Mariners":      {"L":0.91,"R":0.93},
-    "Miami Marlins":         {"L":0.90,"R":0.92},
-    "San Francisco Giants":  {"L":0.88,"R":0.86},
-    "San Diego Padres":      {"L":0.87,"R":0.89},
-    "Oakland Athletics":     {"L":0.88,"R":0.88},
+async function loadParlayTab(){
+  var el=document.getElementById('parlay-combo-count');
+  try{
+    var r=await fetch(API+'/parlay-results');
+    var d=await r.json();
+    if(d.error){el.innerHTML='<span style="color:var(--muted2)">Combination tracking starts today — check back tomorrow</span>';return;}
+    var all2=d.all_time&&d.all_time.two_leg_combos||0;
+    var all3=d.all_time&&d.all_time.three_leg_combos||0;
+    var hr2=d.all_time&&d.all_time.two_leg_hit_rate||'--';
+    var hr3=d.all_time&&d.all_time.three_leg_hit_rate||'--';
+    var h='<div style="display:flex;justify-content:center;gap:32px;margin-top:8px">';
+    h+='<div style="text-align:center"><div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:var(--text)">'+all2+'</div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">2-leg combos tracked</div><div style="font-size:11px;color:var(--g);margin-top:2px">'+hr2+' hit rate</div></div>';
+    h+='<div style="text-align:center"><div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:var(--text)">'+all3+'</div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">3-leg combos tracked</div><div style="font-size:11px;color:var(--g);margin-top:2px">'+hr3+' hit rate</div></div>';
+    h+='</div>';
+    el.innerHTML=h;
+  }catch(e){el.innerHTML='<span style="color:var(--muted2)">Combination tracking starting soon</span>';}
+}
+async function reloadContact(){
+  try{
+    var r=await fetch(API+'/reload-contact');
+    var d=await r.json();
+    alert(d.status+'\n\nHit Refresh in ~30 seconds to see contact data.');
+  }catch(e){alert('Error: '+e.message);}
 }
 
-STADIUMS = {
-    # cf_bearing = compass degrees from home plate toward CF (verified Andrew Clem database)
-    # hr_bearing_R = LF bearing (RHB pull) = (cf+270)%360
-    # hr_bearing_L = RF bearing (LHB pull) = (cf+90)%360
-    # open_factor = wind exposure (1.0=Wrigley fully open)
-    "Arizona Diamondbacks":  {"lat":33.4453,"lon":-112.0667,"dome":True},
-    "Atlanta Braves":        {"lat":33.8907,"lon":-84.4677, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.5},  # NE
-    "Baltimore Orioles":     {"lat":39.2838,"lon":-76.6217, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
-    "Boston Red Sox":        {"lat":42.3467,"lon":-71.0972, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.8},  # NE
-    "Chicago Cubs":          {"lat":41.9484,"lon":-87.6553, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":1.0},  # NE
-    "Chicago White Sox":     {"lat":41.8299,"lon":-87.6338, "dome":False,"cf_bearing":135,"hr_bearing_R":45, "hr_bearing_L":225,"open_factor":0.5},  # SE inverted
-    "Cincinnati Reds":       {"lat":39.0979,"lon":-84.5082, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
-    "Cleveland Guardians":   {"lat":41.4954,"lon":-81.6854, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
-    "Colorado Rockies":      {"lat":39.7559,"lon":-104.9942,"dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.8},  # ENE
-    "Detroit Tigers":        {"lat":42.3390,"lon":-83.0485, "dome":False,"cf_bearing":135,"hr_bearing_R":45, "hr_bearing_L":225,"open_factor":0.5},  # SE inverted
-    "Houston Astros":        {"lat":29.7573,"lon":-95.3555, "dome":True},
-    "Kansas City Royals":    {"lat":39.0517,"lon":-94.4803, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.7},  # NE
-    "Los Angeles Angels":    {"lat":33.8003,"lon":-117.8827,"dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.5},  # NE
-    "Los Angeles Dodgers":   {"lat":34.0739,"lon":-118.2400,"dome":False,"cf_bearing":22, "hr_bearing_R":292,"hr_bearing_L":112,"open_factor":0.5},  # NNE
-    "Miami Marlins":         {"lat":25.7781,"lon":-80.2197, "dome":True},
-    "Milwaukee Brewers":     {"lat":43.0282,"lon":-87.9712, "dome":True},
-    "Minnesota Twins":       {"lat":44.9817,"lon":-93.2778, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
-    "New York Mets":         {"lat":40.7571,"lon":-73.8458, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
-    "New York Yankees":      {"lat":40.8296,"lon":-73.9262, "dome":False,"cf_bearing":90, "hr_bearing_R":0,  "hr_bearing_L":180,"open_factor":0.6},  # E
-    "Oakland Athletics":     {"lat":38.5726,"lon":-121.5088,"dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.5},  # NE
-    "Philadelphia Phillies": {"lat":39.9056,"lon":-75.1665, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
-    "Pittsburgh Pirates":    {"lat":40.4469,"lon":-80.0057, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.7},  # ENE
-    "San Diego Padres":      {"lat":32.7076,"lon":-117.1570,"dome":False,"cf_bearing":315,"hr_bearing_R":225,"hr_bearing_L":45, "open_factor":0.8},  # NW faces downtown
-    "San Francisco Giants":  {"lat":37.7786,"lon":-122.3893,"dome":False,"cf_bearing":90, "hr_bearing_R":0,  "hr_bearing_L":180,"open_factor":0.9},  # E bay wind blows IN
-    "Seattle Mariners":      {"lat":47.5914,"lon":-122.3325,"dome":True},
-    "St. Louis Cardinals":   {"lat":38.6226,"lon":-90.1928, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
-    "Tampa Bay Rays":        {"lat":27.7683,"lon":-82.6534, "dome":True},
-    "Texas Rangers":         {"lat":32.7473,"lon":-97.0825, "dome":True},
-    "Toronto Blue Jays":     {"lat":43.6414,"lon":-79.3894, "dome":True},
-    "Washington Nationals":  {"lat":38.8730,"lon":-77.0074, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
+function probCls(p){return p>=20?'p-elite':p>=15?'p-high':p>=10?'p-mid':'p-low';}
+var modelWeightsData = null;
+async function loadModelTab() {
+  var el = document.getElementById('model-main');
+  el.innerHTML = '<div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div>';
+  try {
+    var r = await fetch(API + '/model-weights');
+    modelWeightsData = await r.json();
+    if (!historyData) { var hr = await fetch(API + '/history'); historyData = await hr.json(); if(historyData.records&&historyData.records.length>0)computePercentiles(historyData.records); }
+    renderModelTab(modelWeightsData, historyData);
+  } catch(e) { el.innerHTML = '<div class="err">Failed to load: ' + e.message + '</div>'; }
+}
+async function manualRecalibrate() {
+  var btn = document.getElementById('recalibrate-btn');
+  if(btn){btn.disabled=true;btn.textContent='Recalibrating...';}
+  try {
+    var r = await fetch(API + '/recalibrate', {method:'GET'});
+    var data = await r.json();
+    if(data.error){alert('Failed: '+data.error);}
+    else{
+      var records = data.records_used || '?';
+      var changes = data.weight_changes || 0;
+      var newActive = data.new_active_8 || [];
+      var promoted = data.promoted || [];
+      var dropped = data.dropped || [];
+      var msg = 'Recalibration complete!\n'
+        + records + ' records used\n'
+        + changes + ' weight changes\n'
+        + 'New active 8: ' + newActive.slice(0,4).join(', ') + '...\n'
+        + (promoted.length ? 'Promoted: ' + promoted.join(', ') + '\n' : '')
+        + (dropped.length ? 'Dropped: ' + dropped.join(', ') : '');
+      alert(msg);
+      loadModelTab();
+    }
+  } catch(e){alert('Error: '+e.message);}
+  if(btn){btn.disabled=false;btn.textContent='Recalibrate Now';}
+}
+// ── Stat label map for model feature names ──
+var DT_STAT_LABELS = {
+  'barrel_pct_season':'Barrel% Season','hard_hit_season':'Hard Hit% Season',
+  'ev_season':'Exit Velo Season','iso_season':'ISO Season',
+  'la_season':'Launch Angle Season','pull_pct_season':'Pull% Season',
+  'barrel_pct_l8d':'Barrel% L8D','hard_hit_l8d':'Hard Hit% L8D',
+  'ev_l8d':'Exit Velo L8D','bat_speed_l8d':'Bat Speed L8D',
+  'xwoba_l8d':'xwOBA L8D','xslg_l8d':'xSLG L8D','slg_l8d':'SLG L8D',
+  'iso_l8d':'ISO L8D','k_pct_l8d':'K% L8D','la_l8d':'Launch Angle L8D',
+  'iso_vs_hand':'ISO vs Hand','slg_vs_hand':'SLG vs Hand',
+  'pit_hr9_season':'Pit HR/9 Season','pit_era_season':'Pit ERA Season',
+  'pit_hard_hit_season':'Pit Hard Hit%','pit_k9_season':'Pit K/9 Season',
+  'pit_hr9_vs_hand':'Pit HR/9 vs Hand','pit_slg_vs_hand':'Pit SLG vs Hand',
+  'park_factor':'Park Factor','weather_mult':'Weather Mult',
+  'bullpen_hr9':'Bullpen HR/9','bat_platoon_mult':'Bat Platoon',
+  'pit_platoon_mult':'Pit Platoon','pitch_matchup_score':'Pitch Matchup',
+};
+function dtLabel(k){ return DT_STAT_LABELS[k]||k.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();}); }
+
+function renderModelTab(md,hd){
+  var el=document.getElementById('model-main');
+  if(!md){el.innerHTML='<div class="err">No data</div>';return;}
+  var weights=md.weights||{};
+  var calInfo=md.calibration||{};
+
+  // ── Model metadata — handles both Decision Tree and Random Forest ──
+  var modelType      = weights.model_type||'decision_tree';
+  var isForest       = modelType === 'random_forest';
+  var treeDepth      = weights.tree_depth||4;
+  var treeLeaves     = weights.tree_n_leaves||0;
+  var treeMinLeaf    = weights.tree_min_leaf||30;
+  var nEstimators    = weights.n_estimators||200;
+  var recordsUsed    = weights.records_used||0;
+  var calFactor      = weights.calibration_factor||1.0;
+  var calRound       = weights.calibration_round||calInfo.round||1;
+  var lastCal        = weights.last_calibrated||'--';
+  var nextUpgrade    = weights.next_depth_upgrade||1500;
+  var hrRates        = weights.hr_rates_at_leaves||[];
+  var featImport     = weights.feature_importances||{};
+  var treeHrRate     = weights.tree_hr_rate||0;
+
+  // ── History: filter to current calibration round ──
+  var allCompleted=[];
+  if(hd&&hd.records)allCompleted=hd.records.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
+  // Tier stats scoped to current round only — resets each Sunday
+  var roundCompleted = allCompleted.filter(function(r){
+    return (r.rotation_round||1) === calRound;
+  });
+  // Fall back to all if round scoping returns nothing (early data before round tracking)
+  var tierCompleted = roundCompleted.length >= 5 ? roundCompleted : allCompleted;
+
+  // ── Build feature importance list ──
+  var featList = Object.entries(featImport).map(function(e){return{key:e[0],imp:e[1],label:dtLabel(e[0])};});
+  featList.sort(function(a,b){return b.imp-a.imp;});
+  var maxImp = featList.length>0 ? featList[0].imp : 1;
+
+  // ── Header ──
+  var h='';
+  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">';
+  h+='<div><div style="font-size:20px;font-weight:700;color:var(--text)">'+(isForest?'RANDOM FOREST':'DECISION TREE')+'</div>';
+  h+='<div style="font-size:11px;color:var(--muted);margin-top:2px">Trained '+lastCal+' &middot; '+recordsUsed+' records &middot; Round '+calRound+'</div></div>';
+  h+='<div style="display:flex;gap:8px;align-items:center">';
+  var canR=allCompleted.length>=50;
+  h+='<button id="recalibrate-btn" class="recal-btn" onclick="manualRecalibrate()" '+(canR?'':'disabled')+'>'+(canR?'Retrain Now':'Need '+(50-allCompleted.length)+' more')+'</button>';
+  h+='</div></div>';
+
+  // ── Tree Stats Banner ──
+  h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:14px">';
+  function statBox(lbl,val,sub,color){
+    return '<div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center">'
+      +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:22px;font-weight:800;color:'+(color||'var(--text)')+'">'+val+'</div>'
+      +'<div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">'+lbl+'</div>'
+      +(sub?'<div style="font-size:9px;color:var(--muted2);margin-top:1px">'+sub+'</div>':'')
+      +'</div>';
+  }
+  if(isForest){
+    h+=statBox('Trees', nEstimators, 'estimators', 'var(--accent)');
+    h+=statBox('Max Depth', treeDepth, 'per tree', 'var(--blue)');
+    h+=statBox('Min Leaf', treeMinLeaf, 'samples/leaf', 'var(--muted)');
+    h+=statBox('Cal Factor', 'OFF', 'not needed for RF', 'var(--g)');
+    h+=statBox('Dataset HR%', treeHrRate>0?treeHrRate.toFixed(1)+'%':'--', 'train set rate', 'var(--muted)');
+    h+=statBox('Records', recordsUsed, 'training records', recordsUsed>=5000?'var(--g)':'var(--y)');
+  } else {
+    h+=statBox('Depth', treeDepth, 'max split layers', 'var(--accent)');
+    h+=statBox('Leaves', treeLeaves||'--', 'decision nodes', 'var(--blue)');
+    h+=statBox('Min Leaf', treeMinLeaf, 'samples/leaf', 'var(--muted)');
+    h+=statBox('Cal Factor', calFactor<1?calFactor.toFixed(3):'1.0 (off)', calFactor>=1?'stabilized':'bias correction', calFactor>=1?'var(--g)':'var(--y)');
+    h+=statBox('Dataset HR%', treeHrRate>0?treeHrRate.toFixed(1)+'%':'--', 'train set rate', 'var(--muted)');
+    var upgradeLeft = typeof nextUpgrade==='number' ? Math.max(nextUpgrade-recordsUsed,0) : 0;
+    var upgradeStr  = typeof nextUpgrade==='number' ? (upgradeLeft>0?('+'+upgradeLeft+' records'):'ready!') : nextUpgrade;
+    h+=statBox('Next Upgrade', 'D'+(treeDepth+1), upgradeStr, upgradeLeft===0?'var(--g)':'var(--muted2)');
+  }
+  h+='</div>';
+
+  // ── Leaf HR Rate Distribution ──
+  if(hrRates.length>0){
+    h+='<div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px">';
+    // For Random Forest: show realistic output range (individual tree leaves go to 90%+
+    // but averaged across 200 trees outputs cluster 2-25%) — cap display at 30%
+    var dispRates = isForest ? hrRates.filter(function(r){return r<=30;}) : hrRates;
+    var totalRates = hrRates.length;
+    var capped = hrRates.length - dispRates.length;
+    h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">'
+      +(isForest?'Leaf probability range — per-tree distribution':'Leaf HR Rate Distribution')
+      +' ('+(dispRates.length)+(capped>0?' shown, '+capped+' outliers hidden':' leaves')+')</div>';
+    h+='<div style="display:flex;align-items:flex-end;gap:2px;height:36px">';
+    var buckets=[0,0,0,0,0,0,0];
+    dispRates.forEach(function(r){
+      if(r<2)buckets[0]++;else if(r<5)buckets[1]++;else if(r<8)buckets[2]++;
+      else if(r<12)buckets[3]++;else if(r<18)buckets[4]++;else if(r<25)buckets[5]++;else buckets[6]++;
+    });
+    var bktLabels=['<2%','2-5%','5-8%','8-12%','12-18%','18-25%','25-30%'];
+    var bktColors=['var(--muted2)','var(--muted)','var(--y)','var(--warn)','var(--g)','var(--accent)','var(--blue)'];
+    var bktMax=Math.max.apply(null,buckets)||1;
+    buckets.forEach(function(cnt,i){
+      var h2=Math.max(Math.round(cnt/bktMax*36),cnt>0?2:0);
+      h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:1px">';
+      h+='<div style="font-size:7px;color:var(--muted2)">'+cnt+'</div>';
+      h+='<div style="width:100%;height:'+h2+'px;background:'+bktColors[i]+';border-radius:2px 2px 0 0;opacity:0.85"></div>';
+      h+='</div>';
+    });
+    h+='</div>';
+    h+='<div style="display:flex;gap:2px;margin-top:3px">';
+    bktLabels.forEach(function(l){
+      h+='<div style="flex:1;font-size:7px;color:var(--muted2);text-align:center">'+l+'</div>';
+    });
+    h+='</div>'
+    +(capped>0?'<div style="font-size:9px;color:var(--muted2);margin-top:4px">'+capped+' extreme leaves (>30%) in individual trees hidden — Forest averages these out</div>':'')
+    +'</div>';
+  }
+
+  h+='<div class="model-layout">';
+  // ── LEFT: Feature Importances + Tier Panel ──
+  h+='<div style="display:flex;flex-direction:column;gap:12px">';
+  h+='<div class="model-card">';
+  h+='<div class="model-card-title"><span>Feature Importance</span><span style="font-weight:400;color:var(--muted2)">'+(isForest?'averaged across 200 trees':'tree split weight')+'</span></div>';
+  if(!featList.length){
+    h+='<div style="font-size:11px;color:var(--muted);padding:8px 0">No importance data yet — tree needs training.</div>';
+  }
+  featList.slice(0,15).forEach(function(s,i){
+    var pct=maxImp>0?Math.round(s.imp/maxImp*100):0;
+    var barColor = i<3?'var(--accent)':i<6?'var(--g)':i<10?'var(--y)':'var(--muted2)';
+    h+='<div class="weight-row">';
+    h+='<div class="weight-rank">'+(i+1)+'</div>';
+    h+='<div class="weight-name" style="width:150px">'+s.label+'</div>';
+    h+='<div class="weight-bar-wrap"><div class="weight-bar" style="width:'+pct+'%;background:'+barColor+'"></div></div>';
+    h+='<div class="weight-val" style="color:'+barColor+'">'+Math.round(s.imp*1000)/10+'%</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+
+  // ── Tier Performance — scoped to current round ──
+  var tierSince = roundCompleted.length>=5 ? 'Round '+calRound : 'all time';
+  h+='<div class="model-card">';
+  h+='<div class="model-card-title"><span>Hit Rate by Tier</span><span style="font-weight:400;color:var(--muted2);font-size:10px">'+tierSince+' · non-DNP</span></div>';
+  var tiers=[
+    {label:'11%+',   lo:11, hi:999, note:'Bet tier',    color:'var(--g)'},
+    {label:'9–11%',  lo:9,  hi:11,  note:'Strong',      color:'var(--accent)'},
+    {label:'7–9%',   lo:7,  hi:9,   note:'Watchlist',   color:'var(--y)'},
+    {label:'5–7%',   lo:5,  hi:7,   note:'Marginal',    color:'var(--muted)'},
+    {label:'4–5%',   lo:4,  hi:5,   note:'Data only',   color:'var(--muted2)'},
+  ];
+  tiers.forEach(function(t){
+    var tierRecs=tierCompleted.filter(function(r){var p=r.model_hr_pct||0;return p>=t.lo&&p<t.hi;});
+    var n=tierRecs.length, hits=tierRecs.filter(function(r){return r.hit_hr===1;}).length;
+    var rate=n>0?(hits/n*100).toFixed(1):'--';
+    var barW=n>0?Math.min((hits/n)*100*3,100):0;
+    var rc=n===0?'var(--muted2)':hits/n>=0.25?'var(--g)':hits/n>=0.15?'var(--accent)':hits/n>=0.10?'var(--y)':'var(--muted)';
+    h+='<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border2)">';
+    h+='<div style="width:52px;font-size:11px;font-weight:600;color:'+t.color+'">'+t.label+'</div>';
+    h+='<div style="width:55px;font-size:10px;color:var(--muted2)">'+t.note+'</div>';
+    h+='<div style="flex:1;height:5px;background:var(--border2);border-radius:3px;overflow:hidden"><div style="width:'+barW+'%;height:100%;background:'+rc+';border-radius:3px;transition:width .3s"></div></div>';
+    h+='<div style="width:38px;text-align:right;font-size:12px;font-weight:700;color:'+rc+'">'+rate+'%</div>';
+    h+='<div style="width:40px;text-align:right;font-size:10px;color:var(--muted2)">'+hits+'/'+n+'</div>';
+    h+='</div>';
+  });
+  if(tierCompleted.length<20)h+='<div style="font-size:10px;color:var(--muted2);margin-top:8px;text-align:center">Rates stabilize at 200+ records</div>';
+  h+='</div>';
+  h+='</div>'; // close left col
+
+  // ── RIGHT: All features ranked by importance ──
+  h+='<div class="model-card">';
+  h+='<div class="model-card-title"><span>All Features Ranked</span><span style="font-weight:400;color:var(--muted2)">'+recordsUsed+' records · Depth '+treeDepth+'</span></div>';
+  if(!featList.length){
+    h+='<div style="font-size:11px;color:var(--muted);padding:8px 0">Tree not yet trained.</div>';
+  }
+  var allFeatMax = featList.length>0?featList[0].imp:1;
+  featList.forEach(function(s,i){
+    var bW=allFeatMax>0?Math.min(Math.round(s.imp/allFeatMax*100),100):0;
+    var bc=i<3?'var(--accent)':i<6?'var(--g)':i<10?'var(--y)':'var(--muted2)';
+    var impStr = s.imp>0 ? Math.round(s.imp*1000)/10+'%' : '--';
+    h+='<div class="stat-row">';
+    h+='<div class="stat-rank">'+(i+1)+'</div>';
+    h+='<div class="stat-name" style="width:155px;color:'+(i<10?'var(--text)':'var(--muted)')+'">'+s.label+'</div>';
+    h+='<div class="stat-bar-wrap"><div class="stat-bar" style="width:'+bW+'%;background:'+bc+'"></div></div>';
+    h+='<div class="stat-corr" style="color:'+bc+'">'+impStr+'</div>';
+    if(i<3)h+='<span class="stat-badge badge-active">TOP</span>';
+    else if(i<10)h+='<span class="stat-badge badge-candidate">IN</span>';
+    h+='</div>';
+  });
+  h+='</div>';
+  h+='</div>'; // close model-layout
+  el.innerHTML=h;
 }
 
-PITCH_TYPE_MAP = {
-    "FF": "wfa", "FA": "wfa",  # 4-seam fastball
-    "SI": "wsi",               # sinker
-    "SL": "wsl",               # slider
-    "ST": "wsl",               # sweeper (treat as slider)
-    "FC": "wfc",               # cutter
-    "CH": "wch",               # changeup
-    "CU": "wcu",               # curveball
-    "KC": "wcu",               # knuckle curve
-    "FS": "wfs",               # splitter
-    "FO": "wfs",               # forkball
+function barrelCls(v){return v>=12?'sc-g':v>=6?'sc-y':'sc-r';}
+function laCls(v){return(v>=25&&v<=35)?'sc-g':(v>=20&&v<=40)?'sc-y':'sc-r';}
+function isoCls(v){return v>=0.200?'sc-g':v>=0.150?'sc-y':'sc-r';}
+function fmtIso(v){return v>0?'.'+String(Math.round(v*1000)).padStart(3,'0'):'--';}
+function chip(lbl,val,cls){return '<div class="chip"><div class="chip-lbl">'+lbl+'</div><div class="chip-val '+cls+'">'+val+'</div></div>';}
+function barrelCls2(v){return v>=12?'g':v>=6?'y':'r';}
+function laCls2(v){return(v>=25&&v<=35)?'g':(v>=20&&v<=40)?'y':'r';}
+function isoCls2(v){return v>=0.200?'g':v>=0.150?'y':'r';}
+function kCls(v){return v>=30?'r':v>=22?'y':'g';}
+
+function divergenceFlag(season,l8d,higherBetter){
+  if(!l8d||!season||season===0)return{val:season,flag:''};
+  var rel=Math.abs(l8d-season)/season;
+  if(rel<0.50)return{val:season,flag:''};
+  var goingUp=l8d>season;
+  var isHot=higherBetter?goingUp:!goingUp;
+  return{val:l8d,flag:isHot?'🔥':'❄️'};
+}
+function laDivergence(season,l8d){
+  if(!l8d||!season||season===0)return{val:season,flag:''};
+  var rel=Math.abs(l8d-season)/Math.max(Math.abs(season),1);
+  if(rel<0.50)return{val:season,flag:''};
+  var sweet=30,ds=Math.abs(season-sweet),dl=Math.abs(l8d-sweet);
+  return{val:l8d,flag:dl<ds?'🔥':'❄️'};
+}
+function batPlatoonDot(isoVsHand,isoOverall){
+  if(!isoVsHand||!isoOverall||isoOverall===0)return'n';
+  var r=isoVsHand/isoOverall;
+  return r>=1.15?'g':r>=0.90?'y':'r';
+}
+function pitPlatoonDot(slgVsBat,slgOverall){
+  if(!slgVsBat||!slgOverall||slgOverall===0)return'n';
+  var r=slgVsBat/slgOverall;
+  return r>=1.10?'g':r>=0.90?'y':'r';
+}
+function wxIcon(label,temp,wind){
+  var l=(label||'').toLowerCase();
+  if(l.includes('dome'))return'&#127967;';
+  if(l.includes('rain'))return'&#127783;';
+  if(l.includes('out')&&wind>=10)return'&#127782;&#8593;';
+  if(l.includes('in')&&wind>=10)return'&#127782;&#8595;';
+  if(temp<50)return'&#129398;';
+  if(temp>=80)return'&#9728;';
+  return'&#9925;';
+}
+function wxTextCls(label){
+  var l=(label||'').toLowerCase();
+  if(l.includes('out'))return'color:var(--g)';
+  if(l.includes('in'))return'color:var(--r)';
+  return'color:var(--muted)';
 }
 
-PITCH_DISPLAY = {
-    "wfa":"Fastball","wsi":"Sinker","wsl":"Slider",
-    "wfc":"Cutter","wch":"Changeup","wcu":"Curveball","wfs":"Splitter"
+function buildBatterTable(games){
+  var el=document.getElementById('batter-main');
+  if(!games||!games.length){el.innerHTML='<div class="no-data">No games today.</div>';return;}
+
+  // ── Helper functions ──
+  // ── Relative-to-median coloring — auto-adjusts as season progresses ──
+  function getMedians(){
+    var fw=modelWeightsData&&modelWeightsData.weights&&modelWeightsData.weights.feature_medians;
+    return fw||{barrel_pct_season:10.2,la_season:14.0,ev_l8d:83.7,xslg_l8d:0.549};
+  }
+  function medCls(val,medKey,invert){
+    var med=getMedians()[medKey]||0;
+    if(!val||val===0||!med)return'pill-m';
+    var ratio=val/med;
+    var good=invert?(ratio<0.85):(ratio>=1.20);
+    var okay=invert?(ratio<1.0):(ratio>=1.0);
+    if(good)return'pill-g';
+    if(okay)return'pill-y';
+    if(invert?(ratio>1.15):(ratio<0.80))return'pill-r';
+    return'pill-m';
+  }
+  // LA uses window logic not median — 18-35deg is always the HR zone
+  function laCls2(la){return(la>=18&&la<=35)?'pill-g':(la>=10&&la<18)||(la>35&&la<=45)?'pill-y':'pill-r';}
+  function evCls(ev){return medCls(ev,'ev_l8d',false);}
+  function brlCls(b){return medCls(b,'barrel_pct_season',false);}
+  function xslgCls(x){return medCls(x,'xslg_l8d',false);}
+  function pctCls2(p){return p>=15?'pct-elite':p>=11?'pct-high':p>=8?'pct-mid':p>=5?'pct-ok':'pct-low';}
+  function l8dHrCls(n){return n>=3?'l8d-fire':n>=1?'l8d-warm':'l8d-none';}
+  function fmtXslg(v){
+    if(!v||v<=0)return'--';
+    if(v>=1.0){return v.toFixed(3);}
+    return'.'+String(Math.round(v*1000)).padStart(3,'0');
+  }
+  // Wind label → alignment score (-1 to 1) for bar coloring
+  function labelToAlign(label){
+    var l=(label||'').toLowerCase();
+    if(l.includes('out to cf'))   return 1.0;
+    if(l.includes('out to lf'))   return 0.8;
+    if(l.includes('out to rf'))   return 0.8;
+    if(l.includes('blowing out')) return 0.6;
+    if(l.includes('toward lf'))   return 0.3;
+    if(l.includes('toward rf'))   return 0.3;
+    if(l.includes('calm'))        return 0.0;
+    if(l.includes('cross'))       return 0.0;
+    if(l.includes('slightly in')) return -0.4;
+    if(l.includes('blowing in'))  return -1.0;
+    return 0;
+  }
+
+  // 3-bar wind display: LF | CF | RF
+  function windBars(wx){
+    if(!wx||!wx.label)return'';
+    var l=(wx.label||'').toLowerCase();
+    var wind=wx.wind_speed||0;
+    if(l.includes('dome'))return'<span class="gchip chip-n">&#127968; Dome</span>';
+    if(wind<4)return'<span class="gchip chip-n" style="font-size:9px">Calm</span>';
+
+    var align=labelToAlign(wx.label);
+    // Calculate alignment per field based on label
+    var lfAlign, cfAlign, rfAlign;
+    if(l.includes('out to lf')){lfAlign=1.0;cfAlign=0.3;rfAlign=-0.2;}
+    else if(l.includes('out to rf')){lfAlign=-0.2;cfAlign=0.3;rfAlign=1.0;}
+    else if(l.includes('out to cf')){lfAlign=0.4;cfAlign=1.0;rfAlign=0.4;}
+    else if(l.includes('toward lf')){lfAlign=0.6;cfAlign=0.2;rfAlign=-0.1;}
+    else if(l.includes('toward rf')){lfAlign=-0.1;cfAlign=0.2;rfAlign=0.6;}
+    else if(l.includes('blowing out')){lfAlign=0.5;cfAlign=0.8;rfAlign=0.5;}
+    else if(l.includes('blowing in')){lfAlign=-0.8;cfAlign=-1.0;rfAlign=-0.8;}
+    else if(l.includes('slightly in')){lfAlign=-0.3;cfAlign=-0.4;rfAlign=-0.3;}
+    else{lfAlign=0;cfAlign=0;rfAlign=0;} // crosswind/calm
+
+    function barColor(a){
+      if(a>=0.6) return'var(--g)';
+      if(a>=0.2) return'var(--y)';
+      if(a<=-0.4) return'var(--r)';
+      return'var(--muted2)';
+    }
+    function barH(a){return Math.max(3,Math.round(Math.abs(a)*20))+'px';}
+    function barDir(a){return a>=0?'flex-end':'flex-start';}
+
+    var speedStr=wind+'mph';
+    var html='<div style="display:flex;align-items:center;gap:4px">';
+    html+='<div style="font-size:9px;color:var(--muted2);margin-right:2px">'+speedStr+'</div>';
+    [[lfAlign,'LF'],[cfAlign,'CF'],[rfAlign,'RF']].forEach(function(item){
+      var a=item[0],lbl=item[1];
+      var c=barColor(a);
+      html+='<div style="display:flex;flex-direction:column;align-items:center;gap:2px">';
+      html+='<div style="width:14px;height:20px;background:rgba(255,255,255,0.06);border-radius:3px;display:flex;align-items:'+barDir(a)+';overflow:hidden">';
+      html+='<div style="width:100%;height:'+barH(a)+';background:'+c+';border-radius:2px;opacity:0.9"></div>';
+      html+='</div>';
+      html+='<div style="font-size:7px;color:var(--muted2);font-weight:500">'+lbl+'</div>';
+      html+='</div>';
+    });
+    html+='</div>';
+    return html;
+  }
+
+  function wxChip(wx, batHand){
+    if(!wx||!wx.label)return'';
+    var l=(wx.label||'').toLowerCase();
+    var temp=wx.temp||70;var wind=wx.wind_speed||0;
+    var parts=[];
+    if(l.includes('dome'))return'<span class="gchip chip-n">&#127968; Dome</span>';
+    // Wind bars
+    if(wind>0) parts.push(windBars(wx));
+    // Temp chip
+    if(temp>=80)parts.push('<span class="gchip chip-g">'+temp+'&#176;</span>');
+    else if(temp>=65)parts.push('<span class="gchip chip-n">'+temp+'&#176;</span>');
+    else parts.push('<span class="gchip chip-r">'+temp+'&#176; cold</span>');
+    return parts.join('');
+  }
+  function parkChip(pf){
+    if(!pf||pf===0)return'';
+    var cls=pf>=1.10?'chip-g':pf>=0.95?'chip-n':'chip-r';
+    return'<span class="gchip '+cls+'">Park '+pf.toFixed(2)+'</span>';
+  }
+  function hr9Cls(v){return v>=2.0?'hr9-hot':v>=1.2?'hr9-warm':v>=0.5?'hr9-ok':'hr9-cold';}
+  function trendDot(b){
+    var s=b.season||{};var l8=b.l8d||{};
+    if((l8.barrel||0)>=(s.barrel||0)*1.2&&(l8.barrel||0)>=10)return'dot-fire';
+    if((b.l8d_hr_count||0)>=2)return'dot-fire';
+    if((b.l8d_hr_count||0)>=1||(l8.xslg||0)>=0.700)return'dot-warm';
+    return'dot-neutral';
+  }
+
+  var totalBatters=0;
+  var h='';
+
+  games.forEach(function(g,gi){
+    var awayP=g.away_pitcher||{};
+    var homeP=g.home_pitcher||{};
+    var wx=g.weather||{};
+    var awayTeam=g.away||'';
+    var homeTeam=g.home||'';
+    var gtime=g.time||'';
+    var timeStr='';
+    if(gtime){try{var d=new Date(gtime);timeStr=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'America/New_York'});}catch(e){}}
+    var pf=awayP.park_factor||homeP.park_factor||g.park_factor||0;
+
+    // Get all batters above threshold — split by team
+    var allCands=g.top_hr_candidates||[];
+    var awayBatters=allCands.filter(function(b){return b.team===awayTeam;}).sort(function(a,b){return(b.hr_prob||0)-(a.hr_prob||0);}).slice(0,4);
+    var homeBatters=allCands.filter(function(b){return b.team===homeTeam;}).sort(function(a,b){return(b.hr_prob||0)-(a.hr_prob||0);}).slice(0,4);
+
+    if(!awayBatters.length&&!homeBatters.length)return;
+    totalBatters+=awayBatters.length+homeBatters.length;
+
+    // ── Game card ──
+    h+='<div class="gc">';
+
+    // Game header
+    h+='<div class="gc-hdr">';
+    h+='<div class="gc-title-row">';
+    h+='<span class="gc-title">'+awayTeam+' <span style="color:var(--muted2);font-size:11px;font-weight:400">@</span> '+homeTeam+'</span>';
+    if(timeStr)h+='<span class="gc-time">'+timeStr+' ET</span>';
+    h+='</div>';
+    h+='<div class="gc-chips">'+wxChip(wx)+parkChip(pf)+'</div>';
+    h+='</div>';
+
+    // ── Away batters — facing home pitcher ──
+    function renderPitcherSection(pitcher, batters, matchupLabel){
+      if(!batters.length)return'';
+      var sec='';
+      var hr9_rhh=pitcher.vs_R_hr9||0;
+      var hr9_lhh=pitcher.vs_L_hr9||0;
+      var hh=pitcher.hard_hit_pct||0;
+      var era=pitcher.era||0;
+      var hand=pitcher.hand||'R';
+      var pitName=pitcher.name||'TBD';
+      var pitIsNew=pitcher.is_new||false;
+
+      // Pitcher bar
+      sec+='<div class="pit-bar">';
+      sec+='<div class="pit-info">';
+      sec+='<div class="pit-name">'+pitName+' <span class="hand-tag '+(hand==='L'?'lhp':'rhp')+'">'+hand+'HP</span>'+(pitIsNew?'<span class="new-tag">NEW</span>':'')+'</div>';
+      sec+='<div class="pit-matchup">'+matchupLabel+'</div>';
+      sec+='</div>';
+      sec+='<div class="pit-stats">';
+      // ERA
+      var eraCls=era>=5?'stat-hot':era>=4?'stat-warm':era>0?'stat-ok':'stat-muted';
+      sec+='<div class="pit-stat"><div class="pit-stat-lbl">ERA</div><div class="pit-stat-val '+eraCls+'">'+(era>0?era.toFixed(2):'--')+'</div></div>';
+      // HH%
+      var hhCls=hh>=45?'stat-hot':hh>=40?'stat-warm':hh>0?'stat-ok':'stat-muted';
+      sec+='<div class="pit-stat"><div class="pit-stat-lbl">HH%</div><div class="pit-stat-val '+hhCls+'">'+(hh>0?hh+'%':'--')+'</div></div>';
+      // HR/9 splits
+      sec+='<div class="pit-divider"></div>';
+      sec+='<div class="pit-stat">';
+      sec+='<div class="pit-stat-lbl">HR/9</div>';
+      sec+='<div class="hr9-splits">';
+      sec+='<div class="hr9-block"><div class="hr9-label">vs RHH</div><div class="hr9-val '+hr9Cls(hr9_rhh)+'">'+(hr9_rhh>0?hr9_rhh.toFixed(1):'--')+'</div></div>';
+      sec+='<div class="hr9-block"><div class="hr9-label">vs LHH</div><div class="hr9-val '+hr9Cls(hr9_lhh)+'">'+(hr9_lhh>0?hr9_lhh.toFixed(1):'--')+'</div></div>';
+      sec+='</div></div>';
+      sec+='</div></div>';
+
+      // Batter rows — attach _full and _pitP so buildBatDetail works correctly
+      batters.forEach(function(b,bi){
+        b._full = b;          // buildBatDetail reads b._full.season etc
+        b._pitP = pitcher;    // buildBatDetail reads b._pitP for pitcher strip
+        var s=b.season||{};var l8=b.l8d||{};var bd=b.breakdown||{};
+        var brl=s.barrel||s.barrel_pct||bd.barrel_season||bd.barrel_use||0;
+        var la=s.la||bd.la_use||0;
+        var ev=l8.ev||bd.ev_l8d||0;
+        var xslg=l8.xslg||bd.xslg_l8d||0;
+        var l8hr=b.l8d_hr_count||0;
+        var pct=b.hr_prob||0;
+        var hand=b.bat_hand||'R';
+        var dot=trendDot(b);
+        var pc=pctCls2(pct);
+        var rowId='gc-'+gi+'-bat-'+bi+'-'+matchupLabel.replace(/\s/g,'');
+
+        sec+='<div class="bat-row" data-rowid="'+rowId+'" onclick="toggleGcDetail(this.dataset.rowid)">';
+        sec+='<div class="bat-left">';
+        sec+='<div class="bat-trend-dot '+dot+'"></div>';
+        sec+='<div>';
+        var slotStr=b.batting_slot&&b.batting_slot>0?'<span class="bat-slot">#'+b.batting_slot+'</span>':'';
+        sec+='<div class="bat-name">'+b.name+slotStr+'<span class="hand-tag '+(hand==='L'?'lhb':'rhb')+'" style="margin-left:6px">'+hand+'</span></div>';
+        sec+='<div class="bat-team">'+b.team+'</div>';
+        sec+='</div></div>';
+        // Four stat pills
+        // Wind advantage chip — check if wind favors this batter's pull side
+        var wxLabel=(wx.label||'').toLowerCase();
+        var windSpd=wx.wind_speed||0;
+        var windAdv='';
+        if(windSpd>=4){
+          // Check if wind favors this specific batter's pull side
+          var rfOut=wxLabel.includes('out to rf')||wxLabel.includes('toward rf');
+          var lfOut=wxLabel.includes('out to lf')||wxLabel.includes('toward lf');
+          var cfOut=wxLabel.includes('out to cf')||wxLabel.includes('blowing out');
+          var windIn=wxLabel.includes('blowing in')||wxLabel.includes('slightly in');
+          var lhbFav=(rfOut&&hand==='L')||(lfOut&&hand==='R')||cfOut;
+          var rhbFav=(lfOut&&hand==='R')||(rfOut&&hand==='L')||cfOut;
+          if((hand==='L'&&rfOut)||(hand==='R'&&lfOut)||cfOut)
+            windAdv='<span class="spill pill-g" title="Wind favors pull side">&#128168;<span class="spill-lbl">Wind</span></span>';
+          else if(windIn)
+            windAdv='<span class="spill pill-r" title="Wind blowing in">&#128168;<span class="spill-lbl">Wind</span></span>';
+        }
+        sec+='<div class="stat-pills">';
+        if(windAdv)sec+=windAdv;
+        sec+='<span class="spill '+brlCls(brl)+'" title="Barrel% Season vs median '+((getMedians().barrel_pct_season||0).toFixed(1))+'%">'+(brl>0?brl.toFixed(1)+'%':'--')+'<span class="spill-lbl">Brl</span></span>';
+        sec+='<span class="spill '+laCls2(la)+'" title="Launch Angle Season (HR window 18-35°)">'+(la>0?la.toFixed(0)+'&#176;':'--')+'<span class="spill-lbl">LA</span></span>';
+        sec+='<span class="spill '+evCls(ev)+'" title="Exit Velo L8D vs median '+((getMedians().ev_l8d||0).toFixed(1))+' mph">'+(ev>0?ev.toFixed(0):'--')+'<span class="spill-lbl">EV</span></span>';
+        sec+='<span class="spill '+xslgCls(xslg)+'" title="xSLG L8D vs median '+fmtXslg(getMedians().xslg_l8d||0)+'">'+fmtXslg(xslg)+'<span class="spill-lbl">xSLG</span></span>';
+        sec+='</div>';
+        // L8D HR
+        sec+='<div class="bat-l8d '+l8dHrCls(l8hr)+'">'+(l8hr>0?l8hr+'HR':'—')+'</div>';
+        // RF Probability
+        sec+='<div class="bat-pct '+pc+'">'+pct+'%</div>';
+        // XGBoost probability — shown only when trained, purely informational
+        var xgbPct=b.xgb_prob!=null?b.xgb_prob:null;
+        if(xgbPct!=null){
+          sec+='<div class="bat-xgb" title="XGBoost probability (learning)">'+xgbPct+'%<span class="xgb-lbl">XG</span></div>';
+        }
+        sec+='</div>';
+        // Detail panel
+        sec+='<div class="gc-detail" id="'+rowId+'" style="display:none">'+buildBatDetail(b)+'</div>';
+      });
+
+      return sec;
+    }
+
+    h+=renderPitcherSection(homeP, awayBatters, awayTeam+' batters');
+    h+=renderPitcherSection(awayP, homeBatters, homeTeam+' batters');
+    h+='</div>';
+  });
+
+  if(!totalBatters){el.innerHTML='<div class="no-data">No batters above threshold today.</div>';return;}
+  el.innerHTML='<div class="gc-wrap">'+h+'</div>';
 }
 
-# ── Data Loading ──
-async def fetch_savant_csv(url: str, session: httpx.AsyncClient) -> pd.DataFrame:
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
-    try:
-        r = await session.get(url, headers=headers, timeout=60, follow_redirects=True)
-        if not r.is_success:
-            print(f"Savant fetch failed {r.status_code}: {url[:80]}")
-            return pd.DataFrame()
-        text = r.text.strip()
-        if not text or text.startswith('<'):
-            print(f"Savant returned HTML (blocked?): {url[:80]}")
-            return pd.DataFrame()
-        df = pd.read_csv(io.StringIO(text))
-        return df
-    except Exception as e:
-        print(f"Savant fetch error: {e} — {url[:80]}")
-        return pd.DataFrame()
+function toggleDD(el){
+  var id=el.dataset.ddid;
+  var d=document.getElementById(id);
+  if(!d)return;
+  var open=d.style.display!=='none';
+  d.style.display=open?'none':'block';
+  var arr=el.querySelector('.dd-arrow');
+  if(arr)arr.textContent=open?'▼':'▲';
+}
 
-def parse_player_name(df: pd.DataFrame) -> pd.DataFrame:
-    """Convert 'last_name, first_name' column to 'name' column"""
-    name_col = None
-    for col in df.columns:
-        if 'last_name' in col.lower() or 'first_name' in col.lower():
-            name_col = col
-            break
-    if name_col and name_col in df.columns:
-        df['name'] = df[name_col].apply(lambda x: reverse_name(str(x)) if pd.notna(x) else "")
-    return df
+function toggleGcDetail(id){
+  var d=document.getElementById(id);
+  if(d)d.style.display=d.style.display==='none'?'block':'none';
+}
 
-def reverse_name(s: str) -> str:
-    """Convert 'Last, First' to 'First Last'"""
-    parts = s.split(', ', 1)
-    if len(parts) == 2:
-        return f"{parts[1]} {parts[0]}"
-    return s
+// Keep legacy toggleBatRow for history tab compatibility
+function toggleBatRow(i){var d=document.getElementById('bdet-'+i);if(d)d.style.display=d.style.display==='none'?'table-row':'none';}
 
-def calc_batter_stats(df: pd.DataFrame) -> pd.DataFrame:
-    """Calculate derived stats from raw Savant columns"""
-    df = parse_player_name(df)
-    if 'slg_percent' in df.columns and 'batting_avg' in df.columns:
-        df['iso'] = pd.to_numeric(df['slg_percent'], errors='coerce') - pd.to_numeric(df['batting_avg'], errors='coerce')
-    # HR/FB: home_run / (ab * n_fb_percent/100)
-    if 'home_run' in df.columns and 'ab' in df.columns and 'n_fb_percent' in df.columns:
-        def calc_hrfb(row):
-            ab = float(row.get('ab') or 0)
-            fb_pct = float(row.get('n_fb_percent') or 0)
-            hr = float(row.get('home_run') or 0)
-            fb = ab * fb_pct / 100.0
-            return (hr / fb * 100) if fb > 0 else 0
-        df['hr_fb_pct'] = df.apply(calc_hrfb, axis=1)
-    # HR rate per 600 PA
-    if 'home_run' in df.columns and 'pa' in df.columns:
-        df['hr_rate'] = df.apply(lambda r: (float(r.get('home_run') or 0) / max(float(r.get('pa') or 1), 1)) * 600, axis=1)
-    # Rename columns to match model
-    rename = {
-        'barrel_batted_rate': 'barrel_pct',
-        'exit_velocity_avg': 'exit_velo',
-        'launch_angle_avg': 'launch_angle',
-        'hard_hit_percent': 'hard_hit_pct',
-        'pull_percent': 'pull_pct',
-        'n_fb_percent': 'fb_pct',
-        'k_percent': 'k_pct',
-        'home_run': 'hr',
+
+
+function buildBatDetail(b){
+  var s=b._full.season||{},l=b._full.l8d||{},bd=b._full.breakdown||{},pitP=b._pitP||{};
+  var oppHand=b.opp_hand||b._full.opp_p_hand||'R';
+  var hasL8D=l.pa>0;
+  var l8dHR=b.l8d_hr||b._full.l8d_hr_count||0;
+  var clog=b._full.contact_log||b.contact_log||[];
+
+  function fmtVal(val,dec,suffix){return(val!=null&&val!==0&&val!==''&&!isNaN(val))?(+val).toFixed(dec)+(suffix||''):'--';}
+  function fmtSlg(val){return val>0?'.'+String(Math.round(val*1000)).padStart(3,'0'):'--';}
+
+  // ── Feature-importance medians from model (fallback if not loaded) ──
+  var medians = (modelWeightsData&&modelWeightsData.weights&&modelWeightsData.weights.feature_medians)||{
+    barrel_pct_season:10.7, hard_hit_season:43.5, ev_season:90, iso_season:0.167,
+    la_season:14.1, pull_pct_season:40.4, barrel_pct_l8d:7.7, hard_hit_l8d:28.1,
+    ev_l8d:84, bat_speed_l8d:70.3, xwoba_l8d:0.391, xslg_l8d:0.56,
+    slg_l8d:0.424, iso_l8d:0.184, k_pct_l8d:22, la_l8d:17.8,
+    iso_vs_hand:0.181, pit_hr9_season:1.04, pit_hard_hit_season:40.4,
+    pit_hr9_vs_hand:0.93, park_factor:1.05,
+  };
+
+  // ── Get feature importances for this batter ──
+  var fi = bd.feature_importances||{};
+  var fiList = Object.entries(fi).sort(function(a,b){return b[1]-a[1];});
+
+  // ── Stat value map — what we actually have for this batter ──
+  var xslg_l8d  = l.xslg||bd.xslg_l8d||0;
+  var xwoba_l8d = l.xwoba||bd.xwoba_l8d||0;
+  var bat_speed = l.bat_speed||bd.bat_speed_l8d||0;
+  var statVals = {
+    xslg_l8d:      xslg_l8d,
+    pull_pct_season: s.pull||bd.pull_s||0,
+    hard_hit_season: s.hh||bd.hh_season||0,
+    barrel_pct_season: s.barrel||bd.barrel_season||0,
+    iso_l8d:       l.iso||bd.iso_l8d||0,
+    pit_hard_hit_season: pitP.hard_hit_pct||bd.pit_hard||0,
+    k_pct_l8d:     l.k_pct||0,
+    iso_vs_hand:   bd.iso_vs_hand||0,
+    ev_season:     s.ev||bd.ev_season||0,
+    la_season:     s.la||bd.la_use||0,
+    barrel_pct_l8d: l.barrel||bd.barrel_use||0,
+    hard_hit_l8d:  l.hh||0,
+    bat_speed_l8d: bat_speed,
+    xwoba_l8d:     xwoba_l8d,
+    iso_season:    s.iso||bd.iso_season||0,
+    pit_hr9_season: bd.hr9_season||bd.pit_hr9||0,
+    pit_hr9_vs_hand: bd.hr9_split||bd.pit_hr9_vs_hand||0,
+  };
+
+  // Label map
+  var FI_LABELS = {
+    xslg_l8d:'xSLG L8D', pull_pct_season:'Pull% Season', hard_hit_season:'Hard Hit% Season',
+    barrel_pct_season:'Barrel% Season', iso_l8d:'ISO L8D', pit_hard_hit_season:'Pit Hard Hit%',
+    k_pct_l8d:'K% L8D', iso_vs_hand:'ISO vs Hand', ev_season:'Exit Velo Season',
+    la_season:'Launch Angle Season', barrel_pct_l8d:'Barrel% L8D', hard_hit_l8d:'Hard Hit% L8D',
+    bat_speed_l8d:'Bat Speed L8D', xwoba_l8d:'xwOBA L8D', iso_season:'ISO Season',
+    pit_hr9_season:'Pit HR/9 Season', pit_hr9_vs_hand:'Pit HR/9 vs Hand',
+  };
+
+  // Invert logic — lower is better for batter for these
+  var INVERT = {k_pct_l8d:true, pit_hard_hit_season:false, pit_hr9_season:false, pit_hr9_vs_hand:false};
+
+  // Format by stat type
+  function fmtByKey(key, val){
+    if(val==null||val===0)return '--';
+    if(key.includes('pct')||key.includes('hard_hit')||key.includes('pull'))return val.toFixed(1)+'%';
+    if(key.includes('iso')||key.includes('slg')||key.includes('woba'))return fmtSlg(val);
+    if(key.includes('ev')||key.includes('bat_speed'))return val.toFixed(1);
+    if(key.includes('la'))return val.toFixed(1)+'°';
+    if(key.includes('k_pct'))return val.toFixed(1)+'%';
+    if(key.includes('hr9'))return val.toFixed(2);
+    return val.toFixed(2);
+  }
+
+  // Above/below median indicator
+  function medianTag(key, val){
+    var med = medians[key];
+    if(!med||!val||val===0)return '<span style="color:var(--muted2);font-size:9px">--</span>';
+    var isPitStat = key.startsWith('pit_');
+    var isInvert = INVERT[key]||false;
+    var above = val > med;
+    // For pit stats: higher HR/9 = good for batter, higher HH% = bad
+    var good;
+    if(isPitStat && (key.includes('hr9')))good=above;
+    else if(isPitStat)good=!above;
+    else if(isInvert)good=!above;
+    else good=above;
+    var color = good?'var(--g)':'var(--r)';
+    var arrow = above?'↑':'↓';
+    var medStr = fmtByKey(key, med);
+    return '<span style="font-size:9px;color:'+color+';font-weight:700" title="Median: '+medStr+'">'+arrow+' med</span>';
+  }
+
+  // ── LEFT: Feature-importance driven stat display ──
+  var h='<div class="detail-wrap">';
+  // ── RIGHT: Radar Chart — Uncle Nicky Signature ──
+  // 6-axis composite radar showing why this batter scored what he did
+  // Each axis is a composite of multiple underlying stats
+
+  function buildRadar(){
+    // ── Axis scoring helpers ──
+    function norm(val, med, cap){
+      if(!val||!med||val===0) return 50;
+      var ratio = val/med;
+      return Math.min(Math.round(ratio * 50), cap||100);
     }
-    df = df.rename(columns={k: v for k, v in rename.items() if k in df.columns})
-    return df
-
-def calc_pitcher_stats(df: pd.DataFrame) -> pd.DataFrame:
-    """Calculate derived pitcher stats"""
-    df = parse_player_name(df)
-    rename = {
-        'barrel_batted_rate': 'barrel_pct_allowed',
-        'exit_velocity_avg': 'exit_velo_allowed',
-        'hard_hit_percent': 'hard_hit_pct',
-        'n_fb_percent': 'fb_pct',
-        'k_percent': 'k_pct',
-        'p_era': 'era',
-        'home_run': 'hr',
+    function normLow(val, med){ // lower is better (K%, pitcher stats)
+      if(!val||!med||val===0) return 50;
+      return Math.min(Math.round((med/val) * 50), 100);
     }
-    df = df.rename(columns={k: v for k, v in rename.items() if k in df.columns})
-    return df
-
-def calc_statcast_8d(df: pd.DataFrame) -> pd.DataFrame:
-    """Aggregate pitch-by-pitch Statcast CSV into per-player L8D stats.
-    Groups by batter name and computes: barrel%, avg EV, avg LA, hard hit%, 
-    bat speed, xwOBA, xSLG, pull%, PA, HR, K%, ISO, SLG, AVG."""
-    df = df.copy()
-    # Normalize name: "Last, First" -> "First Last"
-    if 'player_name' in df.columns:
-        df['name'] = df['player_name'].apply(lambda x: reverse_name(str(x)) if pd.notna(x) else "")
-    else:
-        return pd.DataFrame()
-
-    results = []
-    for name, grp in df.groupby('name'):
-        if not name: continue
-        # All pitches for K% and PA
-        pa_events = grp[grp['events'].notna() & (grp['events'] != '')]
-        pa = len(pa_events)
-        if pa < 1: continue
-
-        hr  = len(pa_events[pa_events['events'] == 'home_run'])
-        so  = len(pa_events[pa_events['events'].isin(['strikeout','strikeout_double_play'])])
-        k_pct = round(so / pa * 100, 1) if pa > 0 else 0.0
-
-        # Contact events only (for Statcast metrics)
-        contact = grp[grp['launch_speed'].notna() & (grp['launch_speed'] > 0)]
-        n_contact = len(contact)
-
-        avg_ev   = round(contact['launch_speed'].mean(), 1) if n_contact > 0 else 0.0
-        avg_la   = round(contact['launch_angle'].mean(), 1) if n_contact > 0 else 0.0
-        hard_hit = round(len(contact[contact['launch_speed'] >= 95]) / n_contact * 100, 1) if n_contact > 0 else 0.0
-        barrels  = len(contact[contact['launch_speed_angle'] == 6]) if 'launch_speed_angle' in contact.columns else 0
-        barrel_pct = round(barrels / n_contact * 100, 1) if n_contact > 0 else 0.0
-
-        # Bat speed (all swings)
-        swings = grp[grp['bat_speed'].notna() & (grp['bat_speed'] > 0)]
-        avg_bat_speed = round(swings['bat_speed'].mean(), 1) if len(swings) > 0 else 0.0
-
-        # Expected stats
-        xwoba = round(contact['estimated_woba_using_speedangle'].dropna().mean(), 3) if n_contact > 0 else 0.0
-        xslg  = round(contact['estimated_slg_using_speedangle'].dropna().mean(), 3) if n_contact > 0 else 0.0
-
-        # Pull%
-        pull_events = contact[contact['hc_x'].notna()]
-        if len(pull_events) > 0:
-            stand = grp['stand'].iloc[0] if 'stand' in grp.columns else 'R'
-            if stand == 'L':
-                pulls = len(pull_events[pull_events['hc_x'] > 170])
-            else:
-                pulls = len(pull_events[pull_events['hc_x'] < 100])
-            pull_pct = round(pulls / len(pull_events) * 100, 1)
-        else:
-            pull_pct = 0.0
-
-        # Traditional stats from woba/iso values
-        woba_vals = pa_events['woba_value'].dropna()
-        iso_vals  = pa_events['iso_value'].dropna()
-        avg_iso   = round(iso_vals.mean(), 3) if len(iso_vals) > 0 else 0.0
-        # Approximate SLG from xSLG since actual SLG isn't directly in the CSV
-        slg = xslg  # use xSLG as proxy — available for all contact
-        avg_val = round(len(pa_events[pa_events['events'].isin(['single','double','triple','home_run'])]) / pa, 3) if pa > 0 else 0.0
-
-        results.append({
-            'name': name,
-            'pa': pa, 'hr': hr, 'k_pct': k_pct,
-            'barrel_pct': barrel_pct,
-            'exit_velo': avg_ev,
-            'launch_angle': avg_la,
-            'hard_hit_pct': hard_hit,
-            'bat_speed': avg_bat_speed,
-            'xwoba': xwoba,
-            'xslg': xslg,
-            'pull_pct': pull_pct,
-            'iso': avg_iso,
-            'slg': slg,
-            'batting_avg': avg_val,
-        })
-
-    if not results:
-        return pd.DataFrame()
-
-    return pd.DataFrame(results)
-
-def _build_contact_log(df: pd.DataFrame):
-    """Build contact log from pitch-by-pitch Statcast CSV (group_by=pitch).
-    Stores last 8 batted ball events per player in _contact_log cache."""
-    if df is None or df.empty: return
-    df = df.copy()
-    if 'player_name' in df.columns:
-        df['name'] = df['player_name'].apply(lambda x: reverse_name(str(x)) if pd.notna(x) else "")
-    else:
-        return
-    PITCH_SHORT = {
-        '4-Seam Fastball': '4-Seam', 'Sinker': 'Sinker', 'Slider': 'Slider',
-        'Sweeper': 'Sweeper', 'Changeup': 'Change', 'Curveball': 'Curve',
-        'Cutter': 'Cutter', 'Splitter': 'Split', 'Knuckle Curve': 'K-Curve',
-        'Fastball': 'FB',
-    }
-    # Only keep batted ball events
-    contact = df[df['launch_speed'].notna() & (df['launch_speed'] > 0) & df['events'].notna()].copy()
-    for name, grp in contact.groupby('name'):
-        if not name: continue
-        grp_sorted = grp.sort_values('game_date', ascending=False).head(8)
-        events = []
-        for _, row in grp_sorted.iterrows():
-            result = str(row.get('events', '') or '').strip()
-            if not result or result == 'nan': continue
-            pitch_name = str(row.get('pitch_name', '') or '').strip()
-            pitch_short = PITCH_SHORT.get(pitch_name, pitch_name[:6] if pitch_name else '--')
-            try:
-                events.append({
-                    'date':       str(row.get('game_date', ''))[-5:],
-                    'pitch_type': pitch_short,
-                    'ev':         round(float(row['launch_speed']), 1),
-                    'angle':      round(float(row['launch_angle']), 1) if pd.notna(row.get('launch_angle')) else 0,
-                    'distance':   int(float(row['hit_distance_sc'])) if pd.notna(row.get('hit_distance_sc')) and float(row.get('hit_distance_sc', 0) or 0) > 0 else 0,
-                    'bat_speed':  round(float(row['bat_speed']), 1) if pd.notna(row.get('bat_speed')) and float(row.get('bat_speed', 0) or 0) > 0 else 0,
-                    'result':     result,
-                })
-            except Exception: continue
-        if events:
-            _contact_log[name.lower()] = events
-
-async def fetch_pitcher_ip(season=2026):
-    """Fetch pitcher IP/HR9/ERA from MLB Stats API — /stats endpoint first to capture all pitchers"""
-    try:
-        ip_map = {}
-        print("Fetching pitcher stats from MLB Stats API /stats endpoint...")
-        url = f"{MLB_API}/stats?stats=season&group=pitching&gameType=R&season={season}&playerPool=All&limit=2000"
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(url)
-            data = r.json()
-        for stat_group in data.get("stats", []):
-            for split in stat_group.get("splits", []):
-                person = split.get("player", {})
-                name = person.get("fullName", "")
-                stat = split.get("stat", {})
-                ip_str = stat.get("inningsPitched", "0") or "0"
-                try: ip = float(ip_str)
-                except: ip = 0
-                gs_val = int(stat.get("gamesStarted", 0) or 0)
-                hr9_str = stat.get("homeRunsPer9", "0") or "0"
-                try: hr9 = float(hr9_str)
-                except: hr9 = 0
-                era_str = stat.get("era", "0") or "0"
-                try: era = float(era_str)
-                except: era = 0
-                k9_str = stat.get("strikeoutsPer9Inn", "0") or "0"
-                try: k9 = float(k9_str) if k9_str not in ("-.--","") else 0
-                except: k9 = 0
-                avg_ip = round(ip / gs_val, 1) if gs_val > 0 else 5.0
-                if name:
-                    ip_map[name.lower()] = {"ip": ip, "hr9": hr9, "era": era, "k9": k9, "gs": gs_val, "avg_ip": avg_ip, "name": name}
-        print(f"Fetched IP data for {len(ip_map)} pitchers from MLB Stats API")
-        # Supplemental leaders fallback if stats endpoint is sparse
-        if len(ip_map) < 5:
-            print("Stats endpoint sparse, supplementing with leaders endpoint...")
-            url2 = (f"{MLB_API}/stats/leaders?leaderCategories=inningsPitched"
-                    f"&season={season}&sportId=1&limit=500&statGroup=pitching&gameType=R")
-            async with httpx.AsyncClient(timeout=20) as client:
-                r2 = await client.get(url2)
-                data2 = r2.json()
-            for cat in data2.get("leagueLeaders", []):
-                for leader in cat.get("leaders", []):
-                    person = leader.get("person", {})
-                    name = person.get("fullName", "")
-                    ip = float(leader.get("value", 0) or 0)
-                    nl = name.lower()
-                    if name and nl not in ip_map:
-                        ip_map[nl] = {"ip": ip, "hr9": 0, "era": 0, "name": name}
-        return ip_map
-    except Exception as e:
-        print(f"MLB Stats IP fetch error: {e}")
-        import traceback; traceback.print_exc()
-        return {}
-
-async def fetch_last5_games_batting():
-    """Fetch last 5 games batting stats from MLB Stats API for all active hitters"""
-    try:
-        url = (f"{MLB_API}/stats?stats=lastXGames&lastXGames=5&group=hitting&gameType=R"
-               f"&season={current_season()}&playerPool=All&limit=2000")
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(url)
-            data = r.json()
-        l5g_map = {}
-        for stat_group in data.get("stats", []):
-            for split in stat_group.get("splits", []):
-                person = split.get("player", {})
-                name = person.get("fullName", "")
-                stat = split.get("stat", {})
-                if not name: continue
-                try:
-                    ab = int(stat.get("atBats", 0) or 0)
-                    hr = int(stat.get("homeRuns", 0) or 0)
-                    slg_str = stat.get("slg", "0") or "0"
-                    slg = float(slg_str) if slg_str not in (".---", "", None) else 0.0
-                    avg_str = stat.get("avg", "0") or "0"
-                    avg = float(avg_str) if avg_str not in (".---", "", None) else 0.0
-                    pa = int(stat.get("plateAppearances", 0) or 0)
-                    so = int(stat.get("strikeOuts", 0) or 0)
-                    iso = round(slg - avg, 3) if slg > 0 else 0.0
-                    l5g_map[name.lower()] = {
-                        "name": name, "ab": ab, "pa": pa,
-                        "hr": hr, "slg": slg, "avg": avg, "iso": iso,
-                        "k_pct": round(so / max(pa, 1) * 100, 1) if pa > 0 else 0.0,
-                    }
-                except Exception: continue
-        print(f"Fetched last-5-games stats for {len(l5g_map)} batters")
-        return l5g_map
-    except Exception as e:
-        print(f"Last 5 games fetch error: {e}")
-        import traceback; traceback.print_exc()
-        return {}
-
-async def fetch_last8d_hr():
-    """Fetch last 8 games full batting stats from MLB Stats API.
-    Reliable rolling window — Savant date filtering is broken for many players.
-    Returns ISO, SLG, AVG, K%, HR, PA for each batter over their last 8 games."""
-    try:
-        url = (f"{MLB_API}/stats?stats=lastXGames&lastXGames=8&group=hitting&gameType=R"
-               f"&season={current_season()}&playerPool=All&limit=2000")
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(url)
-            data = r.json()
-        l8d_hr_map = {}
-        for stat_group in data.get("stats", []):
-            for split in stat_group.get("splits", []):
-                person = split.get("player", {})
-                name = person.get("fullName", "")
-                stat = split.get("stat", {})
-                if not name: continue
-                try:
-                    hr  = int(stat.get("homeRuns", 0) or 0)
-                    pa  = int(stat.get("plateAppearances", 0) or 0)
-                    ab  = int(stat.get("atBats", 0) or 0)
-                    so  = int(stat.get("strikeOuts", 0) or 0)
-                    slg_str = stat.get("slg", "0") or "0"
-                    slg = float(slg_str) if slg_str not in (".---","") else 0.0
-                    avg_str = stat.get("avg", "0") or "0"
-                    avg = float(avg_str) if avg_str not in (".---","") else 0.0
-                    iso = round(slg - avg, 3) if slg > 0 else 0.0
-                    k_pct = round(so / max(pa, 1) * 100, 1) if pa > 0 else 0.0
-                    l8d_hr_map[name.lower()] = {
-                        "hr": hr, "pa": pa, "ab": ab,
-                        "slg": slg, "avg": avg, "iso": iso,
-                        "k_pct": k_pct, "name": name,
-                    }
-                except Exception: continue
-        print(f"Fetched last-8-games stats for {len(l8d_hr_map)} batters")
-        return l8d_hr_map
-    except Exception as e:
-        print(f"Last 8 games fetch error: {e}")
-        return {}
-
-async def fetch_batter_games():
-    """Fetch season games played + PA per batter from MLB Stats API for avg PA/game calculation"""
-    try:
-        url = (f"{MLB_API}/stats?stats=season&group=hitting&gameType=R"
-               f"&season={current_season()}&playerPool=All&limit=2000")
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(url)
-            data = r.json()
-        games_map = {}
-        for stat_group in data.get("stats", []):
-            for split in stat_group.get("splits", []):
-                person = split.get("player", {})
-                name = person.get("fullName", "")
-                stat = split.get("stat", {})
-                if not name: continue
-                try:
-                    games = int(stat.get("gamesPlayed", 0) or 0)
-                    pa = int(stat.get("plateAppearances", 0) or 0)
-                    ab = int(stat.get("atBats", 0) or 0)
-                    if games > 0:
-                        games_map[name.lower()] = {
-                            "games": games,
-                            "pa": pa,
-                            "ab": ab,
-                            "avg_pa_per_game": round(pa / games, 2),
-                            "avg_ab_per_game": round(ab / games, 2),
-                            "name": name,
-                        }
-                except Exception: continue
-        print(f"Fetched games played data for {len(games_map)} batters")
-        return games_map
-    except Exception as e:
-        print(f"Batter games fetch error: {e}")
-        return {}
-
-async def fetch_splits_mlb(season=2026):
-    """Fetch batter and pitcher splits by handedness from MLB Stats API statSplits"""
-    results = {
-        "bat_vs_lhp": [], "bat_vs_rhp": [],
-        "pit_vs_lhh": [], "pit_vs_rhh": [],
-    }
-    try:
-        configs = [
-            ("hitting",  "vl", "bat_vs_lhp"),
-            ("hitting",  "vr", "bat_vs_rhp"),
-            ("pitching", "vl", "pit_vs_lhh"),
-            ("pitching", "vr", "pit_vs_rhh"),
-        ]
-        for group, sit_code, cache_key in configs:
-            url = (f"{MLB_API}/stats?stats=statSplits&group={group}&gameType=R"
-                   f"&season={season}&sportId=1&playerPool=ALL&limit=2000&sitCodes={sit_code}")
-            async with httpx.AsyncClient(timeout=30) as client:
-                r = await client.get(url)
-                data = r.json()
-            for stat_group in data.get("stats", []):
-                for split in stat_group.get("splits", []):
-                    person = split.get("player", {})
-                    name = person.get("fullName", "")
-                    stat = split.get("stat", {})
-                    if not name: continue
-                    try:
-                        pa  = int(stat.get("battersFaced", 0) or stat.get("plateAppearances", 0) or 0)
-                        hr  = int(stat.get("homeRuns", 0) or 0)
-                        so  = int(stat.get("strikeOuts", 0) or 0)
-                        ab  = int(stat.get("atBats", 0) or 0)
-                        tb_str = stat.get("totalBases", "0") or "0"
-                        try: tb = int(tb_str)
-                        except: tb = 0
-                        slg_str = stat.get("slg", ".000") or ".000"
-                        try: slg = float(slg_str) if slg_str not in (".---","") else 0.0
-                        except: slg = round(tb / max(ab, 1), 3) if ab > 0 else 0.0
-                        avg_str = stat.get("avg", ".000") or ".000"
-                        try: avg = float(avg_str) if avg_str not in (".---","") else 0.0
-                        except: avg = 0.0
-                        iso  = round(slg - avg, 3) if slg > 0 else 0.0
-                        obp_str = stat.get("obp", ".000") or ".000"
-                        try: obp = float(obp_str) if obp_str not in (".---","") else 0.0
-                        except: obp = 0.0
-                        k_pct = round(so / max(pa, 1) * 100, 1) if pa > 0 else 0.0
-                        ip_str = stat.get("inningsPitched", "0") or "0"
-                        try: ip = float(ip_str)
-                        except: ip = pa / 4.0
-                        # Use pre-calculated HR/9 if available
-                        hr9_str = stat.get("homeRunsPer9", "0") or "0"
-                        try: hr9 = float(hr9_str) if hr9_str not in ("-.--","") else 0.0
-                        except: hr9 = round((hr / max(ip, 0.1)) * 9, 2) if ip > 0 else 0.0
-                        results[cache_key].append({
-                            "name":              name.strip(),
-                            "pa": pa, "ab": ab, "hr": hr,
-                            "slg": slg, "iso": iso, "avg": avg,
-                            "woba": obp,  # OBP as wOBA proxy
-                            "k_pct": k_pct,
-                            "hr9": hr9, "ip": round(ip, 1),
-                            "hard_hit_pct":      0,
-                            "barrel_pct_allowed": 0,
-                            "barrel_pct":        0,
-                        })
-                    except Exception:
-                        continue
-            print(f"{cache_key}: {len(results[cache_key])} rows (MLB statSplits sitCode={sit_code})")
-    except Exception as e:
-        print(f"MLB statSplits error: {e}")
-        import traceback; traceback.print_exc()
-    return results
-
-async def fetch_team_stats(season=2026):
-    """Fetch team hitting and pitching stats from MLB Stats API"""
-    team_hitting = {}
-    team_pitching = {}
-    try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            # Team hitting
-            r = await client.get(f"{MLB_API}/teams/stats?stats=season&group=hitting&gameType=R&season={season}&sportId=1")
-            data = r.json()
-            for rec in data.get("stats", [{}])[0].get("splits", []):
-                t = rec.get("team", {})
-                s = rec.get("stat", {})
-                name = t.get("name", "")
-                if not name: continue
-                pa = int(s.get("plateAppearances", 0) or 0)
-                g  = int(s.get("gamesPlayed", 1) or 1)
-                team_hitting[name] = {
-                    "runs_per_g":  round(float(s.get("runs", 0) or 0) / max(g, 1), 2),
-                    "hr_per_g":    round(float(s.get("homeRuns", 0) or 0) / max(g, 1), 2),
-                    "avg":         float(s.get("avg", ".000").replace(".---", "0") or 0),
-                    "obp":         float(s.get("obp", ".000").replace(".---", "0") or 0),
-                    "slg":         float(s.get("slg", ".000").replace(".---", "0") or 0),
-                    "k_pct":       round(float(s.get("strikeOuts", 0) or 0) / max(pa, 1) * 100, 1),
-                    "games":       g,
-                }
-            # Team pitching
-            r = await client.get(f"{MLB_API}/teams/stats?stats=season&group=pitching&gameType=R&season={season}&sportId=1")
-            data = r.json()
-            for rec in data.get("stats", [{}])[0].get("splits", []):
-                t = rec.get("team", {})
-                s = rec.get("stat", {})
-                name = t.get("name", "")
-                if not name: continue
-                g = int(s.get("gamesPlayed", 1) or 1)
-                ip_str = s.get("inningsPitched", "0") or "0"
-                try: ip = float(ip_str)
-                except: ip = 0
-                team_pitching[name] = {
-                    "era":         float(s.get("era", "4.50").replace("-.--", "4.50") or 4.50),
-                    "whip":        float(s.get("whip", "1.30").replace("-.--", "1.30") or 1.30),
-                    "hr_per_g":    round(float(s.get("homeRuns", 0) or 0) / max(g, 1), 2),
-                    "hr9":         round(float(s.get("homeRuns", 0) or 0) / max(ip, 1) * 9, 2) if ip > 0 else 1.1,
-                    "k_per_9":     float(s.get("strikeoutsPer9Inn", "8.0").replace("-.--", "8.0") or 8.0),
-                    "runs_per_g":  round(float(s.get("runs", 0) or 0) / max(g, 1), 2),
-                    "games":       g,
-                }
-        _cache["team_hitting"]  = team_hitting
-        _cache["team_pitching"] = team_pitching
-        print(f"team_hitting: {len(team_hitting)} teams, team_pitching: {len(team_pitching)} teams")
-
-        # Fetch reliever-only stats — try pitcherTypes=RP, fallback to team pitching
-        try:
-            bullpen_stats = {}
-            r_bp = await client.get(f"{MLB_API}/teams/stats?stats=season&group=pitching&gameType=R&season={season}&sportId=1&pitcherTypes=RP")
-            if r_bp.is_success:
-                bp_data = r_bp.json()
-                for rec in bp_data.get("stats", [{}])[0].get("splits", []):
-                    t = rec.get("team", {})
-                    s = rec.get("stat", {})
-                    name = t.get("name", "")
-                    if not name: continue
-                    ip_str = s.get("inningsPitched", "0") or "0"
-                    try: ip = float(ip_str)
-                    except: ip = 0
-                    bullpen_stats[name] = {
-                        "era":  float(s.get("era", "4.50").replace("-.--", "4.50") or 4.50),
-                        "hr9":  round(float(s.get("homeRuns", 0) or 0) / max(ip, 1) * 9, 2) if ip > 0 else 1.2,
-                        "whip": float(s.get("whip", "1.30").replace("-.--", "1.30") or 1.30),
-                    }
-            if bullpen_stats:
-                _cache["team_bullpen"] = bullpen_stats
-                print(f"team_bullpen: {len(bullpen_stats)} teams via RP filter")
-            else:
-                # Fallback — use team pitching as proxy for bullpen
-                _cache["team_bullpen"] = {k: {"era": v.get("era", 4.50), "hr9": v.get("hr9", 1.2), "whip": 1.30}
-                                           for k, v in team_pitching.items()}
-                print(f"team_bullpen: using team pitching as fallback ({len(team_pitching)} teams)")
-        except Exception as e:
-            print(f"Bullpen stats error: {e}")
-            _cache["team_bullpen"] = {k: {"era": v.get("era", 4.50), "hr9": v.get("hr9", 1.2), "whip": 1.30}
-                                       for k, v in team_pitching.items()}
-    except Exception as e:
-        print(f"Team stats error: {e}")
-        import traceback; traceback.print_exc()
-
-async def load_all_savant_data():
-    """Fetch all data from Baseball Savant + FanGraphs via pybaseball"""
-    print("Loading data from Baseball Savant...")
-
-    # Start pybaseball load in background thread (non-blocking)
-    async with httpx.AsyncClient(timeout=60) as client:
-        # Batter 2026
-        df = await fetch_savant_csv(savant_batter_url(min_pa=10), client)
-        if not df.empty:
-            _cache["bat_2026"] = calc_batter_stats(df)
-            print(f"bat_2026: {len(_cache['bat_2026'])} rows")
-
-        # Batter 2025
-        # bat_2025 removed — 2026-only model
-
-        # Batter 8d — aggregated stats per player (group_by=name)
-        df = await fetch_savant_csv(savant_8d_url(), client)
-        if not df.empty:
-            _cache["bat_8d"] = calc_statcast_8d(df)
-            print(f"bat_8d: {len(_cache['bat_8d'])} rows")
-        else:
-            print("bat_8d: 0 rows")
-
-        # Contact log fetched separately in refresh_8d to avoid startup timeout
-
-        # Pitcher 2026
-        df = await fetch_savant_csv(savant_pitcher_url(min_pa=5), client)
-        if not df.empty:
-            _cache["pit_2026"] = calc_pitcher_stats(df)
-            print(f"pit_2026: {len(_cache['pit_2026'])} rows")
-
-        # Pitcher 2025
-        # pit_2025 removed — 2026-only model
-
-        # Pitch arsenal - pitcher
-        await asyncio.sleep(3)
-        df = await fetch_savant_csv(savant_pitch_arsenal_url("pitcher", year=current_season(), min_pa=1), client)
-        if not df.empty:
-            _cache["pit_arsenal"] = parse_player_name(df)
-            print(f"pit_arsenal: {len(_cache['pit_arsenal'])} rows")
-        else:
-            print("pit_arsenal: 0 rows")
-
-        # Pitch arsenal - batter
-        await asyncio.sleep(3)
-        df = await fetch_savant_csv(savant_pitch_arsenal_url("batter", year=current_season(), min_pa=1), client)
-        if not df.empty:
-            _cache["bat_arsenal"] = parse_player_name(df)
-            print(f"bat_arsenal: {len(_cache['bat_arsenal'])} rows")
-        else:
-            print("bat_arsenal: 0 rows")
-
-    # Fetch all handedness splits via MLB Stats API
-    splits = await fetch_splits_mlb(current_season())
-    for key, rows in splits.items():
-        if rows:
-            df_split = pd.DataFrame(rows)
-            _cache[key] = df_split
-            print(f"{key}: {len(df_split)} rows")
-
-    # Pitcher IP from MLB Stats API
-    ip_data = await fetch_pitcher_ip(current_season())
-    _cache["player_ip"] = ip_data
-
-    # Last 5 games batting from MLB Stats API
-    l5g_data = await fetch_last5_games_batting()
-    _cache["bat_l5g"] = l5g_data
-
-    l8d_hr_data = await fetch_last8d_hr()
-    _cache["bat_l8d_hr"] = l8d_hr_data
-
-    games_data = await fetch_batter_games()
-    _cache["bat_games"] = games_data
-
-    _cache["last_updated"] = datetime.now().isoformat()
-    _cache["ready"] = True
-    print("All data loaded successfully!")
-
-    # Team stats (non-blocking, runs after main data)
-    await fetch_team_stats(current_season())
-
-async def refresh_8d():
-    """Refresh 8-day data — aggregated stats + contact log"""
-    async with httpx.AsyncClient(timeout=60) as client:
-        df = await fetch_savant_csv(savant_8d_url(), client)
-        if not df.empty:
-            agg = calc_statcast_8d(df)
-            if not agg.empty:
-                _cache["bat_8d"] = agg
-                print(f"bat_8d refreshed: {len(agg)} players")
-        await asyncio.sleep(2)
-        df_contact = await fetch_savant_csv(savant_contact_log_url(), client)
-        if not df_contact.empty:
-            _build_contact_log(df_contact)
-            print(f"contact_log refreshed: {len(_contact_log)} players")
-    l5g_data = await fetch_last5_games_batting()
-    if l5g_data:
-        _cache["bat_l5g"] = l5g_data
-        print(f"bat_l5g refreshed: {len(l5g_data)} players")
-    l8d_hr_data = await fetch_last8d_hr()
-    if l8d_hr_data:
-        _cache["bat_l8d_hr"] = l8d_hr_data
-        print(f"bat_l8d_hr refreshed: {len(l8d_hr_data)} players")
-    _cache["last_8d_update"] = datetime.now().isoformat()
-
-async def daily_refresh_loop():
-    """Run in background — check every hour for scheduled tasks"""
-    while True:
-        now = datetime.now()
-        await asyncio.sleep(3600)  # check every hour
-        if now.hour == 7:
-            try:
-                await load_all_savant_data()
-            except Exception as e:
-                print(f"Daily refresh error: {e}")
-        # Hourly lineup confirmation check — saves top 8 per game as lineups confirm
-        # Runs every hour 10am-8pm ET, replacing noon-only save
-        if 10 <= now.hour <= 20:
-            try:
-                await check_lineup_confirmations()
-            except Exception as e:
-                print(f"Lineup confirmation error: {e}")
-        # Record results at 2am ET — catches most games
-        if now.hour == 2:
-            try:
-                yesterday = (date.today() - timedelta(days=1)).isoformat()
-                await record_results(yesterday)
-                await record_parlay_results(yesterday)
-            except Exception as e:
-                print(f"Result recording error: {e}")
-        # Retrain RF + XGBoost at 3am ET daily (after results are in)
-        if now.hour == 3:
-            try:
-                print(f"Nightly retrain — Round {get_rotation_round()} Day {get_rotation_day()}")
-                await recalibrate_model()
-                await train_xgboost()
-            except Exception as e:
-                print(f"Nightly retrain error: {e}")
-        # 4am second pass — catches West Coast late games (end ~12:30am PT = 3:30am ET)
-        if now.hour == 4:
-            try:
-                yesterday = (date.today() - timedelta(days=1)).isoformat()
-                print("4am second pass — patching West Coast late game results")
-                await record_results(yesterday)
-                await record_parlay_results(yesterday)
-            except Exception as e:
-                print(f"4am result recording error: {e}")
-        # Save daily model log at 4am ET
-        if now.hour == 4:
-            try:
-                await save_model_log(_model_weights)
-            except Exception as e:
-                print(f"Model log error: {e}")
-
-# ── GitHub Storage ──
-async def github_get_file(path: str):
-    """Get a file from GitHub repo, returns (content_str, sha) or (None, None)"""
-    if not GITHUB_TOKEN: return None, None
-    try:
-        url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{path}"
-        headers = {"Authorization": f"token {GITHUB_TOKEN}", "Accept": "application/vnd.github.v3+json"}
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(url, headers=headers)
-        if r.status_code == 404: return None, None
-        if not r.is_success: return None, None
-        data = r.json()
-        import base64
-        content = base64.b64decode(data["content"]).decode("utf-8")
-        return content, data["sha"]
-    except Exception as e:
-        print(f"GitHub get error: {e}")
-        return None, None
-
-async def github_put_file(path: str, content: str, message: str, sha: str = None):
-    """Create or update a file in GitHub repo"""
-    if not GITHUB_TOKEN:
-        print("No GITHUB_TOKEN set — skipping GitHub write")
-        return False
-    try:
-        import base64
-        url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{path}"
-        headers = {"Authorization": f"token {GITHUB_TOKEN}", "Accept": "application/vnd.github.v3+json"}
-        body = {
-            "message": message,
-            "content": base64.b64encode(content.encode("utf-8")).decode("utf-8"),
-        }
-        if sha: body["sha"] = sha
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.put(url, headers=headers, json=body)
-        if r.is_success:
-            print(f"GitHub write OK: {path}")
-            return True
-        print(f"GitHub write failed {r.status_code}: {r.text[:200]}")
-        return False
-    except Exception as e:
-        print(f"GitHub put error: {e}")
-        return False
-
-async def save_daily_predictions():
-    """
-    Save today's top 8 predictions per game to GitHub.
-    Only saves games with CONFIRMED lineups — never projected.
-    Merges with existing file so confirmed games accumulate throughout the day.
-    Called hourly so games get added as lineups confirm.
-    """
-    if not _cache["ready"]: return
-
-    # ── Ensure 8d data is fresh before saving ──
-    needs_refresh = False
-    last_8d = _cache.get("last_8d_update")
-    if not last_8d:
-        needs_refresh = True
-    else:
-        try:
-            from datetime import datetime as dt
-            last = dt.fromisoformat(last_8d)
-            age_hours = (dt.now() - last).total_seconds() / 3600
-            if age_hours > 3:
-                needs_refresh = True
-        except: needs_refresh = True
-
-    if needs_refresh:
-        print("save_daily_predictions: 8d data stale — refreshing before save")
-        await refresh_8d()
-        await asyncio.sleep(30)  # let it populate
-    today = date.today().isoformat()
-    path  = f"data/predictions/{today}.json"
-
-    # Load existing file — we merge, not overwrite
-    # This way confirmed games accumulate as lineups post throughout the day
-    import json
-    existing, sha = await github_get_file(path)
-    existing_records = []
-    already_confirmed_games = set()
-    if existing:
-        try:
-            existing_records = json.loads(existing)
-            # Don't re-save games that already have confirmed records
-            for r in existing_records:
-                if r.get("lineup_source") == "confirmed":
-                    already_confirmed_games.add(r.get("home_team","") + r.get("opp_pitcher",""))
-            # If outcomes already recorded, don't touch this file
-            if any(r.get("hit_hr") is not None for r in existing_records):
-                print(f"Predictions already have outcomes for {today} — skipping")
-                return
-        except: pass
-
-    try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
-            data = r.json()
-        new_records = []
-        games_confirmed = 0
-        games_skipped_projected = 0
-        for game_date in data.get("dates", []):
-            for game in game_date.get("games", []):
-                if game.get("status", {}).get("abstractGameState") == "Final": continue
-                gid = game["gamePk"]
-                home_team = game["teams"]["home"]["team"]["name"]
-                away_team = game["teams"]["away"]["team"]["name"]
-                away_team_id = game["teams"]["away"]["team"]["id"]
-                home_team_id = game["teams"]["home"]["team"]["id"]
-                away_p = game["teams"]["away"].get("probablePitcher", {})
-                home_p = game["teams"]["home"].get("probablePitcher", {})
-                gtime = game.get("gameDate", "")
-
-                away_p_hand = home_p_hand = "R"
-                if away_p.get("id"):
-                    info = await fetch_player_hand(away_p.get("id"))
-                    away_p_hand = info.get("pitch_hand", "R")
-                if home_p.get("id"):
-                    info = await fetch_player_hand(home_p.get("id"))
-                    home_p_hand = info.get("pitch_hand", "R")
-
-                stadium = STADIUMS.get(home_team, {})
-                temp, wind_speed, wind_dir = 70, 0, 0
-                if not stadium.get("dome") and stadium.get("lat"):
-                    temp, wind_speed, wind_dir = await fetch_weather(stadium["lat"], stadium["lon"], gtime)
-
-                # Try confirmed lineup first, fall back to projected
-                lineup_away, lineup_home = [], []
-                try:
-                    async with httpx.AsyncClient(timeout=15) as client:
-                        r2 = await client.get(f"{MLB_API}/game/{gid}/boxscore")
-                        box = r2.json()
-                    teams = box.get("teams", {})
-                    def extract(side):
-                        players = teams.get(side, {}).get("players", {})
-                        return sorted([p for p in players.values() if p.get("battingOrder") and int(p["battingOrder"]) <= 900],
-                                      key=lambda x: int(x["battingOrder"]))[:9]
-                    ca, ch = extract("away"), extract("home")
-                    if ca: lineup_away = ca
-                    if ch: lineup_home = ch
-                except Exception: pass
-
-                lineup_away_source = "confirmed"
-                lineup_home_source = "confirmed"
-                if not lineup_away:
-                    proj, _ = await fetch_projected_lineup(away_team_id, away_team)
-                    lineup_away = proj
-                    lineup_away_source = "projected"
-                if not lineup_home:
-                    proj, _ = await fetch_projected_lineup(home_team_id, home_team)
-                    lineup_home = proj
-                    lineup_home_source = "projected"
-
-                for batters, team, opp_p_name, opp_p_hand, lineup_src in [
-                    (lineup_away, away_team, home_p.get("fullName","TBD"), home_p_hand, lineup_away_source),
-                    (lineup_home, home_team, away_p.get("fullName","TBD"), away_p_hand, lineup_home_source),
-                ]:
-                    # Only save confirmed lineups — never projected
-                    if lineup_src != "confirmed":
-                        games_skipped_projected += 1
-                        continue
-
-                    # Skip games already saved in this file
-                    game_key = home_team + opp_p_name
-                    if game_key in already_confirmed_games:
-                        continue
-
-                    game_candidates = []
-                    for batter in batters:
-                        if "person" in batter:
-                            name = batter.get("person", {}).get("fullName", "")
-                            pid = batter.get("person", {}).get("id")
-                        else:
-                            name = batter.get("name", "")
-                            pid = batter.get("id")
-                        if not name: continue
-                        bat_hand = "R"
-                        if pid:
-                            info = await fetch_player_hand(pid)
-                            bat_hand = info.get("bat_side", "R")
-                        if bat_hand == "S": bat_hand = "L" if opp_p_hand == "R" else "R"
-                        park_factor = get_park_hr_factor(home_team, bat_hand)
-                        wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
-                        hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(
-                            name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult, home_team)
-                        # No threshold — take all batters, select top 8 at end
-                        top_pitches = get_pitcher_top_pitches(opp_p_name)[:2]
-                        pitch1 = top_pitches[0] if len(top_pitches) > 0 else {}
-                        pitch2 = top_pitches[1] if len(top_pitches) > 1 else {}
-                        pitch_score, _ = compute_pitch_matchup(opp_p_name, name)
-                        pa_data = get_avg_pa_per_game(name)
-                        # Raw batter season stats
-                        bc2 = get_batter_stats(name, 2026)
-                        pa26 = bc2.get("pa", 0); pa25 = 0
-                        bwc2 = get_batter_blend_weights(pa26, pa25)
-                        barrel_s = round(blend(bc2.get("barrel_pct",0), 0, bwc2), 1)
-                        la_s     = round(blend(bc2.get("launch_angle",0), 0, bwc2), 1)
-                        ev_s     = round(blend(bc2.get("exit_velo",0), 0, bwc2), 1)
-                        iso_s    = round(blend(bc2.get("iso",0), 0, bwc2), 3)
-                        hh_s     = round(blend(bc2.get("hard_hit_pct",0), 0, bwc2), 1)
-                        k_s      = round(blend(bc2.get("k_pct",0), 0, bwc2), 1)
-                        # Raw batter L8D stats
-                        b8d2 = get_batter_8d(name)
-                        barrel_l8d   = round(b8d2.get("barrel_pct",0), 1)
-                        la_l8d       = round(b8d2.get("launch_angle",0), 1)
-                        ev_l8d       = round(b8d2.get("exit_velo",0), 1)
-                        iso_l8d      = round(b8d2.get("iso",0), 3)
-                        hh_l8d       = round(b8d2.get("hard_hit_pct",0), 1)
-                        pa_l8d       = int(b8d2.get("pa",0))
-                        slg_l8d      = round(b8d2.get("slg",0), 3)
-                        xslg_l8d     = round(b8d2.get("xslg",0), 3)
-                        xslg_gap_l8d = round(b8d2.get("xslg",0) - b8d2.get("slg",0), 3) if b8d2.get("xslg",0) > 0 else 0
-                        xwoba_l8d    = round(b8d2.get("xwoba",0), 3)
-                        bat_speed_l8d = round(b8d2.get("bat_speed",0), 1)
-                        # Raw batter split vs pitcher hand
-                        b_split2   = get_batter_split(name, opp_p_hand)
-                        iso_split  = round(b_split2.get("iso",0), 3)
-                        slg_split  = round(b_split2.get("slg",0), 3)
-                        hr_split   = int(b_split2.get("hr",0))
-                        pa_split   = int(b_split2.get("pa",0))
-                        # Raw pitcher stats
-                        pc2  = get_pitcher_stats(opp_p_name, 2026)
-                        ip26 = pc2.get("ip",0)
-                        pwc2 = get_pitcher_blend_weights(ip26, 0)
-                        pit_hr9_s   = round(blend(pc2.get("hr9",0), 0), 2)
-                        pit_era_s   = round(blend(pc2.get("era",0), 0), 2)
-                        pit_hh_s    = round(blend(pc2.get("hard_hit_pct",0), 0), 1)
-                        pit_k9_s    = round(blend(pc2.get("k9",0), 0), 1)
-                        # Pitcher split vs batter hand
-                        p_split2    = get_pitcher_split(opp_p_name, bat_hand)
-                        pit_hr9_vs  = round(p_split2.get("hr9",0), 2)
-                        pit_slg_vs  = round(p_split2.get("slg",0), 3)
-                        pit_k_vs    = round(p_split2.get("k_pct",0), 1)
-                        pit_ip_vs   = round(p_split2.get("ip",0), 1)
-                        game_candidates.append({
-                            # Identity
-                            "date": today, "name": name, "team": team,
-                            "opp_pitcher": opp_p_name, "opp_pitcher_hand": opp_p_hand,
-                            "bat_hand": bat_hand, "home_team": home_team,
-                            "lineup_source": lineup_src,
-                            # Model output
-                            "model_hr_pct": hr_prob, "hit_hr": None,
-                            # ── BATTER SEASON ──
-                            "barrel_pct_season": barrel_s,
-                            "la_season": la_s,
-                            "ev_season": ev_s,
-                            "iso_season": iso_s,
-                            "hard_hit_season": hh_s,
-                            "k_pct_season": k_s,
-                            "hr_season": int(bc2.get("hr",0)),
-                            "pa_season": pa26,
-                            # ── BATTER L8D ──
-                            "barrel_pct_l8d": barrel_l8d,
-                            "la_l8d": la_l8d,
-                            "ev_l8d": ev_l8d,
-                            "iso_l8d": iso_l8d,
-                            "hard_hit_l8d": hh_l8d,
-                            "pa_l8d": pa_l8d,
-                            "l8d_hr": get_l8d_hr(name),
-                            "slg_l8d": slg_l8d,
-                            "xslg_l8d": xslg_l8d,
-                            "xslg_gap_l8d": xslg_gap_l8d,
-                            "xwoba_l8d": xwoba_l8d,
-                            "bat_speed_l8d": bat_speed_l8d,
-                            # ── BATTER SPLIT vs PITCHER HAND ──
-                            "iso_vs_hand": iso_split,
-                            "slg_vs_hand": slg_split,
-                            "hr_vs_hand": hr_split,
-                            "pa_vs_hand": pa_split,
-                            # ── MODEL USED (blended) ──
-                            "barrel_pct_used": breakdown.get("barrel_use",0),
-                            "la_used": breakdown.get("la_use",0),
-                            # ── PITCHER SEASON ──
-                            "pit_hr9_season": pit_hr9_s,
-                            "pit_era_season": pit_era_s,
-                            "pit_hard_hit_season": pit_hh_s,
-                            "pit_k9_season": pit_k9_s,
-                            "pit_ip_season": round(ip26,1),
-                            # ── PITCHER SPLIT vs BATTER HAND ──
-                            "pit_hr9_vs_hand": pit_hr9_vs,
-                            "pit_slg_vs_hand": pit_slg_vs,
-                            "pit_k_vs_hand": pit_k_vs,
-                            "pit_ip_vs_hand": pit_ip_vs,
-                            # ── CONTEXT ──
-                            "park_factor": breakdown.get("park_factor",1.0),
-                            "weather_mult": breakdown.get("weather_mult",1.0),
-                            "bullpen_hr9": breakdown.get("bullpen_hr9",1.2),
-                            "bullpen_vuln": breakdown.get("bullpen_vuln",1.0),
-                            # ── MODEL MULTIPLIERS ──
-                            "barrel_mult": breakdown.get("barrel_mult",1.0),
-                            "la_mult": breakdown.get("la_mult",1.0),
-                            "pit_vuln_mult": breakdown.get("pit_vuln_mult",1.0),
-                            "bat_platoon_mult": breakdown.get("bat_platoon_mult",1.0),
-                            "pit_platoon_mult": breakdown.get("pit_platoon_mult",1.0),
-                            "hot_cold_mult": breakdown.get("hot_cold_mult",1.0),
-                            "k_mult": breakdown.get("k_mult",1.0),
-                            # ── PITCH DATA ──
-                            "pitch_matchup_score": round(pitch_score,2),
-                            "pitch1_type": pitch1.get("name",""),
-                            "pitch1_usage": pitch1.get("usage",0),
-                            "pitch1_delta": round(pitch1.get("batter_rv",0) - pitch1.get("pit_rv",0), 2) if pitch1 else 0,
-                            "pitch2_type": pitch2.get("name",""),
-                            "pitch2_usage": pitch2.get("usage",0),
-                            "pitch2_delta": round(pitch2.get("batter_rv",0) - pitch2.get("pit_rv",0), 2) if pitch2 else 0,
-                            "combined_pitch_delta": round(
-                                (pitch1.get("usage",0)/100 * (pitch1.get("batter_rv",0) - pitch1.get("pit_rv",0)) if pitch1 else 0) +
-                                (pitch2.get("usage",0)/100 * (pitch2.get("batter_rv",0) - pitch2.get("pit_rv",0)) if pitch2 else 0), 2
-                            ),
-                            # ── OPPORTUNITY ──
-                            "games_played": pa_data.get("games",0),
-                            # ── ROTATION METADATA ──
-                            "rotation_round": get_rotation_round(),
-                            "rotation_day": get_rotation_day(),
-                            # ── ROUND 2 CANDIDATES (stored from day 1, evaluated at day 45) ──
-                            "fb_pct_season": round(blend(bc2.get("fb_pct",0), 0, bwc2), 1),
-                            "pull_pct_season": round(blend(bc2.get("pull_pct",0), 0, bwc2), 1),
-                            "pit_fb_pct_allowed": round(blend(pc2.get("fb_pct",0), 0), 1),
-                            "hard_hit_l8d": hh_l8d,
-                            "k_pct_l8d": round(b8d2.get("k_pct",0), 1),
-                            # ── ROUND 3 CANDIDATES ──
-                            "pit_era_season": pit_era_s,
-                            "pit_era_diff": round(pit_era_s - 4.20, 2) if pit_era_s > 0 else 0,
-                            "pit_hr_fb_pct": round(blend(pc2.get("hr_fb_pct",0), 0), 1),
-                            "lineup_k_pct": 0,  # populated at game time in future
-                            # ── ROUND 4 CANDIDATES ──
-                            "pit_k9_season": pit_k9_s,
-                            # ── XGBOOST FEATURES ──
-                            "day_of_season": (date.today() - date(2026, 3, 20)).days,
-                        })
-                    # Take top 8 from this game side by model probability
-                    top8 = sorted(game_candidates, key=lambda x: x["model_hr_pct"], reverse=True)[:8]
-                    new_records.extend(top8)
-                    if top8:
-                        games_confirmed += 1
-                        print(f"  Confirmed top {len(top8)} for {team} vs {opp_p_name}")
-        # Merge new confirmed records with existing
-        all_records = existing_records + new_records
-        if not new_records:
-            print(f"No new confirmed lineups found for {today} — {games_skipped_projected} games still projected")
-            return
-        content = json.dumps(all_records, indent=2)
-        await github_put_file(path, content,
-                              f"predictions: {today} ({len(all_records)} total, +{len(new_records)} new confirmed)",
-                              sha)
-        print(f"Saved {len(new_records)} new confirmed predictions for {today} "
-              f"({games_confirmed} games, {games_skipped_projected} still projected)")
-    except Exception as e:
-        print(f"save_daily_predictions error: {e}")
-        import traceback; traceback.print_exc()
-
-async def check_lineup_confirmations():
-    """
-    Runs hourly — checks today's games for newly confirmed lineups.
-    When a game's lineup is confirmed, saves top 8 for that game.
-    Merges with existing saved records without duplicating.
-    """
-    if not _cache["ready"] or not GITHUB_TOKEN: return
-    today = date.today().isoformat()
-    path  = f"data/predictions/{today}.json"
-
-    # Load existing saved records to avoid duplicates
-    existing_content, sha = await github_get_file(path)
-    import json
-    existing_records = []
-    already_saved_games = set()
-    if existing_content:
-        try:
-            existing_records = json.loads(existing_content)
-            # Track which game/team combos already saved
-            for r in existing_records:
-                if r.get("lineup_source") == "confirmed":
-                    key = f"{r.get('team','')}-{r.get('opp_pitcher','')}"
-                    already_saved_games.add(key)
-        except: pass
-
-    try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
-            data = r.json()
-
-        new_records = []
-        for game_date in data.get("dates", []):
-            for game in game_date.get("games", []):
-                state = game.get("status", {}).get("abstractGameState", "")
-                if state == "Final": continue
-
-                gid = game["gamePk"]
-                home_team = game["teams"]["home"]["team"]["name"]
-                away_team = game["teams"]["away"]["team"]["name"]
-                away_team_id = game["teams"]["away"]["team"]["id"]
-                home_team_id = game["teams"]["home"]["team"]["id"]
-                away_p = game["teams"]["away"].get("probablePitcher", {})
-                home_p = game["teams"]["home"].get("probablePitcher", {})
-                gtime = game.get("gameDate", "")
-
-                # Check if confirmed lineup available
-                try:
-                    async with httpx.AsyncClient(timeout=10) as box_client:
-                        r2 = await box_client.get(f"{MLB_API}/game/{gid}/boxscore")
-                        box = r2.json()
-                    teams = box.get("teams", {})
-                    def extract(side):
-                        players = teams.get(side, {}).get("players", {})
-                        return sorted(
-                            [p for p in players.values() if p.get("battingOrder") and int(p["battingOrder"]) <= 900],
-                            key=lambda x: int(x["battingOrder"])
-                        )[:9]
-                    confirmed_away = extract("away")
-                    confirmed_home = extract("home")
-                except: continue
-
-                away_p_hand = home_p_hand = "R"
-                if away_p.get("id"):
-                    info = await fetch_player_hand(away_p.get("id"))
-                    away_p_hand = info.get("pitch_hand", "R")
-                if home_p.get("id"):
-                    info = await fetch_player_hand(home_p.get("id"))
-                    home_p_hand = info.get("pitch_hand", "R")
-
-                stadium = STADIUMS.get(home_team, {})
-                temp, wind_speed, wind_dir = 70, 0, 0
-                if not stadium.get("dome") and stadium.get("lat"):
-                    temp, wind_speed, wind_dir = await fetch_weather(stadium["lat"], stadium["lon"], gtime)
-
-                for batters, team, opp_p_name, opp_p_hand in [
-                    (confirmed_away, away_team, home_p.get("fullName","TBD"), home_p_hand),
-                    (confirmed_home, home_team, away_p.get("fullName","TBD"), away_p_hand),
-                ]:
-                    if not batters: continue
-                    game_key = f"{team}-{opp_p_name}"
-                    if game_key in already_saved_games:
-                        continue  # already saved confirmed lineup for this game
-
-                    game_records = []
-                    for batter in batters:
-                        name = batter.get("person", {}).get("fullName", "")
-                        pid  = batter.get("person", {}).get("id")
-                        if not name: continue
-                        bat_hand = "R"
-                        if pid:
-                            info = await fetch_player_hand(pid)
-                            bat_hand = info.get("bat_side", "R")
-                        if bat_hand == "S": bat_hand = "L" if opp_p_hand == "R" else "R"
-                        park_factor = get_park_hr_factor(home_team, bat_hand)
-                        wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
-                        hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(
-                            name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult, home_team)
-                        # No threshold — take all 9 batters, select top 8 at end
-
-                        bc2 = get_batter_stats(name, 2026)
-                        pa26 = bc2.get("pa", 0)
-                        bwc2 = get_batter_blend_weights(pa26, 0)
-                        b8d2 = get_batter_8d(name)
-                        b_split2 = get_batter_split(name, opp_p_hand)
-                        pc2 = get_pitcher_stats(opp_p_name, 2026)
-                        p_split2 = get_pitcher_split(opp_p_name, bat_hand)
-                        pitch_score, _ = compute_pitch_matchup(opp_p_name, name)
-                        top_pitches = get_pitcher_top_pitches(opp_p_name)[:2]
-                        pitch1 = top_pitches[0] if top_pitches else {}
-                        pitch2 = top_pitches[1] if len(top_pitches) > 1 else {}
-                        pa_data = get_avg_pa_per_game(name)
-
-                        game_records.append({
-                            "date": today, "name": name, "team": team,
-                            "opp_pitcher": opp_p_name, "opp_pitcher_hand": opp_p_hand,
-                            "bat_hand": bat_hand, "home_team": home_team,
-                            "lineup_source": "confirmed",
-                            "model_hr_pct": hr_prob, "hit_hr": None,
-                            "barrel_pct_season": round(bc2.get("barrel_pct",0), 1),
-                            "la_season": round(bc2.get("launch_angle",0), 1),
-                            "ev_season": round(bc2.get("exit_velo",0), 1),
-                            "iso_season": round(bc2.get("iso",0), 3),
-                            "hard_hit_season": round(bc2.get("hard_hit_pct",0), 1),
-                            "k_pct_season": round(bc2.get("k_pct",0), 1),
-                            "hr_season": int(bc2.get("hr",0)),
-                            "pa_season": pa26,
-                            "barrel_pct_l8d": round(b8d2.get("barrel_pct",0), 1),
-                            "la_l8d": round(b8d2.get("launch_angle",0), 1),
-                            "ev_l8d": round(b8d2.get("exit_velo",0), 1),
-                            "iso_l8d": round(b8d2.get("iso",0), 3),
-                            "hard_hit_l8d": round(b8d2.get("hard_hit_pct",0), 1),
-                            "pa_l8d": int(b8d2.get("pa",0)),
-                            "l8d_hr": get_l8d_hr(name),
-                            "slg_l8d": round(b8d2.get("slg",0), 3),
-                            "xslg_l8d": round(b8d2.get("xslg",0), 3),
-                            "xslg_gap_l8d": round(b8d2.get("xslg",0) - b8d2.get("slg",0), 3) if b8d2.get("xslg",0) > 0 else 0,
-                            "xwoba_l8d": round(b8d2.get("xwoba",0), 3),
-                            "bat_speed_l8d": round(b8d2.get("bat_speed",0), 1),
-                            "iso_vs_hand": round(b_split2.get("iso",0), 3),
-                            "slg_vs_hand": round(b_split2.get("slg",0), 3),
-                            "hr_vs_hand": int(b_split2.get("hr",0)),
-                            "pa_vs_hand": int(b_split2.get("pa",0)),
-                            "pit_hr9_season": round(pc2.get("hr9",0), 2),
-                            "pit_era_season": round(pc2.get("era",0), 2),
-                            "pit_hard_hit_season": round(pc2.get("hard_hit_pct",0), 1),
-                            "pit_k9_season": round(pc2.get("k9",0), 1),
-                            "pit_hr9_vs_hand": round(p_split2.get("hr9",0), 2),
-                            "pit_slg_vs_hand": round(p_split2.get("slg",0), 3),
-                            "park_factor": breakdown.get("park_factor",1.0),
-                            "weather_mult": breakdown.get("weather_mult",1.0),
-                            "bullpen_vuln": breakdown.get("bullpen_vuln",1.0),
-                            "bat_platoon_mult": breakdown.get("bat_platoon_mult",1.0),
-                            "pit_platoon_mult": breakdown.get("pit_platoon_mult",1.0),
-                            "pitch_matchup_score": round(pitch_score,2),
-                            "combined_pitch_delta": round(
-                                (pitch1.get("usage",0)/100*(pitch1.get("batter_rv",0)-pitch1.get("pit_rv",0)) if pitch1 else 0) +
-                                (pitch2.get("usage",0)/100*(pitch2.get("batter_rv",0)-pitch2.get("pit_rv",0)) if pitch2 else 0), 2),
-                            "pit_era_diff": round(pc2.get("era",0) - 4.20, 2) if pc2.get("era",0) > 0 else 0,
-                            "pull_pct_season": round(bc2.get("pull_pct",0), 1),
-                            "games_played": pa_data.get("games",0),
-                            "rotation_round": get_rotation_round(),
-                            "rotation_day": get_rotation_day(),
-                            "day_of_season": (date.today() - date(2026, 3, 20)).days,
-                        })
-                    # Collect all confirmed batters — global ranking happens below
-                    new_records.extend(game_records)
-                    if game_records:
-                        print(f"  Lineup confirmed: {team} vs {opp_p_name} — {len(game_records)} batters")
-
-        if new_records:
-            # ── Global ranking — top 100 for training, top 8 for betting ──
-            # Remove existing confirmed records for same games
-            confirmed_keys = {f"{r['team']}-{r['opp_pitcher']}" for r in new_records}
-            kept = [r for r in existing_records
-                    if f"{r.get('team','')}-{r.get('opp_pitcher','')}" not in confirmed_keys]
-
-            # Globally rank ALL confirmed batters today
-            all_confirmed = kept + new_records
-            ranked_all = sorted(all_confirmed, key=lambda x: x.get("model_hr_pct", 0), reverse=True)
-
-            # Top 100 = training data (deep pool, model learns from wide range)
-            top100 = ranked_all[:100]
-
-            # Top 8 = betting record (globally best plays today, not per-game)
-            top8 = ranked_all[:8]
-
-            # Save top 100 to predictions file
-            content = json.dumps(top100, indent=2)
-            await github_put_file(path, content,
-                f"lineups confirmed: {today} ({len(top100)} top100, {len(new_records)} new)", sha)
-
-            # Save top 8 to top8 file
-            top8_path = f"data/top8/{today}.json"
-            existing_top8, top8_sha = await github_get_file(top8_path)
-            await github_put_file(top8_path, json.dumps(top8, indent=2),
-                                  f"top8: {today} ({len(top8)} picks)", top8_sha)
-
-            print(f"Lineup check: top100 saved ({len(top100)} records), top8 saved ({len(top8)} picks)")
-        else:
-            print(f"Lineup check: no new confirmations yet")
-
-    except Exception as e:
-        print(f"check_lineup_confirmations error: {e}")
-        import traceback; traceback.print_exc()
-
-
-async def record_results(target_date: str):
-    """Fetch actual HR results for target_date and update the predictions file"""
-    if not GITHUB_TOKEN: return
-    path = f"data/predictions/{target_date}.json"
-    content, sha = await github_get_file(path)
-    if not content:
-        print(f"No predictions file found for {target_date}")
-        return
-    import json
-    try:
-        records = json.loads(content)
-    except Exception:
-        return
-    # Fetch box scores for that date
-    try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={target_date}&hydrate=team")
-            sched = r.json()
-        hr_hitters = set()
-        actual_ab = {}  # name.lower() -> ab count
-        for game_date in sched.get("dates", []):
-            for game in game_date.get("games", []):
-                game_state    = game.get("status", {}).get("abstractGameState", "")
-                detailed_state = game.get("status", {}).get("detailedState", "")
-                code          = game.get("status", {}).get("statusCode", "")
-                # Skip only games that are clearly not finished
-                not_finished = {"Preview", "Live", "Postponed", "Suspended", "Cancelled", "Warmup"}
-                if game_state in not_finished:
-                    print(f"Skipping game {game.get('gamePk')} — state: {game_state}/{detailed_state}/{code}")
-                    continue
-                print(f"Processing game {game.get('gamePk')} — state: {game_state}/{detailed_state}/{code}")
-                gid = game["gamePk"]
-                try:
-                    async with httpx.AsyncClient(timeout=10) as box_client:
-                        r2 = await box_client.get(f"{MLB_API}/game/{gid}/boxscore")
-                        box = r2.json()
-                    for side in ["away", "home"]:
-                        for _, p in box.get("teams", {}).get(side, {}).get("players", {}).items():
-                            stats = p.get("stats", {}).get("batting", {})
-                            name = p.get("person", {}).get("fullName", "")
-                            if not name: continue
-                            ab = int(stats.get("atBats", 0) or 0)
-                            actual_ab[name.lower()] = ab
-                            if int(stats.get("homeRuns", 0) or 0) > 0:
-                                hr_hitters.add(name.lower())
-                except Exception as box_err:
-                    print(f"Boxscore error for game {gid}: {box_err}")
-                    continue
-        # Update records — patch nulls, fix false negatives (0s that should be 1s),
-        # and fix DNPs that actually hit HRs (West Coast late game timing issue)
-        updated = 0
-        dnp_count = 0
-        for rec in records:
-            nl = rec["name"].lower()
-
-            # Fix DNP records that actually hit a HR — West Coast timing issue
-            if rec.get("hit_hr") == "DNP":
-                hit = nl in hr_hitters
-                if not hit:
-                    last = nl.split()[-1]
-                    hit = any(last in k for k in hr_hitters)
-                if hit:
-                    rec["hit_hr"] = 1
-                    updated += 1
-                    print(f"Corrected DNP→HR: {rec['name']} actually hit a HR")
-                continue
-
-            # Fix false negatives — recorded as 0 but actually hit a HR
-            if rec.get("hit_hr") == 0:
-                hit = nl in hr_hitters
-                if not hit:
-                    last = nl.split()[-1]
-                    hit = any(last in k for k in hr_hitters)
-                if hit:
-                    rec["hit_hr"] = 1
-                    updated += 1
-                    print(f"Corrected 0→HR: {rec['name']} actually hit a HR")
-                continue
-
-            if rec.get("hit_hr") is not None:
-                continue  # already recorded correctly, skip
-            # Handle null records
-            nl2 = rec["name"].lower()
-            ab = actual_ab.get(nl2, 0)
-            if ab == 0:
-                last = nl2.split()[-1]
-                for k, v in actual_ab.items():
-                    if last in k:
-                        ab = v
-                        break
-            hit = nl2 in hr_hitters
-            if not hit:
-                last = nl2.split()[-1]
-                hit = any(last in k for k in hr_hitters)
-            if hit:
-                rec["hit_hr"] = 1
-                rec["actual_ab"] = ab
-                updated += 1
-            elif ab < 2:
-                rec["hit_hr"] = "DNP"
-                rec["actual_ab"] = ab
-                dnp_count += 1
-            else:
-                rec["hit_hr"] = 0
-                rec["actual_ab"] = ab
-                updated += 1
-        content_updated = json.dumps(records, indent=2)
-        await github_put_file(path, content_updated, f"results: {target_date} ({len(hr_hitters)} HRs, {dnp_count} DNP)", sha)
-        print(f"Recorded results for {target_date}: {len(hr_hitters)} HR hitters, {dnp_count} DNP, {updated} records updated")
-    except Exception as e:
-        print(f"record_results error: {e}")
-        import traceback; traceback.print_exc()
-
-def run_async(coro):
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(coro)
-    loop.close()
-
-@app.on_event("startup")
-async def startup_event():
-    threading.Thread(target=run_async, args=(load_all_savant_data(),), daemon=True).start()
-    asyncio.create_task(daily_refresh_loop())
-    asyncio.create_task(load_model_weights())
-    asyncio.create_task(startup_catchup())
-    asyncio.create_task(startup_train_rf())
-    asyncio.create_task(startup_train_xgb())
-
-async def startup_catchup():
-    """On startup:
-    1. Check if yesterday results were missed and record them
-    2. Check if today predictions not saved yet and save them
-    """
-    await asyncio.sleep(60)  # wait for data to load first
-    import json
-
-    # Record yesterday results if missed
-    try:
-        yesterday = (date.today() - timedelta(days=1)).isoformat()
-        ypath = f"data/predictions/{yesterday}.json"
-        ycontent, _ = await github_get_file(ypath)
-        if ycontent:
-            records = json.loads(ycontent)
-            nulls = [r for r in records if r.get("hit_hr") is None]
-            if nulls:
-                print(f"Startup catchup: {len(nulls)} unrecorded results for {yesterday} — recording now")
-                await record_results(yesterday)
-            else:
-                print(f"Startup catchup: {yesterday} results already complete")
-    except Exception as e:
-        print(f"Startup catchup (results) error: {e}")
-
-    # Save today predictions if not yet saved
-    try:
-        today = date.today().isoformat()
-        tpath = f"data/predictions/{today}.json"
-        tcontent, _ = await github_get_file(tpath)
-        if not tcontent:
-            print(f"Startup catchup: no predictions for {today} — saving now")
-            await save_daily_predictions()
-        else:
-            print(f"Startup catchup: {today} predictions already saved")
-    except Exception as e:
-        print(f"Startup catchup (predictions) error: {e}")
-
-# ── Player matching ──
-def fuzzy_match(name: str, df: pd.DataFrame, col="name"):
-    if df is None or df.empty or col not in df.columns:
-        return None
-    nl = name.lower().strip()
-    # Exact match first
-    exact = df[df[col].str.lower().str.strip() == nl]
-    if not exact.empty:
-        return exact.iloc[0]
-    # Last name match
-    parts = nl.split()
-    if not parts: return None
-    last = parts[-1]
-    matches = df[df[col].str.lower().str.contains(last, na=False)]
-    if len(matches) == 1:
-        return matches.iloc[0]
-    if len(matches) > 1:
-        # Try first name too
-        first = parts[0]
-        refined = matches[matches[col].str.lower().str.contains(first, na=False)]
-        if not refined.empty:
-            return refined.iloc[0]
-        # Multiple last name matches, no first name match — too ambiguous, return None
-        # This prevents e.g. "Murakami" matching the wrong player
-        return None
-    return None
-
-def gs(row, *keys, default=0.0):
-    """Get stat from row trying multiple keys"""
-    if row is None:
-        return default
-    for key in keys:
-        val = row.get(key, None)
-        if val is not None and str(val) not in ('nan', 'None', ''):
-            try:
-                return float(val)
-            except:
-                pass
-    return default
-
-# ── Stat getters ──
-def get_batter_stats(name, year=2026):
-    """2026-only. year param kept for call-site compatibility."""
-    df = _cache["bat_2026"]
-    row = fuzzy_match(name, df)
-    if row is None:
-        return {}
-    stats = {
-        "pa": gs(row, "pa"),
-        "barrel_pct": gs(row, "barrel_pct"),
-        "exit_velo": gs(row, "exit_velo"),
-        "launch_angle": gs(row, "launch_angle"),
-        "hard_hit_pct": gs(row, "hard_hit_pct"),
-        "fb_pct": gs(row, "fb_pct"),
-        "pull_pct": gs(row, "pull_pct"),
-        "iso": gs(row, "iso"),
-        "slg_percent": gs(row, "slg_percent"),
-        "batting_avg": gs(row, "batting_avg"),
-        "k_pct": gs(row, "k_pct"),
-        "hr_fb_pct": gs(row, "hr_fb_pct"),
-        "hr": gs(row, "hr"),
-    }
-    return stats
-def get_batter_8d(name):
-    """L8D stats from two sources:
-    1. bat_8d cache — pitch-by-pitch Statcast aggregated by calc_statcast_8d
-       gives: barrel%, EV, LA, hard hit%, bat speed, xwOBA, xSLG, pull%, K%, HR, PA
-    2. bat_l8d_hr cache — MLB API lastXGames=8
-       gives: PA, HR, ISO, SLG, AVG, K% (reliable counting stats)
-    Statcast source is preferred for Statcast metrics, MLB API for counting stats."""
-    # ── Statcast aggregated data (pitch-by-pitch) ──
-    df = _cache["bat_8d"]
-    row = fuzzy_match(name, df)
-
-    # ── MLB API counting stats (reliable) ──
-    nl = name.lower().strip()
-    mlb_data = _cache.get("bat_l8d_hr", {})
-    mlb = mlb_data.get(nl)
-    if not mlb:
-        last = nl.split()[-1]
-        for k, v in mlb_data.items():
-            if last in k: mlb = v; break
-
-    # No data at all
-    if row is None and (not mlb or mlb.get("pa", 0) == 0):
-        return {}
-
-    # Statcast metrics from aggregated pitch-by-pitch
-    barrel_pct = gs(row, "barrel_pct") if row is not None else 0.0
-    exit_velo  = gs(row, "exit_velo")  if row is not None else 0.0
-    launch_angle = gs(row, "launch_angle") if row is not None else 0.0
-    hard_hit_pct = gs(row, "hard_hit_pct") if row is not None else 0.0
-    pull_pct   = gs(row, "pull_pct")   if row is not None else 0.0
-    bat_speed  = gs(row, "bat_speed")  if row is not None else 0.0
-    xwoba      = gs(row, "xwoba")      if row is not None else 0.0
-    xslg       = gs(row, "xslg")       if row is not None else 0.0
-
-    # Counting stats: MLB API primary, Statcast fallback
-    if mlb and mlb.get("pa", 0) > 0:
-        pa    = mlb.get("pa", 0)
-        hr    = mlb.get("hr", 0)
-        iso   = mlb.get("iso", 0.0)
-        slg   = mlb.get("slg", 0.0)
-        avg   = mlb.get("avg", 0.0)
-        k_pct = mlb.get("k_pct", 0.0)
-    elif row is not None:
-        pa    = int(gs(row, "pa"))
-        hr    = gs(row, "hr")
-        iso   = gs(row, "iso")
-        slg   = gs(row, "slg")
-        avg   = gs(row, "batting_avg")
-        k_pct = gs(row, "k_pct")
-    else:
-        return {}
-
-    if pa == 0:
-        return {}
-
-    return {
-        "pa": pa, "hr": hr,
-        "barrel_pct":    barrel_pct,
-        "exit_velo":     exit_velo,
-        "launch_angle":  launch_angle,
-        "hard_hit_pct":  hard_hit_pct,
-        "pull_pct":      pull_pct,
-        "bat_speed":     bat_speed,
-        "xwoba":         xwoba,
-        "xslg":          xslg,
-        "iso": iso, "k_pct": k_pct,
-        "slg": slg, "avg": avg,
-        "hr_rate": (hr / max(pa, 1)) * 600 if pa > 0 else 0,
+    function laScore(la){
+      if(!la||la===0) return 40;
+      var ideal = 26.5;
+      var dist = Math.abs(la - ideal);
+      return Math.max(0, Math.min(100, Math.round(100 - dist*3.5)));
     }
 
-def get_contact_log(name):
-    """Get last 8 batted ball events for a player from the contact log cache"""
-    nl = name.lower().strip()
-    if nl in _contact_log: return _contact_log[nl]
-    last = nl.split()[-1]
-    for k, v in _contact_log.items():
-        if last in k: return v
-    return []
+    // Pull stat values
+    var brl_s  = s.barrel||bd.barrel_season||statVals.barrel_pct_season||0;
+    var iso_s  = s.iso||bd.iso_season||statVals.iso_season||0;
+    var ev_s   = s.ev||bd.ev_season||0;
+    var la_s   = s.la||bd.la_use||statVals.la_season||0;
+    var pull_s = s.pull||bd.pull_s||statVals.pull_pct_season||0;
+    var hh_s   = s.hh||bd.hh_season||statVals.hard_hit_season||0;
 
-def get_batter_l5g(name):
-    nl = name.lower().strip()
-    data = _cache["bat_l5g"]
-    if nl in data: return data[nl]
-    last = nl.split()[-1]
-    for k, v in data.items():
-        if last in k: return v
-    return {}
+    var xslg_l= xslg_l8d||l.xslg||bd.xslg_l8d||0;
+    var ev_l  = l.ev||bd.ev_l8d||0;
+    var brl_l = l.barrel||bd.barrel_pct_l8d||0;
+    var spd_l = l.bat_speed||bd.bat_speed_l8d||0;
+    var hh_l  = l.hh||bd.hard_hit_l8d||statVals.hard_hit_l8d||0;
+    var la_l  = l.la||bd.la_l8d||0;
 
-def get_l8d_hr(name):
-    """Get reliable L8D HR count from MLB Stats API lastXGames=8"""
-    nl = name.lower().strip()
-    data = _cache["bat_l8d_hr"]
-    if nl in data: return data[nl].get("hr", 0)
-    last = nl.split()[-1]
-    for k, v in data.items():
-        if last in k: return v.get("hr", 0)
-    return 0
+    var pit_hr9  = pitP.hr9||bd.pit_hr9_season||0;
+    var pit_hh   = pitP.hard_hit_pct||bd.pit_hard||0;
+    var pit_era  = pitP.era||bd.pit_era_season||0;
+    var pit_slg  = pitP.vs_R_slg||pitP.vs_L_slg||bd.pit_slg_vs_hand||0;
 
-def get_avg_pa_per_game(name):
-    """Get batter's avg PA per game this season — key ML feature for opportunity"""
-    nl = name.lower().strip()
-    data = _cache.get("bat_games", {})
-    if nl in data: return data[nl]
-    last = nl.split()[-1]
-    for k, v in data.items():
-        if last in k: return v
-    return {"games": 0, "avg_pa_per_game": 3.1, "avg_ab_per_game": 2.8}
+    var pf    = bd.park_factor||pitP.park_factor||1.0;
+    var wx    = bd.weather_mult||1.0;
 
-def get_batter_split(name, pit_hand):
-    df = _cache["bat_vs_lhp"] if pit_hand == "L" else _cache["bat_vs_rhp"]
-    row = fuzzy_match(name, df)
-    if row is None:
-        return {}
-    return {
-        "pa":         gs(row, "pa"),
-        "hr":         gs(row, "hr"),
-        "iso":        gs(row, "iso"),
-        "slg":        gs(row, "slg"),
-        "woba":       gs(row, "woba"),
-        "k_pct":      gs(row, "k_pct"),
-        "barrel_pct": gs(row, "barrel_pct"),
-        "hr_rate":    (gs(row, "hr") / max(gs(row, "pa"), 1)) * 600 if gs(row, "pa") > 0 else 0,
+    var k_l   = l.k_pct||statVals.k_pct_l8d||0;
+    var chase = bd.chase_rate||s.chase||0;
+
+    var bat_plat = bd.bat_platoon_mult||1.0;
+    var pit_plat = bd.pit_platoon_mult||1.0;
+    var iso_hand = statVals.iso_vs_hand||bd.iso_vs_hand||s.iso_vs_hand||0;
+    var pitch_sc = bd.pitch_matchup_score||0;
+
+    // ── Composite scores (0-100) ──
+    var power = Math.round((
+      norm(brl_s, medians.barrel_pct_season||10, 100) * 0.35 +
+      norm(iso_s,  medians.iso_season||0.162, 100)    * 0.30 +
+      norm(ev_s,   medians.ev_season||89.7, 100)      * 0.20 +
+      laScore(la_s)                                   * 0.08 +
+      norm(pull_s, medians.pull_pct_season||40, 100)  * 0.07
+    ));
+
+    var form = Math.round((
+      norm(xslg_l, medians.xslg_l8d||0.545, 100)     * 0.35 +
+      norm(ev_l,   medians.ev_l8d||83.5, 100)         * 0.25 +
+      norm(brl_l,  medians.barrel_pct_l8d||7.4, 100)  * 0.20 +
+      norm(spd_l,  medians.bat_speed_l8d||70.1, 100)  * 0.10 +
+      norm(hh_l,   medians.hard_hit_l8d||27.3, 100)   * 0.05 +
+      laScore(la_l)                                   * 0.05
+    ));
+
+    var matchup = Math.round((
+      norm(pit_hr9, medians.pit_hr9_season||1.0, 100) * 0.45 +
+      norm(pit_hh,  medians.pit_hard_hit_season||40.6, 100) * 0.30 +
+      normLow(pit_era, medians.pit_era_season||3.68)  * 0.15 +
+      norm(pit_slg, medians.pit_slg_vs_hand||0.36, 100) * 0.10
+    ));
+
+    var parkWx = Math.round((
+      norm(pf, 1.04, 100)  * 0.60 +
+      norm(wx, 1.00, 100)  * 0.40
+    ));
+    if(pf===1.0&&wx===1.0) parkWx = 50;
+
+    var disc = Math.round((
+      normLow(k_l, medians.k_pct_l8d||21.6) * 0.60 +
+      (chase>0 ? normLow(chase, 30) * 0.40 : 50 * 0.40)
+    ));
+
+    var platoon = Math.round((
+      norm(bat_plat, 1.0, 100)  * 0.35 +
+      norm(pit_plat, 1.0, 100)  * 0.35 +
+      norm(iso_hand, medians.iso_vs_hand||0.167, 100) * 0.20 +
+      (pitch_sc > 0 ? Math.min(pitch_sc*10+50, 100) : 50) * 0.10
+    ));
+
+    var scores = [power, form, matchup, parkWx, disc, platoon];
+    var labels = ['Power','Form','Matchup','Park','Discipline','Platoon'];
+    var avg = Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
+
+    // ── Verdict text ──
+    var strong = scores.filter(function(s){return s>=70;}).length;
+    var weak   = scores.filter(function(s){return s<=35;}).length;
+    var verdict = strong>=4 ? 'Multiple axes aligned — strong spot'
+                : strong>=2&&weak===0 ? 'Solid across the board'
+                : strong>=2 ? 'Mixed signals — watch '+ labels[scores.indexOf(Math.min.apply(null,scores))]
+                : weak>=2 ? 'Thin case — model found specific edge'
+                : 'Average spot — no standout signal';
+
+    // ── Build canvas radar via inline SVG math ──
+    var canvasId = 'radar_'+Math.random().toString(36).slice(2,7);
+    var size = 160, cx = size/2, cy = size/2, r = 58;
+    var n = 6;
+    function pt(idx, val){
+      var ang = (Math.PI*2/n)*idx - Math.PI/2;
+      var rv = r * (val/100);
+      return [cx + rv*Math.cos(ang), cy + rv*Math.sin(ang)];
+    }
+    function ptOuter(idx, mult){
+      var ang = (Math.PI*2/n)*idx - Math.PI/2;
+      return [cx + r*(mult||1)*Math.cos(ang), cy + r*(mult||1)*Math.sin(ang)];
     }
 
-def get_pitcher_stats(name, year=2026):
-    """2026-only. year param kept for call-site compatibility."""
-    df = _cache["pit_2026"]
-    row = fuzzy_match(name, df)
-    nl = name.lower().strip()
-    ip_data = _cache["player_ip"].get(nl, {})
-    # Try last name match for IP data
-    if not ip_data:
-        last = nl.split()[-1]
-        for k, v in _cache["player_ip"].items():
-            if last in k:
-                ip_data = v
-                break
-    ip = ip_data.get("ip", 0)
-    hr9 = ip_data.get("hr9", 0)
-    era = ip_data.get("era", 0)
-    k9  = ip_data.get("k9", 0)
-    avg_ip = ip_data.get("avg_ip", 5.0)
-    gs_val = ip_data.get("gs", 0)
-    if row is None:
-        return {"era": era, "ip": ip, "hr9": hr9, "k9": k9, "avg_ip": avg_ip, "gs": gs_val,
-                "hard_hit_pct": 0, "barrel_pct_allowed": 0, "fb_pct": 0, "k_pct": 0, "hr_fb_pct": 0}
-    return {
-        "era": era or gs(row, "era"),
-        "ip": ip, "hr9": hr9, "k9": k9, "avg_ip": avg_ip, "gs": gs_val,
-        "hard_hit_pct": gs(row, "hard_hit_pct"),
-        "barrel_pct_allowed": gs(row, "barrel_pct_allowed"),
-        "fb_pct": gs(row, "fb_pct"),
-        "k_pct": gs(row, "k_pct"),
-        "hr_fb_pct": 0,
+    // Grid rings
+    var gridSvg = '';
+    [0.33,0.67,1.0].forEach(function(frac){
+      var pts2 = [];
+      for(var i=0;i<n;i++){ var p=ptOuter(i,frac); pts2.push(p[0]+','+p[1]); }
+      gridSvg += '<polygon points="'+pts2.join(' ')+'" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>';
+    });
+    // Spokes
+    for(var i=0;i<n;i++){
+      var op = ptOuter(i);
+      gridSvg += '<line x1="'+cx+'" y1="'+cy+'" x2="'+op[0]+'" y2="'+op[1]+'" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>';
     }
 
-def get_pitcher_split(name, vs_hand):
-    df = _cache["pit_vs_lhh"] if vs_hand == "L" else _cache["pit_vs_rhh"]
-    row = fuzzy_match(name, df)
-    if row is None:
-        return {}
-    pa  = gs(row, "pa")
-    hr  = gs(row, "hr")
-    ip  = gs(row, "ip") if gs(row, "ip") > 0 else pa / 4.0
-    return {
-        "pa":           pa,
-        "ip":           round(ip, 1),
-        "hr":           hr,
-        "hr9":          gs(row, "hr9"),
-        "k_pct":        gs(row, "k_pct"),
-        "slg":          gs(row, "slg"),
-        "woba":         gs(row, "woba"),
-        "iso":          gs(row, "iso"),
-        "hard_hit_pct": 0,
-        "barrel_pct":   0,
+    // Data polygon
+    var dataPts = scores.map(function(v,i){ var p=pt(i,v); return p[0]+','+p[1]; });
+    var fillColor = avg>=65?'rgba(50,215,75,0.18)':avg>=45?'rgba(255,159,10,0.15)':'rgba(255,69,58,0.15)';
+    var strokeColor = avg>=65?'#32d74b':avg>=45?'#ff9f0a':'#ff453a';
+
+    // Labels and value dots
+    var labelsSvg = '';
+    labels.forEach(function(lbl, i){
+      var op = ptOuter(i, 1.32);
+      var dp = pt(i, scores[i]);
+      var score = scores[i];
+      var dotC = score>=70?'#32d74b':score>=45?'#ff9f0a':'#ff453a';
+      labelsSvg += '<text x="'+op[0]+'" y="'+(op[1]+3)+'" text-anchor="middle" font-size="7.5" fill="rgba(255,255,255,0.45)" font-family="sans-serif">'+lbl+'</text>';
+      labelsSvg += '<circle cx="'+dp[0]+'" cy="'+dp[1]+'" r="3" fill="'+dotC+'"/>';
+    });
+
+    // ── Trend indicator for radar center ──
+    var l8b = b.l8d||{};
+    var s8b = b.season||{};
+    var trendD = ((l8b.barrel||0)>=(s8b.barrel||0)*1.2&&(l8b.barrel||0)>=10)||((b.l8d_hr_count||0)>=2)
+                 ? 'fire'
+                 : ((b.l8d_hr_count||0)>=1||(l8b.xslg||0)>=0.700)
+                 ? 'warm' : 'neutral';
+    var trendLabel = trendD==='fire'?'🔥':trendD==='warm'?'↑':'·';
+    var trendColor = trendD==='fire'?'#ff9f0a':trendD==='warm'?'#32d74b':'rgba(255,255,255,0.25)';
+
+    var svgStr = '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'
+      + gridSvg
+      + '<polygon points="'+dataPts.join(' ')+'" fill="'+fillColor+'" stroke="'+strokeColor+'" stroke-width="1.5"/>'
+      + labelsSvg
+      + '<text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" font-size="16" fill="'+trendColor+'" font-family="sans-serif">'+trendLabel+'</text>'
+      + '</svg>';
+
+    // ── Axis breakdown list ──
+    var axisRows = '';
+    labels.forEach(function(lbl, i){
+      var sc = scores[i];
+      var barC = sc>=70?'#32d74b':sc>=45?'#ff9f0a':'#ff453a';
+      var barW = sc+'%';
+      axisRows += '<div style="display:flex;align-items:center;gap:6px;padding:3px 0">'
+        +'<div style="font-size:10px;color:rgba(255,255,255,0.5);width:64px;flex-shrink:0">'+lbl+'</div>'
+        +'<div style="flex:1;height:4px;background:rgba(255,255,255,0.07);border-radius:2px">'
+          +'<div style="width:'+barW+';height:100%;background:'+barC+';border-radius:2px"></div>'
+        +'</div>'
+        +'<div style="font-size:10px;font-weight:600;color:'+barC+';width:28px;text-align:right">'+sc+'</div>'
+      +'</div>';
+    });
+
+    var html = '<div style="display:flex;gap:14px;align-items:flex-start">'
+      +'<div style="flex-shrink:0">'+svgStr+'</div>'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:2px">'+b.name+'</div>'
+        +'<div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:8px">'+b.hr_prob+'% HR probability</div>'
+        + axisRows
+        +'<div style="margin-top:8px;padding:6px 8px;background:rgba(255,255,255,0.04);border-radius:5px;font-size:10px;color:rgba(255,255,255,0.45);line-height:1.4">'+verdict+'</div>'
+      +'</div>'
+    +'</div>';
+    return html;
+  }
+
+  var rightH = buildRadar();
+
+  h+='<div style="background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;margin-bottom:10px">';
+  h+=rightH;
+  h+='</div>';
+
+  // ── XGBoost SHAP panel ──
+  if(b.xgb_prob!=null && b.xgb_shap){
+    var shap=b.xgb_shap;
+    var contribs=shap.contributions||{};
+    var baseRate=shap.base_rate||0;
+    var xgbProb=shap.xgb_prob||b.xgb_prob;
+    var keys=Object.keys(contribs).sort(function(a,c){return Math.abs(contribs[c])-Math.abs(contribs[a]);}).slice(0,8);
+    function cleanFeat(k){
+      return k.replace(/_season$/,'').replace(/_l8d$/,' L8D').replace(/_vs_hand$/,' vs hand')
+               .replace(/_/g,' ').replace('pit ','pit. ').replace('barrel pct','barrel%')
+               .replace('hard hit','hard hit%').replace('k pct','K%').replace('xslg','xSLG')
+               .replace('iso','ISO').replace('ev ','EV ').replace('la ','LA ').replace('bat speed','bat spd')
+               .replace('bat platoon mult','platoon').replace('pit platoon mult','pit. platoon')
+               .replace('park factor','park').replace('weather mult','weather')
+               .replace('bullpen vuln','bullpen').replace('pitch matchup score','pitch matchup')
+               .replace('combined pitch delta','pitch delta').replace('day of season','day of season');
+    }
+    var maxAbs=Math.max.apply(null,keys.map(function(k){return Math.abs(contribs[k]);}));
+    if(!maxAbs) maxAbs=1;
+    var pushTotal=keys.filter(function(k){return contribs[k]>0;}).reduce(function(s,k){return s+contribs[k];},0);
+    var dragTotal=keys.filter(function(k){return contribs[k]<0;}).reduce(function(s,k){return s+contribs[k];},0);
+
+    h+='<div style="background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;margin-bottom:10px">';
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">';
+    h+='<div style="font-size:9px;font-weight:700;color:var(--purple,#a78bfa);text-transform:uppercase;letter-spacing:.08em">Why XGBoost thinks '+xgbProb+'%</div>';
+    h+='<div style="font-size:9px;color:var(--muted2)">base '+baseRate.toFixed(1)+'%</div>';
+    h+='</div>';
+    // Base row
+    h+='<div style="display:flex;align-items:center;gap:8px;padding-bottom:7px;margin-bottom:5px;border-bottom:1px solid var(--border2)">';
+    h+='<div style="font-size:10px;color:var(--muted2);width:110px;flex-shrink:0">dataset average</div>';
+    h+='<div style="flex:1;height:4px;background:var(--s3,rgba(255,255,255,.06));border-radius:2px"><div style="width:30%;height:100%;background:rgba(255,255,255,.15);border-radius:2px"></div></div>';
+    h+='<div style="font-size:10px;color:var(--muted2);width:34px;text-align:right">'+baseRate.toFixed(1)+'%</div>';
+    h+='</div>';
+    // Feature bars
+    keys.forEach(function(feat){
+      var val=contribs[feat];
+      var isPos=val>=0;
+      var barC=isPos?'#32d74b':'#ff453a';
+      var barW=Math.round(Math.abs(val)/maxAbs*50);
+      var sign=isPos?'+':'';
+      h+='<div style="display:flex;align-items:center;gap:8px;padding:2px 0">';
+      h+='<div style="font-size:10px;color:var(--muted);width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+feat+'">'+cleanFeat(feat)+'</div>';
+      h+='<div style="flex:1;position:relative;height:4px;background:var(--s3,rgba(255,255,255,.06));border-radius:2px">';
+      if(isPos){
+        h+='<div style="position:absolute;left:30%;top:0;height:100%;width:'+barW+'%;background:'+barC+';border-radius:0 2px 2px 0"></div>';
+      }else{
+        var left=Math.max(0,30-barW);
+        h+='<div style="position:absolute;left:'+left+'%;top:0;height:100%;width:'+barW+'%;background:'+barC+';border-radius:2px 0 0 2px"></div>';
+      }
+      h+='</div>';
+      h+='<div style="font-size:10px;font-weight:600;color:'+barC+';width:34px;text-align:right">'+sign+val.toFixed(1)+'%</div>';
+      h+='</div>';
+    });
+    // Summary
+    h+='<div style="margin-top:8px;padding-top:7px;border-top:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between">';
+    h+='<div style="font-size:10px;color:var(--muted2)">'+baseRate.toFixed(1)+'% <span style="color:#32d74b">+'+pushTotal.toFixed(1)+'%</span> <span style="color:#ff453a">'+dragTotal.toFixed(1)+'%</span> = <span style="color:var(--purple,#a78bfa);font-weight:700">'+xgbProb+'%</span></div>';
+    h+='<div style="display:flex;gap:10px;font-size:9px;color:var(--muted2)">';
+    h+='<span style="display:flex;align-items:center;gap:3px"><span style="width:6px;height:6px;border-radius:1px;background:#32d74b;display:inline-block"></span>up</span>';
+    h+='<span style="display:flex;align-items:center;gap:3px"><span style="width:6px;height:6px;border-radius:1px;background:#ff453a;display:inline-block"></span>down</span>';
+    h+='</div></div>';
+    h+='</div>';
+  }
+
+  // ── Deep Dive — collapsible raw stats ──
+  var ddId = 'dd_'+b.name.replace(/ /g,'_')+'_'+Math.random().toString(36).slice(2,5);
+  h+='<div style="border:1px solid var(--border2);border-radius:8px;overflow:hidden">';
+  h+='<div data-ddid="'+ddId+'" onclick="toggleDD(this)" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;background:var(--surface);user-select:none">';
+  h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.09em">Deep Dive — Raw Model Inputs</div>';
+  h+='<span class="dd-arrow" style="font-size:10px;color:var(--muted2)">▼</span>';
+  h+='</div>';
+  h+='<div id="'+ddId+'" style="display:none;padding:10px 12px;background:var(--s3)">';
+
+  // Tree features header
+  h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;display:flex;justify-content:space-between">';
+  h+='<span>What the tree sees</span><span style="color:var(--muted2)">Value &nbsp; vs median</span></div>';
+
+  // Show stats in feature importance order
+  var shownKeys = [];
+  fiList.forEach(function(fe){
+    var key=fe[0],imp=fe[1];
+    if(!FI_LABELS[key])return;
+    var val=statVals[key]||0;
+    var lbl=FI_LABELS[key];
+    var impPct=Math.round(imp*100);
+    var valStr=fmtByKey(key,val);
+    var med=medians[key]||0;
+    // color the value
+    var isPitStat=key.startsWith('pit_');
+    var isInvert=INVERT[key]||false;
+    var above=val>med;
+    var good;
+    if(isPitStat&&key.includes('hr9'))good=above;
+    else if(isPitStat)good=!above;
+    else if(isInvert)good=!above;
+    else good=above;
+    var valColor=val>0?(good?'var(--g)':'var(--r)'):'var(--muted2)';
+    // importance bar width
+    var maxImp=fiList[0]?fiList[0][1]:1;
+    var barW=maxImp>0?Math.round(imp/maxImp*60):0;
+    h+='<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border2)">';
+    h+='<div style="width:4px;height:28px;background:var(--border);border-radius:2px;flex-shrink:0;position:relative;overflow:hidden">';
+    h+='<div style="position:absolute;bottom:0;width:100%;height:'+barW+'%;background:var(--accent);border-radius:2px"></div></div>';
+    h+='<div style="flex:1;min-width:0">';
+    h+='<div style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+lbl+'</div>';
+    h+='<div style="font-size:8px;color:var(--muted2)">'+impPct+'% tree weight</div>';
+    h+='</div>';
+    h+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:16px;font-weight:700;color:'+valColor+';min-width:52px;text-align:right">'+valStr+'</div>';
+    h+='<div style="min-width:42px;text-align:right">'+medianTag(key,val)+'</div>';
+    h+='</div>';
+    shownKeys.push(key);
+  });
+
+  // If no feature importances yet, fall back to key stats
+  if(shownKeys.length===0){
+    var fallback=[
+      {k:'barrel_pct_season',l:'Barrel% Season',v:s.barrel||0},
+      {k:'hard_hit_season',l:'Hard Hit% Season',v:s.hh||0},
+      {k:'xslg_l8d',l:'xSLG L8D',v:xslg_l8d},
+      {k:'iso_vs_hand',l:'ISO vs Hand',v:bd.iso_vs_hand||0},
+      {k:'la_season',l:'Launch Angle',v:s.la||0},
+    ];
+    fallback.forEach(function(f){
+      var valStr=fmtByKey(f.k,f.v);
+      h+='<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border2)">';
+      h+='<div style="flex:1;font-size:10px;color:var(--muted)">'+f.l+'</div>';
+      h+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:16px;font-weight:700;color:var(--text)">'+valStr+'</div>';
+      h+='<div>'+medianTag(f.k,f.v)+'</div>';
+      h+='</div>';
+    });
+  }
+
+  // Pitcher strip below
+  if(pitP&&pitP.name){
+    h+='<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">';
+    h+='<div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">'+pitP.name+' ('+pitP.hand+'HP)</div>';
+    h+='<div class="chip-row">';
+    h+=chip('ERA',pitP.era?pitP.era.toFixed(2):'--',pitP.era>=4.5?'r':pitP.era>=3.5?'y':'g');
+    h+=chip('HR/9',pitP.hr9?pitP.hr9.toFixed(2):'--',pitP.hr9>=1.4?'g':pitP.hr9>=1?'y':'r');
+    h+=chip('HH%',pitP.hard_hit_pct?pitP.hard_hit_pct+'%':'--',pitP.hard_hit_pct>=42?'r':pitP.hard_hit_pct>=36?'y':'g');
+    var slgKey='vs_'+(b.hand==='L'?'L':'R')+'_slg';
+    var pitSlgV=pitP[slgKey];
+    h+=chip('SLG vs '+b.hand,pitSlgV&&bd.split_ip_vs_bat>=5?fmtSlg(pitSlgV):'--','n');
+    h+='</div></div>';
+  }
+  h+='</div>';
+  h+='</div>';
+
+  h+='</div>'; // detail-wrap
+  return h;
+}
+
+function buildPitcherTable(games){
+  var pitchers=[];
+  games.forEach(function(g){
+    var wx=g.weather||{};
+    [[g.away_pitcher,g.home],[g.home_pitcher,g.away]].forEach(function(arr){
+      var p=arr[0],opp=arr[1];
+      if(!p||!p.name||p.name==='TBD')return;
+      pitchers.push({
+        name:p.name,hand:p.hand||'R',opp_team:opp,
+        opp_lineup_k:p.opp_lineup_k||0,avg_ip:p.avg_ip||5.0,
+        k9:p.k9||0,exp_k:p.exp_k||0,k_prop:p.k_prop||null,
+        k_edge:p.k_edge!=null?p.k_edge:null,gs:p.gs||0,
+        era:p.era||0,hr9:p.hr9||0,
+        wx_label:wx.label||'--',wx_temp:wx.temp||70,wx_wind:wx.wind_speed||0,
+        _full:p,
+      });
+    });
+  });
+  pitchers.sort(function(a,b){
+    if(pitSortCol==='k_edge'){
+      var av=a.k_edge!=null?a.k_edge:-99,bv=b.k_edge!=null?b.k_edge:-99;
+      return pitSortDir*(bv-av);
+    }
+    return pitSortDir*((b[pitSortCol]||0)-(a[pitSortCol]||0));
+  });
+  if(!pitchers.length){document.getElementById('pitcher-main').innerHTML='<div class="no-data">No pitcher data.</div>';return;}
+  var h='<div class="section-hdr"><div class="section-title">Pitcher Strikeouts</div><div class="section-count">'+pitchers.length+' starters</div></div>';
+  h+='<div class="tbl-wrap"><table>';
+  h+='<thead><tr>';
+  h+=pth('Pitcher','name',false);h+=pth('Hand','hand',false);h+=pth('Vs Team','opp_team',false);
+  h+=pth('OPP K%','opp_lineup_k',true);h+=pth('Avg IP','avg_ip',true);h+=pth('K/9','k9',true);
+  h+=pth('Exp Ks','exp_k',true);h+=pth('Prop Line','k_prop',true);h+=pth('Edge','k_edge',true);
+  h+=pth('Starts','gs',false);
+  h+='</tr></thead><tbody>';
+  pitchers.forEach(function(p,i){
+    var hTag='<span class="hand-tag '+(p.hand==='L'?'lhp':'rhp')+'">'+p.hand+'HP</span>';
+    var oppKCls=p.opp_lineup_k>=25?'sc-g':p.opp_lineup_k>=20?'sc-y':'sc-r';
+    var k9Cls=p.k9>=10?'sc-g':p.k9>=8?'sc-y':'sc-r';
+    var edgeCls=p.k_edge!=null?(p.k_edge>=1?'edge-pos':p.k_edge<=-1?'edge-neg':'edge-neu'):'edge-neu';
+    var edgeDisp=p.k_edge!=null?(p.k_edge>0?'+':'')+p.k_edge:'--';
+    var propDisp=p.k_prop?p.k_prop.line.toFixed(1):'--';
+    var conBadge=p.gs<=0?'<span class="consistency-badge con-none">No Data</span>':p.gs<=2?'<span class="consistency-badge con-small">'+p.gs+' GS</span>':p.gs<=5?'<span class="consistency-badge con-mod">'+p.gs+' GS</span>':'<span class="consistency-badge con-solid">'+p.gs+' GS</span>';
+    h+='<tr onclick="togglePitRow('+i+')">';
+    h+='<td><div class="player-name">'+p.name+'</div></td>';
+    h+='<td>'+hTag+'</td>';
+    h+='<td style="font-size:12px;color:var(--muted)">'+p.opp_team+'</td>';
+    h+='<td class="num sc '+oppKCls+'">'+(p.opp_lineup_k>0?p.opp_lineup_k.toFixed(1)+'%':'--')+'</td>';
+    h+='<td class="num sc-n">'+(p.avg_ip>0?p.avg_ip.toFixed(1):'--')+'</td>';
+    h+='<td class="num sc '+k9Cls+'">'+(p.k9>0?p.k9.toFixed(1):'--')+'</td>';
+    h+='<td class="num"><span style="font-family:\'Barlow Condensed\',sans-serif;font-size:18px;font-weight:800;color:var(--text)">'+(p.exp_k>0?p.exp_k.toFixed(1):'--')+'</span></td>';
+    h+='<td class="num" style="font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:600">'+propDisp+'</td>';
+    h+='<td class="num '+edgeCls+'">'+edgeDisp+'</td>';
+    h+='<td>'+conBadge+'</td>';
+    h+='</tr>';
+    h+='<tr class="detail-row" id="pdet-'+i+'" style="display:none"><td colspan="10">'+buildPitDetail(p._full)+'</td></tr>';
+  });
+  h+='</tbody></table></div>';
+  document.getElementById('pitcher-main').innerHTML=h;
+}
+function pth(lbl,col,isNum){
+  var cls=isNum?'num':'';
+  var sc=pitSortCol===col?(pitSortDir===-1?' sort-desc':' sort-asc'):'';
+  return '<th class="'+cls+sc+'" onclick="sortPit(\''+col+'\')">'+lbl+'</th>';
+}
+function sortPit(col){if(pitSortCol===col)pitSortDir*=-1;else{pitSortCol=col;pitSortDir=-1;}buildPitcherTable(allGames);}
+function togglePitRow(i){var d=document.getElementById('pdet-'+i);if(d)d.style.display=d.style.display==='none'?'table-row':'none';}
+function buildPitDetail(p){
+  var h='<div class="detail-wrap"><div class="detail-grid">';
+  h+='<div class="detail-block"><div class="detail-block-title">Stats</div><div class="chip-row">';
+  h+=chip('ERA',p.era?p.era.toFixed(2):'--',p.era>=4.5?'r':p.era>=3.5?'y':'g');
+  h+=chip('HR/9',p.hr9?p.hr9.toFixed(2):'--',p.hr9>=1.4?'r':p.hr9>=1?'y':'g');
+  h+=chip('HH%',p.hard_hit_pct?p.hard_hit_pct+'%':'--',p.hard_hit_pct>=42?'r':p.hard_hit_pct>=36?'y':'g');
+  h+=chip('IP',p.ip_2026?p.ip_2026.toFixed(0):'--','n');
+  h+='</div></div>';
+  h+='<div class="detail-block"><div class="detail-block-title">Splits</div><div class="chip-row">';
+  h+=chip('HR/9 vs L',p.vs_L_hr9!=null?p.vs_L_hr9.toFixed(2):'--',p.vs_L_hr9>=1.4?'r':p.vs_L_hr9>=1?'y':'g');
+  h+=chip('HR/9 vs R',p.vs_R_hr9!=null?p.vs_R_hr9.toFixed(2):'--',p.vs_R_hr9>=1.4?'r':p.vs_R_hr9>=1?'y':'g');
+  h+=chip('K% vs L',p.vs_L_k!=null?p.vs_L_k+'%':'--',p.vs_L_k>=28?'g':p.vs_L_k>=22?'y':'r');
+  h+=chip('K% vs R',p.vs_R_k!=null?p.vs_R_k+'%':'--',p.vs_R_k>=28?'g':p.vs_R_k>=22?'y':'r');
+  h+=chip('SLG vs L',p.vs_L_slg!=null?'.'+String(Math.round(p.vs_L_slg*1000)).padStart(3,'0'):'--','n');
+  h+=chip('SLG vs R',p.vs_R_slg!=null?'.'+String(Math.round(p.vs_R_slg*1000)).padStart(3,'0'):'--','n');
+  h+='</div></div>';
+  if(p.top_pitches&&p.top_pitches.length){
+    h+='<div class="detail-block"><div class="detail-block-title">Arsenal</div><div class="chip-row">';
+    p.top_pitches.forEach(function(pt){h+=chip(pt.name,pt.usage+'%','n');});
+    h+='</div></div>';
+  }
+  if(p.k_prop){
+    h+='<div class="detail-block"><div class="detail-block-title">K Prop</div><div class="chip-row">';
+    h+=chip('Line',p.k_prop.line.toFixed(1),'n');
+    h+=chip('Odds',(p.k_prop.price>0?'+':'')+p.k_prop.price,'n');
+    h+=chip('Book',p.k_prop.book||'--','n');
+    h+='</div></div>';
+  }
+  h+='</div></div>';
+  return h;
+}
+
+function buildGameTable(games){
+  if(!games||!games.length){document.getElementById('game-main').innerHTML='<div class="no-data">No games today.</div>';return;}
+  var h='<div class="section-hdr"><div class="section-title">Game Totals</div><div class="section-count">'+games.length+' games</div></div>';
+  h+='<div class="tbl-wrap"><table>';
+  h+='<thead><tr><th>Matchup</th><th>Time</th><th>Away Starter</th><th>Home Starter</th>';
+  h+='<th class="num">Exp Runs Away</th><th class="num">Exp Runs Home</th><th class="num">Total</th>';
+  h+='<th class="num">Exp HRs</th><th>Weather</th><th class="num">F5 Total</th></tr></thead><tbody>';
+  games.forEach(function(g){
+    var t=g.totals||{},wx=g.weather||{};
+    var awayP=g.away_pitcher||{},homeP=g.home_pitcher||{};
+    var total=t.total_exp_runs||0;
+    var ouCls=total>=9.5?'ou-over':total<=7.5?'ou-under':'ou-push';
+    var ouLbl=total>=9.5?'OVER':total<=7.5?'UNDER':'PUSH';
+    var rpgA=t.away_runs_pg||4.5,rpgH=t.home_runs_pg||4.5;
+    var eraA=awayP.era||4.20,eraH=homeP.era||4.20;
+    var f5A=((eraH/4.20)*rpgA*0.5);
+    var f5H=((eraA/4.20)*rpgH*0.5);
+    var f5T=(f5A+f5H).toFixed(1);
+    var f5Cls=parseFloat(f5T)>=5?'ou-over':parseFloat(f5T)<=3.5?'ou-under':'ou-push';
+    h+='<tr>';
+    h+='<td style="white-space:nowrap"><span class="team-a">'+g.away+'</span><span class="at-sep">@</span><span class="team-h">'+g.home+'</span></td>';
+    h+='<td style="color:var(--muted);font-size:11px">'+fmtTime(g.time)+'</td>';
+    h+='<td><div class="player-name">'+awayP.name+'</div><div class="player-sub">'+(awayP.hand||'R')+'HP &middot; ERA '+(awayP.era||'--')+' &middot; HR/9 '+(awayP.hr9||'--')+'</div></td>';
+    h+='<td><div class="player-name">'+homeP.name+'</div><div class="player-sub">'+(homeP.hand||'R')+'HP &middot; ERA '+(homeP.era||'--')+' &middot; HR/9 '+(homeP.hr9||'--')+'</div></td>';
+    h+='<td class="num"><span class="exp-runs-big team-a">'+(t.away_exp_runs||'--')+'</span></td>';
+    h+='<td class="num"><span class="exp-runs-big team-h">'+(t.home_exp_runs||'--')+'</span></td>';
+    h+='<td class="num"><span class="exp-runs-big '+ouCls+'">'+total+'</span><br><span style="font-size:9px;font-weight:700;letter-spacing:.06em" class="'+ouCls+'">'+ouLbl+'</span></td>';
+    h+='<td class="num" style="color:var(--y);font-family:\'Barlow Condensed\',sans-serif;font-size:14px">'+(t.total_exp_hr||'--')+'</td>';
+    h+='<td style="font-size:11px">'+wxIcon(wx.label,wx.temp,wx.wind_speed)+' '+(wx.temp||'--')+'&#176; <span style="color:var(--muted2)">'+(wx.wind_speed>0?wx.wind_speed+'mph':'calm')+'</span></td>';
+    h+='<td class="num"><span class="exp-runs-big '+f5Cls+'">'+f5T+'</span></td>';
+    h+='</tr>';
+  });
+  h+='</tbody></table></div>';
+  document.getElementById('game-main').innerHTML=h;
+}
+
+async function searchPlayer(){
+  var name=document.getElementById('searchInput').value.trim();
+  if(!name)return;
+  var el=document.getElementById('research-result');
+  el.innerHTML='<div class="loading">Searching<div class="dots"><span></span><span></span><span></span></div></div>';
+  try{
+    var dateStr=formatDateForAPI(selectedDate);
+    var resp=await fetch(API+'/research?player='+encodeURIComponent(name)+'&date='+dateStr);
+    var data=await resp.json();
+    if(data.error){el.innerHTML='<div class="err">'+data.error+'</div>';return;}
+    var p=data.player||{},m=data.matchup||{};
+    var bc=p.season_2026||{},b8d=p.last_8d||{};
+    var h='<div class="research-result"><div class="r-header"><div class="r-name">'+p.name+'</div>';
+    if(m.pitcher_name)h+='<div style="font-size:12px;color:var(--muted)">vs '+m.pitcher_name+' ('+m.pitcher_hand+'HP)</div>';
+    h+='</div><div class="r-body">';
+    h+='<div class="r-section"><div class="r-section-title">2026 Season ('+p.pa_2026+' PA)</div>';
+    h+=rchip('Barrel%',bc.barrel_pct>0?bc.barrel_pct.toFixed(1)+'%':'--');
+    h+=rchip('Launch Angle',bc.launch_angle>0?bc.launch_angle.toFixed(1)+'&#176;':'--');
+    h+=rchip('ISO',bc.iso>0?fmtIso(bc.iso):'--');
+    h+=rchip('Hard Hit%',bc.hard_hit_pct>0?bc.hard_hit_pct.toFixed(1)+'%':'--');
+    h+=rchip('K%',bc.k_pct>0?bc.k_pct.toFixed(1)+'%':'--');
+    h+=rchip('HR',String(bc.hr||0));
+    h+='</div>';
+    if(b8d&&b8d.pa>0){
+      h+='<div class="r-section"><div class="r-section-title">Last 8 Days ('+b8d.pa+' PA)</div>';
+      h+=rchip('Barrel%',b8d.barrel_pct>0?b8d.barrel_pct.toFixed(1)+'%':'--');
+      h+=rchip('LA',b8d.launch_angle>0?b8d.launch_angle.toFixed(1)+'&#176;':'--');
+      h+=rchip('ISO',b8d.iso>0?fmtIso(b8d.iso):'--');
+      h+=rchip('HR',String(b8d.hr||0));
+      h+='</div>';
+    }
+    var sp=p.splits||{};
+    if(sp.vs_lhp||sp.vs_rhp){
+      h+='<div class="r-section"><div class="r-section-title">Splits</div>';
+      if(sp.vs_lhp&&sp.vs_lhp.pa>0){h+=rchip('ISO vs LHP',sp.vs_lhp.iso>0?fmtIso(sp.vs_lhp.iso):'--');h+=rchip('SLG vs LHP',sp.vs_lhp.slg>0?'.'+String(Math.round(sp.vs_lhp.slg*1000)).padStart(3,'0'):'--');}
+      if(sp.vs_rhp&&sp.vs_rhp.pa>0){h+=rchip('ISO vs RHP',sp.vs_rhp.iso>0?fmtIso(sp.vs_rhp.iso):'--');h+=rchip('SLG vs RHP',sp.vs_rhp.slg>0?'.'+String(Math.round(sp.vs_rhp.slg*1000)).padStart(3,'0'):'--');}
+      h+='</div>';
+    }
+    if(m.pitcher_stats){
+      var ps=m.pitcher_stats;
+      h+='<div class="r-section"><div class="r-section-title">Pitcher - '+m.pitcher_name+'</div>';
+      h+=rchip('ERA',ps.era?ps.era.toFixed(2):'--');h+=rchip('HR/9',ps.hr9?ps.hr9.toFixed(2):'--');h+=rchip('HH%',ps.hard_hit_pct?ps.hard_hit_pct+'%':'--');
+      h+='</div>';
+    }
+    h+='</div></div>';
+    el.innerHTML=h;
+  }catch(e){el.innerHTML='<div class="err">'+e.message+'</div>';}
+}
+function rchip(lbl,val){return '<div class="r-chip"><div class="r-chip-lbl">'+lbl+'</div><div class="r-chip-val">'+val+'</div></div>';}
+
+// -- HISTORY --
+var historyData = null;
+var selectedHistDate = null;
+var _statPercentiles = {}; // computed from history records
+var _percentileMode = 'all_predicted'; // switches to 'hr_hitters' at 200+ HR records
+
+function computePercentiles(records) {
+  // Compute 10th, 25th, 50th, 75th percentile for each stat field
+  // Uses all predicted records OR hr_hitters only depending on mode
+  var hrHitters = records.filter(function(r){return r.hit_hr===1;});
+  var pool = (hrHitters.length >= 200) ? hrHitters : records;
+  _percentileMode = (hrHitters.length >= 200) ? 'hr_hitters' : 'all_predicted';
+
+  var fields = [
+    'barrel_pct_season','hard_hit_season','ev_season','iso_season',
+    'iso_vs_hand','xwoba_l8d','xslg_l8d','bat_speed_l8d',
+    'hard_hit_l8d','barrel_pct_l8d','ev_l8d','slg_l8d',
+    'k_pct_season','pit_hr9_season','pit_hr9_vs_hand',
+  ];
+  _statPercentiles = {};
+  fields.forEach(function(f){
+    var vals = pool.map(function(r){return parseFloat(r[f])||0;})
+                   .filter(function(v){return v>0;})
+                   .sort(function(a,b){return a-b;});
+    if(vals.length < 10){_statPercentiles[f]=null;return;}
+    var n=vals.length;
+    _statPercentiles[f]={
+      p10: vals[Math.floor(n*0.10)],
+      p25: vals[Math.floor(n*0.25)],
+      p50: vals[Math.floor(n*0.50)],
+      p75: vals[Math.floor(n*0.75)],
+      mode: _percentileMode,
+      n: n,
+    };
+  });
+}
+
+function pctColor(val, field, invert) {
+  // Returns inline style color based on percentile rank
+  // invert=true for stats where lower is better (K%)
+  if(!val||val===0||!_statPercentiles[field])return'color:var(--muted)';
+  var p=_statPercentiles[field];
+  var rank = invert ? (p.p75 - val) / (p.p75 - p.p10 + 0.001) : (val - p.p10) / (p.p75 - p.p10 + 0.001);
+  if(invert){
+    // for K%: lower is better, flip thresholds
+    if(val<=p.p10)return'color:var(--b10);font-weight:700';
+    if(val<=p.p25)return'color:var(--b25)';
+    if(val<=p.p50)return'color:var(--b50)';
+    return'color:var(--b75)';
+  }
+  if(val>=p.p75)return'color:var(--b10);font-weight:700';
+  if(val>=p.p50)return'color:var(--b25)';
+  if(val>=p.p25)return'color:var(--b50)';
+  return'color:var(--b75)';
+}
+
+async function loadHistory() {
+  var el = document.getElementById('history-main');
+  el.innerHTML = '<div class="loading">Loading history<div class="dots"><span></span><span></span><span></span></div></div>';
+  try {
+    // ── Step 1: Load yesterday only (1 API call) ──
+    var yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+    var yStr = yesterday.toISOString().split('T')[0];
+    var yResp = await fetch(API + '/history?date=' + yStr);
+    var yData = await yResp.json();
+    var yesterdayRecs = (yData.records || []).filter(function(r){
+      return r.date === yStr;
+    });
+
+    // ── Step 2: Load last 7 days for tier stats (7 API calls max) ──
+    var weekRecs = [];
+    var weekDates = [];
+    for(var i=1; i<=7; i++){
+      var d = new Date(); d.setDate(d.getDate()-i);
+      var ds = d.toISOString().split('T')[0];
+      weekDates.push(ds);
+      try {
+        var wr = await fetch(API + '/history?date=' + ds);
+        var wd = await wr.json();
+        var recs = (wd.records||[]).filter(function(r){return r.date===ds;});
+        weekRecs = weekRecs.concat(recs);
+      } catch(e2) {}
     }
 
-def get_pitcher_top_pitches(pitcher_name):
-    df = _cache["pit_arsenal"]
-    if df.empty:
-        return []
-    last = pitcher_name.split()[-1].lower()
-    matches = df[df["name"].str.lower().str.contains(last, na=False)]
-    if matches.empty:
-        return []
-    # If multiple rows (same pitcher different contexts), take the one with most PA
-    if "pa" in matches.columns and len(matches) > 1:
-        matches = matches.sort_values("pa", ascending=False)
-    pitches = []
-    seen_codes = set()
-    seen_types = set()
-    for _, row in matches.iterrows():
-        pt = str(row.get("pitch_type", "")).upper()
-        if pt in seen_types: continue  # skip duplicate pitch types from multiple rows
-        code = PITCH_TYPE_MAP.get(pt)
-        if not code: continue
-        if code in seen_codes: continue  # skip duplicate codes
-        usage = gs(row, "pitch_usage") * 100 if gs(row, "pitch_usage") <= 1 else gs(row, "pitch_usage")
-        rv = gs(row, "run_value_per_100")
-        if usage >= 5:
-            pitches.append({
-                "code": code,
-                "name": row.get("pitch_name", PITCH_DISPLAY.get(code, code)),
-                "usage": round(usage, 1),
-                "pit_rv": round(rv, 2),
-                "pitch_type": pt,
-            })
-            seen_codes.add(code)
-            seen_types.add(pt)
-    pitches.sort(key=lambda x: x["usage"], reverse=True)
-    pitches = pitches[:3]
-    # Normalize usage to sum to 100% across top pitches
-    total_usage = sum(p["usage"] for p in pitches)
-    if total_usage > 0 and total_usage != 100.0:
-        for p in pitches:
-            p["usage"] = round(p["usage"] / total_usage * 100, 1)
-    return pitches
+    // Compute percentiles from week records for color coding
+    if(weekRecs.length > 0) computePercentiles(weekRecs);
 
-def get_batter_pitch_rv(batter_name, pitch_code):
-    df = _cache["bat_arsenal"]
-    if df.empty:
-        return None
-    last = batter_name.split()[-1].lower()
-    matches = df[df["name"].str.lower().str.contains(last, na=False)]
-    if matches.empty:
-        return None
-    # Find pitch type
-    target_types = [k for k, v in PITCH_TYPE_MAP.items() if v == pitch_code]
-    for _, row in matches.iterrows():
-        pt = str(row.get("pitch_type", "")).upper()
-        if pt in target_types:
-            return gs(row, "run_value_per_100")
-    return None
+    renderHistory(yesterdayRecs, weekRecs, weekDates, yStr);
+  } catch(e) {
+    el.innerHTML = '<div class="err">'+e.message+'</div>';
+  }
+}
 
-def compute_pitch_matchup(pitcher_name, batter_name):
-    top_pitches = get_pitcher_top_pitches(pitcher_name)
-    if not top_pitches:
-        return 0.0, []
-    details = []
-    total_bonus = 0.0
-    for pitch in top_pitches:
-        code = pitch["code"]
-        usage = pitch["usage"] / 100.0
-        pit_rv = pitch["pit_rv"]
-        bat_rv = get_batter_pitch_rv(batter_name, code)
-        if bat_rv is None:
-            continue
-        combined = (bat_rv * 0.6) + (pit_rv * 0.4)
-        bonus = max(min(combined * usage * 1.5, 4), -4)
-        total_bonus += bonus
-        details.append({
-            "name": pitch["name"],
-            "usage": pitch["usage"],
-            "pit_rv": round(pit_rv, 2),
-            "bat_rv": round(bat_rv, 2),
-            "combined": round(combined, 2),
-            "bonus": round(bonus, 2),
-        })
-    return round(max(min(total_bonus, 8), -8), 2), details
+function renderHistory(yesterdayRecs, weekRecs, weekDates, yStr) {
+  var el = document.getElementById('history-main');
+  var h = '';
 
-# ── Model helpers ──
-def blend(v1, v2, w1=1.0, w2=0.0):
-    """Returns v1 only — 2025 data removed, w2 always 0."""
-    return float(v1 or 0)
+  // ── SECTION 1: Yesterday's Results ──
+  h += '<div style="margin-bottom:20px">';
+  h += '<div class="section-hdr"><div class="section-title">Yesterday — '+yStr+'</div>';
+  h += '<div style="display:flex;gap:8px">';
+  h += '<button class="refresh-btn" style="font-size:11px;padding:4px 10px" onclick="manualRecord()">Record Results</button>';
+  h += '</div></div>';
 
-def get_batter_blend_weights(pa_2026, pa_2025=0):
-    """2026-only. pa_2025 kept as unused param for call-site compatibility."""
-    return 1.0, 0.0
+  var yCompleted = yesterdayRecs.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
+  var yHits = yCompleted.filter(function(r){return r.hit_hr===1;});
+  var yPending = yesterdayRecs.filter(function(r){return r.hit_hr===null;});
 
-def get_pitcher_blend_weights(ip_2026, ip_2025=0):
-    """2026-only. ip_2025 kept as unused param for call-site compatibility."""
-    return 1.0, 0.0
+  if(!yesterdayRecs.length){
+    h += '<div style="padding:20px;color:var(--muted2);font-size:13px;text-align:center">No predictions found for yesterday.</div>';
+  } else {
+    // Quick summary strip
+    h += '<div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">';
+    h += statPill(yCompleted.length, 'Settled');
+    h += statPill(yHits.length+'/'+yCompleted.length, 'Hit');
+    h += statPill(yCompleted.length>0?(yHits.length/yCompleted.length*100).toFixed(0)+'%':'--', 'Hit Rate');
+    if(yPending.length) h += statPill(yPending.length, 'Pending');
+    h += '</div>';
 
-def get_park_hr_factor(home_team, batter_hand):
-    pf = PARK_HR_FACTORS.get(home_team, {"L": 1.0, "R": 1.0})
-    return pf.get(batter_hand if batter_hand in ("L", "R") else "R", 1.0)
+    // Batter rows sorted by probability
+    var sorted = yesterdayRecs.slice().sort(function(a,b){return b.model_hr_pct-a.model_hr_pct;});
+    h += '<div style="display:flex;flex-direction:column;gap:4px">';
+    sorted.forEach(function(r){
+      var hit = r.hit_hr===1;
+      var miss = r.hit_hr===0;
+      var pending = r.hit_hr===null;
+      var dnp = r.hit_hr==='DNP';
+      var borderC = hit?'var(--g)':miss?'var(--r)':pending?'var(--border2)':'var(--border2)';
+      var badge = hit?'<span style="font-size:10px;font-weight:700;color:var(--g);background:rgba(50,215,75,.12);padding:2px 8px;border-radius:20px">HR ✓</span>'
+                 :miss?'<span style="font-size:10px;font-weight:700;color:var(--r);background:rgba(255,69,58,.1);padding:2px 8px;border-radius:20px">No HR</span>'
+                 :dnp?'<span style="font-size:10px;color:var(--muted2);background:var(--s2);padding:2px 8px;border-radius:20px">DNP</span>'
+                 :'<span style="font-size:10px;color:var(--y);background:rgba(255,159,10,.1);padding:2px 8px;border-radius:20px">Pending</span>';
+      var pc = r.model_hr_pct||0;
+      var pctColor = pc>=18?'var(--text)':pc>=12?'var(--g)':pc>=8?'var(--y)':'var(--muted)';
+      var radar = r.radar||{};
+      h += '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border:0.5px solid '+borderC+';border-left:3px solid '+borderC+';border-radius:8px">';
+      h += '<div style="flex:1;min-width:0">';
+      h += '<div style="font-size:13px;font-weight:500;color:var(--text)">'+r.name+'</div>';
+      h += '<div style="font-size:10px;color:var(--muted2)">'+r.team+' · vs '+(r.opp_pitcher||'--')+' ('+(r.opp_pitcher_hand||'R')+'HP)</div>';
+      h += '</div>';
+      // Mini radar scores if available
+      if(radar.overall){
+        h += '<div style="display:flex;gap:6px">';
+        [['P',radar.power],['F',radar.form],['M',radar.matchup]].forEach(function(ax){
+          var c=ax[1]>=70?'var(--g)':ax[1]>=45?'var(--y)':'var(--r)';
+          h += '<div style="text-align:center"><div style="font-size:9px;color:var(--muted2)">'+ax[0]+'</div>'
+            + '<div style="font-size:11px;font-weight:600;color:'+c+'">'+ax[1]+'</div></div>';
+        });
+        h += '</div>';
+      }
+      h += '<div style="font-size:18px;font-weight:700;color:'+pctColor+';min-width:42px;text-align:right">'+pc+'%</div>';
+      h += badge;
+      h += '</div>';
+    });
+    h += '</div>';
+  }
+  h += '</div>';
 
-def angle_diff(a, b):
-    diff = abs(a - b) % 360
-    return diff if diff <= 180 else 360 - diff
+  // ── SECTION 2: 7-Day Tier Hit Rates ──
+  h += '<div style="margin-bottom:20px">';
+  h += '<div class="section-hdr"><div class="section-title">Last 7 Days — Tier Performance</div></div>';
 
-def calc_weather_multiplier(home_team, wind_speed, wind_direction, temperature, batter_hand="R"):
-    stadium = STADIUMS.get(home_team)
-    if not stadium: return 1.0, "Unknown"
-    if stadium.get("dome"): return 1.0, "Dome"
-    # Use handedness-specific HR bearing
-    # RHB pull to LF (~NW), LHB pull to RF (~SE)
-    if batter_hand == "L":
-        hr_bearing = stadium.get("hr_bearing_L", stadium.get("hr_bearing", 135))
-    else:
-        hr_bearing = stadium.get("hr_bearing_R", stadium.get("hr_bearing", 305))
-    open_factor = stadium.get("open_factor", 0.5)
-    # Open-Meteo gives wind direction as where wind comes FROM (meteorological convention)
-    # We need where it's blowing TO — flip 180 degrees
-    wind_toward = (wind_direction + 180) % 360
-    diff = angle_diff(wind_toward, hr_bearing)
-    alignment = math.cos(math.radians(diff))
-    speed_factor = 0 if wind_speed < 5 else 0.3 if wind_speed < 10 else 0.7 if wind_speed < 16 else 1.0
-    wind_mult = 1.0 + (alignment * speed_factor * 0.12 * open_factor)
-    temp_mult = 1.06 if temperature >= 80 else 1.02 if temperature >= 70 else 0.91 if temperature < 50 else 0.96 if temperature < 60 else 1.0
-    # Direction label — uses cf_bearing for precise field direction labels
-    cf_bearing = stadium.get("cf_bearing", 67)  # default ENE
-    hr_bear_r  = stadium.get("hr_bearing_R", (cf_bearing + 270) % 360)
-    hr_bear_l  = stadium.get("hr_bearing_L", (cf_bearing + 90)  % 360)
+  var settled = weekRecs.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
 
-    if wind_speed < 5:
-        direction_label = "Calm"
-    else:
-        diff_cf = abs(angle_diff(wind_toward, cf_bearing))
-        diff_lf = abs(angle_diff(wind_toward, hr_bear_r))
-        diff_rf = abs(angle_diff(wind_toward, hr_bear_l))
-        if alignment > 0.5:
-            if diff_cf <= 25:       direction_label = "Out to CF"
-            elif diff_lf < diff_rf: direction_label = "Out to LF"
-            else:                   direction_label = "Out to RF"
-        elif alignment > 0.15:
-            if diff_cf <= 35:       direction_label = "Blowing Out"
-            elif diff_lf < diff_rf: direction_label = "Toward LF"
-            else:                   direction_label = "Toward RF"
-        elif alignment < -0.5:      direction_label = "Blowing In"
-        elif alignment < -0.15:     direction_label = "Slightly In"
-        else:                       direction_label = "Crosswind"
-    return round(wind_mult * temp_mult, 3), direction_label
+  function tierRow(label, lo, hi, color){
+    var t = settled.filter(function(r){var p=r.model_hr_pct||0;return p>=lo&&(hi===null||p<hi);});
+    var hits = t.filter(function(r){return r.hit_hr===1;});
+    var rate = t.length>0?(hits.length/t.length*100).toFixed(0)+'%':'--';
+    var barW = t.length>0?Math.min(hits.length/t.length*100,100):0;
+    return '<div style="padding:10px 14px;background:var(--surface);border:0.5px solid var(--border2);border-radius:8px;margin-bottom:6px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      +'<div style="font-size:12px;font-weight:500;color:var(--text)">'+label+'</div>'
+      +'<div style="display:flex;align-items:center;gap:10px">'
+      +'<div style="font-size:11px;color:var(--muted2)">'+hits.length+' / '+t.length+' hit</div>'
+      +'<div style="font-size:16px;font-weight:700;color:'+color+'">'+rate+'</div>'
+      +'</div></div>'
+      +'<div style="height:4px;background:var(--s2);border-radius:2px">'
+      +'<div style="width:'+barW+'%;height:100%;background:'+color+';border-radius:2px"></div>'
+      +'</div></div>';
+  }
 
-def sigmoid_to_prob(raw_score):
-    centered = (raw_score - 50) / 18.0
-    sigmoid = 1 / (1 + math.exp(-centered))
-    return round(min(max(0.02 + sigmoid * 0.25, 0.02), 0.25) * 100, 1)
+  if(!settled.length){
+    h += '<div style="padding:20px;color:var(--muted2);font-size:13px;text-align:center">No settled records in the last 7 days yet.</div>';
+  } else {
+    h += tierRow('Elite — 18%+',   18, null, 'var(--text)');
+    h += tierRow('Strong — 12-18%', 12, 18,  'var(--g)');
+    h += tierRow('Moderate — 8-12%', 8, 12,  'var(--y)');
+    h += tierRow('Low — Under 8%',   0,  8,  'var(--muted)');
 
-def safe_mult(value, lg_avg, weight_key="", sample=None, min_sample=0, cap_high=2.50, cap_low=0.30):
-    """
-    Safe multiplier that returns 1.0 (neutral) when:
-    - value is missing, zero, or None
-    - sample size is below minimum threshold
-    Never collapses to 0, never goes haywire on tiny samples.
-    """
-    if value is None or value == 0:
-        return 1.0  # missing stat — neutral, doesn't help or hurt
-    if min_sample > 0 and sample is not None and sample < min_sample:
-        return 1.0  # insufficient sample — neutral until we have real data
-    w = W(weight_key) if weight_key else 1.0
-    raw = (float(value) / float(lg_avg)) ** w
-    return max(min(raw, cap_high), cap_low)
+    // Day by day summary
+    h += '<div style="margin-top:14px">';
+    h += '<div style="font-size:9px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Day by Day</div>';
+    h += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+    weekDates.slice().reverse().forEach(function(d){
+      var dayRecs = weekRecs.filter(function(r){return r.date===d;});
+      var daySettled = dayRecs.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
+      var dayHits = daySettled.filter(function(r){return r.hit_hr===1;});
+      if(!daySettled.length) return;
+      var rate = (dayHits.length/daySettled.length*100).toFixed(0);
+      var c = parseInt(rate)>=25?'var(--g)':parseInt(rate)>=10?'var(--y)':'var(--r)';
+      h += '<div style="padding:6px 10px;background:var(--surface);border:0.5px solid var(--border2);border-radius:6px;text-align:center;min-width:54px">';
+      h += '<div style="font-size:9px;color:var(--muted2)">'+d.slice(5)+'</div>';
+      h += '<div style="font-size:14px;font-weight:700;color:'+c+'">'+rate+'%</div>';
+      h += '<div style="font-size:9px;color:var(--muted2)">'+dayHits.length+'/'+daySettled.length+'</div>';
+      h += '</div>';
+    });
+    h += '</div></div>';
+  }
+  h += '</div>';
 
-def compute_hr_prob_multiplicative(
-        name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
-    """
-    Multiplicative HR probability model.
-    P(HR) = Base Rate × Barrel% × LA × Pitcher Vuln × Batter Platoon ×
-            Pitcher Platoon × Park × Weather × Hot/Cold × K% penalty
-    Hard cap: 28%
-    """
-    # ── Data fetch ──
-    bc  = get_batter_stats(name, 2026)
-    b8d = get_batter_8d(name)
-    b_split_vs_hand = get_batter_split(name, opp_p_hand)   # batter vs pitcher hand
-    b_split_opp     = get_batter_split(name, "R" if opp_p_hand == "L" else "L")  # vs opposite hand
-    p_split_vs_bat  = get_pitcher_split(opp_p_name, bat_hand)  # pitcher vs batter hand
+  // ── Load More ──
+  h += '<div style="text-align:center;padding:10px 0 20px">';
+  h += '<button onclick="loadMoreHistory()" style="background:transparent;border:1px solid var(--border2);color:var(--muted);font-size:12px;padding:7px 20px;border-radius:6px;cursor:pointer">Load More History</button>';
+  h += '</div>';
 
-    pa_26 = bc.get("pa", 0); pa_25 = 0
-    bwc = 1.0
-    # For brand new MLB players (under 60 PA, no 2025 data), Savant's game_date_gt
-    # filter sometimes returns full season stats instead of true L8D window.
-    # If L8D PA matches season PA exactly, it's bogus — clear it.
+  el.innerHTML = h;
+}
 
-    has_8d = b8d.get("pa", 0) >= 3
-    total_pa = pa_26
+function statPill(val, lbl){
+  return '<div style="padding:6px 12px;background:var(--surface);border:0.5px solid var(--border2);border-radius:20px;font-size:12px;color:var(--text)">'
+    +'<span style="font-weight:600">'+val+'</span>'
+    +' <span style="color:var(--muted2)">'+lbl+'</span></div>';
+}
 
-    # ── Step 1: Base HR rate (per-PA, relative ranking model) ──
-    # base_rate = HR/PA blended between 2026 season and 2025 career
-    # Output is a relative score — higher = more likely than others today
-    # Not a literal per-game probability. Rankings matter more than absolute values.
-    hr_season = bc.get("hr", 0)
-    hr_career  = blend(bc.get("hr", 0), 0, bwc)
-    pa_season  = max(pa_26, 1)
+async function loadMoreHistory(){
+  var btn = event.target;
+  btn.textContent = 'Loading...';
+  btn.disabled = true;
+  try {
+    var resp = await fetch(API + '/history');
+    var data = await resp.json();
+    historyData = data;
+    if(data.records && data.records.length > 0) computePercentiles(data.records);
+    // Show full legacy view
+    var el = document.getElementById('history-main');
+    var records = data.records || [];
+    var completed = records.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
+    var hits = completed.filter(function(r){return r.hit_hr===1;});
+    var h = '<div style="padding:12px;background:var(--surface);border:0.5px solid var(--border2);border-radius:8px;margin-bottom:16px;font-size:12px;color:var(--muted)">';
+    h += 'Full history — '+records.length+' records, '+completed.length+' settled, '+hits.length+' HRs ('+
+      (completed.length>0?(hits.length/completed.length*100).toFixed(1)+'%':'--')+' hit rate)</div>';
+    var sorted = completed.slice().sort(function(a,b){return b.model_hr_pct-a.model_hr_pct;});
+    sorted.forEach(function(r){
+      var hit=r.hit_hr===1; var miss=r.hit_hr===0;
+      var borderC=hit?'var(--g)':miss?'var(--r)':'var(--border2)';
+      var badge=hit?'<span style="font-size:10px;font-weight:700;color:var(--g)">HR ✓</span>'
+               :miss?'<span style="font-size:10px;color:var(--r)">No HR</span>':'';
+      h += '<div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:var(--surface);border:0.5px solid '+borderC+';border-left:3px solid '+borderC+';border-radius:6px;margin-bottom:3px">';
+      h += '<div style="font-size:10px;color:var(--muted2);min-width:46px">'+r.date+'</div>';
+      h += '<div style="flex:1;font-size:12px;font-weight:500">'+r.name+'</div>';
+      h += '<div style="font-size:14px;font-weight:700;color:'+(r.model_hr_pct>=12?'var(--g)':r.model_hr_pct>=8?'var(--y)':'var(--muted)')+'">'+r.model_hr_pct+'%</div>';
+      h += badge+'</div>';
+    });
+    el.innerHTML = h;
+  } catch(e) {
+    btn.textContent = 'Load More History';
+    btn.disabled = false;
+  }
+}
 
-    hr_per_pa_season = hr_season / pa_season if pa_season > 0 else 0
-    hr_per_pa_career = hr_career / max(pa_26, 1) if pa_26 > 0 else 0.028
 
-    # PA-weighted blend — 200+ PA = trust season fully
-    if pa_26 >= 200:
-        base_rate = hr_per_pa_season
-    elif pa_26 >= 150:
-        base_rate = hr_per_pa_season * 0.80 + hr_per_pa_career * 0.20
-    elif pa_26 >= 100:
-        base_rate = hr_per_pa_season * 0.60 + hr_per_pa_career * 0.40
-    elif pa_26 >= 50:
-        base_rate = hr_per_pa_season * 0.30 + hr_per_pa_career * 0.70
-    else:
-        base_rate = hr_per_pa_career
+function histCard(val, lbl, isHit) {
+  return '<div class="hist-stat'+(isHit?' hist-hit':'')+'"><div class="hist-stat-val">'+val+'</div><div class="hist-stat-lbl">'+lbl+'</div></div>';
+}
 
-    # Floor: league avg HR/PA ~2.8%
-    if base_rate <= 0:
-        base_rate = 0.028
-    base_rate = min(base_rate, 0.12)
+function selectHistDate(d) {
+  selectedHistDate = selectedHistDate === d ? null : d;
+  if (historyData) renderHistory(historyData);
+}
 
-    # Small sample confidence gate
-    if total_pa < 30:   base_rate = base_rate * 0.55 + 0.028 * 0.45
-    elif total_pa < 60: base_rate = base_rate * 0.75 + 0.028 * 0.25
+function pointBiserial(records, key) {
+  // Point-biserial correlation between a continuous stat and binary hit_hr outcome
+  var valid = records.filter(function(r){return r[key] != null && r[key] !== 0;});
+  if (valid.length < 5) return null;
+  var n = valid.length;
+  var n1 = valid.filter(function(r){return r.hit_hr===1;}).length;
+  var n0 = n - n1;
+  if (n1 === 0 || n0 === 0) return null;
+  var vals = valid.map(function(r){return parseFloat(r[key])||0;});
+  var mean_all = vals.reduce(function(s,v){return s+v;},0) / n;
+  var std = Math.sqrt(vals.reduce(function(s,v){return s+Math.pow(v-mean_all,2);},0) / n);
+  if (std === 0) return null;
+  var mean1 = valid.filter(function(r){return r.hit_hr===1;}).reduce(function(s,r){return s+(parseFloat(r[key])||0);},0) / n1;
+  return ((mean1 - mean_all) / std) * Math.sqrt(n1 * n0 / (n * n));
+}
 
-    running = base_rate
+async function manualSave() {
+  try {
+    var r = await fetch(API+'/save-predictions', {method:'GET'});
+    var d = await r.json();
+    alert('Saved predictions for '+d.date);
+    loadHistory();
+  } catch(e) { alert('Error: '+e.message); }
+}
 
-    # ── Step 2: Barrel% — season + L8D weighted separately via safe_mult ──
-    LG_BARREL = LEAGUE_CONSTANTS["lg_barrel_pct"]
-    barrel_season = blend(bc.get("barrel_pct", 0), 0, bwc)
-    barrel_l8d    = b8d.get("barrel_pct", 0) if has_8d else 0
-    barrel_season_mult = safe_mult(barrel_season, LG_BARREL, "barrel_season_w", pa_26, 20)
-    barrel_l8d_mult    = safe_mult(barrel_l8d, LG_BARREL, "barrel_l8d_w",
-                                   b8d.get("pa", 0) if has_8d else 0, 8)
-    if has_8d and b8d.get("pa", 0) >= 8:
-        barrel_mult = barrel_season_mult * 0.60 + barrel_l8d_mult * 0.40
-    else:
-        barrel_mult = barrel_season_mult
-    barrel_use = barrel_season if barrel_season > 0 else LG_BARREL
-    running *= barrel_mult
+async function manualRecord() {
+  try {
+    var r = await fetch(API+'/record-results', {method:'GET'});
+    var d = await r.json();
+    alert('Recorded results for '+d.date);
+    loadHistory();
+  } catch(e) { alert('Error: '+e.message); }
+}
 
-    # ── Step 3: Launch angle — season + L8D weighted separately via safe_mult ──
-    la_season = blend(bc.get("launch_angle", 0), 0, bwc)
-    la_l8d    = b8d.get("launch_angle", 0) if has_8d else 0
-
-    def la_to_raw(la):
-        if not la or la <= 0: return None
-        if 25 <= la <= 35:   return 1.00
-        elif 20 <= la < 25:  return 0.90
-        elif 35 < la <= 40:  return 0.90
-        elif 18 <= la < 20:  return 0.80
-        elif 40 < la <= 45:  return 0.80
-        else:                return 0.75
-
-    la_s_raw = la_to_raw(la_season)
-    la_l_raw = la_to_raw(la_l8d)
-    # Apply weights as exponent on the raw LA multiplier
-    la_season_mult = (la_s_raw ** W("la_season_w")) if la_s_raw else 1.0
-    la_l8d_mult    = (la_l_raw ** W("la_l8d_w")) if la_l_raw and has_8d and b8d.get("pa",0) >= 8 else 1.0
-    if has_8d and b8d.get("pa", 0) >= 8 and la_l_raw:
-        la_mult = la_season_mult * 0.60 + la_l8d_mult * 0.40
-    else:
-        la_mult = la_season_mult
-    la_use = la_season if la_season > 0 else 20.0
-    running *= la_mult
-
-    # ── Step 4: Pitcher vulnerability — season + vs-hand via safe_mult ──
-    pc = get_pitcher_stats(opp_p_name, 2026)
-    ip_26 = pc.get("ip", 0)
-    pwc = 1.0
-
-    LG_HR9 = LEAGUE_CONSTANTS["lg_hr9"]
-    LG_HH  = LEAGUE_CONSTANTS["lg_hard_hit"]
-    pit_hr9_season  = blend(pc.get("hr9", 0), 0)
-    pit_hr9_vs_hand = p_split_vs_bat.get("hr9", 0)
-    pit_hard        = blend(pc.get("hard_hit_pct", 0), 0)
-    pit_ip_vs_hand  = p_split_vs_bat.get("ip", 0)
-    total_ip        = ip_26 + 0
-
-    m_hr9_s  = safe_mult(pit_hr9_season,  LG_HR9, "pit_hr9_season_w",  total_ip, 10)
-    m_hr9_vs = safe_mult(pit_hr9_vs_hand, LG_HR9, "pit_hr9_vs_hand_w", pit_ip_vs_hand, 5)
-    m_hard   = safe_mult(pit_hard, LG_HH, "", total_ip, 10)
-
-    # Combine: average of available signals (don't multiply — correlated stats)
-    pit_signals = []
-    if total_ip >= 10 and pit_hr9_season > 0:  pit_signals.append(m_hr9_s)
-    if pit_ip_vs_hand >= 5 and pit_hr9_vs_hand > 0: pit_signals.append(m_hr9_vs)
-    if total_ip >= 10 and pit_hard > 0:         pit_signals.append(m_hard)
-    pit_vuln_mult = sum(pit_signals) / len(pit_signals) if pit_signals else 1.0
-    pit_vuln_mult = max(min(pit_vuln_mult, 1.80), 0.50)
-    running *= pit_vuln_mult
-
-    # ── Step 5: Batter platoon — ISO vs hand via safe_mult ──
-    iso_vs_hand   = b_split_vs_hand.get("iso", 0)
-    iso_overall   = blend(bc.get("iso", 0), 0, bwc)
-    split_pa      = b_split_vs_hand.get("pa", 0)
-    # Need both iso_vs_hand and iso_overall as ratio — use safe_mult on ratio
-    if iso_overall > 0 and iso_vs_hand > 0 and split_pa >= 30:
-        bat_platoon_raw = iso_vs_hand / iso_overall
-        bat_platoon_mult = safe_mult(bat_platoon_raw, 1.0, "bat_platoon_w",
-                                     split_pa, 30, cap_high=1.60, cap_low=0.60)
-    else:
-        bat_platoon_mult = 1.0
-    running *= bat_platoon_mult
-
-    # ── Step 6: Pitcher platoon — SLG vs hand via safe_mult ──
-    slg_vs_bat      = p_split_vs_bat.get("slg", 0)
-    p_split_opp     = get_pitcher_split(opp_p_name, "L" if bat_hand == "R" else "R")
-    split_ip_vs_bat = p_split_vs_bat.get("ip", 0)
-    slg_sources     = [x for x in [slg_vs_bat, p_split_opp.get("slg", 0)] if x > 0]
-    slg_overall_pit = sum(slg_sources) / len(slg_sources) if slg_sources else 0
-    if slg_overall_pit > 0 and slg_vs_bat > 0 and split_ip_vs_bat >= 5:
-        pit_platoon_raw  = slg_vs_bat / slg_overall_pit
-        pit_platoon_mult = safe_mult(pit_platoon_raw, 1.0, "pit_platoon_w",
-                                     split_ip_vs_bat, 5, cap_high=1.60, cap_low=0.60)
-    else:
-        pit_platoon_mult = 1.0
-    running *= pit_platoon_mult
-
-    # ── Step 7: Park multiplier ──
-    park_w = W("park_w")
-    park_mult_applied = park_factor ** park_w if park_factor > 0 else 1.0
-    running *= park_mult_applied
-
-    # ── Step 8: Weather multiplier ──
-    weather_w = W("weather_w")
-    weather_mult_applied = weather_mult ** weather_w if weather_mult > 0 else 1.0
-    running *= weather_mult_applied
-
-    # ── Step 9: Hot/cold — display signal only, NOT in model ──
-    # Removed from calculation — L8D HR count is shown on the table as a visual signal
-    # ML will determine if it actually matters. Keeping calc for breakdown display only.
-    hot_cold_mult = 1.0
-    if has_8d and b8d.get("pa", 0) >= 8:
-        pa_8d = b8d.get("pa", 0)
-        hr_8d_count = get_l8d_hr(name)
-        hr_8d_rate  = hr_8d_count / pa_8d
-        if base_rate > 0:
-            ratio = hr_8d_rate / base_rate
-            hot_cold_mult = max(min(ratio, 1.20), 0.85)
-    # NOT applied to running — hot_cold_mult stored for ML analysis only
-    # running *= hot_cold_mult  <-- removed
-
-    # ── Step 10: K% penalty — safe_mult aware ──
-    k_season = blend(bc.get("k_pct", 0), 0, bwc)
-    k_w = W("k_pct_w")
-    if k_season >= 35:   k_mult = 0.88 ** k_w
-    elif k_season >= 30: k_mult = 0.94 ** k_w
-    elif k_season >= 25: k_mult = 0.97 ** k_w
-    else:                k_mult = 1.0
-    if k_season == 0:    k_mult = 1.0  # missing K% — neutral
-    running *= k_mult
-
-    # ── Hard cap + bullpen blend ──
-    LG_BULLPEN_HR9 = LEAGUE_CONSTANTS["lg_bullpen_hr9"]
-    bullpen_data   = _cache.get("team_bullpen", {}).get(home_team, {})
-    bullpen_hr9    = bullpen_data.get("hr9", LG_BULLPEN_HR9)
-    bullpen_vuln   = safe_mult(bullpen_hr9, LG_BULLPEN_HR9, "bullpen_w",
-                               cap_high=1.80, cap_low=0.50)
-    # Bullpen component — uses batter skill + context + bullpen vuln
-    bullpen_component = (base_rate * barrel_mult * la_mult * bat_platoon_mult *
-                         park_mult_applied * weather_mult_applied * k_mult * bullpen_vuln)
-    # Bullpen blend is always 25% — bullpen_w is an exponent applied in safe_mult above,
-    # NOT a blend fraction. Using it as a fraction would break math when bullpen_w > 1.0.
-    bullpen_w_blend = 0.25
-    running = (running * (1 - bullpen_w_blend)) + (bullpen_component * bullpen_w_blend)
-
-    hr_prob = round(min(running * 100, LEAGUE_CONSTANTS["hr_prob_cap"]), 1)
-
-    # ── Build breakdown for frontend ──
-    pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
-    archetype = get_archetype(barrel_season, k_season,
-                              blend(bc.get("fb_pct", 0), 0, bwc),
-                              iso_overall if iso_overall else blend(bc.get("iso",0), 0, bwc))
-    trend = get_trend(b8d, bc)
-
-    reasons = []
-    if barrel_season >= 12: reasons.append(f"Barrel {barrel_season:.1f}%")
-    if iso_vs_hand > 0.220: reasons.append(f"ISO vs hand .{int(iso_vs_hand*1000):03d}")
-    if pit_hr9_season > 1.3: reasons.append(f"SP {pit_hr9_season:.1f} HR/9")
-    if pit_hard > 40: reasons.append(f"SP {pit_hard:.1f}% HH")
-    if park_factor >= 1.15: reasons.append("HR-friendly park")
-    elif park_factor <= 0.90: reasons.append("Pitcher-friendly park")
-
-    platoon_tag = None
-    if bat_platoon_mult >= 1.20:
-        platoon_tag = f"Batter strong vs {opp_p_hand}HP"
-    if pit_platoon_mult >= 1.20:
-        platoon_tag = (platoon_tag + " + " if platoon_tag else "") + f"SP weak vs {bat_hand}HB"
-
-    n_components = len(pit_signals)
-    conf = "High" if n_components >= 2 and pa_26 >= 50 else "Medium" if n_components >= 1 else "Low"
-    blend_note = "100% 2026" + (" + 8d" if has_8d else "")
-
-    breakdown = {
-        "base_rate": round(base_rate * 100, 2),
-        "barrel_mult": round(barrel_mult, 3), "la_mult": round(la_mult, 3),
-        "pit_vuln_mult": round(pit_vuln_mult, 3),
-        "bat_platoon_mult": round(bat_platoon_mult, 3), "pit_platoon_mult": round(pit_platoon_mult, 3),
-        "park_factor": round(park_factor, 3), "weather_mult": round(weather_mult, 3),
-        "hot_cold_mult": round(hot_cold_mult, 3), "k_mult": round(k_mult, 3),
-        "iso_vs_hand": round(iso_vs_hand, 3), "iso_overall": round(iso_overall, 3),
-        "split_pa": split_pa, "split_ip_vs_bat": round(split_ip_vs_bat, 1),
-        "slg_vs_bat": round(slg_vs_bat, 3) if split_ip_vs_bat >= 5 else 0,
-        "pit_slg_overall": round(slg_overall_pit, 3),
-        "split_hr": int(b_split_vs_hand.get("hr", 0)),
-        "split_slg": round(b_split_vs_hand.get("slg", 0), 3),
-        "split_woba": round(b_split_vs_hand.get("woba", 0), 3),
-        "split_k_pct": round(b_split_vs_hand.get("k_pct", 0), 1),
-        "split_brl": round(b_split_vs_hand.get("barrel_pct", 0), 1),
-        "split_iso": round(iso_vs_hand, 3), "split_ip": round(split_ip_vs_bat, 1),
-        "hr9_split": round(p_split_vs_bat.get("hr9", 0), 2),
-        "hr9_season": round(pit_hr9_season, 2), "pit_hard": round(pit_hard, 1),
-        "n_pit_components": n_components,
-        "pit_blend_note": "100% 2026",
-        "barrel_use": round(barrel_use, 1), "barrel_season": round(barrel_season, 1),
-        "la_use": round(la_use, 1), "la_season": round(la_season, 1),
-        "la_8d_raw": round(la_l8d, 1), "barrel_8d_raw": round(b8d.get("barrel_pct", 0), 1),
-        "hr_season": int(bc.get("hr", 0)), "pa_season": int(pa_26), "pa_8d": int(b8d.get("pa", 0)),
-        "has_8d": has_8d, "blend_note": blend_note, "k_season": round(k_season, 1),
-        "pitch_bonus": pitch_bonus, "pitch_breakdown": pitch_details,
-        "data_conf": {
-            "barrel": 1 if barrel_season > 0 and pa_26 >= 20 else 0,
-            "la": 1 if la_season > 0 and pa_26 >= 20 else 0,
-            "pit_hr9": 1 if pit_hr9_season > 0 and total_ip >= 10 else 0,
-            "pit_hr9_hand": 1 if pit_hr9_vs_hand > 0 and pit_ip_vs_hand >= 5 else 0,
-            "iso_vs_hand": 1 if iso_vs_hand > 0 and split_pa >= 30 else 0,
-            "park": 1 if park_factor != 1.0 else 0,
-            "pitch_delta": 1 if pitch_bonus != 0 else 0,
-            "bat_platoon": 1 if bat_platoon_mult != 1.0 else 0,
-        },
-        "bullpen_hr9": round(bullpen_hr9, 2), "bullpen_vuln": round(bullpen_vuln, 3),
-        "iso_use": round(iso_vs_hand if iso_vs_hand > 0 else iso_overall, 3),
-        "pull_s": round(blend(bc.get("pull_pct", 0), 0, bwc), 1),
-        "pit_modifier": round(pit_vuln_mult, 3),
-        "hr_rate_8d": round(b8d.get("hr", 0) / max(b8d.get("pa", 1), 1) * 600, 1) if has_8d else 0,
+async function load(forceRefresh){
+  var btn=document.getElementById('refreshBtn'),upd=document.getElementById('upd');
+  btn.disabled=true;
+  document.getElementById('batter-main').innerHTML='<div class="loading">Loading Uncle Nicky&#39;s Model<div class="dots"><span></span><span></span><span></span></div></div>';
+  document.getElementById('pitcher-main').innerHTML='<div class="no-data">Loading...</div>';
+  document.getElementById('game-main').innerHTML='<div class="no-data">Loading...</div>';
+  try{
+    var dateStr=formatDateForAPI(selectedDate);
+    var url=API+'/games?date='+dateStr+(forceRefresh?'&refresh=true':'');
+    var resp=await fetch(url);
+    if(!resp.ok)throw new Error('Backend error '+resp.status);
+    var data=await resp.json();
+    if(data.loading){document.getElementById('batter-main').innerHTML='<div class="err">'+(data.message||'Data loading - try again in 30 seconds.')+'</div>';btn.disabled=false;return;}
+    allGames=data.games||[];
+    if(!allGames.length){
+      var nm='<div class="no-data">No MLB games on '+dateStr+'.</div>';
+      ['batter-main','pitcher-main','game-main'].forEach(function(id){document.getElementById(id).innerHTML=nm;});
+      btn.disabled=false;return;
     }
-    return hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
-
-def get_archetype(barrel_pct, k_pct, fb_pct, iso):
-    if barrel_pct >= 10 and k_pct >= 28: return "Boom/Bust"
-    elif barrel_pct >= 10 and k_pct < 22: return "Pure Power"
-    elif barrel_pct >= 7 and fb_pct >= 38: return "Power"
-    elif iso >= 0.180 and k_pct < 20: return "Balanced"
-    elif k_pct >= 28: return "High K"
-    else: return "Contact"
-
-def get_trend(b8d, bc):
-    if not b8d or b8d.get("pa", 0) < 3: return "Steady"
-    score = 0
-    hr_rate = b8d.get("hr_rate", 0)
-    if hr_rate > 25: score += 2
-    elif hr_rate > 12: score += 1
-    elif hr_rate == 0 and b8d.get("pa", 0) >= 10: score -= 1
-    brl_8d = b8d.get("barrel_pct", 0)
-    brl_s = bc.get("barrel_pct", 0)
-    if brl_8d > 0 and brl_s > 0:
-        diff = brl_8d - brl_s
-        if diff >= 5: score += 2
-        elif diff >= 2: score += 1
-        elif diff <= -5: score -= 2
-        elif diff <= -2: score -= 1
-    iso_8d = b8d.get("iso", 0)
-    iso_s = bc.get("iso", 0)
-    if iso_8d > 0 and iso_s > 0:
-        if iso_8d - iso_s >= 0.080: score += 1
-        elif iso_8d - iso_s <= -0.080: score -= 1
-    if score >= 2: return "Heating Up"
-    elif score <= -2: return "Cooling Off"
-    return "Steady"
-
-def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
-    """
-    Main prediction entry point.
-    When RF is trained: uses pure Random Forest probability.
-    Falls back to multiplicative model when RF not yet trained.
-    """
-    # Always compute multiplicative — used as fallback and for breakdown data
-    mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf = \
-        compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team)
-
-    if not _rf_trained or _rf_model is None:
-        return mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
-
-    # ── Build RF feature vector ──
-    try:
-        bc  = get_batter_stats(name, 2026)
-        b8d = get_batter_8d(name)
-        b_split = get_batter_split(name, opp_p_hand)
-        pc  = get_pitcher_stats(opp_p_name, 2026)
-        p_split = get_pitcher_split(opp_p_name, bat_hand)
-        pa_26 = bc.get("pa", 0); pa_25 = 0
-        bwc = 1.0
-        ip_26 = pc.get("ip", 0)
-        pwc = 1.0
-        pitch_score, _ = compute_pitch_matchup(opp_p_name, name)
-
-        def bv(k): return blend(bc.get(k, 0), 0, bwc)
-        def pv(k): return blend(pc.get(k, 0), 0)
-
-        feat_vals = {
-            "barrel_pct_season":    bv("barrel_pct"),
-            "barrel_pct_l8d":       b8d.get("barrel_pct", 0),
-            "la_season":            bv("launch_angle"),
-            "la_l8d":               b8d.get("launch_angle", 0),
-            "ev_season":            bv("exit_velo"),
-            "ev_l8d":               b8d.get("exit_velo", 0),
-            "iso_season":           bv("iso"),
-            "iso_vs_hand":          b_split.get("iso", 0),
-            "hard_hit_season":      bv("hard_hit_pct"),
-            "hard_hit_l8d":         b8d.get("hard_hit_pct", 0),
-            "k_pct_season":         bv("k_pct"),
-            "k_pct_l8d":            b8d.get("k_pct", 0),
-            "pull_pct_season":      bv("pull_pct"),
-            "pit_hr9_season":       pv("hr9"),
-            "pit_hr9_vs_hand":      p_split.get("hr9", 0),
-            "pit_hard_hit_season":  pv("hard_hit_pct"),
-            "pit_era_season":       pv("era"),
-            "pit_k9_season":        pv("k9"),
-            "pit_era_diff":         round(pv("era") - 4.20, 2) if pv("era") > 0 else 0,
-            "pit_slg_vs_hand":      p_split.get("slg", 0),
-            "park_factor":          park_factor,
-            "weather_mult":         weather_mult,
-            "bat_platoon_mult":     breakdown.get("bat_platoon_mult", 1.0),
-            "pit_platoon_mult":     breakdown.get("pit_platoon_mult", 1.0),
-            "bullpen_vuln":         breakdown.get("bullpen_vuln", 1.0),
-            "pitch_matchup_score":  pitch_score,
-            "combined_pitch_delta": breakdown.get("combined_pitch_delta", 0),
-            "xslg_l8d":             b8d.get("xslg", 0),
-            "xwoba_l8d":            b8d.get("xwoba", 0),
-            "xslg_gap_l8d":         round(b8d.get("xslg", 0) - b8d.get("slg", 0), 3) if b8d.get("xslg", 0) > 0 else 0,
-            "bat_speed_l8d":        b8d.get("bat_speed", 0),
-        }
-
-        row = [float(feat_vals.get(f) or _rf_medians.get(f, 0.0)) for f in _rf_features]
-        proba = _rf_model.predict_proba([row])[0]
-        rf_prob = round(min(float(proba[1]) * 100, LEAGUE_CONSTANTS["hr_prob_cap"]), 1)
-
-        breakdown["rf_prob"]   = rf_prob
-        breakdown["mult_prob"] = mult_prob  # kept for debugging only
-
-        return rf_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
-
-    except Exception as e:
-        print(f"RF predict error for {name}: {e} — falling back to multiplicative")
-        return mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
-
-
-def predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, breakdown,
-                bc=None, b8d=None, b_split=None, pc=None, p_split=None):
-    """
-    Get XGBoost probability for a batter.
-    Accepts pre-fetched stat dicts to avoid double-lookup performance hit.
-    Falls back to fetching if not provided.
-    """
-    if not _xgb_trained or _xgb_model is None:
-        return None
-    try:
-        # Use pre-fetched stats if provided, otherwise fetch
-        _bc      = bc      or get_batter_stats(name, 2026)
-        _b8d     = b8d     or get_batter_8d(name)
-        _b_split = b_split or get_batter_split(name, opp_p_hand)
-        _pc      = pc      or get_pitcher_stats(opp_p_name, 2026)
-        _p_split = p_split or get_pitcher_split(opp_p_name, bat_hand)
-
-        def bv(k): return float(_bc.get(k, 0) or 0)
-        def pv(k): return float(_pc.get(k, 0) or 0)
-
-        feat_vals = {
-            "barrel_pct_season":    bv("barrel_pct"),
-            "barrel_pct_l8d":       _b8d.get("barrel_pct", 0),
-            "la_season":            bv("launch_angle"),
-            "la_l8d":               _b8d.get("launch_angle", 0),
-            "ev_season":            bv("exit_velo"),
-            "ev_l8d":               _b8d.get("exit_velo", 0),
-            "iso_season":           bv("iso"),
-            "iso_vs_hand":          _b_split.get("iso", 0),
-            "hard_hit_season":      bv("hard_hit_pct"),
-            "hard_hit_l8d":         _b8d.get("hard_hit_pct", 0),
-            "k_pct_season":         bv("k_pct"),
-            "k_pct_l8d":            _b8d.get("k_pct", 0),
-            "pull_pct_season":      bv("pull_pct"),
-            "pit_hr9_season":       pv("hr9"),
-            "pit_hr9_vs_hand":      _p_split.get("hr9", 0),
-            "pit_hard_hit_season":  pv("hard_hit_pct"),
-            "pit_era_season":       pv("era"),
-            "pit_k9_season":        pv("k9"),
-            "pit_era_diff":         round(pv("era") - 4.20, 2) if pv("era") > 0 else 0,
-            "pit_slg_vs_hand":      _p_split.get("slg", 0),
-            "park_factor":          park_factor,
-            "weather_mult":         weather_mult,
-            "bat_platoon_mult":     breakdown.get("bat_platoon_mult", 1.0),
-            "pit_platoon_mult":     breakdown.get("pit_platoon_mult", 1.0),
-            "bullpen_vuln":         breakdown.get("bullpen_vuln", 1.0),
-            "pitch_matchup_score":  breakdown.get("pitch_matchup_score", 0),
-            "combined_pitch_delta": breakdown.get("combined_pitch_delta", 0),
-            "xslg_l8d":             _b8d.get("xslg", 0),
-            "xwoba_l8d":            _b8d.get("xwoba", 0),
-            "xslg_gap_l8d":         round(_b8d.get("xslg", 0) - _b8d.get("slg", 0), 3) if _b8d.get("xslg", 0) > 0 else 0,
-            "bat_speed_l8d":        _b8d.get("bat_speed", 0),
-            "day_of_season":        (date.today() - date(2026, 3, 20)).days,
-        }
-
-        row   = [float(feat_vals.get(f) or _xgb_medians.get(f, 0.0)) for f in _xgb_features]
-        proba = _xgb_model.predict_proba([row])[0]
-        xgb_prob = round(float(proba[1]) * 100, 1)
-
-        # ── SHAP values ──
-        shap_values = None
-        if _xgb_explainer is not None:
-            try:
-                import numpy as np
-                sv = _xgb_explainer.shap_values(np.array([row]))
-                raw_shap = sv[0] if hasattr(sv, '__len__') else sv
-                spread = xgb_prob - _xgb_base_rate
-                total_abs = sum(abs(float(v)) for v in raw_shap) or 1
-                contribs = {
-                    feat: round(float(v) / total_abs * spread, 2)
-                    for feat, v in zip(_xgb_features, raw_shap)
-                    if abs(float(v) / total_abs * spread) >= 0.3
-                }
-                contribs = dict(sorted(contribs.items(), key=lambda x: abs(x[1]), reverse=True))
-                shap_values = {
-                    "base_rate":     round(_xgb_base_rate, 1),
-                    "contributions": contribs,
-                    "xgb_prob":      xgb_prob,
-                }
-            except Exception as se:
-                print(f"SHAP values error for {name}: {se}")
-
-        return xgb_prob, shap_values
-    except Exception as e:
-        print(f"XGB predict error for {name}: {e}")
-        return None, None
-
-def _compute_hr_probability_legacy(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult):
-    bc = get_batter_stats(name, 2026)
-    b8d = get_batter_8d(name)
-    b_split = get_batter_split(name, opp_p_hand)
-
-    pa_26 = bc.get("pa", 0); pa_25 = 0
-    bwc = 1.0
-    has_8d = b8d.get("pa", 0) >= 3
-    w_s = 0.70 if has_8d else 1.0
-    w_8 = 0.30 if has_8d else 0.0
-
-    def blend3(s26, s25, d8):
-        s = blend(s26, s25, bwc)
-        return round(s * w_s + d8 * w_8, 2) if (has_8d and d8 > 0) else round(s, 2)
-
-    barrel_s = blend3(bc.get("barrel_pct", 0), 0, b8d.get("barrel_pct", 0))
-    fb_s     = blend3(bc.get("fb_pct", 0), 0, 0)
-    pull_s   = blend3(bc.get("pull_pct", 0), 0, b8d.get("pull_pct", 0))
-    la_s     = blend3(bc.get("launch_angle", 0), 0, b8d.get("launch_angle", 0))
-    k_s      = blend3(bc.get("k_pct", 0), 0, 0)
-    hr_fb_s  = 0
-
-    iso_split  = b_split.get("iso", 0) if b_split.get("pa", 0) >= 20 else 0
-    iso_season = blend(bc.get("iso", 0), 0, bwc)
-    iso_base   = iso_split if iso_split > 0 else iso_season
-    iso_8d     = b8d.get("iso", 0) if has_8d else 0
-    iso_use    = round(iso_base * w_s + iso_8d * w_8, 3) if iso_8d > 0 else iso_base
-
-    hr_rate_8d    = b8d.get("hr_rate", 0)
-    barrel_season = blend(bc.get("barrel_pct", 0), 0, bwc)
-    barrel_8d_raw = b8d.get("barrel_pct", 0)
-    trend = get_trend(b8d, bc)
-
-    pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
-
-    # Step 1 — Batter score
-    s1_barrel = round(min(barrel_s / 15.0, 1.0) * 30, 2)
-    s1_iso    = round(min(iso_use / 0.280, 1.0) * 14, 2)
-    s1_fb     = 0
-    s1_pull   = round(min(pull_s / 50.0, 1.0) * 8, 2)
-    s1_la     = round(min(max(la_s - 10, 0) / 20.0, 1.0) * 9, 2) if la_s > 0 else 0
-    s1_hrfb   = 0
-    s1_hr8d   = round(min(hr_rate_8d / 40.0, 1.0) * 5, 2) if has_8d and b8d.get("pa", 0) >= 10 else 0
-
-    batter_score = s1_barrel + s1_iso + s1_pull + s1_la + s1_hr8d + pitch_bonus
-
-    total_pa = pa_26
-    if total_pa < 30: batter_score *= 0.55
-    elif total_pa < 60: batter_score *= 0.75
-    elif pa_26 < 10: batter_score *= 0.80
-
-    archetype = get_archetype(barrel_season, k_s, fb_s, iso_season)
-
-    # Step 2 — Pitcher modifier
-    pc = get_pitcher_stats(opp_p_name, 2026)
-    pp = get_pitcher_stats(opp_p_name)
-    ip_26 = pc.get("ip", 0)
-    pwc = 1.0
-
-    p_split  = get_pitcher_split(opp_p_name, bat_hand)
-    split_ip = p_split.get("ip", 0)
-
-    hr9_season = blend(pc.get("hr9", 0), pp.get("hr9", 0))
-    hr9_split  = p_split.get("hr9", 0) if split_ip >= 5 else 0
-
-    if hr9_split > 0 and hr9_season > 0:
-        split_ratio  = hr9_split / hr9_season
-        split_weight = min(split_ip / 30.0, 0.80)
-        pit_hr9      = hr9_season * (1 - split_weight) + hr9_split * split_weight
-        platoon_magnitude = round((split_ratio - 1.0) * 100, 1)
-    else:
-        pit_hr9 = hr9_season
-        platoon_magnitude = 0.0
-
-    pit_hard = blend(pc.get("hard_hit_pct", 0), pp.get("hard_hit_pct", 0))
-    pit_brl  = blend(pc.get("barrel_pct_allowed", 0), pp.get("barrel_pct_allowed", 0))
-    pit_fb   = blend(pc.get("fb_pct", 0), pp.get("fb_pct", 0))
-
-    m_hr9  = 1.0 + (pit_hr9 - 1.15) / 1.15 * 0.40 if pit_hr9 > 0 else 1.0
-    m_hard = 1.0 + (pit_hard - 32.0) / 32.0 * 0.25 if pit_hard > 0 else 1.0
-    m_brl  = 1.0 + (pit_brl - 7.5) / 7.5 * 0.20  if pit_brl > 0 else 1.0
-    m_fb   = 1.0 + (pit_fb - 36.0) / 36.0 * 0.15  if pit_fb > 0 else 1.0
-
-    components = [(m_hr9, 0.40, pit_hr9 > 0), (m_hard, 0.25, pit_hard > 0),
-                  (m_brl, 0.20, pit_brl > 0), (m_fb, 0.15, pit_fb > 0)]
-    active = [(m, w) for m, w, has in components if has]
-    if not active:
-        pit_modifier = 1.0
-    else:
-        total_w = sum(w for _, w in active)
-        pit_modifier = sum(m * w / total_w for m, w in active)
-    pit_modifier = round(max(min(pit_modifier, 1.65), 0.55), 3)
-    n_components = len(active)
-
-    # Step 3 — K% gate
-    k_cap = 1.0
-    if k_s >= 35: k_cap = 0.75
-    elif k_s >= 30: k_cap = 0.88
-    elif k_s >= 28: k_cap = 0.94
-    after_k = batter_score * k_cap
-
-    # Step 4 — Context
-    after_context = round(after_k * pit_modifier * park_factor * weather_mult, 1)
-
-    # Step 5 — Sigmoid
-    hr_prob = sigmoid_to_prob(after_context)
-
-    platoon_tag = None
-    if split_ip >= 5 and hr9_split > 0 and hr9_season > 0:
-        split_ratio = hr9_split / hr9_season
-        hand_label  = "LHB" if bat_hand == "L" else "RHB"
-        if split_ratio >= 1.3:
-            platoon_tag = f"SP weak vs {hand_label} ({hr9_split:.1f} HR/9)"
-        elif split_ratio <= 0.7:
-            platoon_tag = f"SP strong vs {hand_label} ({hr9_split:.1f} HR/9)"
-
-    conf       = "High" if n_components >= 3 and pa_26 >= 50 else "Medium" if n_components >= 2 else "Low"
-    blend_note = "100% 2026" + (" + 30% 8d" if has_8d else "")
-
-    reasons = []
-    if barrel_s > 10: reasons.append(f"Barrel {barrel_s:.1f}%")
-    if iso_use > 0.200: reasons.append(f"ISO .{int(iso_use*1000):03d}")
-    if pit_hr9 > 1.3: reasons.append(f"SP {pit_hr9:.1f} HR/9")
-    if pit_hard > 38: reasons.append(f"SP {pit_hard:.1f}% HH")
-    if park_factor >= 1.15: reasons.append("HR-friendly park")
-    elif park_factor <= 0.90: reasons.append("Pitcher-friendly park")
-
-    breakdown = {
-        "barrel_s": round(barrel_s, 1), "s1_barrel": s1_barrel,
-        "barrel_season": round(barrel_season, 1), "barrel_8d": round(barrel_8d_raw, 1),
-        "iso_use": round(iso_use, 3), "s1_iso": s1_iso, "iso_8d": round(iso_8d, 3),
-        "pull_8d": round(b8d.get("pull_pct", 0), 1),
-        "la_8d": round(b8d.get("launch_angle", 0), 1),
-        "pa_8d": int(b8d.get("pa", 0)),
-        "fb_s": round(fb_s, 1), "s1_fb": s1_fb,
-        "pull_s": round(pull_s, 1), "s1_pull": s1_pull,
-        "la_s": round(la_s, 1), "s1_la": s1_la,
-        "hr_fb_s": round(hr_fb_s, 1), "s1_hrfb": s1_hrfb,
-        "hr_rate_8d": round(hr_rate_8d, 1), "s1_hr8d": s1_hr8d,
-        "has_8d": has_8d, "batter_score": round(batter_score, 1),
-        "k_s": round(k_s, 1), "k_cap": k_cap,
-        "pit_hr9": round(pit_hr9, 2), "pit_hard": round(pit_hard, 1),
-        "pit_brl": round(pit_brl, 1), "pit_modifier": pit_modifier,
-        "n_pit_components": n_components, "platoon_magnitude": platoon_magnitude,
-        "hr9_split": round(hr9_split, 2), "hr9_season": round(hr9_season, 2),
-        "split_ip": round(split_ip, 1),
-        "pitch_bonus": pitch_bonus, "pitch_breakdown": pitch_details,
-        "after_k": round(after_k, 1), "park_factor": park_factor,
-        "weather_mult": weather_mult, "after_context": after_context, "hr_prob": hr_prob,
-        "blend_note": blend_note,
-        "pit_blend_note": "100% 2026",
-        # Split stats for dropdown
-        "split_brl":  round(b_split.get("barrel_pct", 0), 1),
-        "split_iso":  round(b_split.get("iso", 0), 3),
-        "split_slg":  round(b_split.get("slg", 0), 3),
-        "split_woba": round(b_split.get("woba", 0), 3),
-        "split_hr":   int(b_split.get("hr", 0)),
-        "split_pa":   int(b_split.get("pa", 0)),
-        "hr_season":  int(bc.get("hr", 0)),
-        "l8d_hr_reliable": get_l8d_hr(name),
+    // Check if data is ready — silent retry if not, no blocking banner
+    try {
+      var stResp = await fetch(API+'/status');
+      var stData = await stResp.json();
+      if(!stData.ready || !stData.tree_trained) {
+        // Show subtle loading state — auto retry every 8 seconds silently
+        var retryIn = stData.tree_trained === false ? 20 : 8;
+        document.getElementById('batter-main').innerHTML =
+          '<div style="text-align:center;padding:40px 20px;color:var(--muted2)">' +
+          '<div style="font-size:13px;margin-bottom:6px">Loading data...</div>' +
+          '<div style="font-size:11px">Retrying automatically</div>' +
+          '</div>';
+        btn.disabled=false;
+        setTimeout(function(){ load(true); }, retryIn * 1000);
+        return;
+      }
+    } catch(e) {}
+    buildBatterTable(allGames);
+    buildPitcherTable(allGames);
+    buildGameTable(allGames);
+    upd.textContent='Updated '+new Date().toLocaleTimeString()+' \u00b7 '+dateStr;
+    // Show model version so you know what round you're on
+    try {
+      var stResp2 = await fetch(API+'/status');
+      var stData2 = await stResp2.json();
+      if(stData2.model_round) {
+        upd.textContent += ' \u00b7 Round '+stData2.model_round+' Day '+stData2.model_day;
+      }
+      if(stData2.is_retraining) {
+        upd.textContent += ' \u00b7 Retraining...';
+      }
+    } catch(e) {}
+  }catch(e){document.getElementById('batter-main').innerHTML='<div class="err"><strong>Error:</strong> '+e.message+'</div>';}
+  btn.disabled=false;
+}
+document.getElementById('dateLbl').textContent=fmtDateLabel(selectedDate);
+// Load history in background on startup so percentile colors are ready
+(async function(){
+  try{
+    var r=await fetch(API+'/history');
+    var d=await r.json();
+    historyData=d;
+    if(d.records&&d.records.length>0){
+      computePercentiles(d.records);
+      // Rebuild batter table with colors if already rendered
+      if(allGames.length>0) buildBatterTable(allGames);
     }
-    return hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
-
-# ── Weather ──
-async def fetch_weather(lat, lon, game_time_utc):
-    try:
-        # Default to 1pm local (most common day game time)
-        local_hour = 13
-        if game_time_utc:
-            try:
-                dt = datetime.fromisoformat(game_time_utc.replace("Z", "+00:00"))
-                # Convert UTC to ET (UTC-4 during EDT, UTC-5 during EST)
-                # April-November = EDT = UTC-4
-                et_offset = -4
-                local_hour = (dt.hour + et_offset) % 24
-            except: pass
-        url = (f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}"
-               f"&hourly=temperature_2m,windspeed_10m,winddirection_10m"
-               f"&temperature_unit=fahrenheit&windspeed_unit=mph&forecast_days=2&timezone=auto")
-        async with httpx.AsyncClient(timeout=10) as client:
-            r = await client.get(url); d = r.json()
-        hourly = d.get("hourly", {})
-        times = hourly.get("time", [])
-        temps = hourly.get("temperature_2m", [])
-        speeds = hourly.get("windspeed_10m", [])
-        dirs = hourly.get("winddirection_10m", [])
-        # Find the index matching the local game hour
-        idx = 0
-        for i, t in enumerate(times):
-            if f"T{local_hour:02d}:" in t:
-                idx = i
-                break
-        if idx == 0 and len(temps) > local_hour:
-            idx = local_hour  # fallback
-        return (round(temps[idx]) if idx < len(temps) else 70,
-                round(speeds[idx]) if idx < len(speeds) else 0,
-                round(dirs[idx]) if idx < len(dirs) else 0)
-    except: return 70, 0, 0
-
-async def fetch_player_hand(player_id):
-    if player_id in _cache["player_hands"]:
-        return _cache["player_hands"][player_id]
-    try:
-        async with httpx.AsyncClient(timeout=8) as client:
-            r = await client.get(f"{MLB_API}/people/{player_id}")
-            d = r.json()
-        person = d.get("people", [{}])[0]
-        result = {
-            "bat_side": person.get("batSide", {}).get("code", "") or "R",
-            "pitch_hand": person.get("pitchHand", {}).get("code", "") or "R",
-            "name": person.get("fullName", "")
-        }
-        _cache["player_hands"][player_id] = result
-        return result
-    except:
-        return {"bat_side": "R", "pitch_hand": "R", "name": ""}
-
-async def fetch_projected_lineup(team_id, team_name):
-    try:
-        end = date.today(); start = end - timedelta(days=10)
-        url = f"{MLB_API}/schedule?sportId=1&teamId={team_id}&startDate={start}&endDate={end}&hydrate=boxscore"
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(url); d = r.json()
-        recent_games = []
-        for de in reversed(d.get("dates", [])):
-            for g in de.get("games", []):
-                if g.get("status", {}).get("abstractGameState") == "Final":
-                    recent_games.append(g["gamePk"])
-            if len(recent_games) >= 5: break
-        player_data = defaultdict(lambda: {"name": "", "appearances": 0, "orders": [], "id": 0})
-        for gid in recent_games[:5]:
-            try:
-                async with httpx.AsyncClient(timeout=10) as client:
-                    r = await client.get(f"{MLB_API}/game/{gid}/boxscore"); box = r.json()
-                for side in ["away", "home"]:
-                    td = box.get("teams", {}).get(side, {})
-                    if team_name.lower() not in td.get("team", {}).get("name", "").lower(): continue
-                    for _, p in td.get("players", {}).items():
-                        order = p.get("battingOrder")
-                        if order and int(order) <= 900:
-                            person = p.get("person", {})
-                            pid = person.get("id", 0)
-                            player_data[pid]["name"] = person.get("fullName", "")
-                            player_data[pid]["id"] = pid
-                            player_data[pid]["appearances"] += 1
-                            player_data[pid]["orders"].append(int(order) // 100)
-            except: continue
-        projected = [{"id": d["id"], "name": d["name"], "appearances": d["appearances"],
-                      "avg_order": sum(d["orders"]) / len(d["orders"])}
-                     for d in player_data.values() if d["appearances"] >= 2 and d["name"]]
-        projected.sort(key=lambda x: x["avg_order"])
-        return projected[:9], "projected"
-    except: return [], "projected"
-
-async def fetch_dk_hr_props():
-    if not ODDS_API_KEY: return {}
-    try:
-        url = f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events?apiKey={ODDS_API_KEY}&dateFormat=iso"
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(url)
-            if not r.is_success: return {}
-            events = r.json()
-        props = {}
-        for event in events[:15]:
-            event_id = event.get("id", "")
-            try:
-                prop_url = (f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events/{event_id}/odds?"
-                            f"apiKey={ODDS_API_KEY}&regions=us&markets=batter_home_runs"
-                            f"&oddsFormat=american&bookmakers=betrivers")
-                async with httpx.AsyncClient(timeout=10) as client:
-                    pr = await client.get(prop_url)
-                    if not pr.is_success: continue
-                    pd_data = pr.json()
-                for bk in pd_data.get("bookmakers", []):
-                    if bk.get("key") != "betrivers": continue
-                    for mkt in bk.get("markets", []):
-                        for outcome in mkt.get("outcomes", []):
-                            pname = outcome.get("description") or outcome.get("name", "")
-                            price = outcome.get("price", 0)
-                            if pname and price: props[pname.lower()] = price
-            except: continue
-        return props
-    except: return {}
-
-async def fetch_pitcher_k_props():
-    """Fetch pitcher strikeout prop lines from BetRivers/DraftKings/FanDuel via Odds API"""
-    if not ODDS_API_KEY: return {}
-    try:
-        url = f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events?apiKey={ODDS_API_KEY}&dateFormat=iso"
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(url)
-            if not r.is_success: return {}
-            events = r.json()
-        k_props = {}
-        for event in events[:15]:
-            event_id = event.get("id", "")
-            try:
-                prop_url = (f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events/{event_id}/odds?"
-                            f"apiKey={ODDS_API_KEY}&regions=us"
-                            f"&markets=pitcher_strikeouts,pitcher_outs"
-                            f"&oddsFormat=american&bookmakers=betrivers,draftkings,fanduel")
-                async with httpx.AsyncClient(timeout=10) as client:
-                    pr = await client.get(prop_url)
-                    if not pr.is_success: continue
-                    pd_data = pr.json()
-                for bk in pd_data.get("bookmakers", []):
-                    for mkt in bk.get("markets", []):
-                        mkt_key = mkt.get("key", "")
-                        for outcome in mkt.get("outcomes", []):
-                            pname = outcome.get("description") or outcome.get("name", "")
-                            line  = outcome.get("point", 0)
-                            side  = outcome.get("name", "")
-                            price = outcome.get("price", 0)
-                            if pname and line and side == "Over":
-                                key = pname.lower()
-                                if key not in k_props or mkt_key == "pitcher_strikeouts":
-                                    k_props[key] = {
-                                        "line": line, "price": price,
-                                        "market": mkt_key, "book": bk.get("title", ""),
-                                    }
-            except: continue
-        print(f"Pitcher K props fetched: {len(k_props)} pitchers")
-        return k_props
-    except Exception as e:
-        print(f"Pitcher K props error: {e}")
-        return {}
-
-def match_pitcher_k_prop(pitcher_name, k_props):
-    if not k_props: return None
-    nl = pitcher_name.lower()
-    if nl in k_props: return k_props[nl]
-    last = nl.split()[-1]
-    for k, v in k_props.items():
-        if last in k: return v
-    return None
-
-def match_dk_odds(player_name, props):
-    if not props: return None
-    nl = player_name.lower()
-    if nl in props: return props[nl]
-    last = nl.split()[-1]
-    for k, v in props.items():
-        if last in k: return v
-    return None
-
-def fmt_odds(o):
-    if o is None: return None
-    return f"+{int(o)}" if o > 0 else str(int(o))
-
-def pit_display(p_name, p_hand):
-    pc = get_pitcher_stats(p_name, 2026)
-    pp = get_pitcher_stats(p_name)
-    ip_26 = pc.get("ip", 0)
-    pwc = 1.0
-    top_pitches = get_pitcher_top_pitches(p_name)
-    vs_L = get_pitcher_split(p_name, "L")
-    vs_R = get_pitcher_split(p_name, "R")
-    nl = p_name.lower().strip()
-    ip_data = _cache["player_ip"].get(nl, {})
-    if not ip_data:
-        last = nl.split()[-1]
-        for k, v in _cache["player_ip"].items():
-            if last in k: ip_data = v; break
-    k9_val  = blend(pc.get("k9", 0), pp.get("k9", 0))
-    avg_ip  = ip_data.get("avg_ip", 5.0) or 5.0
-    gs_val  = ip_data.get("gs", 0)
-    return {
-        "name": p_name, "hand": p_hand,
-        "era": round(blend(pc.get("era", 0), pp.get("era", 0)), 2) or None,
-        "hr9": round(blend(pc.get("hr9", 0), pp.get("hr9", 0)), 2) or None,
-        "hard_hit_pct": round(blend(pc.get("hard_hit_pct", 0), pp.get("hard_hit_pct", 0)), 1) or None,
-        "barrel_pct": round(blend(pc.get("barrel_pct_allowed", 0), pp.get("barrel_pct_allowed", 0)), 1) or None,
-        "ip_2026": round(ip_26, 1),
-        "blend_note": "100% 2026",
-        "vs_L_hr9":  round(vs_L.get("hr9", 0), 2) if vs_L.get("pa", 0) >= 1 else None,
-        "vs_R_hr9":  round(vs_R.get("hr9", 0), 2) if vs_R.get("pa", 0) >= 1 else None,
-        "vs_L_k":    round(vs_L.get("k_pct", 0), 1) if vs_L.get("pa", 0) >= 1 else None,
-        "vs_R_k":    round(vs_R.get("k_pct", 0), 1) if vs_R.get("pa", 0) >= 1 else None,
-        "vs_L_slg":  round(vs_L.get("slg", 0), 3) if vs_L.get("pa", 0) >= 1 else None,
-        "vs_R_slg":  round(vs_R.get("slg", 0), 3) if vs_R.get("pa", 0) >= 1 else None,
-        "vs_L_woba": round(vs_L.get("woba", 0), 3) if vs_L.get("pa", 0) >= 1 else None,
-        "vs_R_woba": round(vs_R.get("woba", 0), 3) if vs_R.get("pa", 0) >= 1 else None,
-        "top_pitches": [{"name": p["name"], "usage": p["usage"]} for p in top_pitches],
-        "k9": round(k9_val, 1) if k9_val > 0 else None,
-        "avg_ip": round(avg_ip, 1),
-        "gs": gs_val,
-    }
-
-# ── API Endpoints ──
-@app.get("/dashboard")
-async def get_dashboard():
-    """
-    Dashboard data — top 8 today + running hit rate stats.
-    Calculates hit rates for top 8, top 4, and overall from last 30 days.
-    """
-    if not GITHUB_TOKEN:
-        return {"error": "GitHub not configured"}
-    import json
-    try:
-        # ── Load last 30 days of prediction records ──
-        url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions"
-        headers = {"Authorization": f"token {GITHUB_TOKEN}"}
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(url, headers=headers)
-        files = r.json() if r.is_success else []
-        all_records = []
-        dates = []
-        for f in sorted(files, key=lambda x: x["name"], reverse=True)[:30]:
-            if not f["name"].endswith(".json"): continue
-            d = f["name"].replace(".json","")
-            content, _ = await github_get_file(f"data/predictions/{f['name']}")
-            if not content: continue
-            try:
-                recs = json.loads(content)
-                for rec in recs: rec["_date"] = d
-                all_records.extend(recs)
-                dates.append(d)
-            except: continue
-
-        # ── Hit rate calculations ──
-        # Group by date, rank by model_hr_pct, calculate hit rates by rank tier
-        from collections import defaultdict
-        by_date = defaultdict(list)
-        for rec in all_records:
-            if rec.get("hit_hr") in [0, 1]:
-                by_date[rec["_date"]].append(rec)
-
-        top8_hits = 0; top8_total = 0
-        top4_hits = 0; top4_total = 0
-        overall_hits = 0; overall_total = 0
-        # 2-of-top4 rate (parlay signal)
-        two_of_top4 = 0; two_of_top4_days = 0
-        # 2-of-top8 rate
-        two_of_top8 = 0; two_of_top8_days = 0
-
-        slate_days = []
-        for d, recs in sorted(by_date.items(), reverse=True):
-            ranked = sorted(recs, key=lambda x: x.get("model_hr_pct",0), reverse=True)
-            t8 = ranked[:8]
-            t4 = ranked[:4]
-            t8_hr = sum(1 for r in t8 if r.get("hit_hr")==1)
-            t4_hr = sum(1 for r in t4 if r.get("hit_hr")==1)
-            all_hr = sum(1 for r in ranked if r.get("hit_hr")==1)
-
-            top8_hits  += t8_hr;  top8_total  += len(t8)
-            top4_hits  += t4_hr;  top4_total  += len(t4)
-            overall_hits += all_hr; overall_total += len(ranked)
-
-            if len(t4) >= 4:
-                two_of_top4_days += 1
-                if t4_hr >= 2: two_of_top4 += 1
-            if len(t8) >= 8:
-                two_of_top8_days += 1
-                if t8_hr >= 2: two_of_top8 += 1
-
-            slate_days.append({
-                "date":         d,
-                "top8_hits":    t8_hr,
-                "top8_total":   len(t8),
-                "top4_hits":    t4_hr,
-                "slate_total":  len(ranked),
-                "slate_hrs":    all_hr,
-                "top8": [{"name": r["name"], "team": r.get("team",""),
-                          "pct": r.get("model_hr_pct",0), "hit": r.get("hit_hr")} for r in t8],
-            })
-
-        def pct(hits, total):
-            return round(hits/total*100, 1) if total > 0 else 0
-
-        stats = {
-            "days_tracked":       len(slate_days),
-            "top8_hit_rate":      pct(top8_hits, top8_total),
-            "top4_hit_rate":      pct(top4_hits, top4_total),
-            "overall_hit_rate":   pct(overall_hits, overall_total),
-            "two_of_top4_rate":   pct(two_of_top4, two_of_top4_days),
-            "two_of_top8_rate":   pct(two_of_top8, two_of_top8_days),
-            "top8_total_picks":   top8_total,
-            "top8_total_hits":    top8_hits,
-        }
-
-        # ── Today's top 8 ──
-        today = date.today().isoformat()
-        today_content, _ = await github_get_file(f"data/predictions/{today}.json")
-        top8_today = []
-        if today_content:
-            try:
-                today_recs = json.loads(today_content)
-                ranked_today = sorted(
-                    [r for r in today_recs if r.get("model_hr_pct") is not None],
-                    key=lambda x: x.get("model_hr_pct", 0), reverse=True
-                )[:8]
-                top8_today = ranked_today
-            except: pass
-
-        return {
-            "stats":      stats,
-            "top8_today": top8_today,
-            "slate_days": slate_days[:14],  # last 14 days for history display
-            "model_type": "random_forest" if _rf_trained else "multiplicative",
-            "xgb_trained": _xgb_trained,
-            "xgb_cv":     _xgb_oob,
-            "rf_oob":     _model_weights.get("oob_score", 0),
-        }
-    except Exception as e:
-        print(f"Dashboard error: {e}")
-        import traceback; traceback.print_exc()
-        return {"error": str(e)}
-
-
-@app.get("/history")
-async def get_history():
-    """Return all historical prediction/result files from GitHub"""
-    if not GITHUB_TOKEN:
-        return {"error": "GitHub not configured", "records": []}
-    import json
-    try:
-        # List all files in data/predictions/
-        url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions"
-        headers = {"Authorization": f"token {GITHUB_TOKEN}", "Accept": "application/vnd.github.v3+json"}
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(url, headers=headers)
-        if r.status_code == 404:
-            return {"records": [], "dates": [], "message": "No history yet — predictions start saving at 1pm ET daily"}
-        if not r.is_success:
-            return {"error": f"GitHub error {r.status_code}", "records": []}
-        files = r.json()
-        all_records = []
-        dates = []
-        # Fetch each file (most recent 30 days)
-        for f in sorted(files, key=lambda x: x["name"], reverse=True)[:30]:
-            fname = f["name"]
-            if not fname.endswith(".json"): continue
-            d = fname.replace(".json", "")
-            dates.append(d)
-            content, _ = await github_get_file(f"data/predictions/{fname}")
-            if not content: continue
-            try:
-                recs = json.loads(content)
-                all_records.extend(recs)
-            except Exception: continue
-        return {"records": all_records, "dates": dates}
-    except Exception as e:
-        print(f"History endpoint error: {e}")
-        return {"error": str(e), "records": []}
-
-@app.get("/debug-l8d")
-async def debug_l8d(player: str = "Murakami"):
-    """Debug L8D data — check what Savant returns vs season stats"""
-    from datetime import date as date_cls
-    b8d = get_batter_8d(player)
-    bc = get_batter_stats(player, 2026)
-    url = savant_8d_url()
-    return {
-        "player_searched": player,
-        "l8d_url": url,
-        "l8d_stats": b8d,
-        "season_stats": {
-            "pa": bc.get("pa"), "hr": bc.get("hr"),
-            "barrel_pct": bc.get("barrel_pct"),
-            "launch_angle": bc.get("launch_angle"),
-            "k_pct": bc.get("k_pct"),
-            "iso": bc.get("iso"),
-        },
-        "l8d_cache_size": len(_cache["bat_8d"]) if not _cache["bat_8d"].empty else 0,
-        "same_as_season": b8d.get("barrel_pct") == bc.get("barrel_pct"),
-    }
-
-@app.post("/recalibrate")
-async def manual_recalibrate():
-    """Manually trigger RF + XGBoost retrain"""
-    rf_result  = await recalibrate_model()
-    xgb_result = await train_xgboost()
-    return {"rf": rf_result, "xgboost": xgb_result}
-
-@app.get("/recalibrate")
-async def manual_recalibrate_get():
-    """GET version — browser accessible. Retrains RF + XGBoost."""
-    rf_result  = await recalibrate_model()
-    xgb_result = await train_xgboost()
-    return {"rf": rf_result, "xgboost": xgb_result}
-
-@app.get("/retrain-xgboost")
-async def retrain_xgboost_get():
-    """GET — retrain XGBoost only (faster than full recalibrate)"""
-    result = await train_xgboost()
-    return result
-
-@app.get("/model-weights")
-async def get_model_weights():
-    """Return current model weights, rotation status, and model log"""
-    rotation_start = date(2026, 4, 13)
-    days_since_start = (date.today() - rotation_start).days
-    days_left = ROTATION_DAYS - get_rotation_day()
-    return {
-        "weights": _model_weights,
-        "rotation": {
-            "round": get_rotation_round(),
-            "day": get_rotation_day(),
-            "days_left": days_left,
-            "rotation_start": rotation_start.isoformat(),
-            "days_since_start": days_since_start,
-        },
-        "rotation_schedule": ROTATION_SCHEDULE,
-        "league_constants": LEAGUE_CONSTANTS,
-    }
-
-@app.post("/save-predictions")
-async def manual_save_predictions():
-    """Manually trigger saving today's predictions"""
-    await save_daily_predictions()
-    return {"status": "done", "date": date.today().isoformat()}
-
-@app.get("/save-predictions")
-async def manual_save_predictions_get():
-    """GET version — browser accessible"""
-    await save_daily_predictions()
-    return {"status": "done", "date": date.today().isoformat()}
-
-@app.get("/check-lineups")
-async def manual_check_lineups():
-    """Manually trigger lineup confirmation check"""
-    await check_lineup_confirmations()
-    return {"status": "done", "date": date.today().isoformat()}
-
-@app.post("/record-results")
-async def manual_record_results(target_date: str = None):
-    """Manually trigger recording results for a date"""
-    d = target_date or (date.today() - timedelta(days=1)).isoformat()
-    await record_results(d)
-    return {"status": "done", "date": d}
-
-@app.get("/record-results")
-async def manual_record_results_get(target_date: str = None):
-    """GET version — browser accessible"""
-    d = target_date or (date.today() - timedelta(days=1)).isoformat()
-    await record_results(d)
-    await record_parlay_results(d)
-    return {"status": "done", "date": d}
-
-@app.get("/cleanup-results")
-async def cleanup_results(days: int = 30):
-    """
-    Reprocess result recording for any date that has DNP records.
-    Fixes historical data corruption from the client shadowing bug.
-    Run once after deploying the boxscore client fix.
-    """
-    if not GITHUB_TOKEN:
-        return {"error": "No GitHub token"}
-    import json
-    try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(
-                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
-                headers={"Authorization": f"token {GITHUB_TOKEN}"}
-            )
-            files = r.json() if r.is_success else []
-
-        results = []
-        for f in sorted(files, key=lambda x: x["name"], reverse=True)[:days]:
-            if not f["name"].endswith(".json"): continue
-            d = f["name"].replace(".json", "")
-            # Skip today and future dates
-            if d >= date.today().isoformat(): continue
-            content, _ = await github_get_file(f"data/predictions/{f['name']}")
-            if not content: continue
-            try:
-                recs = json.loads(content)
-            except: continue
-            dnp_count = sum(1 for r in recs if r.get("hit_hr") == "DNP")
-            null_count = sum(1 for r in recs if r.get("hit_hr") is None)
-            if dnp_count > 0 or null_count > 0:
-                print(f"Reprocessing {d} — {dnp_count} DNPs, {null_count} nulls")
-                await record_results(d)
-                results.append({"date": d, "dnp": dnp_count, "null": null_count, "status": "reprocessed"})
-            else:
-                results.append({"date": d, "status": "clean"})
-
-        return {
-            "processed": len([r for r in results if r.get("status") == "reprocessed"]),
-            "clean":     len([r for r in results if r.get("status") == "clean"]),
-            "details":   results,
-        }
-    except Exception as e:
-        return {"error": str(e)}
-async def debug_boxscore(target_date: str = None):
-    """Show all player names returned by MLB API boxscore for a date — for debugging DNP issues."""
-    d = target_date or (date.today() - timedelta(days=1)).isoformat()
-    try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={d}&hydrate=team")
-            sched = r.json()
-        games = []
-        for game_date in sched.get("dates", []):
-            for game in game_date.get("games", []):
-                gid = game["gamePk"]
-                away = game.get("teams", {}).get("away", {}).get("team", {}).get("name", "")
-                home = game.get("teams", {}).get("home", {}).get("team", {}).get("name", "")
-                state = game.get("status", {}).get("abstractGameState", "")
-                detailed = game.get("status", {}).get("detailedState", "")
-                try:
-                    async with httpx.AsyncClient(timeout=10) as client2:
-                        r2 = await client2.get(f"{MLB_API}/game/{gid}/boxscore")
-                        box = r2.json()
-                    players = []
-                    hr_hitters = []
-                    for side in ["away", "home"]:
-                        for _, p in box.get("teams", {}).get(side, {}).get("players", {}).items():
-                            stats = p.get("stats", {}).get("batting", {})
-                            name = p.get("person", {}).get("fullName", "")
-                            ab = int(stats.get("atBats", 0) or 0)
-                            hrs = int(stats.get("homeRuns", 0) or 0)
-                            if name:
-                                players.append({"name": name, "ab": ab, "hr": hrs})
-                                if hrs > 0:
-                                    hr_hitters.append(name)
-                    games.append({
-                        "game_id": gid,
-                        "matchup": f"{away} @ {home}",
-                        "state": f"{state}/{detailed}",
-                        "hr_hitters": hr_hitters,
-                        "all_players": players,
-                    })
-                except Exception as e:
-                    games.append({"game_id": gid, "matchup": f"{away} @ {home}", "error": str(e)})
-        return {"date": d, "games": games}
-    except Exception as e:
-        return {"error": str(e)}
-async def coverage_check(days: int = 7):
-    """
-    Data health check — for each feature field in prediction records,
-    shows how many players have real values vs zero/null/blank.
-    Tells you exactly what the model is and isn't seeing.
-    """
-    if not GITHUB_TOKEN:
-        return {"error": "No GitHub token"}
-    import json
-    try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(
-                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
-                headers={"Authorization": f"token {GITHUB_TOKEN}"}
-            )
-            files = r.json() if r.is_success else []
-
-        all_records = []
-        for f in sorted(files, key=lambda x: x["name"], reverse=True)[:days]:
-            if not f["name"].endswith(".json"): continue
-            content, _ = await github_get_file(f"data/predictions/{f['name']}")
-            if content:
-                try: all_records.extend(json.loads(content))
-                except: pass
-
-        if not all_records:
-            return {"error": "No records found"}
-
-        n = len(all_records)
-        dnp_count    = sum(1 for r in all_records if r.get("hit_hr") == "DNP")
-        completed    = sum(1 for r in all_records if r.get("hit_hr") in [0, 1])
-        pending      = sum(1 for r in all_records if r.get("hit_hr") is None)
-        hr_count     = sum(1 for r in all_records if r.get("hit_hr") == 1)
-
-        # Fields to check — everything the model uses
-        FIELDS = [
-            "barrel_pct_season", "barrel_pct_l8d",
-            "la_season", "la_l8d",
-            "ev_season", "ev_l8d",
-            "iso_season", "iso_vs_hand",
-            "hard_hit_season", "hard_hit_l8d",
-            "k_pct_season", "k_pct_l8d",
-            "pull_pct_season",
-            "pit_hr9_season", "pit_hr9_vs_hand",
-            "pit_hard_hit_season", "pit_era_season",
-            "pit_k9_season", "pit_era_diff",
-            "pit_slg_vs_hand",
-            "park_factor", "weather_mult",
-            "bat_platoon_mult", "pit_platoon_mult",
-            "bullpen_vuln", "pitch_matchup_score",
-            "combined_pitch_delta", "xslg_l8d",
-            "xwoba_l8d", "xslg_gap_l8d",
-            "bat_speed_l8d", "day_of_season",
-            "hit_hr",
-        ]
-
-        coverage = {}
-        for field in FIELDS:
-            populated = sum(1 for r in all_records
-                          if r.get(field) not in (None, 0, "", "DNP")
-                          and r.get(field) == r.get(field))  # not NaN
-            missing   = n - populated
-            coverage[field] = {
-                "populated":  populated,
-                "missing":    missing,
-                "pct":        round(populated / n * 100, 1),
-                "status":     "✅" if populated/n >= 0.80
-                              else "⚠️" if populated/n >= 0.50
-                              else "❌"
-            }
-
-        # Sort by coverage % ascending so worst fields show first
-        sorted_coverage = dict(sorted(coverage.items(),
-                                      key=lambda x: x[1]["pct"]))
-
-        # Summary
-        good   = sum(1 for v in coverage.values() if v["pct"] >= 80)
-        warn   = sum(1 for v in coverage.values() if 50 <= v["pct"] < 80)
-        bad    = sum(1 for v in coverage.values() if v["pct"] < 50)
-
-        return {
-            "records_checked": n,
-            "days_checked":    days,
-            "outcome_breakdown": {
-                "completed":  completed,
-                "hr_hits":    hr_count,
-                "no_hr":      completed - hr_count,
-                "dnp":        dnp_count,
-                "pending":    pending,
-                "hr_rate_completed": f"{round(hr_count/completed*100,1)}%" if completed > 0 else "0%",
-                "dnp_rate":   f"{round(dnp_count/n*100,1)}%",
-            },
-            "summary": {
-                "good_80pct_plus":  good,
-                "warning_50_80pct": warn,
-                "bad_under_50pct":  bad,
-            },
-            "fields": sorted_coverage,
-        }
-    except Exception as e:
-        return {"error": str(e)}
-
-
-@app.get("/debug-results")
-async def debug_results(target_date: str = None):
-    """Show what the MLB API returned for a date vs what we predicted"""
-    d = target_date or (date.today() - timedelta(days=1)).isoformat()
-    try:
-        url = f"{MLB_API}/schedule?sportId=1&date={d}&gameType=R&hydrate=boxscore"
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(url)
-            sched = r.json()
-        hr_hitters = {}
-        all_players = {}
-        for game_date in sched.get("dates", []):
-            for game in game_date.get("games", []):
-                if game.get("status", {}).get("abstractGameState") != "Final": continue
-                gid = game["gamePk"]
-                away = game["teams"]["away"]["team"]["name"]
-                home = game["teams"]["home"]["team"]["name"]
-                async with httpx.AsyncClient(timeout=10) as client:
-                    r2 = await client.get(f"{MLB_API}/game/{gid}/boxscore")
-                    box = r2.json()
-                for side in ["away", "home"]:
-                    for _, p in box.get("teams", {}).get(side, {}).get("players", {}).items():
-                        stats = p.get("stats", {}).get("batting", {})
-                        name = p.get("person", {}).get("fullName", "")
-                        if not name: continue
-                        ab = int(stats.get("atBats", 0) or 0)
-                        hrs = int(stats.get("homeRuns", 0) or 0)
-                        all_players[name] = {"ab": ab, "hr": hrs, "game": f"{away}@{home}"}
-                        if hrs > 0:
-                            hr_hitters[name] = hrs
-        # Load predictions for that date
-        path = f"data/predictions/{d}.json"
-        raw, _ = await github_get_file(path)
-        records = json.loads(raw) if raw else []
-        pred_names = [r["name"] for r in records]
-        # Match predictions to API results
-        matches = []
-        misses = []
-        for name in pred_names:
-            nl = name.lower()
-            found = next((k for k in all_players if k.lower() == nl), None)
-            if not found:
-                last = nl.split()[-1]
-                found = next((k for k in all_players if last in k.lower()), None)
-            if found:
-                matches.append({"predicted": name, "api_name": found, "ab": all_players[found]["ab"], "hr": all_players[found]["hr"]})
-            else:
-                misses.append(name)
-        return {
-            "date": d,
-            "hr_hitters_in_api": hr_hitters,
-            "predicted_players": len(pred_names),
-            "matched": len(matches),
-            "missed": misses,
-            "matches": matches
-        }
-    except Exception as e:
-        return {"error": str(e)}
-
-@app.get("/")
-def root():
-    return {
-        "status": "Sharp MLB HR Model — Baseball Savant Edition",
-        "data_ready": _cache["ready"],
-        "last_updated": _cache["last_updated"],
-        "rows": {k: len(v) for k, v in _cache.items() if isinstance(v, pd.DataFrame)}
-    }
-
-@app.get("/status")
-def status():
-    return {
-        "ready": _cache["ready"],
-        "last_updated": _cache["last_updated"],
-        "last_8d_update": _cache["last_8d_update"],
-        # Batter data
-        "bat_2026": len(_cache["bat_2026"]),
-        "bat_8d": len(_cache["bat_8d"]),
-        "bat_l5g": len(_cache["bat_l5g"]),
-        "bat_vs_lhp": len(_cache["bat_vs_lhp"]),
-        "bat_vs_rhp": len(_cache["bat_vs_rhp"]),
-        # Pitcher data
-        "pit_2026": len(_cache["pit_2026"]),
-        "pit_vs_lhh": len(_cache["pit_vs_lhh"]),
-        "pit_vs_rhh": len(_cache["pit_vs_rhh"]),
-        "pit_arsenal": len(_cache["pit_arsenal"]),
-        "bat_arsenal": len(_cache["bat_arsenal"]),
-        # New caches
-        "bat_l8d_hr": len(_cache.get("bat_l8d_hr", {})),
-        "bat_games": len(_cache.get("bat_games", {})),
-        "team_hitting": len(_cache.get("team_hitting", {})),
-        "team_pitching": len(_cache.get("team_pitching", {})),
-        "team_bullpen": len(_cache.get("team_bullpen", {})),
-        "player_hands": len(_cache.get("player_hands", {})),
-        "player_ip": len(_cache.get("player_ip", {})),
-        # Model weights
-        "model_calibrated": _model_weights.get("last_calibrated"),
-        "model_round": get_rotation_round(),
-        "model_day": get_rotation_day(),
-        # Model state
-        "tree_trained": _rf_trained,
-        "model_type": "random_forest" if _rf_trained else "multiplicative",
-        "model_version": f"round-{get_rotation_round()}-day-{get_rotation_day()}",
-        "records_used": _model_weights.get("records_used", 0),
-        "rf_threshold": 50,
-        "oob_score": _model_weights.get("oob_score"),
-        "rf_params": _model_weights.get("rf_params"),
-        "is_retraining": False,
-    }
-
-@app.get("/version")
-def version():
-    """Quick check — both models now use CV AUC for honest apples-to-apples comparison."""
-    rf_auc  = _model_weights.get("oob_score", 0)  # now CV AUC not OOB
-    xgb_auc = _xgb_oob
-    winning = "xgboost" if (_xgb_trained and xgb_auc > rf_auc) else "random_forest"
-    return {
-        "file_version":    "2026-05-04",
-        "active_model":    winning,
-        "metric":          "cv_auc_5fold — both models on same scale (0.5=random, 1.0=perfect)",
-        "rf": {
-            "trained":      _rf_trained,
-            "records_used": _model_weights.get("records_used", 0),
-            "cv_auc":       rf_auc,
-            "params":       _model_weights.get("rf_params"),
-            "top_features": _model_weights.get("top_features", []),
-        },
-        "xgboost": {
-            "trained":      _xgb_trained,
-            "cv_auc":       xgb_auc,
-            "beats_rf":     _xgb_trained and xgb_auc > rf_auc,
-            "gap":          round(xgb_auc - rf_auc, 4),
-        },
-        "flip_condition":  "XGBoost goes live when xgb cv_auc > rf cv_auc on same 5-fold split",
-    }
-
-
-@app.get("/xgboost-status")
-async def xgboost_status():
-    """Full XGBoost training status — pull latest metadata from GitHub."""
-    meta = {"trained": _xgb_trained, "cv_auc": _xgb_oob}
-    if GITHUB_TOKEN:
-        content, _ = await github_get_file("data/xgb_meta.json")
-        if content:
-            import json
-            try: meta.update(json.loads(content))
-            except: pass
-    rf_auc = _model_weights.get("oob_score", 0)  # now CV AUC
-    meta["rf_auc_comparison"] = rf_auc
-    meta["xgb_beats_rf"] = _xgb_trained and _xgb_oob > rf_auc
-    meta["metric"] = "cv_auc_5fold — both on same scale, 0.5=random 1.0=perfect"
-    meta["recommendation"] = (
-        "XGBoost ready to go live — flip compute_hr_probability to use XGBoost"
-        if meta.get("xgb_beats_rf") else
-        f"RF CV AUC {rf_auc:.3f} vs XGBoost CV AUC {_xgb_oob:.3f} — gap: {round(_xgb_oob - rf_auc, 3)}. Keep collecting data."
-    )
-    return meta
-
-@app.post("/reload")
-async def reload_data():
-    _games_cache.clear()
-    threading.Thread(target=run_async, args=(load_all_savant_data(),), daemon=True).start()
-    asyncio.create_task(reload_contact_log())
-    return {"status": "Reloading data from Baseball Savant"}
-
-async def reload_contact_log():
-    """Fetch contact log separately after a short delay so main data loads first"""
-    await asyncio.sleep(45)
-    async with httpx.AsyncClient(timeout=120) as client:
-        df = await fetch_savant_csv(savant_contact_log_url(), client)
-        if not df.empty:
-            _build_contact_log(df)
-            print(f"contact_log reloaded: {len(_contact_log)} players")
-
-@app.get("/games")
-async def get_games(date: str = None, refresh: bool = False):
-    if not _cache["ready"]:
-        return {"games": [], "loading": True, "message": "Data loading — try again in 30 seconds."}
-
-    from datetime import date as date_cls
-    today = date if date else date_cls.today().isoformat()
-    date = None  # clear to avoid shadowing
-
-    # ── Response cache — return cached result if < 15 min old and not forced refresh ──
-    cached = _games_cache.get(today)
-    if cached and not refresh and (datetime.now() - cached["ts"]).total_seconds() < GAMES_CACHE_TTL:
-        return cached["data"]
-
-    async with httpx.AsyncClient(timeout=30) as client:
-        r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
-        data = r.json()
-
-    dk_props = await fetch_dk_hr_props()
-    k_props  = await fetch_pitcher_k_props()
-    dates = data.get("dates", [])
-    if not dates: return {"games": [], "date": today, "loading": False}
-
-    # ── Batch-fetch ALL player IDs needed upfront ──
-    all_player_ids = set()
-    games_list = dates[0].get("games", [])
-    for game in games_list:
-        if game.get("status", {}).get("abstractGameState") == "Final": continue
-        for side in ["away", "home"]:
-            pid = game["teams"][side].get("probablePitcher", {}).get("id")
-            if pid: all_player_ids.add(pid)
-
-    # Batch fetch all pitcher hands in parallel (batters added below after lineups)
-    async def batch_fetch_hands(pids):
-        tasks = [fetch_player_hand(pid) for pid in pids]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-        return {pid: (r if not isinstance(r, Exception) else {"bat_side": "R", "pitch_hand": "R"})
-                for pid, r in zip(pids, results)}
-
-    await batch_fetch_hands(all_player_ids)  # warms the cache for pitchers
-
-    games_out = []
-    for game in games_list:
-        if game.get("status", {}).get("abstractGameState") == "Final": continue
-
-        gid = game["gamePk"]
-        away_team = game["teams"]["away"]["team"]["name"]
-        home_team = game["teams"]["home"]["team"]["name"]
-        away_team_id = game["teams"]["away"]["team"]["id"]
-        home_team_id = game["teams"]["home"]["team"]["id"]
-        away_p = game["teams"]["away"].get("probablePitcher", {})
-        home_p = game["teams"]["home"].get("probablePitcher", {})
-        gtime = game.get("gameDate", "")
-
-        away_p_hand = home_p_hand = "R"
-        if away_p.get("id"):
-            info = await fetch_player_hand(away_p.get("id"))
-            away_p_hand = info.get("pitch_hand", "R")
-        if home_p.get("id"):
-            info = await fetch_player_hand(home_p.get("id"))
-            home_p_hand = info.get("pitch_hand", "R")
-
-        stadium = STADIUMS.get(home_team, {})
-        temp, wind_speed, wind_dir = 70, 0, 0
-        if not stadium.get("dome") and stadium.get("lat"):
-            temp, wind_speed, wind_dir = await fetch_weather(stadium["lat"], stadium["lon"], gtime)
-        wx_mult, wx_label = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp)
-
-        lineup_away, lineup_home = [], []
-        lineup_away_status = lineup_home_status = "projected"
-        try:
-            async with httpx.AsyncClient(timeout=15) as client:
-                r = await client.get(f"{MLB_API}/game/{gid}/boxscore"); box = r.json()
-            teams = box.get("teams", {})
-            def extract(side):
-                players = teams.get(side, {}).get("players", {})
-                return sorted([p for p in players.values() if p.get("battingOrder") and int(p["battingOrder"]) <= 900],
-                              key=lambda x: int(x["battingOrder"]))[:9]
-            ca, ch = extract("away"), extract("home")
-            if ca: lineup_away = ca; lineup_away_status = "confirmed"
-            if ch: lineup_home = ch; lineup_home_status = "confirmed"
-        except: pass
-
-        if not lineup_away: lineup_away, _ = await fetch_projected_lineup(away_team_id, away_team)
-        if not lineup_home: lineup_home, _ = await fetch_projected_lineup(home_team_id, home_team)
-
-        all_batters = []
-
-        async def process(batter, team, opp_p_name, opp_p_hand, is_proj):
-            if "person" in batter:
-                name = batter.get("person", {}).get("fullName", "")
-                pid = batter.get("person", {}).get("id")
-                bat_hand = batter.get("person", {}).get("batSide", {}).get("code", "")
-            else:
-                name = batter.get("name", ""); pid = batter.get("id"); bat_hand = ""
-
-            if pid:
-                info = await fetch_player_hand(pid)
-                if info.get("bat_side"): bat_hand = info["bat_side"]
-            if not bat_hand: bat_hand = "R"
-            if bat_hand == "S": bat_hand = "L" if opp_p_hand == "R" else "R"
-
-            park_factor = get_park_hr_factor(home_team, bat_hand)
-            batter_wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
-
-            hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf = compute_hr_probability(
-                name, bat_hand, opp_p_name, opp_p_hand, park_factor, batter_wx_mult, home_team)
-
-            bc = get_batter_stats(name, 2026)
-            pa_26 = bc.get("pa", 0); pa_25 = 0
-            bwc = 1.0
-            b8d = get_batter_8d(name)
-            b_split = get_batter_split(name, opp_p_hand)
-            pc = get_pitcher_stats(opp_p_name, 2026)
-            p_split = get_pitcher_split(opp_p_name, bat_hand)
-
-            bl5g = get_batter_l5g(name)
-            xgb_prob, xgb_shap = predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, batter_wx_mult, breakdown,
-                                              bc=bc, b8d=b8d, b_split=b_split, pc=pc, p_split=p_split)
-
-            all_batters.append({
-                "name": name, "team": team, "hr_prob": hr_prob,
-                "xgb_prob": xgb_prob,
-                "xgb_shap": xgb_shap,
-                "archetype": archetype, "trend": trend, "confidence": conf,
-                "reasons": reasons, "opp_pitcher": opp_p_name,
-                "bat_hand": bat_hand, "opp_p_hand": opp_p_hand,
-                "park_factor": round(park_factor, 2),
-                "l8d_hr_count": get_l8d_hr(name),
-                "season": {
-                    "barrel": round(blend(bc.get("barrel_pct", 0), 0, bwc), 1),
-                    "ev":     round(blend(bc.get("exit_velo", 0), 0, bwc), 1),
-                    "la":     round(blend(bc.get("launch_angle", 0), 0, bwc), 1),
-                    "hh":     round(blend(bc.get("hard_hit_pct", 0), 0, bwc), 1),
-                    "iso":    round(blend(bc.get("iso", 0), 0, bwc), 3),
-                    "slg":    round(blend(bc.get("slg_percent", 0), 0, bwc), 3),
-                    "avg":    round(blend(bc.get("batting_avg", 0), 0, bwc), 3),
-                    "k":      round(blend(bc.get("k_pct", 0), 0, bwc), 1),
-                    "pull":   round(blend(bc.get("pull_pct", 0), 0, bwc), 1),
-                    "hr":     int(bc.get("hr", 0)),
-                },
-                "l8d": {
-                    "pa":       int(b8d.get("pa", 0)),
-                    "barrel":   round(b8d.get("barrel_pct", 0), 1),
-                    "ev":       round(b8d.get("exit_velo", 0), 1),
-                    "la":       round(b8d.get("launch_angle", 0), 1),
-                    "hh":       round(b8d.get("hard_hit_pct", 0), 1),
-                    "iso":      round(b8d.get("iso", 0), 3),
-                    "slg":      round(b8d.get("slg", 0), 3),
-                    "avg":      round(b8d.get("avg", 0), 3),
-                    "pull":     round(b8d.get("pull_pct", 0), 1),
-                    "k_pct":    round(b8d.get("k_pct", 0), 1),
-                    "xslg":     round(b8d.get("xslg", 0), 3),
-                    "xwoba":    round(b8d.get("xwoba", 0), 3),
-                    "bat_speed":round(b8d.get("bat_speed", 0), 1),
-                },
-                "l5g": {
-                    "ab":  int(bl5g.get("ab", 0)),
-                    "hr":  int(bl5g.get("hr", 0)),
-                    "slg": round(bl5g.get("slg", 0), 3),
-                    "avg": round(bl5g.get("avg", 0), 3),
-                    "iso": round(bl5g.get("iso", 0), 3),
-                },
-                "dk_odds": fmt_odds(match_dk_odds(name, dk_props)),
-                "projected": is_proj, "platoon_tag": platoon_tag,
-                "contact_log": get_contact_log(name),
-                "breakdown": breakdown,
-            })
-
-        # Pre-fetch all batter hands in parallel before processing
-        all_lineup = list(lineup_away) + list(lineup_home)
-        batter_pids = set()
-        for b in all_lineup:
-            pid = b.get("person", {}).get("id") if "person" in b else b.get("id")
-            if pid: batter_pids.add(pid)
-        if batter_pids:
-            await batch_fetch_hands(batter_pids)  # warms cache — process() hits cache not network
-
-        # Process all batters in parallel
-        away_tasks = [process(b, away_team, home_p.get("fullName", "TBD"), home_p_hand, lineup_away_status == "projected") for b in lineup_away]
-        home_tasks = [process(b, home_team, away_p.get("fullName", "TBD"), away_p_hand, lineup_home_status == "projected") for b in lineup_home]
-        await asyncio.gather(*away_tasks, *home_tasks)
-
-        away_lineup_ordered = [b for b in all_batters if b["team"] == away_team]
-        home_lineup_ordered = [b for b in all_batters if b["team"] == home_team]
-        all_batters.sort(key=lambda x: x["hr_prob"], reverse=True)
-
-        # ── Game Totals ──
-        park_factor_neutral = 1.0  # neutral for runs (park factors are HR-specific)
-        away_lineup_hr_sum  = round(sum(b["hr_prob"] for b in away_lineup_ordered) / 100, 3)
-        home_lineup_hr_sum  = round(sum(b["hr_prob"] for b in home_lineup_ordered) / 100, 3)
-        away_th = _cache["team_hitting"].get(away_team, {})
-        home_th = _cache["team_hitting"].get(home_team, {})
-        away_tp = _cache["team_pitching"].get(away_team, {})
-        home_tp = _cache["team_pitching"].get(home_team, {})
-
-        # Expected runs: blend team runs/g with starter ERA signal
-        away_pit_stats = get_pitcher_stats(away_p.get("fullName", "TBD"), 2026)
-        home_pit_stats = get_pitcher_stats(home_p.get("fullName", "TBD"), 2026)
-        lg_era = 4.20
-        away_starter_factor = 1 + (away_pit_stats.get("era", lg_era) - lg_era) / lg_era * 0.3 if away_pit_stats.get("era") else 1.0
-        home_starter_factor = 1 + (home_pit_stats.get("era", lg_era) - lg_era) / lg_era * 0.3 if home_pit_stats.get("era") else 1.0
-        away_runs_exp = round((home_th.get("runs_per_g", 4.5) * home_starter_factor * wx_mult), 2)
-        home_runs_exp = round((away_th.get("runs_per_g", 4.5) * away_starter_factor * wx_mult), 2)
-        total_runs_exp = round(away_runs_exp + home_runs_exp, 2)
-
-        # ── Strikeouts + K Props ──
-        away_lineup_k = round(sum(b["season"].get("k", 0) for b in away_lineup_ordered) / max(len(away_lineup_ordered), 1), 1)
-        home_lineup_k = round(sum(b["season"].get("k", 0) for b in home_lineup_ordered) / max(len(home_lineup_ordered), 1), 1)
-        away_pit_k9  = away_pit_stats.get("k9", 0)
-        home_pit_k9  = home_pit_stats.get("k9", 0)
-        away_avg_ip  = away_pit_stats.get("avg_ip", 5.0) or 5.0
-        home_avg_ip  = home_pit_stats.get("avg_ip", 5.0) or 5.0
-        lg_k_pct = 22.5
-        away_exp_k = round(away_pit_k9 * (away_avg_ip / 9) * (home_lineup_k / lg_k_pct), 1) if away_pit_k9 > 0 else 0
-        home_exp_k = round(home_pit_k9 * (home_avg_ip / 9) * (away_lineup_k / lg_k_pct), 1) if home_pit_k9 > 0 else 0
-
-        # K prop lines from Odds API
-        away_k_prop = match_pitcher_k_prop(away_p.get("fullName", "TBD"), k_props)
-        home_k_prop = match_pitcher_k_prop(home_p.get("fullName", "TBD"), k_props)
-        away_k_edge = round(away_exp_k - away_k_prop["line"], 1) if away_k_prop and away_exp_k > 0 else None
-        home_k_edge = round(home_exp_k - home_k_prop["line"], 1) if home_k_prop and home_exp_k > 0 else None
-
-        # Build pitcher display objects with K data attached
-        away_pit_obj = pit_display(away_p.get("fullName", "TBD"), away_p_hand)
-        home_pit_obj = pit_display(home_p.get("fullName", "TBD"), home_p_hand)
-        for obj, exp_k, k_prop, k_edge, opp_t, opp_lk in [
-            (away_pit_obj, away_exp_k, away_k_prop, away_k_edge, home_team, home_lineup_k),
-            (home_pit_obj, home_exp_k, home_k_prop, home_k_edge, away_team, away_lineup_k),
-        ]:
-            obj["exp_k"]       = exp_k
-            obj["k_prop"]      = k_prop
-            obj["k_edge"]      = k_edge
-            obj["opp_team"]    = opp_t
-            obj["opp_lineup_k"] = opp_lk
-
-        games_out.append({
-            "game_id": gid, "away": away_team, "home": home_team, "time": gtime,
-            "away_pitcher": away_pit_obj,
-            "home_pitcher": home_pit_obj,
-            "top_hr_candidates": all_batters,
-            "away_lineup": away_lineup_ordered,
-            "home_lineup": home_lineup_ordered,
-            "lineup_away_status": lineup_away_status,
-            "lineup_home_status": lineup_home_status,
-            "weather": {"label": wx_label, "temp": temp, "wind_speed": wind_speed, "wind_dir": wind_dir},
-            "totals": {
-                "away_exp_hr":    away_lineup_hr_sum,
-                "home_exp_hr":    home_lineup_hr_sum,
-                "total_exp_hr":   round(away_lineup_hr_sum + home_lineup_hr_sum, 2),
-                "away_exp_runs":  away_runs_exp,
-                "home_exp_runs":  home_runs_exp,
-                "total_exp_runs": total_runs_exp,
-                "away_runs_pg":   away_th.get("runs_per_g", 0),
-                "home_runs_pg":   home_th.get("runs_per_g", 0),
-                "away_hr_pg":     away_th.get("hr_per_g", 0),
-                "home_hr_pg":     home_th.get("hr_per_g", 0),
-                "away_era":       away_tp.get("era", 0),
-                "home_era":       home_tp.get("era", 0),
-                "away_k_pg":      away_tp.get("k_per_9", 0),
-                "home_k_pg":      home_tp.get("k_per_9", 0),
-            },
-            "strikeouts": {
-                "away_exp_k":    away_exp_k,
-                "home_exp_k":    home_exp_k,
-                "away_lineup_k": away_lineup_k,
-                "home_lineup_k": home_lineup_k,
-                "away_pit_name": away_p.get("fullName", "TBD"),
-                "home_pit_name": home_p.get("fullName", "TBD"),
-                "away_pit_k9":   round(away_pit_k9, 1),
-                "home_pit_k9":   round(home_pit_k9, 1),
-                "away_avg_ip":   round(away_avg_ip, 1),
-                "home_avg_ip":   round(home_avg_ip, 1),
-                "away_k_prop":   away_k_prop,
-                "home_k_prop":   home_k_prop,
-                "away_k_edge":   away_k_edge,
-                "home_k_edge":   home_k_edge,
-            },
-        })
-
-    result = {"games": games_out, "date": today, "loading": False}
-    _games_cache[today] = {"data": result, "ts": datetime.now()}
-    return result
-
-@app.get("/debug-weather")
-async def debug_weather(team: str = "Pittsburgh Pirates", wind_deg: int = 315, wind_speed: int = 12, temp: int = 56):
-    """Debug weather calculation for any stadium.
-    Example: /debug-weather?team=Pittsburgh+Pirates&wind_deg=315&wind_speed=12&temp=56
-    wind_deg = meteorological direction wind comes FROM (0=N, 90=E, 180=S, 270=W)
-    """
-    stadium = STADIUMS.get(team)
-    if not stadium:
-        return {"error": f"Team not found: {team}", "available": list(STADIUMS.keys())}
-    if stadium.get("dome"):
-        return {"team": team, "dome": True, "result": "No wind effect in dome"}
-
-    cf_bearing = stadium.get("cf_bearing", 67)
-    hr_r = stadium.get("hr_bearing_R", (cf_bearing + 270) % 360)
-    hr_l = stadium.get("hr_bearing_L", (cf_bearing + 90) % 360)
-    wind_toward = (wind_deg + 180) % 360
-
-    COMPASS = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"]
-    def compass(deg): return COMPASS[round(((deg % 360) + 360) % 360 / 22.5) % 16]
-
-    mult_r, label_r = calc_weather_multiplier(team, wind_speed, wind_deg, temp, "R")
-    mult_l, label_l = calc_weather_multiplier(team, wind_speed, wind_deg, temp, "L")
-
-    return {
-        "team": team,
-        "stadium_orientation": {
-            "cf_bearing": cf_bearing,
-            "cf_direction": compass(cf_bearing),
-            "lf_bearing": hr_r,
-            "lf_direction": compass(hr_r),
-            "rf_bearing": hr_l,
-            "rf_direction": compass(hr_l),
-        },
-        "wind": {
-            "from_deg": wind_deg,
-            "from_direction": compass(wind_deg),
-            "toward_deg": wind_toward,
-            "toward_direction": compass(wind_toward),
-            "speed_mph": wind_speed,
-            "temp_f": temp,
-        },
-        "result_rhb": {"mult": mult_r, "label": label_r},
-        "result_lhb": {"mult": mult_l, "label": label_l},
-        "interpretation": f"Wind FROM {compass(wind_deg)} TOWARD {compass(wind_toward)}. CF at {compass(cf_bearing)}. LF at {compass(hr_r)}, RF at {compass(hr_l)}.",
-    }
-
-
-@app.get("/research")
-async def research(player: str, date: str = None):
-    from datetime import date as date_cls
-    today = date if date else date_cls.today().isoformat()
-    date = None  # clear to avoid shadowing
-    if not _cache["ready"]:
-        return {"error": "Data loading — try again in 30 seconds"}
-
-    bc = get_batter_stats(player, 2026)
-    b8d = get_batter_8d(player)
-    bl5g = get_batter_l5g(player)
-    pa_26 = bc.get("pa", 0); pa_25 = 0
-    bwc = 1.0
-    has_8d = b8d.get("pa", 0) >= 3
-    w_s, w_8 = (0.70, 0.30) if has_8d else (1.0, 0.0)
-
-    def blend3(s26, s25, d8):
-        s = blend(s26, s25, bwc)
-        return round(s * w_s + d8 * w_8, 3) if (has_8d and d8 > 0) else round(s, 3)
-
-    stats = {
-        "name": player, "pa_2026": pa_26, "pa_2025": pa_25,
-        "blend_note": "100% 2026",
-        "season_2026": bc,
-        "last_8d": b8d,
-        "last_5g": bl5g,
-        "blended": {
-            "barrel_pct":   blend3(bc.get("barrel_pct", 0), 0, b8d.get("barrel_pct", 0)),
-            "iso":          blend3(bc.get("iso", 0), 0, b8d.get("iso", 0)),
-            "pull_pct":     blend3(bc.get("pull_pct", 0), 0, b8d.get("pull_pct", 0)),
-            "launch_angle": blend3(bc.get("launch_angle", 0), 0, b8d.get("launch_angle", 0)),
-            "hard_hit_pct": blend3(bc.get("hard_hit_pct", 0), 0, b8d.get("hard_hit_pct", 0)),
-        },
-        "splits": {
-            "vs_lhp": get_batter_split(player, "L"),
-            "vs_rhp": get_batter_split(player, "R"),
-        },
-        "pitch_values": {code: get_batter_pitch_rv(player, code) for code in ["wfa","wsl","wfc","wch","wcu","wsi","wfs"]},
-    }
-
-    matchup = None
-    try:
-        async with httpx.AsyncClient(timeout=20) as client:
-            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
-            schedule = r.json()
-        for game_date in schedule.get("dates", []):
-            for game in game_date.get("games", []):
-                for side in ["away", "home"]:
-                    opp_side = "home" if side == "away" else "away"
-                    opp_p = game["teams"][opp_side].get("probablePitcher", {})
-                    opp_p_name = opp_p.get("fullName", "TBD")
-                    opp_p_id = opp_p.get("id")
-                    opp_p_hand = "R"
-                    if opp_p_id:
-                        info = await fetch_player_hand(opp_p_id)
-                        opp_p_hand = info.get("pitch_hand", "R")
-                    pc = get_pitcher_stats(opp_p_name, 2026)
-                    ip_26 = pc.get("ip", 0)
-                    pwc = 1.0
-                    pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, player)
-                    matchup = {
-                        "home_team": game["teams"]["home"]["team"]["name"],
-                        "away_team": game["teams"]["away"]["team"]["name"],
-                        "game_time": game.get("gameDate", ""),
-                        "pitcher_name": opp_p_name,
-                        "pitcher_hand": opp_p_hand,
-                        "pitcher_stats": {
-                            "era": round(blend(pc.get("era", 0), 0), 2),
-                            "hr9": round(blend(pc.get("hr9", 0), 0), 2),
-                            "hard_hit_pct": round(blend(pc.get("hard_hit_pct", 0), 0), 1),
-                            "barrel_pct_allowed": round(blend(pc.get("barrel_pct_allowed", 0), 0), 1),
-                            "ip_2026": ip_26,
-                            "blend_note": "100% 2026",
-                        },
-                        "pitch_matchup": pitch_details,
-                        "pitch_bonus": pitch_bonus,
-                    }
-                    break
-            if matchup: break
-    except Exception as e:
-        print(f"Research matchup error: {e}")
-
-    return {"player": stats, "matchup": matchup, "date": today}
-
-
-# ── /refresh-8d ──────────────────────────────────────────────────────────────
-@app.get("/refresh-8d")
-async def manual_refresh_8d():
-    """Manually trigger 8-day rolling data refresh (Statcast + MLB API)."""
-    asyncio.create_task(refresh_8d())
-    _cache["last_8d_update"] = datetime.now().isoformat()
-    return {"status": "8d refresh triggered", "ts": _cache["last_8d_update"]}
-
-
-# ── /debug-arsenal ───────────────────────────────────────────────────────────
-@app.get("/debug-arsenal")
-async def debug_arsenal(player: str = "Freddie Freeman", pitcher: str = "Logan Webb"):
-    """Debug bat_arsenal and pit_arsenal column names and matchup values."""
-    bat_df = _cache.get("bat_arsenal", pd.DataFrame())
-    pit_df = _cache.get("pit_arsenal", pd.DataFrame())
-    bat_cols = list(bat_df.columns) if not bat_df.empty else []
-    pit_cols = list(pit_df.columns) if not pit_df.empty else []
-    bat_row = fuzzy_match(player, bat_df)
-    pit_row = fuzzy_match(pitcher, pit_df)
-    score, details = compute_pitch_matchup(pitcher, player)
-    return {
-        "bat_arsenal_columns": bat_cols,
-        "pit_arsenal_columns": pit_cols,
-        "bat_row_sample": dict(bat_row) if bat_row is not None else None,
-        "pit_row_sample": dict(pit_row) if pit_row is not None else None,
-        "pitch_matchup_score": score,
-        "pitch_matchup_details": details,
-    }
-
-
-# ── Parlay combination tracking ───────────────────────────────────────────────
-async def save_parlay_combinations():
-    """
-    Called at 12pm daily after save_daily_predictions().
-    Takes top picks (≥7%), generates all 2-leg and 3-leg combos,
-    saves to data/parlays/{date}.json on GitHub.
-    """
-    if not GITHUB_TOKEN: return
-    today = date.today().isoformat()
-    path  = f"data/parlays/{today}.json"
-    existing, sha = await github_get_file(path)
-    if existing:
-        print(f"Parlay combos already saved for {today}")
-        return
-    try:
-        import json, itertools
-        pred_content, _ = await github_get_file(f"data/predictions/{today}.json")
-        if not pred_content: return
-        preds = json.loads(pred_content)
-        top   = sorted([p for p in preds if (p.get("model_hr_pct") or 0) >= 7],
-                       key=lambda x: x.get("model_hr_pct", 0), reverse=True)[:15]
-        top3  = top[:10]  # 3-leg combos from top 10 only
-
-        def combo_obj(legs):
-            return {
-                "legs":     [{"name": p["name"], "team": p.get("team",""), "pct": p.get("model_hr_pct",0)} for p in legs],
-                "n_legs":   len(legs),
-                "both_hit": None,  # patched at 2am by record_parlay_results
-            }
-
-        combos  = [combo_obj(list(c)) for c in itertools.combinations(top,  2)]
-        combos += [combo_obj(list(c)) for c in itertools.combinations(top3, 3)]
-        content = json.dumps(combos, indent=2)
-        await github_put_file(path, content, f"parlays: {today} ({len(combos)} combos)", sha)
-        print(f"Saved {len(combos)} parlay combos for {today}")
-    except Exception as e:
-        print(f"save_parlay_combinations error: {e}")
-
-
-async def record_parlay_results(target_date: str):
-    """
-    Called at 2am inside record_results() after individual outcomes are patched.
-    Reads today's prediction file for hit_hr outcomes, patches both_hit into combos.
-    """
-    if not GITHUB_TOKEN: return
-    path = f"data/parlays/{target_date}.json"
-    existing, sha = await github_get_file(path)
-    if not existing: return
-    try:
-        import json
-        combos = json.loads(existing)
-        pred_content, _ = await github_get_file(f"data/predictions/{target_date}.json")
-        if not pred_content: return
-        preds    = json.loads(pred_content)
-        hit_map  = {(r.get("name") or ""): r.get("hit_hr") for r in preds if r.get("name")}
-        updated  = 0
-        for combo in combos:
-            outcomes = [hit_map.get(leg["name"]) for leg in combo.get("legs", [])]
-            if all(o is not None for o in outcomes):
-                combo["both_hit"] = int(all(o == 1 for o in outcomes))
-                updated += 1
-        content = json.dumps(combos, indent=2)
-        await github_put_file(path, content, f"parlay results: {target_date}", sha)
-        print(f"Patched {updated}/{len(combos)} parlay combos for {target_date}")
-    except Exception as e:
-        print(f"record_parlay_results error: {e}")
-
-
-@app.get("/parlay-results")
-async def parlay_results_endpoint(days: int = 30):
-    """
-    Aggregate parlay combination hit rates across tracked days.
-    Returns today's combos, all-time hit rates, and best winning combos.
-    """
-    if not GITHUB_TOKEN:
-        return {"error": "No GitHub token"}
-    try:
-        import json
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(
-                f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/parlays",
-                headers={"Authorization": f"token {GITHUB_TOKEN}"}
-            )
-            files = r.json() if r.is_success else []
-        all_combos = []
-        dates_loaded = []
-        for f in sorted(files, key=lambda x: x.get("name",""), reverse=True)[:days]:
-            if not f.get("name","").endswith(".json"): continue
-            content, _ = await github_get_file(f"data/parlays/{f['name']}")
-            if content:
-                try:
-                    day_combos = json.loads(content)
-                    for c in day_combos:
-                        c["_date"] = f["name"].replace(".json","")
-                    all_combos.extend(day_combos)
-                    dates_loaded.append(f["name"].replace(".json",""))
-                except: pass
-
-        completed = [c for c in all_combos if c.get("both_hit") is not None]
-        two_leg   = [c for c in completed if c.get("n_legs") == 2]
-        three_leg = [c for c in completed if c.get("n_legs") == 3]
-        two_hits  = [c for c in two_leg   if c.get("both_hit") == 1]
-        three_hits= [c for c in three_leg if c.get("both_hit") == 1]
-
-        # Best combos by hit count
-        combo_counts = {}
-        for c in two_hits + three_hits:
-            key = tuple(sorted(leg["name"] for leg in c.get("legs", [])))
-            combo_counts[key] = combo_counts.get(key, 0) + 1
-        best = sorted(combo_counts.items(), key=lambda x: x[1], reverse=True)[:5]
-
-        today_str   = date.today().isoformat()
-        today_combos = [c for c in all_combos if c.get("_date") == today_str]
-
-        return {
-            "today": {
-                "date":         today_str,
-                "total_combos": len(today_combos),
-                "two_leg":      len([c for c in today_combos if c.get("n_legs") == 2]),
-                "three_leg":    len([c for c in today_combos if c.get("n_legs") == 3]),
-            },
-            "all_time": {
-                "days_tracked":        len(dates_loaded),
-                "two_leg_combos":      len(two_leg),
-                "three_leg_combos":    len(three_leg),
-                "two_leg_hit_rate":    f"{len(two_hits)/len(two_leg)*100:.1f}%" if two_leg else "--",
-                "three_leg_hit_rate":  f"{len(three_hits)/len(three_leg)*100:.1f}%" if three_leg else "--",
-            },
-            "best_combos": [{"players": list(k), "hits": v} for k, v in best],
-        }
-    except Exception as e:
-        return {"error": str(e)}
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+  }catch(e){console.log('History preload failed:',e.message);}
+})();
+load();
+loadDashboard();
+</script>
+</body>
+</html>
