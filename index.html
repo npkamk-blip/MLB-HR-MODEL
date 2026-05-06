@@ -955,9 +955,9 @@ function buildBatterTable(games){
     var wxLabel=(wx.label||'').toLowerCase();
     var windSpd=wx.wind_speed||0;
     var isDome=wxLabel.includes('dome');
-    // Calculate weather multiplier from wind label — mirrors backend calc_weather_multiplier
-    var wxMult=1.0;
-    if(!isDome && windSpd>=5){
+    // Use backend-calculated mult when available, otherwise approximate from label
+    var wxMult=wx.mult||1.0;
+    if(!wx.mult && !isDome && windSpd>=5){
       var align=labelToAlign(wx.label||'');
       var speedFactor=windSpd<10?0.3:windSpd<16?0.7:1.0;
       wxMult=1.0+(align*speedFactor*0.12);
