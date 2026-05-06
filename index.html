@@ -298,13 +298,20 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
   </div>
 </header>
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('batters',this)">Batters</button>
+  <button class="tab active" onclick="switchTab('dashboard',this)">Dashboard</button>
+  <button class="tab" onclick="switchTab('batters',this)">Batters</button>
   <button class="tab" onclick="switchTab('parlays',this)">Parlays</button>
   <button class="tab" onclick="switchTab('history',this)">History</button>
   <button class="tab" onclick="switchTab('model',this)">Model</button>
 </div>
 
-<div id="batters-panel" class="tab-panel active">
+<div id="dashboard-panel" class="tab-panel active">
+  <div class="container">
+    <div id="dashboard-main"><div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div></div>
+  </div>
+</div>
+
+<div id="batters-panel" class="tab-panel">
   <div class="container">
     <div id="batter-main"><div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div></div>
   </div>
@@ -380,9 +387,113 @@ function switchTab(id,btn){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   document.getElementById(id+'-panel').classList.add('active');
   btn.classList.add('active');
+  if(id==='dashboard') loadDashboard();
   if(id==='history'&&!historyData) loadHistory();
   if(id==='model') loadModelTab();
   if(id==='parlays') loadParlayTab();
+}
+
+var dashboardData=null;
+async function loadDashboard(){
+  var el=document.getElementById('dashboard-main');
+  el.innerHTML='<div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div>';
+  try{
+    var r=await fetch(API+'/dashboard');
+    var d=await r.json();
+    if(d.error){el.innerHTML='<div class="err"><b>Error:</b> '+d.error+'</div>';return;}
+    dashboardData=d;
+    el.innerHTML=buildDashboard(d);
+  }catch(e){el.innerHTML='<div class="err"><b>Error:</b> Failed to fetch</div>';}
+}
+
+function buildDashboard(d){
+  var stats=d.stats||{};var top8=d.top8_today||[];var days=d.slate_days||[];
+  var h='';
+
+  // ── Stat cards ──
+  h+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px">';
+  function sCard(label,val,sub,color){
+    return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 15px">'
+      +'<div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">'+label+'</div>'
+      +'<div style="font-family:Barlow Condensed,sans-serif;font-size:26px;font-weight:800;color:'+(color||'var(--text)')+'">'+val+'</div>'
+      +(sub?'<div style="font-size:10px;color:var(--muted);margin-top:1px">'+sub+'</div>':'')
+      +'</div>';
+  }
+  var t8r=stats.top8_hit_rate||0,t4r=stats.top4_hit_rate||0;
+  var p2r=stats.two_of_top4_rate||0,p2t8=stats.two_of_top8_rate||0;
+  var ovr=stats.overall_hit_rate||0,daysT=stats.days_tracked||0;
+  h+=sCard('Top 8 Hit Rate',t8r+'%',stats.top8_total_hits+' HRs / '+stats.top8_total_picks+' picks',t8r>=25?'var(--g)':t8r>=15?'var(--y)':'var(--r)');
+  h+=sCard('Top 4 Hit Rate',t4r+'%','Last '+daysT+' days',t4r>=25?'var(--g)':t4r>=15?'var(--y)':'var(--r)');
+  h+=sCard('2-of-Top-4 Days',p2r+'%','Parlay signal',p2r>=20?'var(--g)':p2r>=12?'var(--y)':'var(--r)');
+  h+=sCard('2-of-Top-8 Days',p2t8+'%','Wider parlay window',p2t8>=20?'var(--g)':p2t8>=12?'var(--y)':'var(--r)');
+  h+=sCard('Slate Hit Rate',ovr+'%','All tracked players','var(--muted)');
+  h+=sCard('Days Tracked',daysT,'Since '+(days.length>0?days[days.length-1].date:'—'),'var(--text)');
+  h+='</div>';
+
+  // ── Model status ──
+  var modelC=d.xgb_trained&&d.xgb_cv>d.rf_oob?'var(--purple)':'var(--blue)';
+  var modelLbl=d.xgb_trained&&d.xgb_cv>d.rf_oob?'XGBoost':'Random Forest';
+  h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 15px;margin-bottom:18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap">';
+  h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em">Active Model</div>';
+  h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:800;color:'+modelC+'">'+modelLbl+'</div>';
+  if(d.rf_oob)h+='<div style="font-size:11px;color:var(--muted)">RF AUC <span style="color:var(--text);font-weight:600">'+d.rf_oob.toFixed(3)+'</span></div>';
+  if(d.xgb_trained)h+='<div style="font-size:11px;color:var(--muted)">XGB AUC <span style="color:var(--purple);font-weight:600">'+d.xgb_cv.toFixed(3)+'</span></div>';
+  if(d.xgb_trained&&d.xgb_cv<=d.rf_oob)h+='<div style="font-size:10px;color:var(--muted2)">XGBoost learning — flips live when AUC beats RF</div>';
+  h+='</div>';
+
+  // ── Today's Top 8 ──
+  h+='<div style="margin-bottom:18px">';
+  h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:15px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin-bottom:10px">Today\'s Top 8</div>';
+  if(!top8.length){
+    h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;text-align:center;color:var(--muted2);font-size:13px">Confirmed lineups save hourly — check back later</div>';
+  }else{
+    h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px">';
+    top8.forEach(function(p,i){
+      var pct=p.model_hr_pct||0;
+      var pc=pct>=18?'var(--g)':pct>=12?'var(--y)':'var(--muted)';
+      var hit=p.hit_hr;
+      var hitBadge=hit===1?'<span style="background:rgba(50,215,75,.15);color:var(--g);border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700;margin-left:5px">HR ✓</span>'
+                  :hit===0?'<span style="background:rgba(255,69,58,.1);color:var(--r);border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700;margin-left:5px">✗</span>':'';
+      var rankC=i===0?'#ffd60a':i===1?'#e5e5ea':i===2?'#cd7f32':'var(--muted2)';
+      h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 15px;display:flex;align-items:center;gap:10px">';
+      h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:18px;font-weight:800;color:'+rankC+';width:22px;flex-shrink:0">'+(i+1)+'</div>';
+      h+='<div style="flex:1;min-width:0">';
+      h+='<div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.name+hitBadge+'</div>';
+      h+='<div style="font-size:10px;color:var(--muted);margin-top:1px">'+(p.team||'')+(p.opp_pitcher?' · vs '+p.opp_pitcher:'')+'</div>';
+      h+='</div>';
+      h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:20px;font-weight:800;color:'+pc+'">'+pct+'%</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+  h+='</div>';
+
+  // ── Recent record ──
+  if(days.length){
+    h+='<div style="margin-bottom:18px">';
+    h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:15px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin-bottom:10px">Recent Record</div>';
+    h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden">';
+    h+='<div style="display:grid;grid-template-columns:90px 1fr 70px 65px;padding:7px 14px;border-bottom:1px solid var(--border2)">';
+    ['Date','Top 8','Hits','Rate'].forEach(function(l){h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em">'+l+'</div>';});
+    h+='</div>';
+    days.slice(0,14).forEach(function(day){
+      var rate=day.top8_total>0?Math.round(day.top8_hits/day.top8_total*100):0;
+      var rc=rate>=25?'var(--g)':rate>=12?'var(--y)':'var(--r)';
+      var dots='';
+      (day.top8||[]).forEach(function(p){
+        var dc=p.hit===1?'var(--g)':p.hit===0?'rgba(255,255,255,0.15)':'rgba(255,255,255,0.08)';
+        dots+='<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+dc+';margin-right:2px"></span>';
+      });
+      h+='<div style="display:grid;grid-template-columns:90px 1fr 70px 65px;padding:9px 14px;border-bottom:1px solid var(--border2)">';
+      h+='<div style="font-size:11px;color:var(--muted)">'+day.date.slice(5)+'</div>';
+      h+='<div>'+dots+'</div>';
+      h+='<div style="font-size:11px;color:var(--text);font-weight:600">'+day.top8_hits+' / '+day.top8_total+'</div>';
+      h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:800;color:'+rc+'">'+rate+'%</div>';
+      h+='</div>';
+    });
+    h+='</div></div>';
+  }
+  return h;
 }
 
 async function loadParlayTab(){
@@ -1990,6 +2101,7 @@ document.getElementById('dateLbl').textContent=fmtDateLabel(selectedDate);
   }catch(e){console.log('History preload failed:',e.message);}
 })();
 load();
+loadDashboard();
 </script>
 </body>
 </html>
