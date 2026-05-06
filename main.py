@@ -97,12 +97,10 @@ _rf_trained  = False  # True once model is fitted and ready
 
 # ── XGBoost model globals ──
 _xgb_model    = None  # trained XGBClassifier
-_xgb_features = []    # feature list
+_xgb_features = []    # feature list (same as RF + day_of_season)
 _xgb_medians  = {}    # per-feature medians
 _xgb_trained  = False # True once fitted
-_xgb_oob      = 0.0   # cross-val AUC
-_xgb_base_rate = 0.0  # model's self-learned base rate (from expected_value)
-_xgb_explainer = None # shap.TreeExplainer - built after training
+_xgb_oob      = 0.0   # cross-val score for comparison vs RF
 
 def W(key):
     """Get a model weight, default 1.0"""
@@ -348,7 +346,7 @@ async def train_xgboost(save_to_github: bool = True):
     Runs silently. Does not affect predictions until it outperforms RF.
     Uses cross-validation score (not OOB) for honest comparison vs RF.
     """
-    global _xgb_model, _xgb_features, _xgb_medians, _xgb_trained, _xgb_oob, _xgb_base_rate, _xgb_explainer
+    global _xgb_model, _xgb_features, _xgb_medians, _xgb_trained, _xgb_oob
     import json
 
     # ── Load records (same as RF) ──
@@ -455,21 +453,8 @@ async def train_xgboost(save_to_github: bool = True):
     _xgb_trained  = True
     _xgb_oob      = xgb_cv
 
-    # ── Build SHAP explainer and extract self-learned base rate ──
-    try:
-        import shap as _shap, numpy as np
-        explainer = _shap.TreeExplainer(xgb)
-        base_log_odds = float(explainer.expected_value)
-        base_prob = round(float(1 / (1 + np.exp(-base_log_odds))) * 100, 2)
-        _xgb_explainer = explainer
-        _xgb_base_rate = base_prob
-        print(f"SHAP explainer built - base rate: {base_prob}% (log-odds: {base_log_odds:.3f})")
-    except Exception as e:
-        print(f"SHAP build error (non-fatal): {e}")
-        _xgb_base_rate = round(sum(y) / len(y) * 100, 2)
-
     print(f"XGBoost trained - {n} records, CV AUC={xgb_cv:.3f}, "
-          f"base_rate={_xgb_base_rate}%, top={ranked[0][0] if ranked else '?'}")
+          f"scale_pos_weight={spw}, top={ranked[0][0] if ranked else '?'}")
 
     if save_to_github:
         # Save XGBoost metadata alongside RF weights
@@ -1926,40 +1911,24 @@ async def check_lineup_confirmations():
                             "rotation_day": get_rotation_day(),
                             "day_of_season": (date.today() - date(2026, 3, 20)).days,
                         })
-                    # Collect all confirmed batters - global ranking happens below
-                    new_records.extend(game_records)
-                    if game_records:
-                        print(f"  Lineup confirmed: {team} vs {opp_p_name} - {len(game_records)} batters")
+
+                    # Top 8 from this team
+                    top8 = sorted(game_records, key=lambda x: x["model_hr_pct"], reverse=True)[:8]
+                    new_records.extend(top8)
+                    if top8:
+                        print(f"  Lineup confirmed: {team} vs {opp_p_name} - saved top {len(top8)}")
 
         if new_records:
-            # ── Global ranking - top 100 for training, top 8 for betting ──
-            # Remove existing confirmed records for same games
+            # Merge with existing - remove any projected records for same games, add confirmed
             confirmed_keys = {f"{r['team']}-{r['opp_pitcher']}" for r in new_records}
+            # Keep existing records that aren't being replaced by confirmed
             kept = [r for r in existing_records
                     if f"{r.get('team','')}-{r.get('opp_pitcher','')}" not in confirmed_keys]
-
-            # Globally rank ALL confirmed batters today
-            all_confirmed = kept + new_records
-            ranked_all = sorted(all_confirmed, key=lambda x: x.get("model_hr_pct", 0), reverse=True)
-
-            # Top 100 = training data (deep pool, model learns from wide range)
-            top100 = ranked_all[:100]
-
-            # Top 8 = betting record (globally best plays today, not per-game)
-            top8 = ranked_all[:8]
-
-            # Save top 100 to predictions file
-            content = json.dumps(top100, indent=2)
+            merged = kept + new_records
+            content = json.dumps(merged, indent=2)
             await github_put_file(path, content,
-                f"lineups confirmed: {today} ({len(top100)} top100, {len(new_records)} new)", sha)
-
-            # Save top 8 to top8 file
-            top8_path = f"data/top8/{today}.json"
-            existing_top8, top8_sha = await github_get_file(top8_path)
-            await github_put_file(top8_path, json.dumps(top8, indent=2),
-                                  f"top8: {today} ({len(top8)} picks)", top8_sha)
-
-            print(f"Lineup check: top100 saved ({len(top100)} records), top8 saved ({len(top8)} picks)")
+                f"lineups confirmed: {today} ({len(new_records)} new, {len(merged)} total)", sha)
+            print(f"Lineup check: saved {len(new_records)} new confirmed records, {len(merged)} total")
         else:
             print(f"Lineup check: no new confirmations yet")
 
@@ -2976,35 +2945,10 @@ def predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mul
 
         row   = [float(feat_vals.get(f) or _xgb_medians.get(f, 0.0)) for f in _xgb_features]
         proba = _xgb_model.predict_proba([row])[0]
-        xgb_prob = round(float(proba[1]) * 100, 1)
-
-        # ── SHAP values ──
-        shap_values = None
-        if _xgb_explainer is not None:
-            try:
-                import numpy as np
-                sv = _xgb_explainer.shap_values(np.array([row]))
-                raw_shap = sv[0] if hasattr(sv, '__len__') else sv
-                spread = xgb_prob - _xgb_base_rate
-                total_abs = sum(abs(float(v)) for v in raw_shap) or 1
-                contribs = {
-                    feat: round(float(v) / total_abs * spread, 2)
-                    for feat, v in zip(_xgb_features, raw_shap)
-                    if abs(float(v) / total_abs * spread) >= 0.3
-                }
-                contribs = dict(sorted(contribs.items(), key=lambda x: abs(x[1]), reverse=True))
-                shap_values = {
-                    "base_rate":     round(_xgb_base_rate, 1),
-                    "contributions": contribs,
-                    "xgb_prob":      xgb_prob,
-                }
-            except Exception as se:
-                print(f"SHAP values error for {name}: {se}")
-
-        return xgb_prob, shap_values
+        return round(float(proba[1]) * 100, 1)
     except Exception as e:
         print(f"XGB predict error for {name}: {e}")
-        return None, None
+        return None
 
 def _compute_hr_probability_legacy(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult):
     bc = get_batter_stats(name, 2026)
@@ -3486,34 +3430,19 @@ async def get_dashboard():
             "top8_total_hits":    top8_hits,
         }
 
-        # ── Today's top 8 - use live games cache (projected + confirmed) ──
+        # ── Today's top 8 ──
         today = date.today().isoformat()
+        today_content, _ = await github_get_file(f"data/predictions/{today}.json")
         top8_today = []
-        try:
-            cached = _games_cache.get(today)
-            if cached and cached.get("data"):
-                all_live = cached["data"].get("top_hr_candidates", [])
-                top8_today = sorted(
-                    [b for b in all_live if b.get("hr_prob") is not None],
-                    key=lambda x: x.get("hr_prob", 0), reverse=True
+        if today_content:
+            try:
+                today_recs = json.loads(today_content)
+                ranked_today = sorted(
+                    [r for r in today_recs if r.get("model_hr_pct") is not None],
+                    key=lambda x: x.get("model_hr_pct", 0), reverse=True
                 )[:8]
-                # Normalize field name for frontend
-                for b in top8_today:
-                    if "model_hr_pct" not in b:
-                        b["model_hr_pct"] = b.get("hr_prob", 0)
-        except: pass
-
-        # Fallback to predictions file if cache empty
-        if not top8_today:
-            today_content, _ = await github_get_file(f"data/predictions/{today}.json")
-            if today_content:
-                try:
-                    today_recs = json.loads(today_content)
-                    top8_today = sorted(
-                        [r for r in today_recs if r.get("model_hr_pct") is not None],
-                        key=lambda x: x.get("model_hr_pct", 0), reverse=True
-                    )[:8]
-                except: pass
+                top8_today = ranked_today
+            except: pass
 
         return {
             "stats":      stats,
@@ -3590,22 +3519,14 @@ async def debug_l8d(player: str = "Murakami"):
 
 @app.post("/recalibrate")
 async def manual_recalibrate():
-    """Manually trigger RF + XGBoost retrain"""
-    rf_result  = await recalibrate_model()
-    xgb_result = await train_xgboost()
-    return {"rf": rf_result, "xgboost": xgb_result}
+    """Manually trigger model recalibration"""
+    result = await recalibrate_model()
+    return result
 
 @app.get("/recalibrate")
 async def manual_recalibrate_get():
-    """GET version - browser accessible. Retrains RF + XGBoost."""
-    rf_result  = await recalibrate_model()
-    xgb_result = await train_xgboost()
-    return {"rf": rf_result, "xgboost": xgb_result}
-
-@app.get("/retrain-xgboost")
-async def retrain_xgboost_get():
-    """GET - retrain XGBoost only (faster than full recalibrate)"""
-    result = await train_xgboost()
+    """GET version - browser accessible"""
+    result = await recalibrate_model()
     return result
 
 @app.get("/model-weights")
@@ -4141,13 +4062,11 @@ async def get_games(date: str = None, refresh: bool = False):
             p_split = get_pitcher_split(opp_p_name, bat_hand)
 
             bl5g = get_batter_l5g(name)
-            xgb_prob, xgb_shap = predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, batter_wx_mult, breakdown,
-                                              bc=bc, b8d=b8d, b_split=b_split, pc=pc, p_split=p_split)
 
             all_batters.append({
                 "name": name, "team": team, "hr_prob": hr_prob,
-                "xgb_prob": xgb_prob,
-                "xgb_shap": xgb_shap,
+                "xgb_prob": predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, batter_wx_mult, breakdown,
+                                         bc=bc, b8d=b8d, b_split=b_split, pc=pc, p_split=p_split),
                 "archetype": archetype, "trend": trend, "confidence": conf,
                 "reasons": reasons, "opp_pitcher": opp_p_name,
                 "bat_hand": bat_hand, "opp_p_hand": opp_p_hand,
@@ -4269,7 +4188,7 @@ async def get_games(date: str = None, refresh: bool = False):
             "home_lineup": home_lineup_ordered,
             "lineup_away_status": lineup_away_status,
             "lineup_home_status": lineup_home_status,
-            "weather": {"label": wx_label, "temp": temp, "wind_speed": wind_speed, "wind_dir": wind_dir},
+            "weather": {"label": wx_label, "temp": temp, "wind_speed": wind_speed, "wind_dir": wind_dir, "mult": round(wx_mult, 3)},
             "totals": {
                 "away_exp_hr":    away_lineup_hr_sum,
                 "home_exp_hr":    home_lineup_hr_sum,
