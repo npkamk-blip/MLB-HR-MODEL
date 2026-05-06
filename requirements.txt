@@ -6,3 +6,4 @@ pybaseball
 scikit-learn
 numpy
 xgboost
+shap
