@@ -384,7 +384,7 @@ function switchTab(id,btn){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   document.getElementById(id+'-panel').classList.add('active');
   btn.classList.add('active');
-  if(id==='dashboard') loadDashboard();
+  if(id==='dashboard'&&!dashboardData) loadDashboard();
   if(id==='history'&&!historyData) loadHistory();
   if(id==='model') loadModelTab();
   if(id==='parlays') loadParlayTab();
@@ -915,12 +915,13 @@ function buildBatterTable(games){
     var pf=g.park_factor||g.away_pitcher&&g.away_pitcher.park_factor||1.0;
     var awayP=g.away_pitcher||{};
     var homeP=g.home_pitcher||{};
-    var avgHr9=((awayP.hr9||awayP.era&&1.2||1.2)+(homeP.hr9||homeP.era&&1.2||1.2))/2;
-    var projHR=Math.round((avgHr9/9)*27*2*pf*wxMult*10)/10;
+    var awayHr9s=awayP.hr9||1.2;
+    var homeHr9s=homeP.hr9||1.2;
+    var projHR=Math.round((awayHr9s+homeHr9s)*pf*wxMult*10)/10;
     totalProjHR+=projHR;
   });
-  var slateColor=totalProjHR>=35?'var(--g)':totalProjHR>=25?'var(--y)':'var(--muted)';
-  var slateLabel=totalProjHR>=35?'strong day':totalProjHR>=25?'average day':'low HR day';
+  var slateColor=totalProjHR>=32?'var(--g)':totalProjHR>=22?'var(--y)':'var(--muted)';
+  var slateLabel=totalProjHR>=32?'strong day':totalProjHR>=22?'average day':'low HR day';
   h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding:0 2px">';
   h+='<div style="font-size:11px;color:var(--muted2)">'+games.length+' games today</div>';
   h+='<div style="font-size:11px;color:var(--muted2)">Slate total: <span style="color:'+slateColor+';font-weight:600">'+totalProjHR.toFixed(0)+' proj. HRs</span> - '+slateLabel+'</div>';
@@ -957,11 +958,11 @@ function buildBatterTable(games){
     // ── Projected HR for this game ──
     var awayHr9=awayP.hr9||1.2;
     var homeHr9=homeP.hr9||1.2;
-    var awayProj=Math.round((homeHr9/9)*27*pf*wxMult*10)/10; // away batters face home pitcher
-    var homeProj=Math.round((awayHr9/9)*27*pf*wxMult*10)/10;
+    var awayProj=Math.round(homeHr9*pf*wxMult*10)/10; // away batters face home pitcher
+    var homeProj=Math.round(awayHr9*pf*wxMult*10)/10;
     var gameProj=Math.round((awayProj+homeProj)*10)/10;
-    var projC=gameProj>=3.0?'var(--g)':gameProj>=2.0?'var(--y)':'var(--muted)';
-    var projLabel=gameProj>=3.0?'IDEAL':gameProj>=2.0?'NORMAL':'LOW';
+    var projC=gameProj>=2.8?'var(--g)':gameProj>=2.0?'var(--y)':'var(--muted)';
+    var projLabel=gameProj>=2.8?'IDEAL':gameProj>=2.0?'NORMAL':'LOW';
 
     // ── Wind direction arrow (rotated SVG) ──
     function windArrow(wx,isDome){
@@ -2091,6 +2092,11 @@ async function manualRecord() {
 async function load(forceRefresh){
   var btn=document.getElementById('refreshBtn'),upd=document.getElementById('upd');
   btn.disabled=true;
+  if(forceRefresh){
+    dashboardData=null;
+    historyData=null;
+    loadDashboard();
+  }
   document.getElementById('batter-main').innerHTML='<div class="loading">Loading Uncle Nicky&#39;s Model<div class="dots"><span></span><span></span><span></span></div></div>';
   document.getElementById('pitcher-main').innerHTML='<div class="no-data">Loading...</div>';
   document.getElementById('game-main').innerHTML='<div class="no-data">Loading...</div>';
