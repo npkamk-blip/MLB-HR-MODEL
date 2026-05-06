@@ -298,20 +298,13 @@ td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px
   </div>
 </header>
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('dashboard',this)">Dashboard</button>
-  <button class="tab" onclick="switchTab('batters',this)">Batters</button>
+  <button class="tab active" onclick="switchTab('batters',this)">Batters</button>
   <button class="tab" onclick="switchTab('parlays',this)">Parlays</button>
   <button class="tab" onclick="switchTab('history',this)">History</button>
   <button class="tab" onclick="switchTab('model',this)">Model</button>
 </div>
 
-<div id="dashboard-panel" class="tab-panel active">
-  <div class="container">
-    <div id="dashboard-main"><div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div></div>
-  </div>
-</div>
-
-<div id="batters-panel" class="tab-panel">
+<div id="batters-panel" class="tab-panel active">
   <div class="container">
     <div id="batter-main"><div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div></div>
   </div>
@@ -387,136 +380,9 @@ function switchTab(id,btn){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   document.getElementById(id+'-panel').classList.add('active');
   btn.classList.add('active');
-  if(id==='dashboard') loadDashboard();
   if(id==='history'&&!historyData) loadHistory();
   if(id==='model') loadModelTab();
   if(id==='parlays') loadParlayTab();
-}
-
-var dashboardData = null;
-
-async function loadDashboard(){
-  var el = document.getElementById('dashboard-main');
-  el.innerHTML = '<div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div>';
-  try{
-    var r = await fetch(API+'/dashboard');
-    var d = await r.json();
-    if(d.error){ el.innerHTML='<div class="err"><b>Error:</b> '+d.error+'</div>'; return; }
-    dashboardData = d;
-    el.innerHTML = buildDashboard(d);
-  }catch(e){
-    el.innerHTML='<div class="err"><b>Error:</b> Failed to fetch</div>';
-  }
-}
-
-function buildDashboard(d){
-  var stats = d.stats||{};
-  var top8  = d.top8_today||[];
-  var days  = d.slate_days||[];
-  var h = '';
-
-  // ── Header stat strip ──
-  h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px">';
-
-  function statCard(label, value, sub, color){
-    return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px">'
-      +'<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">'+label+'</div>'
-      +'<div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:'+(color||'var(--text)')+'">'+value+'</div>'
-      +(sub?'<div style="font-size:10px;color:var(--muted);margin-top:2px">'+sub+'</div>':'')
-      +'</div>';
-  }
-
-  var t8r  = stats.top8_hit_rate||0;
-  var t4r  = stats.top4_hit_rate||0;
-  var ovr  = stats.overall_hit_rate||0;
-  var p2r  = stats.two_of_top4_rate||0;
-  var p2t8 = stats.two_of_top8_rate||0;
-  var days_t = stats.days_tracked||0;
-
-  var t8c  = t8r>=25?'var(--g)':t8r>=15?'var(--y)':'var(--r)';
-  var t4c  = t4r>=25?'var(--g)':t4r>=15?'var(--y)':'var(--r)';
-  var p2c  = p2r>=20?'var(--g)':p2r>=12?'var(--y)':'var(--r)';
-
-  h += statCard('Top 8 Hit Rate', t8r+'%', stats.top8_total_hits+' HRs / '+stats.top8_total_picks+' picks', t8c);
-  h += statCard('Top 4 Hit Rate', t4r+'%', 'Last '+days_t+' days', t4c);
-  h += statCard('2-of-Top-4 Days', p2r+'%', 'Parlay signal', p2c);
-  h += statCard('2-of-Top-8 Days', p2t8+'%', 'Wider parlay window', p2t8>=20?'var(--g)':p2t8>=12?'var(--y)':'var(--r)');
-  h += statCard('Slate Hit Rate', ovr+'%', 'All tracked players', 'var(--muted)');
-  h += statCard('Days Tracked', days_t, 'Since '+( days.length>0?days[days.length-1].date:'—'), 'var(--text)');
-  h += '</div>';
-
-  // ── Model status strip ──
-  var modelC = d.xgb_trained && d.xgb_cv > d.rf_oob ? 'var(--purple)' : 'var(--blue)';
-  var modelLbl = d.xgb_trained && d.xgb_cv > d.rf_oob ? 'XGBoost' : 'Random Forest';
-  h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">';
-  h += '<div style="font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em">Active Model</div>';
-  h += '<div style="font-family:Barlow Condensed,sans-serif;font-size:15px;font-weight:800;color:'+modelC+'">'+modelLbl+'</div>';
-  if(d.rf_oob) h += '<div style="font-size:11px;color:var(--muted)">RF CV AUC <span style="color:var(--text);font-weight:600">'+d.rf_oob.toFixed(3)+'</span></div>';
-  if(d.xgb_trained) h += '<div style="font-size:11px;color:var(--muted)">XGB CV AUC <span style="color:var(--purple);font-weight:600">'+d.xgb_cv.toFixed(3)+'</span></div>';
-  if(d.xgb_trained && d.xgb_cv <= d.rf_oob) h += '<div style="font-size:10px;color:var(--muted2)">XGBoost learning — flips live when it beats RF</div>';
-  h += '</div>';
-
-  // ── Today's Top 8 ──
-  h += '<div style="margin-bottom:20px">';
-  h += '<div style="font-family:Barlow Condensed,sans-serif;font-size:16px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin-bottom:12px">Today\'s Top 8</div>';
-
-  if(top8.length === 0){
-    h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:30px;text-align:center;color:var(--muted2);font-size:13px">Top 8 saves at noon ET — check back later</div>';
-  } else {
-    h += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">';
-    top8.forEach(function(p, i){
-      var pct = p.model_hr_pct||0;
-      var pc  = pct>=18?'var(--g)':pct>=12?'var(--y)':'var(--muted)';
-      var hit = p.hit_hr;
-      var hitBadge = hit===1?'<span style="background:rgba(50,215,75,.15);color:var(--g);border-radius:4px;padding:2px 6px;font-size:9px;font-weight:700;margin-left:6px">HR ✓</span>'
-                   : hit===0?'<span style="background:rgba(255,69,58,.1);color:var(--r);border-radius:4px;padding:2px 6px;font-size:9px;font-weight:700;margin-left:6px">✗</span>'
-                   : '';
-      var rankColor = i===0?'#ffd60a':i===1?'#e5e5ea':i===2?'#cd7f32':'var(--muted2)';
-      h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px">';
-      h += '<div style="font-family:Barlow Condensed,sans-serif;font-size:20px;font-weight:800;color:'+rankColor+';width:24px;flex-shrink:0">'+(i+1)+'</div>';
-      h += '<div style="flex:1;min-width:0">';
-      h += '<div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.name+hitBadge+'</div>';
-      h += '<div style="font-size:10px;color:var(--muted);margin-top:1px">'+( p.team||'')+(p.pitcher_name?' · vs '+p.pitcher_name:'')+'</div>';
-      h += '</div>';
-      h += '<div style="font-family:Barlow Condensed,sans-serif;font-size:22px;font-weight:800;color:'+pc+'">'+pct+'%</div>';
-      h += '</div>';
-    });
-    h += '</div>';
-  }
-  h += '</div>';
-
-  // ── Last 14 days record ──
-  if(days.length > 0){
-    h += '<div style="margin-bottom:20px">';
-    h += '<div style="font-family:Barlow Condensed,sans-serif;font-size:16px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin-bottom:12px">Recent Record</div>';
-    h += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden">';
-    h += '<div style="display:grid;grid-template-columns:100px 1fr 80px 80px;gap:0;border-bottom:1px solid var(--border2);padding:8px 16px">';
-    h += '<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em">Date</div>';
-    h += '<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em">Top 8</div>';
-    h += '<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;text-align:center">Hits</div>';
-    h += '<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;text-align:right">Rate</div>';
-    h += '</div>';
-    days.slice(0,14).forEach(function(day){
-      var rate = day.top8_total>0 ? Math.round(day.top8_hits/day.top8_total*100) : 0;
-      var rc = rate>=25?'var(--g)':rate>=12?'var(--y)':'var(--r)';
-      // Mini hit indicators
-      var dots = '';
-      (day.top8||[]).forEach(function(p){
-        var dc = p.hit===1?'var(--g)':p.hit===0?'rgba(255,255,255,0.15)':'rgba(255,255,255,0.08)';
-        dots += '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+dc+';margin-right:2px"></span>';
-      });
-      h += '<div style="display:grid;grid-template-columns:100px 1fr 80px 80px;gap:0;padding:10px 16px;border-bottom:1px solid var(--border2)">';
-      h += '<div style="font-size:11px;color:var(--muted)">'+day.date.slice(5)+'</div>';
-      h += '<div>'+dots+'</div>';
-      h += '<div style="font-size:11px;color:var(--text);text-align:center;font-weight:600">'+day.top8_hits+' / '+day.top8_total+'</div>';
-      h += '<div style="font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:800;color:'+rc+';text-align:right">'+rate+'%</div>';
-      h += '</div>';
-    });
-    h += '</div>';
-    h += '</div>';
-  }
-
-  return h;
 }
 
 async function loadParlayTab(){
@@ -1412,6 +1278,73 @@ function buildBatDetail(b){
   h+=rightH;
   h+='</div>';
 
+  // ── XGBoost SHAP panel ──
+  if(b.xgb_prob != null && b.xgb_shap){
+    var shap = b.xgb_shap;
+    var contribs = shap.contributions || {};
+    var baseRate = shap.base_rate || 0;
+    var xgbProb  = shap.xgb_prob  || b.xgb_prob;
+    var keys = Object.keys(contribs).sort(function(a,b){ return Math.abs(contribs[b])-Math.abs(contribs[a]); }).slice(0,8);
+
+    // Clean feature names for display
+    function cleanFeat(k){
+      return k.replace(/_season$/,'').replace(/_l8d$/,' L8D').replace(/_vs_hand$/,' vs hand')
+               .replace(/_/g,' ').replace('pit ','pit. ').replace('barrel pct','barrel%')
+               .replace('hard hit','hard hit%').replace('k pct','K%').replace('xslg','xSLG')
+               .replace('iso','ISO').replace('ev ','EV ').replace('la ','LA ').replace('bat speed','bat spd');
+    }
+
+    // Max abs contribution for bar scaling
+    var maxAbs = Math.max.apply(null, keys.map(function(k){ return Math.abs(contribs[k]); })) || 1;
+
+    h+='<div style="background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;margin-bottom:10px">';
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">';
+    h+='<div style="font-size:9px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.08em">Why XGBoost thinks '+xgbProb+'%</div>';
+    h+='<div style="font-size:9px;color:var(--muted2)">base '+baseRate.toFixed(1)+'%</div>';
+    h+='</div>';
+
+    // Baseline row
+    h+='<div style="display:flex;align-items:center;gap:8px;padding-bottom:8px;margin-bottom:6px;border-bottom:1px solid var(--border2)">';
+    h+='<div style="font-size:10px;color:var(--muted2);width:110px;flex-shrink:0">dataset average</div>';
+    h+='<div style="flex:1;height:4px;background:var(--s3);border-radius:2px"><div style="width:30%;height:100%;background:var(--border);border-radius:2px"></div></div>';
+    h+='<div style="font-size:10px;color:var(--muted2);width:34px;text-align:right">'+baseRate.toFixed(1)+'%</div>';
+    h+='</div>';
+
+    // Feature contribution bars
+    keys.forEach(function(feat){
+      var val = contribs[feat];
+      var isPos = val >= 0;
+      var barColor = isPos ? '#32d74b' : '#ff453a';
+      var barW = Math.round(Math.abs(val) / maxAbs * 50); // max 50% of available space
+      var label = cleanFeat(feat);
+      var sign = isPos ? '+' : '';
+
+      h+='<div style="display:flex;align-items:center;gap:8px;padding:3px 0">';
+      h+='<div style="font-size:10px;color:var(--muted);width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+label+'</div>';
+      h+='<div style="flex:1;position:relative;height:4px;background:var(--s3);border-radius:2px">';
+      if(isPos){
+        h+='<div style="position:absolute;left:30%;top:0;height:100%;width:'+barW+'%;background:'+barColor+';border-radius:0 2px 2px 0"></div>';
+      } else {
+        h+='<div style="position:absolute;right:70%;top:0;height:100%;width:'+barW+'%;background:'+barColor+';border-radius:2px 0 0 2px;transform:translateX(100%)"></div>';
+      }
+      h+='</div>';
+      h+='<div style="font-size:10px;font-weight:600;color:'+barColor+';width:34px;text-align:right">'+sign+val.toFixed(1)+'%</div>';
+      h+='</div>';
+    });
+
+    // Summary line
+    var pushTotal = keys.filter(function(k){return contribs[k]>0;}).reduce(function(s,k){return s+contribs[k];},0);
+    var dragTotal = keys.filter(function(k){return contribs[k]<0;}).reduce(function(s,k){return s+contribs[k];},0);
+    h+='<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between">';
+    h+='<div style="font-size:10px;color:var(--muted2)">'+baseRate.toFixed(1)+'% base <span style="color:#32d74b">+'+pushTotal.toFixed(1)+'%</span> <span style="color:#ff453a">'+dragTotal.toFixed(1)+'%</span> = <span style="color:var(--purple);font-weight:700">'+xgbProb+'%</span></div>';
+    h+='<div style="display:flex;gap:10px;font-size:9px;color:var(--muted2)">';
+    h+='<span style="display:flex;align-items:center;gap:3px"><span style="width:6px;height:6px;border-radius:1px;background:#32d74b;display:inline-block"></span>up</span>';
+    h+='<span style="display:flex;align-items:center;gap:3px"><span style="width:6px;height:6px;border-radius:1px;background:#ff453a;display:inline-block"></span>down</span>';
+    h+='</div>';
+    h+='</div>';
+    h+='</div>';
+  }
+
   // ── Deep Dive — collapsible raw stats ──
   var ddId = 'dd_'+b.name.replace(/ /g,'_')+'_'+Math.random().toString(36).slice(2,5);
   h+='<div style="border:1px solid var(--border2);border-radius:8px;overflow:hidden">';
@@ -2057,7 +1990,6 @@ document.getElementById('dateLbl').textContent=fmtDateLabel(selectedDate);
   }catch(e){console.log('History preload failed:',e.message);}
 })();
 load();
-loadDashboard();
 </script>
 </body>
 </html>
