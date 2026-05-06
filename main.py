@@ -1,9 +1,9 @@
-# main.py — MLB HR Model by Nick
+# main.py - MLB HR Model by Nick
 # Version: 2026-05-04
 # Model: Random Forest (adaptive depth/trees by record count)
 # Features: RF adaptive params, save_parlay_combinations, record_parlay_results,
 #           /refresh-8d, /debug-arsenal, /parlay-results, /version, bullpen_w_blend fix
-# DO NOT overwrite with an older file — fetch from GitHub before editing.
+# DO NOT overwrite with an older file - fetch from GitHub before editing.
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -43,7 +43,7 @@ LEAGUE_CONSTANTS = {
 }
 
 # ── Model Weights (learned from ML, updated every 45 days) ──
-# All start at 1.0 — neutral. Recalibration moves them based on what predicted HRs.
+# All start at 1.0 - neutral. Recalibration moves them based on what predicted HRs.
 # Exponent weights: effective_mult = raw_mult ** weight
 # weight > 1.0 = stat matters MORE than assumed
 # weight < 1.0 = stat matters LESS than assumed
@@ -102,7 +102,7 @@ _xgb_medians  = {}    # per-feature medians
 _xgb_trained  = False # True once fitted
 _xgb_oob      = 0.0   # cross-val AUC
 _xgb_base_rate = 0.0  # model's self-learned base rate (from expected_value)
-_xgb_explainer = None # shap.TreeExplainer — built after training
+_xgb_explainer = None # shap.TreeExplainer - built after training
 
 def W(key):
     """Get a model weight, default 1.0"""
@@ -117,11 +117,11 @@ async def load_model_weights():
             import json
             w = json.loads(content)
             _model_weights = {**DEFAULT_WEIGHTS, **w}
-            print(f"Loaded model weights — round {w.get('calibration_round',0)}, {w.get('records_used',0)} records")
+            print(f"Loaded model weights - round {w.get('calibration_round',0)}, {w.get('records_used',0)} records")
         except Exception as e:
             print(f"Weight load error: {e}")
     else:
-        print("No model weights found — using defaults (1.0)")
+        print("No model weights found - using defaults (1.0)")
 
 async def save_model_weights(weights_dict, changes=None):
     """Save updated weights to GitHub"""
@@ -188,11 +188,11 @@ async def recalibrate_model(save_to_github: bool = True):
     completed = [r for r in all_records if r.get("hit_hr") in [0, 1]]
     n = len(completed)
     if n < 50:
-        return {"error": f"Not enough data — need 50+, have {n}"}
+        return {"error": f"Not enough data - need 50+, have {n}"}
 
     print(f"Training Random Forest on {n} completed records")
 
-    # ── Feature set — all numeric fields stored in prediction records ──
+    # ── Feature set - all numeric fields stored in prediction records ──
     FEATURES = [
         "barrel_pct_season", "barrel_pct_l8d",
         "la_season", "la_l8d",
@@ -213,7 +213,7 @@ async def recalibrate_model(save_to_github: bool = True):
         "bat_speed_l8d",
     ]
 
-    # ── Build X, y — impute missing with per-feature median ──
+    # ── Build X, y - impute missing with per-feature median ──
     import statistics
     medians = {}
     for feat in FEATURES:
@@ -226,7 +226,7 @@ async def recalibrate_model(save_to_github: bool = True):
     X = [build_row(r) for r in completed]
     y = [int(r["hit_hr"]) for r in completed]
 
-    # ── RF params — scale with record count, never hardcoded ──
+    # ── RF params - scale with record count, never hardcoded ──
     # More data = deeper trees + smaller leaves = model learns more nuance
     # n_estimators grows too: more records benefit from more trees
     if n < 200:
@@ -250,13 +250,13 @@ async def recalibrate_model(save_to_github: bool = True):
     try:
         from sklearn.ensemble import RandomForestClassifier
     except ImportError:
-        return {"error": "sklearn not installed — add scikit-learn to requirements.txt"}
+        return {"error": "sklearn not installed - add scikit-learn to requirements.txt"}
 
     rf = RandomForestClassifier(
         n_estimators=n_trees,
         max_depth=max_depth,
         min_samples_leaf=min_leaf,
-        max_features="sqrt",   # core RF principle — keeps trees decorrelated
+        max_features="sqrt",   # core RF principle - keeps trees decorrelated
         bootstrap=True,
         random_state=42,       # reproducibility only
         n_jobs=-1,             # use all CPU cores
@@ -268,7 +268,7 @@ async def recalibrate_model(save_to_github: bool = True):
                    for feat, imp in zip(FEATURES, rf.feature_importances_)}
     ranked = sorted(importances.items(), key=lambda x: x[1], reverse=True)
 
-    # ── RF cross-val AUC — same metric as XGBoost for honest comparison ──
+    # ── RF cross-val AUC - same metric as XGBoost for honest comparison ──
     try:
         from sklearn.model_selection import cross_val_score
         import numpy as np
@@ -298,7 +298,7 @@ async def recalibrate_model(save_to_github: bool = True):
     new_weights["feature_importances"] = dict(ranked)
     new_weights["top_features"]      = [k for k, _ in ranked[:8]]
     new_weights["recent_changes"]    = [f"{k}: {v:.4f}" for k, v in ranked[:10]]
-    # Save actual params used — so frontend/status always shows what's running
+    # Save actual params used - so frontend/status always shows what's running
     new_weights["rf_params"] = {
         "n_estimators": n_trees,
         "max_depth":    max_depth,
@@ -312,9 +312,9 @@ async def recalibrate_model(save_to_github: bool = True):
         await save_model_weights(new_weights)
         await save_model_log(new_weights)
     else:
-        print("RF trained (startup — skipping GitHub write to prevent deploy loop)")
+        print("RF trained (startup - skipping GitHub write to prevent deploy loop)")
 
-    print(f"RF trained — {n} records, OOB={oob_score:.3f}, HR rate={hr_rate}%")
+    print(f"RF trained - {n} records, OOB={oob_score:.3f}, HR rate={hr_rate}%")
     print(f"Top features: {[k for k,_ in ranked[:5]]}")
     return {
         "status":       "done",
@@ -327,14 +327,14 @@ async def recalibrate_model(save_to_github: bool = True):
 
 
 async def startup_train_rf():
-    """Train RF on startup — no GitHub write so we don't trigger infinite redeploy loop."""
+    """Train RF on startup - no GitHub write so we don't trigger infinite redeploy loop."""
     global _rf_trained
     await asyncio.sleep(20)  # let Savant data load first
     try:
         print("Startup: training Random Forest from saved records...")
         result = await recalibrate_model(save_to_github=False)
         if isinstance(result, dict) and result.get("status") == "done":
-            print(f"Startup RF trained — {result.get('records_used')} records, "
+            print(f"Startup RF trained - {result.get('records_used')} records, "
                   f"OOB={result.get('oob_score')}, top={result.get('top_features',[])[0] if result.get('top_features') else '?'}")
         else:
             print(f"Startup RF result: {result}")
@@ -344,7 +344,7 @@ async def startup_train_rf():
 
 async def train_xgboost(save_to_github: bool = True):
     """
-    Train XGBoost in parallel with RF — same records, same features + day_of_season.
+    Train XGBoost in parallel with RF - same records, same features + day_of_season.
     Runs silently. Does not affect predictions until it outperforms RF.
     Uses cross-validation score (not OOB) for honest comparison vs RF.
     """
@@ -373,9 +373,9 @@ async def train_xgboost(save_to_github: bool = True):
     completed = [r for r in all_records if r.get("hit_hr") in [0, 1]]
     n = len(completed)
     if n < 50:
-        return {"error": f"Not enough data — need 50+, have {n}"}
+        return {"error": f"Not enough data - need 50+, have {n}"}
 
-    # ── Feature set — RF features + day_of_season ──
+    # ── Feature set - RF features + day_of_season ──
     FEATURES = [
         "barrel_pct_season", "barrel_pct_l8d",
         "la_season", "la_l8d",
@@ -394,7 +394,7 @@ async def train_xgboost(save_to_github: bool = True):
         "combined_pitch_delta", "xslg_l8d",
         "xwoba_l8d", "xslg_gap_l8d",
         "bat_speed_l8d",
-        "day_of_season",   # XGBoost-specific — captures seasonal patterns — captures seasonal patterns
+        "day_of_season",   # XGBoost-specific - captures seasonal patterns - captures seasonal patterns
     ]
 
     import statistics
@@ -414,7 +414,7 @@ async def train_xgboost(save_to_github: bool = True):
     try:
         from xgboost import XGBClassifier
     except ImportError:
-        return {"error": "xgboost not installed — add xgboost to requirements.txt"}
+        return {"error": "xgboost not installed - add xgboost to requirements.txt"}
 
     # scale_pos_weight handles class imbalance properly
     # = count(negative) / count(positive)
@@ -463,12 +463,12 @@ async def train_xgboost(save_to_github: bool = True):
         base_prob = round(float(1 / (1 + np.exp(-base_log_odds))) * 100, 2)
         _xgb_explainer = explainer
         _xgb_base_rate = base_prob
-        print(f"SHAP explainer built — base rate: {base_prob}% (log-odds: {base_log_odds:.3f})")
+        print(f"SHAP explainer built - base rate: {base_prob}% (log-odds: {base_log_odds:.3f})")
     except Exception as e:
         print(f"SHAP build error (non-fatal): {e}")
         _xgb_base_rate = round(sum(y) / len(y) * 100, 2)
 
-    print(f"XGBoost trained — {n} records, CV AUC={xgb_cv:.3f}, "
+    print(f"XGBoost trained - {n} records, CV AUC={xgb_cv:.3f}, "
           f"base_rate={_xgb_base_rate}%, top={ranked[0][0] if ranked else '?'}")
 
     if save_to_github:
@@ -500,13 +500,13 @@ async def train_xgboost(save_to_github: bool = True):
 
 
 async def startup_train_xgb():
-    """Train XGBoost on startup — silent, no GitHub write, doesn't affect predictions yet."""
+    """Train XGBoost on startup - silent, no GitHub write, doesn't affect predictions yet."""
     await asyncio.sleep(45)  # after RF finishes
     try:
         print("Startup: training XGBoost silently...")
         result = await train_xgboost(save_to_github=False)
         if isinstance(result, dict) and result.get("status") == "done":
-            print(f"Startup XGBoost trained — CV AUC={result.get('cv_auc')}, "
+            print(f"Startup XGBoost trained - CV AUC={result.get('cv_auc')}, "
                   f"top={result.get('top_features',[])[0] if result.get('top_features') else '?'}, "
                   f"winning={result.get('winning_model')}")
         else:
@@ -541,12 +541,12 @@ ROTATION_SCHEDULE = {
                    "park_factor","weather_mult","hot_cold_mult","k_pct_season",
 ],
         "candidates": [],  # nothing new yet, establishing baseline
-        "note": "Baseline round — establishing correlations for all core stats"
+        "note": "Baseline round - establishing correlations for all core stats"
     },
     2: {
         "active": [],  # filled after round 1 correlation analysis
         "candidates": ["pull_pct_season","hard_hit_l8d","k_pct_l8d"],
-        "note": "Testing pull%, hard hit L8D, K% L8D — fb_pct removed (never populated)"
+        "note": "Testing pull%, hard hit L8D, K% L8D - fb_pct removed (never populated)"
     },
     3: {
         "active": [],
@@ -589,12 +589,12 @@ def current_season():
     return today.year if today.month >= 3 else today.year - 1
 
 def savant_contact_log_url():
-    """Pitch-by-pitch URL — only batted ball contact events, minimal columns for speed."""
+    """Pitch-by-pitch URL - only batted ball contact events, minimal columns for speed."""
     cutoff = (date.today() - timedelta(days=8)).isoformat()
     today_str = (date.today() + timedelta(days=1)).isoformat()
-    # hfAB=54 filters to balls in play only (no strikes/balls) — much smaller dataset
+    # hfAB=54 filters to balls in play only (no strikes/balls) - much smaller dataset
     # Only request columns we need for contact log
-    # hfAB=54 = "in_play" filter — returns only batted ball events (~8k rows vs 25k)
+    # hfAB=54 = "in_play" filter - returns only batted ball events (~8k rows vs 25k)
     # This reduces download from 16MB to ~5MB, preventing Railway timeout
     return (f"{SAVANT_BASE}/statcast_search/csv?all=true"
             f"&hfPT=&hfAB=54%7C&hfGT=R%7C&hfPR=&hfZ=&hfStadium=&hfBBL=&hfNewZones=&hfPull="
@@ -606,7 +606,7 @@ def savant_contact_log_url():
             f"&sort_order=desc&min_pas=0&type=details")
 
 def savant_8d_url():
-    """Statcast pitch-by-pitch search — reliable date filtering, includes bat speed + xStats.
+    """Statcast pitch-by-pitch search - reliable date filtering, includes bat speed + xStats.
     We aggregate this ourselves rather than relying on the broken leaderboard date filter."""
     cutoff = (date.today() - timedelta(days=8)).isoformat()
     today_str = (date.today() + timedelta(days=1)).isoformat()  # tomorrow to include today's games
@@ -749,7 +749,7 @@ async def fetch_savant_csv(url: str, session: httpx.AsyncClient) -> pd.DataFrame
         df = pd.read_csv(io.StringIO(text))
         return df
     except Exception as e:
-        print(f"Savant fetch error: {e} — {url[:80]}")
+        print(f"Savant fetch error: {e} - {url[:80]}")
         return pd.DataFrame()
 
 def parse_player_name(df: pd.DataFrame) -> pd.DataFrame:
@@ -874,7 +874,7 @@ def calc_statcast_8d(df: pd.DataFrame) -> pd.DataFrame:
         iso_vals  = pa_events['iso_value'].dropna()
         avg_iso   = round(iso_vals.mean(), 3) if len(iso_vals) > 0 else 0.0
         # Approximate SLG from xSLG since actual SLG isn't directly in the CSV
-        slg = xslg  # use xSLG as proxy — available for all contact
+        slg = xslg  # use xSLG as proxy - available for all contact
         avg_val = round(len(pa_events[pa_events['events'].isin(['single','double','triple','home_run'])]) / pa, 3) if pa > 0 else 0.0
 
         results.append({
@@ -939,7 +939,7 @@ def _build_contact_log(df: pd.DataFrame):
             _contact_log[name.lower()] = events
 
 async def fetch_pitcher_ip(season=2026):
-    """Fetch pitcher IP/HR9/ERA from MLB Stats API — /stats endpoint first to capture all pitchers"""
+    """Fetch pitcher IP/HR9/ERA from MLB Stats API - /stats endpoint first to capture all pitchers"""
     try:
         ip_map = {}
         print("Fetching pitcher stats from MLB Stats API /stats endpoint...")
@@ -1031,7 +1031,7 @@ async def fetch_last5_games_batting():
 
 async def fetch_last8d_hr():
     """Fetch last 8 games full batting stats from MLB Stats API.
-    Reliable rolling window — Savant date filtering is broken for many players.
+    Reliable rolling window - Savant date filtering is broken for many players.
     Returns ISO, SLG, AVG, K%, HR, PA for each batter over their last 8 games."""
     try:
         url = (f"{MLB_API}/stats?stats=lastXGames&lastXGames=8&group=hitting&gameType=R"
@@ -1224,7 +1224,7 @@ async def fetch_team_stats(season=2026):
         _cache["team_pitching"] = team_pitching
         print(f"team_hitting: {len(team_hitting)} teams, team_pitching: {len(team_pitching)} teams")
 
-        # Fetch reliever-only stats — try pitcherTypes=RP, fallback to team pitching
+        # Fetch reliever-only stats - try pitcherTypes=RP, fallback to team pitching
         try:
             bullpen_stats = {}
             r_bp = await client.get(f"{MLB_API}/teams/stats?stats=season&group=pitching&gameType=R&season={season}&sportId=1&pitcherTypes=RP")
@@ -1247,7 +1247,7 @@ async def fetch_team_stats(season=2026):
                 _cache["team_bullpen"] = bullpen_stats
                 print(f"team_bullpen: {len(bullpen_stats)} teams via RP filter")
             else:
-                # Fallback — use team pitching as proxy for bullpen
+                # Fallback - use team pitching as proxy for bullpen
                 _cache["team_bullpen"] = {k: {"era": v.get("era", 4.50), "hr9": v.get("hr9", 1.2), "whip": 1.30}
                                            for k, v in team_pitching.items()}
                 print(f"team_bullpen: using team pitching as fallback ({len(team_pitching)} teams)")
@@ -1272,9 +1272,9 @@ async def load_all_savant_data():
             print(f"bat_2026: {len(_cache['bat_2026'])} rows")
 
         # Batter 2025
-        # bat_2025 removed — 2026-only model
+        # bat_2025 removed - 2026-only model
 
-        # Batter 8d — aggregated stats per player (group_by=name)
+        # Batter 8d - aggregated stats per player (group_by=name)
         df = await fetch_savant_csv(savant_8d_url(), client)
         if not df.empty:
             _cache["bat_8d"] = calc_statcast_8d(df)
@@ -1291,7 +1291,7 @@ async def load_all_savant_data():
             print(f"pit_2026: {len(_cache['pit_2026'])} rows")
 
         # Pitcher 2025
-        # pit_2025 removed — 2026-only model
+        # pit_2025 removed - 2026-only model
 
         # Pitch arsenal - pitcher
         await asyncio.sleep(3)
@@ -1341,7 +1341,7 @@ async def load_all_savant_data():
     await fetch_team_stats(current_season())
 
 async def refresh_8d():
-    """Refresh 8-day data — aggregated stats + contact log"""
+    """Refresh 8-day data - aggregated stats + contact log"""
     async with httpx.AsyncClient(timeout=60) as client:
         df = await fetch_savant_csv(savant_8d_url(), client)
         if not df.empty:
@@ -1365,7 +1365,7 @@ async def refresh_8d():
     _cache["last_8d_update"] = datetime.now().isoformat()
 
 async def daily_refresh_loop():
-    """Run in background — check every hour for scheduled tasks"""
+    """Run in background - check every hour for scheduled tasks"""
     while True:
         now = datetime.now()
         await asyncio.sleep(3600)  # check every hour
@@ -1374,14 +1374,14 @@ async def daily_refresh_loop():
                 await load_all_savant_data()
             except Exception as e:
                 print(f"Daily refresh error: {e}")
-        # Hourly lineup confirmation check — saves top 8 per game as lineups confirm
+        # Hourly lineup confirmation check - saves top 8 per game as lineups confirm
         # Runs every hour 10am-8pm ET, replacing noon-only save
         if 10 <= now.hour <= 20:
             try:
                 await check_lineup_confirmations()
             except Exception as e:
                 print(f"Lineup confirmation error: {e}")
-        # Record results at 2am ET — catches most games
+        # Record results at 2am ET - catches most games
         if now.hour == 2:
             try:
                 yesterday = (date.today() - timedelta(days=1)).isoformat()
@@ -1392,16 +1392,16 @@ async def daily_refresh_loop():
         # Retrain RF + XGBoost at 3am ET daily (after results are in)
         if now.hour == 3:
             try:
-                print(f"Nightly retrain — Round {get_rotation_round()} Day {get_rotation_day()}")
+                print(f"Nightly retrain - Round {get_rotation_round()} Day {get_rotation_day()}")
                 await recalibrate_model()
                 await train_xgboost()
             except Exception as e:
                 print(f"Nightly retrain error: {e}")
-        # 4am second pass — catches West Coast late games (end ~12:30am PT = 3:30am ET)
+        # 4am second pass - catches West Coast late games (end ~12:30am PT = 3:30am ET)
         if now.hour == 4:
             try:
                 yesterday = (date.today() - timedelta(days=1)).isoformat()
-                print("4am second pass — patching West Coast late game results")
+                print("4am second pass - patching West Coast late game results")
                 await record_results(yesterday)
                 await record_parlay_results(yesterday)
             except Exception as e:
@@ -1435,7 +1435,7 @@ async def github_get_file(path: str):
 async def github_put_file(path: str, content: str, message: str, sha: str = None):
     """Create or update a file in GitHub repo"""
     if not GITHUB_TOKEN:
-        print("No GITHUB_TOKEN set — skipping GitHub write")
+        print("No GITHUB_TOKEN set - skipping GitHub write")
         return False
     try:
         import base64
@@ -1460,7 +1460,7 @@ async def github_put_file(path: str, content: str, message: str, sha: str = None
 async def save_daily_predictions():
     """
     Save today's top 8 predictions per game to GitHub.
-    Only saves games with CONFIRMED lineups — never projected.
+    Only saves games with CONFIRMED lineups - never projected.
     Merges with existing file so confirmed games accumulate throughout the day.
     Called hourly so games get added as lineups confirm.
     """
@@ -1481,13 +1481,13 @@ async def save_daily_predictions():
         except: needs_refresh = True
 
     if needs_refresh:
-        print("save_daily_predictions: 8d data stale — refreshing before save")
+        print("save_daily_predictions: 8d data stale - refreshing before save")
         await refresh_8d()
         await asyncio.sleep(30)  # let it populate
     today = date.today().isoformat()
     path  = f"data/predictions/{today}.json"
 
-    # Load existing file — we merge, not overwrite
+    # Load existing file - we merge, not overwrite
     # This way confirmed games accumulate as lineups post throughout the day
     import json
     existing, sha = await github_get_file(path)
@@ -1502,7 +1502,7 @@ async def save_daily_predictions():
                     already_confirmed_games.add(r.get("home_team","") + r.get("opp_pitcher",""))
             # If outcomes already recorded, don't touch this file
             if any(r.get("hit_hr") is not None for r in existing_records):
-                print(f"Predictions already have outcomes for {today} — skipping")
+                print(f"Predictions already have outcomes for {today} - skipping")
                 return
         except: pass
 
@@ -1569,7 +1569,7 @@ async def save_daily_predictions():
                     (lineup_away, away_team, home_p.get("fullName","TBD"), home_p_hand, lineup_away_source),
                     (lineup_home, home_team, away_p.get("fullName","TBD"), away_p_hand, lineup_home_source),
                 ]:
-                    # Only save confirmed lineups — never projected
+                    # Only save confirmed lineups - never projected
                     if lineup_src != "confirmed":
                         games_skipped_projected += 1
                         continue
@@ -1597,7 +1597,7 @@ async def save_daily_predictions():
                         wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
                         hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(
                             name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult, home_team)
-                        # No threshold — take all batters, select top 8 at end
+                        # No threshold - take all batters, select top 8 at end
                         top_pitches = get_pitcher_top_pitches(opp_p_name)[:2]
                         pitch1 = top_pitches[0] if len(top_pitches) > 0 else {}
                         pitch2 = top_pitches[1] if len(top_pitches) > 1 else {}
@@ -1750,7 +1750,7 @@ async def save_daily_predictions():
         # Merge new confirmed records with existing
         all_records = existing_records + new_records
         if not new_records:
-            print(f"No new confirmed lineups found for {today} — {games_skipped_projected} games still projected")
+            print(f"No new confirmed lineups found for {today} - {games_skipped_projected} games still projected")
             return
         content = json.dumps(all_records, indent=2)
         await github_put_file(path, content,
@@ -1764,7 +1764,7 @@ async def save_daily_predictions():
 
 async def check_lineup_confirmations():
     """
-    Runs hourly — checks today's games for newly confirmed lineups.
+    Runs hourly - checks today's games for newly confirmed lineups.
     When a game's lineup is confirmed, saves top 8 for that game.
     Merges with existing saved records without duplicating.
     """
@@ -1859,7 +1859,7 @@ async def check_lineup_confirmations():
                         wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
                         hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(
                             name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult, home_team)
-                        # No threshold — take all 9 batters, select top 8 at end
+                        # No threshold - take all 9 batters, select top 8 at end
 
                         bc2 = get_batter_stats(name, 2026)
                         pa26 = bc2.get("pa", 0)
@@ -1926,13 +1926,13 @@ async def check_lineup_confirmations():
                             "rotation_day": get_rotation_day(),
                             "day_of_season": (date.today() - date(2026, 3, 20)).days,
                         })
-                    # Collect all confirmed batters — global ranking happens below
+                    # Collect all confirmed batters - global ranking happens below
                     new_records.extend(game_records)
                     if game_records:
-                        print(f"  Lineup confirmed: {team} vs {opp_p_name} — {len(game_records)} batters")
+                        print(f"  Lineup confirmed: {team} vs {opp_p_name} - {len(game_records)} batters")
 
         if new_records:
-            # ── Global ranking — top 100 for training, top 8 for betting ──
+            # ── Global ranking - top 100 for training, top 8 for betting ──
             # Remove existing confirmed records for same games
             confirmed_keys = {f"{r['team']}-{r['opp_pitcher']}" for r in new_records}
             kept = [r for r in existing_records
@@ -1996,9 +1996,9 @@ async def record_results(target_date: str):
                 # Skip only games that are clearly not finished
                 not_finished = {"Preview", "Live", "Postponed", "Suspended", "Cancelled", "Warmup"}
                 if game_state in not_finished:
-                    print(f"Skipping game {game.get('gamePk')} — state: {game_state}/{detailed_state}/{code}")
+                    print(f"Skipping game {game.get('gamePk')} - state: {game_state}/{detailed_state}/{code}")
                     continue
-                print(f"Processing game {game.get('gamePk')} — state: {game_state}/{detailed_state}/{code}")
+                print(f"Processing game {game.get('gamePk')} - state: {game_state}/{detailed_state}/{code}")
                 gid = game["gamePk"]
                 try:
                     async with httpx.AsyncClient(timeout=10) as box_client:
@@ -2016,14 +2016,14 @@ async def record_results(target_date: str):
                 except Exception as box_err:
                     print(f"Boxscore error for game {gid}: {box_err}")
                     continue
-        # Update records — patch nulls, fix false negatives (0s that should be 1s),
+        # Update records - patch nulls, fix false negatives (0s that should be 1s),
         # and fix DNPs that actually hit HRs (West Coast late game timing issue)
         updated = 0
         dnp_count = 0
         for rec in records:
             nl = rec["name"].lower()
 
-            # Fix DNP records that actually hit a HR — West Coast timing issue
+            # Fix DNP records that actually hit a HR - West Coast timing issue
             if rec.get("hit_hr") == "DNP":
                 hit = nl in hr_hitters
                 if not hit:
@@ -2035,7 +2035,7 @@ async def record_results(target_date: str):
                     print(f"Corrected DNP→HR: {rec['name']} actually hit a HR")
                 continue
 
-            # Fix false negatives — recorded as 0 but actually hit a HR
+            # Fix false negatives - recorded as 0 but actually hit a HR
             if rec.get("hit_hr") == 0:
                 hit = nl in hr_hitters
                 if not hit:
@@ -2113,7 +2113,7 @@ async def startup_catchup():
             records = json.loads(ycontent)
             nulls = [r for r in records if r.get("hit_hr") is None]
             if nulls:
-                print(f"Startup catchup: {len(nulls)} unrecorded results for {yesterday} — recording now")
+                print(f"Startup catchup: {len(nulls)} unrecorded results for {yesterday} - recording now")
                 await record_results(yesterday)
             else:
                 print(f"Startup catchup: {yesterday} results already complete")
@@ -2126,7 +2126,7 @@ async def startup_catchup():
         tpath = f"data/predictions/{today}.json"
         tcontent, _ = await github_get_file(tpath)
         if not tcontent:
-            print(f"Startup catchup: no predictions for {today} — saving now")
+            print(f"Startup catchup: no predictions for {today} - saving now")
             await save_daily_predictions()
         else:
             print(f"Startup catchup: {today} predictions already saved")
@@ -2155,7 +2155,7 @@ def fuzzy_match(name: str, df: pd.DataFrame, col="name"):
         refined = matches[matches[col].str.lower().str.contains(first, na=False)]
         if not refined.empty:
             return refined.iloc[0]
-        # Multiple last name matches, no first name match — too ambiguous, return None
+        # Multiple last name matches, no first name match - too ambiguous, return None
         # This prevents e.g. "Murakami" matching the wrong player
         return None
     return None
@@ -2198,9 +2198,9 @@ def get_batter_stats(name, year=2026):
     return stats
 def get_batter_8d(name):
     """L8D stats from two sources:
-    1. bat_8d cache — pitch-by-pitch Statcast aggregated by calc_statcast_8d
+    1. bat_8d cache - pitch-by-pitch Statcast aggregated by calc_statcast_8d
        gives: barrel%, EV, LA, hard hit%, bat speed, xwOBA, xSLG, pull%, K%, HR, PA
-    2. bat_l8d_hr cache — MLB API lastXGames=8
+    2. bat_l8d_hr cache - MLB API lastXGames=8
        gives: PA, HR, ISO, SLG, AVG, K% (reliable counting stats)
     Statcast source is preferred for Statcast metrics, MLB API for counting stats."""
     # ── Statcast aggregated data (pitch-by-pitch) ──
@@ -2295,7 +2295,7 @@ def get_l8d_hr(name):
     return 0
 
 def get_avg_pa_per_game(name):
-    """Get batter's avg PA per game this season — key ML feature for opportunity"""
+    """Get batter's avg PA per game this season - key ML feature for opportunity"""
     nl = name.lower().strip()
     data = _cache.get("bat_games", {})
     if nl in data: return data[nl]
@@ -2458,7 +2458,7 @@ def compute_pitch_matchup(pitcher_name, batter_name):
 
 # ── Model helpers ──
 def blend(v1, v2, w1=1.0, w2=0.0):
-    """Returns v1 only — 2025 data removed, w2 always 0."""
+    """Returns v1 only - 2025 data removed, w2 always 0."""
     return float(v1 or 0)
 
 def get_batter_blend_weights(pa_2026, pa_2025=0):
@@ -2489,14 +2489,14 @@ def calc_weather_multiplier(home_team, wind_speed, wind_direction, temperature, 
         hr_bearing = stadium.get("hr_bearing_R", stadium.get("hr_bearing", 305))
     open_factor = stadium.get("open_factor", 0.5)
     # Open-Meteo gives wind direction as where wind comes FROM (meteorological convention)
-    # We need where it's blowing TO — flip 180 degrees
+    # We need where it's blowing TO - flip 180 degrees
     wind_toward = (wind_direction + 180) % 360
     diff = angle_diff(wind_toward, hr_bearing)
     alignment = math.cos(math.radians(diff))
     speed_factor = 0 if wind_speed < 5 else 0.3 if wind_speed < 10 else 0.7 if wind_speed < 16 else 1.0
     wind_mult = 1.0 + (alignment * speed_factor * 0.12 * open_factor)
     temp_mult = 1.06 if temperature >= 80 else 1.02 if temperature >= 70 else 0.91 if temperature < 50 else 0.96 if temperature < 60 else 1.0
-    # Direction label — uses cf_bearing for precise field direction labels
+    # Direction label - uses cf_bearing for precise field direction labels
     cf_bearing = stadium.get("cf_bearing", 67)  # default ENE
     hr_bear_r  = stadium.get("hr_bearing_R", (cf_bearing + 270) % 360)
     hr_bear_l  = stadium.get("hr_bearing_L", (cf_bearing + 90)  % 360)
@@ -2533,9 +2533,9 @@ def safe_mult(value, lg_avg, weight_key="", sample=None, min_sample=0, cap_high=
     Never collapses to 0, never goes haywire on tiny samples.
     """
     if value is None or value == 0:
-        return 1.0  # missing stat — neutral, doesn't help or hurt
+        return 1.0  # missing stat - neutral, doesn't help or hurt
     if min_sample > 0 and sample is not None and sample < min_sample:
-        return 1.0  # insufficient sample — neutral until we have real data
+        return 1.0  # insufficient sample - neutral until we have real data
     w = W(weight_key) if weight_key else 1.0
     raw = (float(value) / float(lg_avg)) ** w
     return max(min(raw, cap_high), cap_low)
@@ -2559,14 +2559,14 @@ def compute_hr_prob_multiplicative(
     bwc = 1.0
     # For brand new MLB players (under 60 PA, no 2025 data), Savant's game_date_gt
     # filter sometimes returns full season stats instead of true L8D window.
-    # If L8D PA matches season PA exactly, it's bogus — clear it.
+    # If L8D PA matches season PA exactly, it's bogus - clear it.
 
     has_8d = b8d.get("pa", 0) >= 3
     total_pa = pa_26
 
     # ── Step 1: Base HR rate (per-PA, relative ranking model) ──
     # base_rate = HR/PA blended between 2026 season and 2025 career
-    # Output is a relative score — higher = more likely than others today
+    # Output is a relative score - higher = more likely than others today
     # Not a literal per-game probability. Rankings matter more than absolute values.
     hr_season = bc.get("hr", 0)
     hr_career  = blend(bc.get("hr", 0), 0, bwc)
@@ -2575,7 +2575,7 @@ def compute_hr_prob_multiplicative(
     hr_per_pa_season = hr_season / pa_season if pa_season > 0 else 0
     hr_per_pa_career = hr_career / max(pa_26, 1) if pa_26 > 0 else 0.028
 
-    # PA-weighted blend — 200+ PA = trust season fully
+    # PA-weighted blend - 200+ PA = trust season fully
     if pa_26 >= 200:
         base_rate = hr_per_pa_season
     elif pa_26 >= 150:
@@ -2598,7 +2598,7 @@ def compute_hr_prob_multiplicative(
 
     running = base_rate
 
-    # ── Step 2: Barrel% — season + L8D weighted separately via safe_mult ──
+    # ── Step 2: Barrel% - season + L8D weighted separately via safe_mult ──
     LG_BARREL = LEAGUE_CONSTANTS["lg_barrel_pct"]
     barrel_season = blend(bc.get("barrel_pct", 0), 0, bwc)
     barrel_l8d    = b8d.get("barrel_pct", 0) if has_8d else 0
@@ -2612,7 +2612,7 @@ def compute_hr_prob_multiplicative(
     barrel_use = barrel_season if barrel_season > 0 else LG_BARREL
     running *= barrel_mult
 
-    # ── Step 3: Launch angle — season + L8D weighted separately via safe_mult ──
+    # ── Step 3: Launch angle - season + L8D weighted separately via safe_mult ──
     la_season = blend(bc.get("launch_angle", 0), 0, bwc)
     la_l8d    = b8d.get("launch_angle", 0) if has_8d else 0
 
@@ -2637,7 +2637,7 @@ def compute_hr_prob_multiplicative(
     la_use = la_season if la_season > 0 else 20.0
     running *= la_mult
 
-    # ── Step 4: Pitcher vulnerability — season + vs-hand via safe_mult ──
+    # ── Step 4: Pitcher vulnerability - season + vs-hand via safe_mult ──
     pc = get_pitcher_stats(opp_p_name, 2026)
     ip_26 = pc.get("ip", 0)
     pwc = 1.0
@@ -2654,7 +2654,7 @@ def compute_hr_prob_multiplicative(
     m_hr9_vs = safe_mult(pit_hr9_vs_hand, LG_HR9, "pit_hr9_vs_hand_w", pit_ip_vs_hand, 5)
     m_hard   = safe_mult(pit_hard, LG_HH, "", total_ip, 10)
 
-    # Combine: average of available signals (don't multiply — correlated stats)
+    # Combine: average of available signals (don't multiply - correlated stats)
     pit_signals = []
     if total_ip >= 10 and pit_hr9_season > 0:  pit_signals.append(m_hr9_s)
     if pit_ip_vs_hand >= 5 and pit_hr9_vs_hand > 0: pit_signals.append(m_hr9_vs)
@@ -2663,11 +2663,11 @@ def compute_hr_prob_multiplicative(
     pit_vuln_mult = max(min(pit_vuln_mult, 1.80), 0.50)
     running *= pit_vuln_mult
 
-    # ── Step 5: Batter platoon — ISO vs hand via safe_mult ──
+    # ── Step 5: Batter platoon - ISO vs hand via safe_mult ──
     iso_vs_hand   = b_split_vs_hand.get("iso", 0)
     iso_overall   = blend(bc.get("iso", 0), 0, bwc)
     split_pa      = b_split_vs_hand.get("pa", 0)
-    # Need both iso_vs_hand and iso_overall as ratio — use safe_mult on ratio
+    # Need both iso_vs_hand and iso_overall as ratio - use safe_mult on ratio
     if iso_overall > 0 and iso_vs_hand > 0 and split_pa >= 30:
         bat_platoon_raw = iso_vs_hand / iso_overall
         bat_platoon_mult = safe_mult(bat_platoon_raw, 1.0, "bat_platoon_w",
@@ -2676,7 +2676,7 @@ def compute_hr_prob_multiplicative(
         bat_platoon_mult = 1.0
     running *= bat_platoon_mult
 
-    # ── Step 6: Pitcher platoon — SLG vs hand via safe_mult ──
+    # ── Step 6: Pitcher platoon - SLG vs hand via safe_mult ──
     slg_vs_bat      = p_split_vs_bat.get("slg", 0)
     p_split_opp     = get_pitcher_split(opp_p_name, "L" if bat_hand == "R" else "R")
     split_ip_vs_bat = p_split_vs_bat.get("ip", 0)
@@ -2700,8 +2700,8 @@ def compute_hr_prob_multiplicative(
     weather_mult_applied = weather_mult ** weather_w if weather_mult > 0 else 1.0
     running *= weather_mult_applied
 
-    # ── Step 9: Hot/cold — display signal only, NOT in model ──
-    # Removed from calculation — L8D HR count is shown on the table as a visual signal
+    # ── Step 9: Hot/cold - display signal only, NOT in model ──
+    # Removed from calculation - L8D HR count is shown on the table as a visual signal
     # ML will determine if it actually matters. Keeping calc for breakdown display only.
     hot_cold_mult = 1.0
     if has_8d and b8d.get("pa", 0) >= 8:
@@ -2711,17 +2711,17 @@ def compute_hr_prob_multiplicative(
         if base_rate > 0:
             ratio = hr_8d_rate / base_rate
             hot_cold_mult = max(min(ratio, 1.20), 0.85)
-    # NOT applied to running — hot_cold_mult stored for ML analysis only
+    # NOT applied to running - hot_cold_mult stored for ML analysis only
     # running *= hot_cold_mult  <-- removed
 
-    # ── Step 10: K% penalty — safe_mult aware ──
+    # ── Step 10: K% penalty - safe_mult aware ──
     k_season = blend(bc.get("k_pct", 0), 0, bwc)
     k_w = W("k_pct_w")
     if k_season >= 35:   k_mult = 0.88 ** k_w
     elif k_season >= 30: k_mult = 0.94 ** k_w
     elif k_season >= 25: k_mult = 0.97 ** k_w
     else:                k_mult = 1.0
-    if k_season == 0:    k_mult = 1.0  # missing K% — neutral
+    if k_season == 0:    k_mult = 1.0  # missing K% - neutral
     running *= k_mult
 
     # ── Hard cap + bullpen blend ──
@@ -2730,10 +2730,10 @@ def compute_hr_prob_multiplicative(
     bullpen_hr9    = bullpen_data.get("hr9", LG_BULLPEN_HR9)
     bullpen_vuln   = safe_mult(bullpen_hr9, LG_BULLPEN_HR9, "bullpen_w",
                                cap_high=1.80, cap_low=0.50)
-    # Bullpen component — uses batter skill + context + bullpen vuln
+    # Bullpen component - uses batter skill + context + bullpen vuln
     bullpen_component = (base_rate * barrel_mult * la_mult * bat_platoon_mult *
                          park_mult_applied * weather_mult_applied * k_mult * bullpen_vuln)
-    # Bullpen blend is always 25% — bullpen_w is an exponent applied in safe_mult above,
+    # Bullpen blend is always 25% - bullpen_w is an exponent applied in safe_mult above,
     # NOT a blend fraction. Using it as a fraction would break math when bullpen_w > 1.0.
     bullpen_w_blend = 0.25
     running = (running * (1 - bullpen_w_blend)) + (bullpen_component * bullpen_w_blend)
@@ -2848,7 +2848,7 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, 
     When RF is trained: uses pure Random Forest probability.
     Falls back to multiplicative model when RF not yet trained.
     """
-    # Always compute multiplicative — used as fallback and for breakdown data
+    # Always compute multiplicative - used as fallback and for breakdown data
     mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf = \
         compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team)
 
@@ -2915,7 +2915,7 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, 
         return rf_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
     except Exception as e:
-        print(f"RF predict error for {name}: {e} — falling back to multiplicative")
+        print(f"RF predict error for {name}: {e} - falling back to multiplicative")
         return mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
 
@@ -3041,7 +3041,7 @@ def _compute_hr_probability_legacy(name, bat_hand, opp_p_name, opp_p_hand, park_
 
     pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
 
-    # Step 1 — Batter score
+    # Step 1 - Batter score
     s1_barrel = round(min(barrel_s / 15.0, 1.0) * 30, 2)
     s1_iso    = round(min(iso_use / 0.280, 1.0) * 14, 2)
     s1_fb     = 0
@@ -3059,7 +3059,7 @@ def _compute_hr_probability_legacy(name, bat_hand, opp_p_name, opp_p_hand, park_
 
     archetype = get_archetype(barrel_season, k_s, fb_s, iso_season)
 
-    # Step 2 — Pitcher modifier
+    # Step 2 - Pitcher modifier
     pc = get_pitcher_stats(opp_p_name, 2026)
     pp = get_pitcher_stats(opp_p_name)
     ip_26 = pc.get("ip", 0)
@@ -3100,17 +3100,17 @@ def _compute_hr_probability_legacy(name, bat_hand, opp_p_name, opp_p_hand, park_
     pit_modifier = round(max(min(pit_modifier, 1.65), 0.55), 3)
     n_components = len(active)
 
-    # Step 3 — K% gate
+    # Step 3 - K% gate
     k_cap = 1.0
     if k_s >= 35: k_cap = 0.75
     elif k_s >= 30: k_cap = 0.88
     elif k_s >= 28: k_cap = 0.94
     after_k = batter_score * k_cap
 
-    # Step 4 — Context
+    # Step 4 - Context
     after_context = round(after_k * pit_modifier * park_factor * weather_mult, 1)
 
-    # Step 5 — Sigmoid
+    # Step 5 - Sigmoid
     hr_prob = sigmoid_to_prob(after_context)
 
     platoon_tag = None
@@ -3398,7 +3398,7 @@ def pit_display(p_name, p_hand):
 @app.get("/dashboard")
 async def get_dashboard():
     """
-    Dashboard data — top 8 today + running hit rate stats.
+    Dashboard data - top 8 today + running hit rate stats.
     Calculates hit rates for top 8, top 4, and overall from last 30 days.
     """
     if not GITHUB_TOKEN:
@@ -3486,19 +3486,34 @@ async def get_dashboard():
             "top8_total_hits":    top8_hits,
         }
 
-        # ── Today's top 8 ──
+        # ── Today's top 8 - use live games cache (projected + confirmed) ──
         today = date.today().isoformat()
-        today_content, _ = await github_get_file(f"data/predictions/{today}.json")
         top8_today = []
-        if today_content:
-            try:
-                today_recs = json.loads(today_content)
-                ranked_today = sorted(
-                    [r for r in today_recs if r.get("model_hr_pct") is not None],
-                    key=lambda x: x.get("model_hr_pct", 0), reverse=True
+        try:
+            cached = _games_cache.get(today)
+            if cached and cached.get("data"):
+                all_live = cached["data"].get("top_hr_candidates", [])
+                top8_today = sorted(
+                    [b for b in all_live if b.get("hr_prob") is not None],
+                    key=lambda x: x.get("hr_prob", 0), reverse=True
                 )[:8]
-                top8_today = ranked_today
-            except: pass
+                # Normalize field name for frontend
+                for b in top8_today:
+                    if "model_hr_pct" not in b:
+                        b["model_hr_pct"] = b.get("hr_prob", 0)
+        except: pass
+
+        # Fallback to predictions file if cache empty
+        if not top8_today:
+            today_content, _ = await github_get_file(f"data/predictions/{today}.json")
+            if today_content:
+                try:
+                    today_recs = json.loads(today_content)
+                    top8_today = sorted(
+                        [r for r in today_recs if r.get("model_hr_pct") is not None],
+                        key=lambda x: x.get("model_hr_pct", 0), reverse=True
+                    )[:8]
+                except: pass
 
         return {
             "stats":      stats,
@@ -3528,7 +3543,7 @@ async def get_history():
         async with httpx.AsyncClient(timeout=15) as client:
             r = await client.get(url, headers=headers)
         if r.status_code == 404:
-            return {"records": [], "dates": [], "message": "No history yet — predictions start saving at 1pm ET daily"}
+            return {"records": [], "dates": [], "message": "No history yet - predictions start saving at 1pm ET daily"}
         if not r.is_success:
             return {"error": f"GitHub error {r.status_code}", "records": []}
         files = r.json()
@@ -3553,7 +3568,7 @@ async def get_history():
 
 @app.get("/debug-l8d")
 async def debug_l8d(player: str = "Murakami"):
-    """Debug L8D data — check what Savant returns vs season stats"""
+    """Debug L8D data - check what Savant returns vs season stats"""
     from datetime import date as date_cls
     b8d = get_batter_8d(player)
     bc = get_batter_stats(player, 2026)
@@ -3582,14 +3597,14 @@ async def manual_recalibrate():
 
 @app.get("/recalibrate")
 async def manual_recalibrate_get():
-    """GET version — browser accessible. Retrains RF + XGBoost."""
+    """GET version - browser accessible. Retrains RF + XGBoost."""
     rf_result  = await recalibrate_model()
     xgb_result = await train_xgboost()
     return {"rf": rf_result, "xgboost": xgb_result}
 
 @app.get("/retrain-xgboost")
 async def retrain_xgboost_get():
-    """GET — retrain XGBoost only (faster than full recalibrate)"""
+    """GET - retrain XGBoost only (faster than full recalibrate)"""
     result = await train_xgboost()
     return result
 
@@ -3620,7 +3635,7 @@ async def manual_save_predictions():
 
 @app.get("/save-predictions")
 async def manual_save_predictions_get():
-    """GET version — browser accessible"""
+    """GET version - browser accessible"""
     await save_daily_predictions()
     return {"status": "done", "date": date.today().isoformat()}
 
@@ -3639,7 +3654,7 @@ async def manual_record_results(target_date: str = None):
 
 @app.get("/record-results")
 async def manual_record_results_get(target_date: str = None):
-    """GET version — browser accessible"""
+    """GET version - browser accessible"""
     d = target_date or (date.today() - timedelta(days=1)).isoformat()
     await record_results(d)
     await record_parlay_results(d)
@@ -3677,7 +3692,7 @@ async def cleanup_results(days: int = 30):
             dnp_count = sum(1 for r in recs if r.get("hit_hr") == "DNP")
             null_count = sum(1 for r in recs if r.get("hit_hr") is None)
             if dnp_count > 0 or null_count > 0:
-                print(f"Reprocessing {d} — {dnp_count} DNPs, {null_count} nulls")
+                print(f"Reprocessing {d} - {dnp_count} DNPs, {null_count} nulls")
                 await record_results(d)
                 results.append({"date": d, "dnp": dnp_count, "null": null_count, "status": "reprocessed"})
             else:
@@ -3691,7 +3706,7 @@ async def cleanup_results(days: int = 30):
     except Exception as e:
         return {"error": str(e)}
 async def debug_boxscore(target_date: str = None):
-    """Show all player names returned by MLB API boxscore for a date — for debugging DNP issues."""
+    """Show all player names returned by MLB API boxscore for a date - for debugging DNP issues."""
     d = target_date or (date.today() - timedelta(days=1)).isoformat()
     try:
         async with httpx.AsyncClient(timeout=30) as client:
@@ -3735,7 +3750,7 @@ async def debug_boxscore(target_date: str = None):
         return {"error": str(e)}
 async def coverage_check(days: int = 7):
     """
-    Data health check — for each feature field in prediction records,
+    Data health check - for each feature field in prediction records,
     shows how many players have real values vs zero/null/blank.
     Tells you exactly what the model is and isn't seeing.
     """
@@ -3767,7 +3782,7 @@ async def coverage_check(days: int = 7):
         pending      = sum(1 for r in all_records if r.get("hit_hr") is None)
         hr_count     = sum(1 for r in all_records if r.get("hit_hr") == 1)
 
-        # Fields to check — everything the model uses
+        # Fields to check - everything the model uses
         FIELDS = [
             "barrel_pct_season", "barrel_pct_l8d",
             "la_season", "la_l8d",
@@ -3898,7 +3913,7 @@ async def debug_results(target_date: str = None):
 @app.get("/")
 def root():
     return {
-        "status": "Sharp MLB HR Model — Baseball Savant Edition",
+        "status": "Sharp MLB HR Model - Baseball Savant Edition",
         "data_ready": _cache["ready"],
         "last_updated": _cache["last_updated"],
         "rows": {k: len(v) for k, v in _cache.items() if isinstance(v, pd.DataFrame)}
@@ -3947,14 +3962,14 @@ def status():
 
 @app.get("/version")
 def version():
-    """Quick check — both models now use CV AUC for honest apples-to-apples comparison."""
+    """Quick check - both models now use CV AUC for honest apples-to-apples comparison."""
     rf_auc  = _model_weights.get("oob_score", 0)  # now CV AUC not OOB
     xgb_auc = _xgb_oob
     winning = "xgboost" if (_xgb_trained and xgb_auc > rf_auc) else "random_forest"
     return {
         "file_version":    "2026-05-04",
         "active_model":    winning,
-        "metric":          "cv_auc_5fold — both models on same scale (0.5=random, 1.0=perfect)",
+        "metric":          "cv_auc_5fold - both models on same scale (0.5=random, 1.0=perfect)",
         "rf": {
             "trained":      _rf_trained,
             "records_used": _model_weights.get("records_used", 0),
@@ -3974,7 +3989,7 @@ def version():
 
 @app.get("/xgboost-status")
 async def xgboost_status():
-    """Full XGBoost training status — pull latest metadata from GitHub."""
+    """Full XGBoost training status - pull latest metadata from GitHub."""
     meta = {"trained": _xgb_trained, "cv_auc": _xgb_oob}
     if GITHUB_TOKEN:
         content, _ = await github_get_file("data/xgb_meta.json")
@@ -3985,11 +4000,11 @@ async def xgboost_status():
     rf_auc = _model_weights.get("oob_score", 0)  # now CV AUC
     meta["rf_auc_comparison"] = rf_auc
     meta["xgb_beats_rf"] = _xgb_trained and _xgb_oob > rf_auc
-    meta["metric"] = "cv_auc_5fold — both on same scale, 0.5=random 1.0=perfect"
+    meta["metric"] = "cv_auc_5fold - both on same scale, 0.5=random 1.0=perfect"
     meta["recommendation"] = (
-        "XGBoost ready to go live — flip compute_hr_probability to use XGBoost"
+        "XGBoost ready to go live - flip compute_hr_probability to use XGBoost"
         if meta.get("xgb_beats_rf") else
-        f"RF CV AUC {rf_auc:.3f} vs XGBoost CV AUC {_xgb_oob:.3f} — gap: {round(_xgb_oob - rf_auc, 3)}. Keep collecting data."
+        f"RF CV AUC {rf_auc:.3f} vs XGBoost CV AUC {_xgb_oob:.3f} - gap: {round(_xgb_oob - rf_auc, 3)}. Keep collecting data."
     )
     return meta
 
@@ -4012,13 +4027,13 @@ async def reload_contact_log():
 @app.get("/games")
 async def get_games(date: str = None, refresh: bool = False):
     if not _cache["ready"]:
-        return {"games": [], "loading": True, "message": "Data loading — try again in 30 seconds."}
+        return {"games": [], "loading": True, "message": "Data loading - try again in 30 seconds."}
 
     from datetime import date as date_cls
     today = date if date else date_cls.today().isoformat()
     date = None  # clear to avoid shadowing
 
-    # ── Response cache — return cached result if < 15 min old and not forced refresh ──
+    # ── Response cache - return cached result if < 15 min old and not forced refresh ──
     cached = _games_cache.get(today)
     if cached and not refresh and (datetime.now() - cached["ts"]).total_seconds() < GAMES_CACHE_TTL:
         return cached["data"]
@@ -4185,7 +4200,7 @@ async def get_games(date: str = None, refresh: bool = False):
             pid = b.get("person", {}).get("id") if "person" in b else b.get("id")
             if pid: batter_pids.add(pid)
         if batter_pids:
-            await batch_fetch_hands(batter_pids)  # warms cache — process() hits cache not network
+            await batch_fetch_hands(batter_pids)  # warms cache - process() hits cache not network
 
         # Process all batters in parallel
         away_tasks = [process(b, away_team, home_p.get("fullName", "TBD"), home_p_hand, lineup_away_status == "projected") for b in lineup_away]
@@ -4346,7 +4361,7 @@ async def research(player: str, date: str = None):
     today = date if date else date_cls.today().isoformat()
     date = None  # clear to avoid shadowing
     if not _cache["ready"]:
-        return {"error": "Data loading — try again in 30 seconds"}
+        return {"error": "Data loading - try again in 30 seconds"}
 
     bc = get_batter_stats(player, 2026)
     b8d = get_batter_8d(player)
