@@ -3478,23 +3478,66 @@ async def get_dashboard():
             "top8_total_hits":    top8_hits,
         }
 
-        # -- Today's top 8 - use live games cache (projected + confirmed) --
+        # -- Today's top 8 --
+        # Start with projected lineups globally ranked
+        # As lineups confirm, remove scratched players and pull up next best from full slate
         today = date.today().isoformat()
         top8_today = []
-        # Try live games cache first - always has projected lineups
         try:
             cached = _games_cache.get(today)
+            if not cached or not cached.get("data"):
+                # Warm the cache
+                games_data = await get_games(today, False)
+                cached = _games_cache.get(today)
+
             if cached and cached.get("data"):
                 all_live = cached["data"].get("top_hr_candidates", [])
-                top8_today = sorted(
+                games_list = cached["data"].get("games", [])
+
+                # Build set of confirmed players per game
+                # lineup_source == "confirmed" means this player is in the confirmed lineup
+                confirmed_names_by_game = {}  # game_key -> set of confirmed player names
+                for game in games_list:
+                    away = game.get("away", "")
+                    home = game.get("home", "")
+                    away_status = game.get("lineup_away_status", "projected")
+                    home_status = game.get("lineup_home_status", "projected")
+                    if away_status == "confirmed":
+                        confirmed_names_by_game[away] = set(
+                            b["name"] for b in game.get("away_lineup", [])
+                        )
+                    if home_status == "confirmed":
+                        confirmed_names_by_game[home] = set(
+                            b["name"] for b in game.get("home_lineup", [])
+                        )
+
+                # Rank all projected players globally
+                all_ranked = sorted(
                     [b for b in all_live if b.get("hr_prob") is not None],
                     key=lambda x: x.get("hr_prob", 0), reverse=True
-                )[:8]
+                )
+
+                # Filter out scratched players
+                # A player is scratched if their team has a confirmed lineup
+                # AND they are NOT in that confirmed lineup
+                def is_available(b):
+                    team = b.get("team", "")
+                    if team in confirmed_names_by_game:
+                        return b.get("name") in confirmed_names_by_game[team]
+                    return True  # projected lineup - keep them
+
+                available = [b for b in all_ranked if is_available(b)]
+
+                # Take top 8 from available players
+                top8_today = available[:8]
                 for b in top8_today:
                     if "model_hr_pct" not in b:
                         b["model_hr_pct"] = b.get("hr_prob", 0)
-        except: pass
-        # Fallback to GitHub predictions file
+
+        except Exception as e:
+            print(f"Dashboard top8 error: {e}")
+
+        # Fallback to predictions file if cache failed
         if not top8_today:
             today_content, _ = await github_get_file(f"data/predictions/{today}.json")
             if today_content:
@@ -3505,19 +3548,6 @@ async def get_dashboard():
                         key=lambda x: x.get("model_hr_pct", 0), reverse=True
                     )[:8]
                 except: pass
-        # Last fallback - trigger games load if cache empty
-        if not top8_today and _cache.get("ready"):
-            try:
-                games_data = await get_games(today, False)
-                all_live = games_data.get("top_hr_candidates", []) if isinstance(games_data, dict) else []
-                top8_today = sorted(
-                    [b for b in all_live if b.get("hr_prob") is not None],
-                    key=lambda x: x.get("hr_prob", 0), reverse=True
-                )[:8]
-                for b in top8_today:
-                    if "model_hr_pct" not in b:
-                        b["model_hr_pct"] = b.get("hr_prob", 0)
-            except: pass
 
         return {
             "stats":      stats,
