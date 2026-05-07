@@ -3491,24 +3491,25 @@ async def get_dashboard():
                 cached = _games_cache.get(today)
 
             if cached and cached.get("data"):
-                all_live = cached["data"].get("top_hr_candidates", [])
                 games_list = cached["data"].get("games", [])
 
-                # Build set of confirmed players per game
-                # lineup_source == "confirmed" means this player is in the confirmed lineup
-                confirmed_names_by_game = {}  # game_key -> set of confirmed player names
+                # Collect ALL batters from ALL games
+                all_live = []
+                for game in games_list:
+                    all_live.extend(game.get("top_hr_candidates", []))
+
+                # Build set of confirmed players per team
+                confirmed_names_by_team = {}
                 for game in games_list:
                     away = game.get("away", "")
                     home = game.get("home", "")
-                    away_status = game.get("lineup_away_status", "projected")
-                    home_status = game.get("lineup_home_status", "projected")
-                    if away_status == "confirmed":
-                        confirmed_names_by_game[away] = set(
-                            b["name"] for b in game.get("away_lineup", [])
+                    if game.get("lineup_away_status") == "confirmed":
+                        confirmed_names_by_team[away] = set(
+                            b.get("name","") for b in game.get("away_lineup", [])
                         )
-                    if home_status == "confirmed":
-                        confirmed_names_by_game[home] = set(
-                            b["name"] for b in game.get("home_lineup", [])
+                    if game.get("lineup_home_status") == "confirmed":
+                        confirmed_names_by_team[home] = set(
+                            b.get("name","") for b in game.get("home_lineup", [])
                         )
 
                 # Rank all projected players globally
@@ -3522,8 +3523,8 @@ async def get_dashboard():
                 # AND they are NOT in that confirmed lineup
                 def is_available(b):
                     team = b.get("team", "")
-                    if team in confirmed_names_by_game:
-                        return b.get("name") in confirmed_names_by_game[team]
+                    if team in confirmed_names_by_team:
+                        return b.get("name") in confirmed_names_by_team[team]
                     return True  # projected lineup - keep them
 
                 available = [b for b in all_ranked if is_available(b)]
