@@ -3400,6 +3400,7 @@ async def get_dashboard():
         for f in sorted(top8_files, key=lambda x: x["name"], reverse=True)[:30]:
             if not f["name"].endswith(".json"): continue
             d = f["name"].replace(".json","")
+            if d < TRACKING_START: continue  # only track from clean XGBoost era
             content, _ = await github_get_file(f"data/top8/{f['name']}")
             if not content: continue
             try:
@@ -3408,11 +3409,12 @@ async def get_dashboard():
             except: continue
 
         # -- Hit rate calculations --
-        # Group by date, rank by model_hr_pct, calculate hit rates by rank tier
+        # Only count records from tracking start date (XGBoost era, clean data)
+        TRACKING_START = "2026-05-07"
         from collections import defaultdict
         by_date = defaultdict(list)
         for rec in all_records:
-            if rec.get("hit_hr") in [0, 1]:
+            if rec.get("hit_hr") in [0, 1] and rec.get("_date", "") >= TRACKING_START:
                 by_date[rec["_date"]].append(rec)
 
         top8_hits = 0; top8_total = 0
@@ -3469,6 +3471,7 @@ async def get_dashboard():
 
         stats = {
             "days_tracked":       len(slate_days),
+            "tracking_start":     TRACKING_START,
             "top8_hit_rate":      pct(top8_hits, top8_total),
             "top4_hit_rate":      pct(top4_hits, top4_total),
             "overall_hit_rate":   pct(overall_hits, overall_total),
@@ -3478,67 +3481,23 @@ async def get_dashboard():
             "top8_total_hits":    top8_hits,
         }
 
-        # -- Today's top 8 --
-        # Start with projected lineups globally ranked
-        # As lineups confirm, remove scratched players and pull up next best from full slate
+        # -- Today's top 8 - use live games cache (projected + confirmed) --
         today = date.today().isoformat()
         top8_today = []
+        # Try live games cache first - always has projected lineups
         try:
             cached = _games_cache.get(today)
-            if not cached or not cached.get("data"):
-                # Warm the cache
-                games_data = await get_games(today, False)
-                cached = _games_cache.get(today)
-
             if cached and cached.get("data"):
-                games_list = cached["data"].get("games", [])
-
-                # Collect ALL batters from ALL games
-                all_live = []
-                for game in games_list:
-                    all_live.extend(game.get("top_hr_candidates", []))
-
-                # Build set of confirmed players per team
-                confirmed_names_by_team = {}
-                for game in games_list:
-                    away = game.get("away", "")
-                    home = game.get("home", "")
-                    if game.get("lineup_away_status") == "confirmed":
-                        confirmed_names_by_team[away] = set(
-                            b.get("name","") for b in game.get("away_lineup", [])
-                        )
-                    if game.get("lineup_home_status") == "confirmed":
-                        confirmed_names_by_team[home] = set(
-                            b.get("name","") for b in game.get("home_lineup", [])
-                        )
-
-                # Rank all projected players globally
-                all_ranked = sorted(
+                all_live = cached["data"].get("top_hr_candidates", [])
+                top8_today = sorted(
                     [b for b in all_live if b.get("hr_prob") is not None],
                     key=lambda x: x.get("hr_prob", 0), reverse=True
-                )
-
-                # Filter out scratched players
-                # A player is scratched if their team has a confirmed lineup
-                # AND they are NOT in that confirmed lineup
-                def is_available(b):
-                    team = b.get("team", "")
-                    if team in confirmed_names_by_team:
-                        return b.get("name") in confirmed_names_by_team[team]
-                    return True  # projected lineup - keep them
-
-                available = [b for b in all_ranked if is_available(b)]
-
-                # Take top 8 from available players
-                top8_today = available[:8]
+                )[:8]
                 for b in top8_today:
                     if "model_hr_pct" not in b:
                         b["model_hr_pct"] = b.get("hr_prob", 0)
-
-        except Exception as e:
-            print(f"Dashboard top8 error: {e}")
-
-        # Fallback to predictions file if cache failed
+        except: pass
+        # Fallback to GitHub predictions file
         if not top8_today:
             today_content, _ = await github_get_file(f"data/predictions/{today}.json")
             if today_content:
@@ -3549,6 +3508,19 @@ async def get_dashboard():
                         key=lambda x: x.get("model_hr_pct", 0), reverse=True
                     )[:8]
                 except: pass
+        # Last fallback - trigger games load if cache empty
+        if not top8_today and _cache.get("ready"):
+            try:
+                games_data = await get_games(today, False)
+                all_live = games_data.get("top_hr_candidates", []) if isinstance(games_data, dict) else []
+                top8_today = sorted(
+                    [b for b in all_live if b.get("hr_prob") is not None],
+                    key=lambda x: x.get("hr_prob", 0), reverse=True
+                )[:8]
+                for b in top8_today:
+                    if "model_hr_pct" not in b:
+                        b["model_hr_pct"] = b.get("hr_prob", 0)
+            except: pass
 
         return {
             "stats":      stats,
@@ -3842,6 +3814,26 @@ async def debug_boxscore(target_date: str = None):
         return {"date": d, "games": games}
     except Exception as e:
         return {"error": str(e)}
+
+@app.get("/reset-tracking")
+async def reset_tracking():
+    """
+    Reset top 8 tracking to today. Call this when site goes live.
+    Saves the new tracking start date to GitHub so it persists.
+    """
+    import json
+    new_start = date.today().isoformat()
+    try:
+        meta = {"tracking_start": new_start, "reset_at": new_start, "reason": "manual reset"}
+        content, sha = await github_get_file("data/tracking_meta.json")
+        await github_put_file("data/tracking_meta.json",
+                              json.dumps(meta, indent=2),
+                              f"tracking reset: {new_start}", sha)
+        return {"status": "reset", "tracking_start": new_start,
+                "message": f"Top 8 tracking now starts from {new_start}. Deploy a new main.py with TRACKING_START updated to keep this permanent."}
+    except Exception as e:
+        return {"error": str(e)}
+
 
 @app.get("/coverage-check")
 async def coverage_check(days: int = 7):
