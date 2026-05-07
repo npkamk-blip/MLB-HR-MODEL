@@ -412,7 +412,8 @@ function buildDashboard(d){
   h+=sCard('2-of-Top-4 Days',p2r+'%','Parlay signal',p2r>=20?'var(--g)':p2r>=12?'var(--y)':'var(--r)');
   h+=sCard('2-of-Top-8 Days',p2t8+'%','Wider parlay',p2t8>=20?'var(--g)':p2t8>=12?'var(--y)':'var(--r)');
   h+=sCard('Slate Hit Rate',ovr+'%','All tracked','var(--muted)');
-  h+=sCard('Days Tracked',daysT,'Since '+(days.length>0?days[days.length-1].date:'-'),'var(--text)');
+  var trackStart=stats.tracking_start||'2026-05-07';
+  h+=sCard('Days Tracked',daysT,'Since '+trackStart,'var(--text)');
   h+='</div>';
   var modelC=d.xgb_trained&&d.xgb_cv>d.rf_oob?'var(--purple)':'var(--blue)';
   var modelLbl=d.xgb_trained&&d.xgb_cv>d.rf_oob?'XGBoost':'Random Forest';
