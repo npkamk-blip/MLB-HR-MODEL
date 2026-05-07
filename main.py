@@ -1878,6 +1878,7 @@ async def check_lineup_confirmations():
                             "ev_l8d": round(b8d2.get("exit_velo",0), 1),
                             "iso_l8d": round(b8d2.get("iso",0), 3),
                             "hard_hit_l8d": round(b8d2.get("hard_hit_pct",0), 1),
+                            "k_pct_l8d": round(b8d2.get("k_pct",0), 1),
                             "pa_l8d": int(b8d2.get("pa",0)),
                             "l8d_hr": get_l8d_hr(name),
                             "slg_l8d": round(b8d2.get("slg",0), 3),
@@ -1918,23 +1919,34 @@ async def check_lineup_confirmations():
                                                     pc=pc2, p_split=p_split2)[0],
                         })
 
-                    # Top 8 from this team
-                    top8 = sorted(game_records, key=lambda x: x["model_hr_pct"], reverse=True)[:8]
-                    new_records.extend(top8)
-                    if top8:
-                        print(f"  Lineup confirmed: {team} vs {opp_p_name} - saved top {len(top8)}")
+                    # Collect all batters - global ranking happens below
+                    new_records.extend(game_records)
+                    if game_records:
+                        print(f"  Lineup confirmed: {team} vs {opp_p_name} - {len(game_records)} batters")
 
         if new_records:
-            # Merge with existing - remove any projected records for same games, add confirmed
             confirmed_keys = {f"{r['team']}-{r['opp_pitcher']}" for r in new_records}
-            # Keep existing records that aren't being replaced by confirmed
             kept = [r for r in existing_records
                     if f"{r.get('team','')}-{r.get('opp_pitcher','')}" not in confirmed_keys]
-            merged = kept + new_records
-            content = json.dumps(merged, indent=2)
+
+            # Global ranking - top 100 for training, top 8 for betting
+            all_confirmed = kept + new_records
+            ranked_all = sorted(all_confirmed, key=lambda x: x.get("model_hr_pct", 0), reverse=True)
+            top100 = ranked_all[:100]
+            top8   = ranked_all[:8]
+
+            # Save top 100 to predictions (training data)
+            content = json.dumps(top100, indent=2)
             await github_put_file(path, content,
-                f"lineups confirmed: {today} ({len(new_records)} new, {len(merged)} total)", sha)
-            print(f"Lineup check: saved {len(new_records)} new confirmed records, {len(merged)} total")
+                f"lineups confirmed: {today} ({len(top100)} top100)", sha)
+
+            # Save top 8 to top8 file (betting record)
+            top8_path = f"data/top8/{today}.json"
+            existing_top8_content, top8_sha = await github_get_file(top8_path)
+            await github_put_file(top8_path, json.dumps(top8, indent=2),
+                                  f"top8: {today} ({len(top8)} picks)", top8_sha)
+
+            print(f"Lineup check: top100 saved ({len(top100)}), top8 saved ({len(top8)})")
         else:
             print(f"Lineup check: no new confirmations yet")
 
