@@ -3641,14 +3641,22 @@ async def debug_l8d(player: str = "Murakami"):
 
 @app.post("/recalibrate")
 async def manual_recalibrate():
-    """Manually trigger model recalibration"""
-    result = await recalibrate_model()
-    return result
+    """Manually trigger RF + XGBoost retrain"""
+    rf_result  = await recalibrate_model()
+    xgb_result = await train_xgboost()
+    return {"rf": rf_result, "xgboost": xgb_result}
 
 @app.get("/recalibrate")
 async def manual_recalibrate_get():
-    """GET version - browser accessible"""
-    result = await recalibrate_model()
+    """GET - retrains RF + XGBoost"""
+    rf_result  = await recalibrate_model()
+    xgb_result = await train_xgboost()
+    return {"rf": rf_result, "xgboost": xgb_result}
+
+@app.get("/retrain-xgboost")
+async def retrain_xgboost_get():
+    """GET - retrain XGBoost only (faster)"""
+    result = await train_xgboost()
     return result
 
 @app.get("/model-weights")
@@ -4010,7 +4018,7 @@ def version():
     xgb_auc = _xgb_oob
     winning = "xgboost" if (_xgb_trained and xgb_auc > rf_auc) else "random_forest"
     return {
-        "file_version":    "2026-05-04",
+        "file_version":    date.today().isoformat(),
         "active_model":    winning,
         "metric":          "cv_auc_5fold - both models on same scale (0.5=random, 1.0=perfect)",
         "rf": {
