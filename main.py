@@ -1858,13 +1858,21 @@ async def check_lineup_confirmations():
                         pitch1 = top_pitches[0] if top_pitches else {}
                         pitch2 = top_pitches[1] if len(top_pitches) > 1 else {}
                         pa_data = get_avg_pa_per_game(name)
+                        # XGBoost is primary
+                        xgb_r2 = predict_xgb(name, bat_hand, opp_p_name, opp_p_hand,
+                                              park_factor, wx_mult, breakdown,
+                                              bc=bc2, b8d=b8d2, b_split=b_split2,
+                                              pc=pc2, p_split=p_split2)
+                        xgb_save2 = xgb_r2 if isinstance(xgb_r2, (int, float)) else (xgb_r2[0] if xgb_r2 else None)
+                        save_prob2 = xgb_save2 if (_xgb_trained and xgb_save2 is not None) else hr_prob
 
                         game_records.append({
                             "date": today, "name": name, "team": team,
                             "opp_pitcher": opp_p_name, "opp_pitcher_hand": opp_p_hand,
                             "bat_hand": bat_hand, "home_team": home_team,
                             "lineup_source": "confirmed",
-                            "model_hr_pct": hr_prob, "hit_hr": None,
+                            "model_hr_pct": save_prob2, "hit_hr": None,
+                            "rf_prob": hr_prob,
                             "barrel_pct_season": round(bc2.get("barrel_pct",0), 1),
                             "la_season": round(bc2.get("launch_angle",0), 1),
                             "ev_season": round(bc2.get("exit_velo",0), 1),
@@ -3396,6 +3404,7 @@ async def get_dashboard():
             except: continue
 
         # -- Build top8 by date - prefer top8 files, fallback to predictions --
+        TRACKING_START = "2026-05-07"
         top8_by_date = {}
         for f in sorted(top8_files, key=lambda x: x["name"], reverse=True)[:30]:
             if not f["name"].endswith(".json"): continue
@@ -3410,7 +3419,6 @@ async def get_dashboard():
 
         # -- Hit rate calculations --
         # Only count records from tracking start date (XGBoost era, clean data)
-        TRACKING_START = "2026-05-07"
         from collections import defaultdict
         by_date = defaultdict(list)
         for rec in all_records:
@@ -4227,13 +4235,20 @@ async def get_games(date: str = None, refresh: bool = False):
             b_split = get_batter_split(name, opp_p_hand)
             pc = get_pitcher_stats(opp_p_name, 2026)
             p_split = get_pitcher_split(opp_p_name, bat_hand)
-
             bl5g = get_batter_l5g(name)
 
+            # XGBoost is PRIMARY - drives all rankings
+            xgb_result = predict_xgb(name, bat_hand, opp_p_name, opp_p_hand,
+                                     park_factor, batter_wx_mult, breakdown,
+                                     bc=bc, b8d=b8d, b_split=b_split, pc=pc, p_split=p_split)
+            xgb_prob = xgb_result if isinstance(xgb_result, (int, float)) else (xgb_result[0] if xgb_result else None)
+            display_prob = xgb_prob if (_xgb_trained and xgb_prob is not None) else hr_prob
+
             all_batters.append({
-                "name": name, "team": team, "hr_prob": hr_prob,
-                "xgb_prob": predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, batter_wx_mult, breakdown,
-                                         bc=bc, b8d=b8d, b_split=b_split, pc=pc, p_split=p_split),
+                "name": name, "team": team,
+                "hr_prob":  display_prob,
+                "rf_prob":  hr_prob,
+                "xgb_prob": xgb_prob,
                 "archetype": archetype, "trend": trend, "confidence": conf,
                 "reasons": reasons, "opp_pitcher": opp_p_name,
                 "bat_hand": bat_hand, "opp_p_hand": opp_p_hand,
