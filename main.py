@@ -1910,6 +1910,12 @@ async def check_lineup_confirmations():
                             "rotation_round": get_rotation_round(),
                             "rotation_day": get_rotation_day(),
                             "day_of_season": (date.today() - date(2026, 3, 20)).days,
+                            "xgb_prob": predict_xgb(name, bat_hand, opp_p_name, opp_p_hand,
+                                                    breakdown.get("park_factor",1.0),
+                                                    breakdown.get("weather_mult",1.0),
+                                                    breakdown,
+                                                    bc=bc2, b8d=b8d2, b_split=b_split2,
+                                                    pc=pc2, p_split=p_split2)[0],
                         })
 
                     # Top 8 from this team
