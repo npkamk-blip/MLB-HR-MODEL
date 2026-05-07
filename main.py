@@ -30,7 +30,7 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 GITHUB_REPO = "npkamk-blip/MLB-HR-MODEL"
 GITHUB_API = "https://api.github.com"
 
-# ── League Constants (update each April) ──
+# -- League Constants (update each April) --
 LEAGUE_CONSTANTS = {
     "lg_barrel_pct":   8.0,    # league avg barrel%
     "lg_hr9":          1.10,   # league avg HR/9
@@ -42,7 +42,7 @@ LEAGUE_CONSTANTS = {
     "hr_prob_cap":     28.0,   # hard cap on model output %
 }
 
-# ── Model Weights (learned from ML, updated every 45 days) ──
+# -- Model Weights (learned from ML, updated every 45 days) --
 # All start at 1.0 - neutral. Recalibration moves them based on what predicted HRs.
 # Exponent weights: effective_mult = raw_mult ** weight
 # weight > 1.0 = stat matters MORE than assumed
@@ -89,13 +89,13 @@ DEFAULT_WEIGHTS = {
 }
 _model_weights = DEFAULT_WEIGHTS.copy()
 
-# ── Random Forest model globals ──
+# -- Random Forest model globals --
 _rf_model    = None   # trained sklearn RandomForestClassifier
 _rf_features = []     # ordered feature list used at training time
 _rf_medians  = {}     # per-feature medians for missing value imputation
 _rf_trained  = False  # True once model is fitted and ready
 
-# ── XGBoost model globals ──
+# -- XGBoost model globals --
 _xgb_model    = None  # trained XGBClassifier
 _xgb_features = []    # feature list (same as RF + day_of_season)
 _xgb_medians  = {}    # per-feature medians
@@ -160,7 +160,7 @@ async def recalibrate_model(save_to_github: bool = True):
     global _model_weights, _rf_model, _rf_features, _rf_medians, _rf_trained
     import json
 
-    # ── Load all prediction records from GitHub ──
+    # -- Load all prediction records from GitHub --
     all_records = []
     try:
         if not GITHUB_TOKEN: return {"error": "No GitHub token"}
@@ -182,7 +182,7 @@ async def recalibrate_model(save_to_github: bool = True):
         print(f"RF data load error: {e}")
         return {"error": str(e)}
 
-    # ── Filter to completed records only ──
+    # -- Filter to completed records only --
     completed = [r for r in all_records if r.get("hit_hr") in [0, 1]]
     n = len(completed)
     if n < 50:
@@ -190,7 +190,7 @@ async def recalibrate_model(save_to_github: bool = True):
 
     print(f"Training Random Forest on {n} completed records")
 
-    # ── Feature set - all numeric fields stored in prediction records ──
+    # -- Feature set - all numeric fields stored in prediction records --
     FEATURES = [
         "barrel_pct_season", "barrel_pct_l8d",
         "la_season", "la_l8d",
@@ -211,7 +211,7 @@ async def recalibrate_model(save_to_github: bool = True):
         "bat_speed_l8d",
     ]
 
-    # ── Build X, y - impute missing with per-feature median ──
+    # -- Build X, y - impute missing with per-feature median --
     import statistics
     medians = {}
     for feat in FEATURES:
@@ -224,7 +224,7 @@ async def recalibrate_model(save_to_github: bool = True):
     X = [build_row(r) for r in completed]
     y = [int(r["hit_hr"]) for r in completed]
 
-    # ── RF params - scale with record count, never hardcoded ──
+    # -- RF params - scale with record count, never hardcoded --
     # More data = deeper trees + smaller leaves = model learns more nuance
     # n_estimators grows too: more records benefit from more trees
     if n < 200:
@@ -242,9 +242,9 @@ async def recalibrate_model(save_to_github: bool = True):
     else:
         max_depth, min_leaf, n_trees = 12, 3, 500
 
-    print(f"RF params: n={n} → depth={max_depth}, min_leaf={min_leaf}, trees={n_trees}")
+    print(f"RF params: n={n} -> depth={max_depth}, min_leaf={min_leaf}, trees={n_trees}")
 
-    # ── Train Random Forest ──
+    # -- Train Random Forest --
     try:
         from sklearn.ensemble import RandomForestClassifier
     except ImportError:
@@ -261,12 +261,12 @@ async def recalibrate_model(save_to_github: bool = True):
     )
     rf.fit(X, y)
 
-    # ── Feature importances ──
+    # -- Feature importances --
     importances = {feat: round(float(imp), 4)
                    for feat, imp in zip(FEATURES, rf.feature_importances_)}
     ranked = sorted(importances.items(), key=lambda x: x[1], reverse=True)
 
-    # ── RF cross-val AUC - same metric as XGBoost for honest comparison ──
+    # -- RF cross-val AUC - same metric as XGBoost for honest comparison --
     try:
         from sklearn.model_selection import cross_val_score
         import numpy as np
@@ -276,16 +276,16 @@ async def recalibrate_model(save_to_github: bool = True):
         rf_auc = 0.0
     oob_score = rf_auc  # stored as oob_score for backwards compat but now AUC
 
-    # ── HR rate in training data (calibration reference) ──
+    # -- HR rate in training data (calibration reference) --
     hr_rate = round(sum(y) / len(y) * 100, 2)
 
-    # ── Persist model state ──
+    # -- Persist model state --
     _rf_model    = rf
     _rf_features = FEATURES
     _rf_medians  = medians
     _rf_trained  = True
 
-    # ── Save weights/metadata to GitHub ──
+    # -- Save weights/metadata to GitHub --
     new_weights = _model_weights.copy()
     new_weights["last_calibrated"]   = date.today().isoformat()
     new_weights["records_used"]      = n
@@ -349,7 +349,7 @@ async def train_xgboost(save_to_github: bool = True):
     global _xgb_model, _xgb_features, _xgb_medians, _xgb_trained, _xgb_oob
     import json
 
-    # ── Load records (same as RF) ──
+    # -- Load records (same as RF) --
     all_records = []
     try:
         if not GITHUB_TOKEN: return {"error": "No GitHub token"}
@@ -373,7 +373,7 @@ async def train_xgboost(save_to_github: bool = True):
     if n < 50:
         return {"error": f"Not enough data - need 50+, have {n}"}
 
-    # ── Feature set - RF features + day_of_season ──
+    # -- Feature set - RF features + day_of_season --
     FEATURES = [
         "barrel_pct_season", "barrel_pct_l8d",
         "la_season", "la_l8d",
@@ -408,7 +408,7 @@ async def train_xgboost(save_to_github: bool = True):
     X = [build_row(r) for r in completed]
     y = [int(r["hit_hr"]) for r in completed]
 
-    # ── Train XGBoost ──
+    # -- Train XGBoost --
     try:
         from xgboost import XGBClassifier
     except ImportError:
@@ -433,7 +433,7 @@ async def train_xgboost(save_to_github: bool = True):
     )
     xgb.fit(X, y)
 
-    # ── Cross-val score for honest RF comparison ──
+    # -- Cross-val score for honest RF comparison --
     try:
         from sklearn.model_selection import cross_val_score
         import numpy as np
@@ -442,7 +442,7 @@ async def train_xgboost(save_to_github: bool = True):
     except Exception:
         xgb_cv = 0.0
 
-    # ── Feature importances ──
+    # -- Feature importances --
     importances = {feat: round(float(imp), 4)
                    for feat, imp in zip(FEATURES, xgb.feature_importances_)}
     ranked = sorted(importances.items(), key=lambda x: x[1], reverse=True)
@@ -719,7 +719,7 @@ PITCH_DISPLAY = {
     "wfc":"Cutter","wch":"Changeup","wcu":"Curveball","wfs":"Splitter"
 }
 
-# ── Data Loading ──
+# -- Data Loading --
 async def fetch_savant_csv(url: str, session: httpx.AsyncClient) -> pd.DataFrame:
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
     try:
@@ -1398,7 +1398,7 @@ async def daily_refresh_loop():
             except Exception as e:
                 print(f"Model log error: {e}")
 
-# ── GitHub Storage ──
+# -- GitHub Storage --
 async def github_get_file(path: str):
     """Get a file from GitHub repo, returns (content_str, sha) or (None, None)"""
     if not GITHUB_TOKEN: return None, None
@@ -1451,7 +1451,7 @@ async def save_daily_predictions():
     """
     if not _cache["ready"]: return
 
-    # ── Ensure 8d data is fresh before saving ──
+    # -- Ensure 8d data is fresh before saving --
     needs_refresh = False
     last_8d = _cache.get("last_8d_update")
     if not last_8d:
@@ -1639,7 +1639,7 @@ async def save_daily_predictions():
                             "lineup_source": lineup_src,
                             # Model output
                             "model_hr_pct": hr_prob, "hit_hr": None,
-                            # ── BATTER SEASON ──
+                            # -- BATTER SEASON --
                             "barrel_pct_season": barrel_s,
                             "la_season": la_s,
                             "ev_season": ev_s,
@@ -1648,7 +1648,7 @@ async def save_daily_predictions():
                             "k_pct_season": k_s,
                             "hr_season": int(bc2.get("hr",0)),
                             "pa_season": pa26,
-                            # ── BATTER L8D ──
+                            # -- BATTER L8D --
                             "barrel_pct_l8d": barrel_l8d,
                             "la_l8d": la_l8d,
                             "ev_l8d": ev_l8d,
@@ -1661,31 +1661,31 @@ async def save_daily_predictions():
                             "xslg_gap_l8d": xslg_gap_l8d,
                             "xwoba_l8d": xwoba_l8d,
                             "bat_speed_l8d": bat_speed_l8d,
-                            # ── BATTER SPLIT vs PITCHER HAND ──
+                            # -- BATTER SPLIT vs PITCHER HAND --
                             "iso_vs_hand": iso_split,
                             "slg_vs_hand": slg_split,
                             "hr_vs_hand": hr_split,
                             "pa_vs_hand": pa_split,
-                            # ── MODEL USED (blended) ──
+                            # -- MODEL USED (blended) --
                             "barrel_pct_used": breakdown.get("barrel_use",0),
                             "la_used": breakdown.get("la_use",0),
-                            # ── PITCHER SEASON ──
+                            # -- PITCHER SEASON --
                             "pit_hr9_season": pit_hr9_s,
                             "pit_era_season": pit_era_s,
                             "pit_hard_hit_season": pit_hh_s,
                             "pit_k9_season": pit_k9_s,
                             "pit_ip_season": round(ip26,1),
-                            # ── PITCHER SPLIT vs BATTER HAND ──
+                            # -- PITCHER SPLIT vs BATTER HAND --
                             "pit_hr9_vs_hand": pit_hr9_vs,
                             "pit_slg_vs_hand": pit_slg_vs,
                             "pit_k_vs_hand": pit_k_vs,
                             "pit_ip_vs_hand": pit_ip_vs,
-                            # ── CONTEXT ──
+                            # -- CONTEXT --
                             "park_factor": breakdown.get("park_factor",1.0),
                             "weather_mult": breakdown.get("weather_mult",1.0),
                             "bullpen_hr9": breakdown.get("bullpen_hr9",1.2),
                             "bullpen_vuln": breakdown.get("bullpen_vuln",1.0),
-                            # ── MODEL MULTIPLIERS ──
+                            # -- MODEL MULTIPLIERS --
                             "barrel_mult": breakdown.get("barrel_mult",1.0),
                             "la_mult": breakdown.get("la_mult",1.0),
                             "pit_vuln_mult": breakdown.get("pit_vuln_mult",1.0),
@@ -1693,7 +1693,7 @@ async def save_daily_predictions():
                             "pit_platoon_mult": breakdown.get("pit_platoon_mult",1.0),
                             "hot_cold_mult": breakdown.get("hot_cold_mult",1.0),
                             "k_mult": breakdown.get("k_mult",1.0),
-                            # ── PITCH DATA ──
+                            # -- PITCH DATA --
                             "pitch_matchup_score": round(pitch_score,2),
                             "pitch1_type": pitch1.get("name",""),
                             "pitch1_usage": pitch1.get("usage",0),
@@ -1705,25 +1705,25 @@ async def save_daily_predictions():
                                 (pitch1.get("usage",0)/100 * (pitch1.get("batter_rv",0) - pitch1.get("pit_rv",0)) if pitch1 else 0) +
                                 (pitch2.get("usage",0)/100 * (pitch2.get("batter_rv",0) - pitch2.get("pit_rv",0)) if pitch2 else 0), 2
                             ),
-                            # ── OPPORTUNITY ──
+                            # -- OPPORTUNITY --
                             "games_played": pa_data.get("games",0),
-                            # ── ROTATION METADATA ──
+                            # -- ROTATION METADATA --
                             "rotation_round": get_rotation_round(),
                             "rotation_day": get_rotation_day(),
-                            # ── ROUND 2 CANDIDATES (stored from day 1, evaluated at day 45) ──
+                            # -- ROUND 2 CANDIDATES (stored from day 1, evaluated at day 45) --
                             "fb_pct_season": round(blend(bc2.get("fb_pct",0), 0, bwc2), 1),
                             "pull_pct_season": round(blend(bc2.get("pull_pct",0), 0, bwc2), 1),
                             "pit_fb_pct_allowed": round(blend(pc2.get("fb_pct",0), 0), 1),
                             "hard_hit_l8d": hh_l8d,
                             "k_pct_l8d": round(b8d2.get("k_pct",0), 1),
-                            # ── ROUND 3 CANDIDATES ──
+                            # -- ROUND 3 CANDIDATES --
                             "pit_era_season": pit_era_s,
                             "pit_era_diff": round(pit_era_s - 4.20, 2) if pit_era_s > 0 else 0,
                             "pit_hr_fb_pct": round(blend(pc2.get("hr_fb_pct",0), 0), 1),
                             "lineup_k_pct": 0,  # populated at game time in future
-                            # ── ROUND 4 CANDIDATES ──
+                            # -- ROUND 4 CANDIDATES --
                             "pit_k9_season": pit_k9_s,
-                            # ── XGBOOST FEATURES ──
+                            # -- XGBOOST FEATURES --
                             "day_of_season": (date.today() - date(2026, 3, 20)).days,
                         })
                     # Take top 8 from this game side by model probability
@@ -2007,7 +2007,7 @@ async def record_results(target_date: str):
                 if hit:
                     rec["hit_hr"] = 1
                     updated += 1
-                    print(f"Corrected DNP→HR: {rec['name']} actually hit a HR")
+                    print(f"Corrected DNP->HR: {rec['name']} actually hit a HR")
                 continue
 
             # Fix false negatives - recorded as 0 but actually hit a HR
@@ -2019,7 +2019,7 @@ async def record_results(target_date: str):
                 if hit:
                     rec["hit_hr"] = 1
                     updated += 1
-                    print(f"Corrected 0→HR: {rec['name']} actually hit a HR")
+                    print(f"Corrected 0->HR: {rec['name']} actually hit a HR")
                 continue
 
             if rec.get("hit_hr") is not None:
@@ -2108,7 +2108,7 @@ async def startup_catchup():
     except Exception as e:
         print(f"Startup catchup (predictions) error: {e}")
 
-# ── Player matching ──
+# -- Player matching --
 def fuzzy_match(name: str, df: pd.DataFrame, col="name"):
     if df is None or df.empty or col not in df.columns:
         return None
@@ -2148,7 +2148,7 @@ def gs(row, *keys, default=0.0):
                 pass
     return default
 
-# ── Stat getters ──
+# -- Stat getters --
 def get_batter_stats(name, year=2026):
     """2026-only. year param kept for call-site compatibility."""
     df = _cache["bat_2026"]
@@ -2178,11 +2178,11 @@ def get_batter_8d(name):
     2. bat_l8d_hr cache - MLB API lastXGames=8
        gives: PA, HR, ISO, SLG, AVG, K% (reliable counting stats)
     Statcast source is preferred for Statcast metrics, MLB API for counting stats."""
-    # ── Statcast aggregated data (pitch-by-pitch) ──
+    # -- Statcast aggregated data (pitch-by-pitch) --
     df = _cache["bat_8d"]
     row = fuzzy_match(name, df)
 
-    # ── MLB API counting stats (reliable) ──
+    # -- MLB API counting stats (reliable) --
     nl = name.lower().strip()
     mlb_data = _cache.get("bat_l8d_hr", {})
     mlb = mlb_data.get(nl)
@@ -2431,7 +2431,7 @@ def compute_pitch_matchup(pitcher_name, batter_name):
         })
     return round(max(min(total_bonus, 8), -8), 2), details
 
-# ── Model helpers ──
+# -- Model helpers --
 def blend(v1, v2, w1=1.0, w2=0.0):
     """Returns v1 only - 2025 data removed, w2 always 0."""
     return float(v1 or 0)
@@ -2519,11 +2519,11 @@ def compute_hr_prob_multiplicative(
         name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
     """
     Multiplicative HR probability model.
-    P(HR) = Base Rate × Barrel% × LA × Pitcher Vuln × Batter Platoon ×
-            Pitcher Platoon × Park × Weather × Hot/Cold × K% penalty
+    P(HR) = Base Rate x Barrel% x LA x Pitcher Vuln x Batter Platoon x
+            Pitcher Platoon x Park x Weather x Hot/Cold x K% penalty
     Hard cap: 28%
     """
-    # ── Data fetch ──
+    # -- Data fetch --
     bc  = get_batter_stats(name, 2026)
     b8d = get_batter_8d(name)
     b_split_vs_hand = get_batter_split(name, opp_p_hand)   # batter vs pitcher hand
@@ -2539,7 +2539,7 @@ def compute_hr_prob_multiplicative(
     has_8d = b8d.get("pa", 0) >= 3
     total_pa = pa_26
 
-    # ── Step 1: Base HR rate (per-PA, relative ranking model) ──
+    # -- Step 1: Base HR rate (per-PA, relative ranking model) --
     # base_rate = HR/PA blended between 2026 season and 2025 career
     # Output is a relative score - higher = more likely than others today
     # Not a literal per-game probability. Rankings matter more than absolute values.
@@ -2573,7 +2573,7 @@ def compute_hr_prob_multiplicative(
 
     running = base_rate
 
-    # ── Step 2: Barrel% - season + L8D weighted separately via safe_mult ──
+    # -- Step 2: Barrel% - season + L8D weighted separately via safe_mult --
     LG_BARREL = LEAGUE_CONSTANTS["lg_barrel_pct"]
     barrel_season = blend(bc.get("barrel_pct", 0), 0, bwc)
     barrel_l8d    = b8d.get("barrel_pct", 0) if has_8d else 0
@@ -2587,7 +2587,7 @@ def compute_hr_prob_multiplicative(
     barrel_use = barrel_season if barrel_season > 0 else LG_BARREL
     running *= barrel_mult
 
-    # ── Step 3: Launch angle - season + L8D weighted separately via safe_mult ──
+    # -- Step 3: Launch angle - season + L8D weighted separately via safe_mult --
     la_season = blend(bc.get("launch_angle", 0), 0, bwc)
     la_l8d    = b8d.get("launch_angle", 0) if has_8d else 0
 
@@ -2612,7 +2612,7 @@ def compute_hr_prob_multiplicative(
     la_use = la_season if la_season > 0 else 20.0
     running *= la_mult
 
-    # ── Step 4: Pitcher vulnerability - season + vs-hand via safe_mult ──
+    # -- Step 4: Pitcher vulnerability - season + vs-hand via safe_mult --
     pc = get_pitcher_stats(opp_p_name, 2026)
     ip_26 = pc.get("ip", 0)
     pwc = 1.0
@@ -2638,7 +2638,7 @@ def compute_hr_prob_multiplicative(
     pit_vuln_mult = max(min(pit_vuln_mult, 1.80), 0.50)
     running *= pit_vuln_mult
 
-    # ── Step 5: Batter platoon - ISO vs hand via safe_mult ──
+    # -- Step 5: Batter platoon - ISO vs hand via safe_mult --
     iso_vs_hand   = b_split_vs_hand.get("iso", 0)
     iso_overall   = blend(bc.get("iso", 0), 0, bwc)
     split_pa      = b_split_vs_hand.get("pa", 0)
@@ -2651,7 +2651,7 @@ def compute_hr_prob_multiplicative(
         bat_platoon_mult = 1.0
     running *= bat_platoon_mult
 
-    # ── Step 6: Pitcher platoon - SLG vs hand via safe_mult ──
+    # -- Step 6: Pitcher platoon - SLG vs hand via safe_mult --
     slg_vs_bat      = p_split_vs_bat.get("slg", 0)
     p_split_opp     = get_pitcher_split(opp_p_name, "L" if bat_hand == "R" else "R")
     split_ip_vs_bat = p_split_vs_bat.get("ip", 0)
@@ -2665,17 +2665,17 @@ def compute_hr_prob_multiplicative(
         pit_platoon_mult = 1.0
     running *= pit_platoon_mult
 
-    # ── Step 7: Park multiplier ──
+    # -- Step 7: Park multiplier --
     park_w = W("park_w")
     park_mult_applied = park_factor ** park_w if park_factor > 0 else 1.0
     running *= park_mult_applied
 
-    # ── Step 8: Weather multiplier ──
+    # -- Step 8: Weather multiplier --
     weather_w = W("weather_w")
     weather_mult_applied = weather_mult ** weather_w if weather_mult > 0 else 1.0
     running *= weather_mult_applied
 
-    # ── Step 9: Hot/cold - display signal only, NOT in model ──
+    # -- Step 9: Hot/cold - display signal only, NOT in model --
     # Removed from calculation - L8D HR count is shown on the table as a visual signal
     # ML will determine if it actually matters. Keeping calc for breakdown display only.
     hot_cold_mult = 1.0
@@ -2689,7 +2689,7 @@ def compute_hr_prob_multiplicative(
     # NOT applied to running - hot_cold_mult stored for ML analysis only
     # running *= hot_cold_mult  <-- removed
 
-    # ── Step 10: K% penalty - safe_mult aware ──
+    # -- Step 10: K% penalty - safe_mult aware --
     k_season = blend(bc.get("k_pct", 0), 0, bwc)
     k_w = W("k_pct_w")
     if k_season >= 35:   k_mult = 0.88 ** k_w
@@ -2699,7 +2699,7 @@ def compute_hr_prob_multiplicative(
     if k_season == 0:    k_mult = 1.0  # missing K% - neutral
     running *= k_mult
 
-    # ── Hard cap + bullpen blend ──
+    # -- Hard cap + bullpen blend --
     LG_BULLPEN_HR9 = LEAGUE_CONSTANTS["lg_bullpen_hr9"]
     bullpen_data   = _cache.get("team_bullpen", {}).get(home_team, {})
     bullpen_hr9    = bullpen_data.get("hr9", LG_BULLPEN_HR9)
@@ -2715,7 +2715,7 @@ def compute_hr_prob_multiplicative(
 
     hr_prob = round(min(running * 100, LEAGUE_CONSTANTS["hr_prob_cap"]), 1)
 
-    # ── Build breakdown for frontend ──
+    # -- Build breakdown for frontend --
     pitch_bonus, pitch_details = compute_pitch_matchup(opp_p_name, name)
     archetype = get_archetype(barrel_season, k_season,
                               blend(bc.get("fb_pct", 0), 0, bwc),
@@ -2830,7 +2830,7 @@ def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, 
     if not _rf_trained or _rf_model is None:
         return mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
-    # ── Build RF feature vector ──
+    # -- Build RF feature vector --
     try:
         bc  = get_batter_stats(name, 2026)
         b8d = get_batter_8d(name)
@@ -3119,7 +3119,7 @@ def _compute_hr_probability_legacy(name, bat_hand, opp_p_name, opp_p_hand, park_
     }
     return hr_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
-# ── Weather ──
+# -- Weather --
 async def fetch_weather(lat, lon, game_time_utc):
     try:
         # Default to 1pm local (most common day game time)
@@ -3345,7 +3345,7 @@ def pit_display(p_name, p_hand):
     }
 
 
-# ── API Endpoints ──
+# -- API Endpoints --
 @app.get("/dashboard")
 async def get_dashboard():
     """
@@ -3356,10 +3356,10 @@ async def get_dashboard():
         return {"error": "GitHub not configured"}
     import json
     try:
-        # ── Load last 30 days of prediction records ──
+        # -- Load last 30 days of prediction records --
         url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions"
         headers = {"Authorization": f"token {GITHUB_TOKEN}"}
-        # ── Load top8 files for hit rate tracking (locked-in daily picks) ──
+        # -- Load top8 files for hit rate tracking (locked-in daily picks) --
         top8_url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/top8"
         async with httpx.AsyncClient(timeout=15) as client:
             r_top8 = await client.get(top8_url, headers=headers)
@@ -3383,7 +3383,7 @@ async def get_dashboard():
                 dates.append(d)
             except: continue
 
-        # ── Build top8 by date - prefer top8 files, fallback to predictions ──
+        # -- Build top8 by date - prefer top8 files, fallback to predictions --
         top8_by_date = {}
         for f in sorted(top8_files, key=lambda x: x["name"], reverse=True)[:30]:
             if not f["name"].endswith(".json"): continue
@@ -3395,7 +3395,7 @@ async def get_dashboard():
                 top8_by_date[d] = recs
             except: continue
 
-        # ── Hit rate calculations ──
+        # -- Hit rate calculations --
         # Group by date, rank by model_hr_pct, calculate hit rates by rank tier
         from collections import defaultdict
         by_date = defaultdict(list)
@@ -3466,7 +3466,7 @@ async def get_dashboard():
             "top8_total_hits":    top8_hits,
         }
 
-        # ── Today's top 8 - use live games cache (projected + confirmed) ──
+        # -- Today's top 8 - use live games cache (projected + confirmed) --
         today = date.today().isoformat()
         top8_today = []
         # Try live games cache first - always has projected lineups
@@ -3857,9 +3857,9 @@ async def coverage_check(days: int = 7):
                 "populated":  populated,
                 "missing":    missing,
                 "pct":        round(populated / n * 100, 1),
-                "status":     "✅" if populated/n >= 0.80
-                              else "⚠️" if populated/n >= 0.50
-                              else "❌"
+                "status":     "?" if populated/n >= 0.80
+                              else "??" if populated/n >= 0.50
+                              else "?"
             }
 
         # Sort by coverage % ascending so worst fields show first
@@ -4076,7 +4076,7 @@ async def get_games(date: str = None, refresh: bool = False):
     today = date if date else date_cls.today().isoformat()
     date = None  # clear to avoid shadowing
 
-    # ── Response cache - return cached result if < 15 min old and not forced refresh ──
+    # -- Response cache - return cached result if < 15 min old and not forced refresh --
     cached = _games_cache.get(today)
     if cached and not refresh and (datetime.now() - cached["ts"]).total_seconds() < GAMES_CACHE_TTL:
         return cached["data"]
@@ -4090,7 +4090,7 @@ async def get_games(date: str = None, refresh: bool = False):
     dates = data.get("dates", [])
     if not dates: return {"games": [], "date": today, "loading": False}
 
-    # ── Batch-fetch ALL player IDs needed upfront ──
+    # -- Batch-fetch ALL player IDs needed upfront --
     all_player_ids = set()
     games_list = dates[0].get("games", [])
     for game in games_list:
@@ -4252,7 +4252,7 @@ async def get_games(date: str = None, refresh: bool = False):
         home_lineup_ordered = [b for b in all_batters if b["team"] == home_team]
         all_batters.sort(key=lambda x: x["hr_prob"], reverse=True)
 
-        # ── Game Totals ──
+        # -- Game Totals --
         park_factor_neutral = 1.0  # neutral for runs (park factors are HR-specific)
         away_lineup_hr_sum  = round(sum(b["hr_prob"] for b in away_lineup_ordered) / 100, 3)
         home_lineup_hr_sum  = round(sum(b["hr_prob"] for b in home_lineup_ordered) / 100, 3)
@@ -4271,7 +4271,7 @@ async def get_games(date: str = None, refresh: bool = False):
         home_runs_exp = round((away_th.get("runs_per_g", 4.5) * away_starter_factor * wx_mult), 2)
         total_runs_exp = round(away_runs_exp + home_runs_exp, 2)
 
-        # ── Strikeouts + K Props ──
+        # -- Strikeouts + K Props --
         away_lineup_k = round(sum(b["season"].get("k", 0) for b in away_lineup_ordered) / max(len(away_lineup_ordered), 1), 1)
         home_lineup_k = round(sum(b["season"].get("k", 0) for b in home_lineup_ordered) / max(len(home_lineup_ordered), 1), 1)
         away_pit_k9  = away_pit_stats.get("k9", 0)
@@ -4484,7 +4484,7 @@ async def research(player: str, date: str = None):
     return {"player": stats, "matchup": matchup, "date": today}
 
 
-# ── /refresh-8d ──────────────────────────────────────────────────────────────
+# -- /refresh-8d --------------------------------------------------------------
 @app.get("/refresh-8d")
 async def manual_refresh_8d():
     """Manually trigger 8-day rolling data refresh (Statcast + MLB API)."""
@@ -4493,7 +4493,7 @@ async def manual_refresh_8d():
     return {"status": "8d refresh triggered", "ts": _cache["last_8d_update"]}
 
 
-# ── /debug-arsenal ───────────────────────────────────────────────────────────
+# -- /debug-arsenal -----------------------------------------------------------
 @app.get("/debug-arsenal")
 async def debug_arsenal(player: str = "Freddie Freeman", pitcher: str = "Logan Webb"):
     """Debug bat_arsenal and pit_arsenal column names and matchup values."""
@@ -4514,11 +4514,11 @@ async def debug_arsenal(player: str = "Freddie Freeman", pitcher: str = "Logan W
     }
 
 
-# ── Parlay combination tracking ───────────────────────────────────────────────
+# -- Parlay combination tracking -----------------------------------------------
 async def save_parlay_combinations():
     """
     Called at 12pm daily after save_daily_predictions().
-    Takes top picks (≥7%), generates all 2-leg and 3-leg combos,
+    Takes top picks (?7%), generates all 2-leg and 3-leg combos,
     saves to data/parlays/{date}.json on GitHub.
     """
     if not GITHUB_TOKEN: return
