@@ -3799,6 +3799,8 @@ async def debug_boxscore(target_date: str = None):
         return {"date": d, "games": games}
     except Exception as e:
         return {"error": str(e)}
+
+@app.get("/coverage-check")
 async def coverage_check(days: int = 7):
     """
     Data health check - for each feature field in prediction records,
