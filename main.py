@@ -1864,7 +1864,7 @@ async def check_lineup_confirmations():
                                               bc=bc2, b8d=b8d2, b_split=b_split2,
                                               pc=pc2, p_split=p_split2)
                         xgb_save2 = xgb_r2 if isinstance(xgb_r2, (int, float)) else (xgb_r2[0] if xgb_r2 else None)
-                        save_prob2 = xgb_save2 if (_xgb_trained and xgb_save2 is not None) else hr_prob
+                        save_prob2 = xgb_save2 if xgb_save2 is not None else None
 
                         game_records.append({
                             "date": today, "name": name, "team": team,
@@ -3489,52 +3489,54 @@ async def get_dashboard():
             "top8_total_hits":    top8_hits,
         }
 
-        # -- Today's top 8 - use live games cache (projected + confirmed) --
+        # -- Today's top 8 - projected all day, scratched when confirmed --
         today = date.today().isoformat()
         top8_today = []
-        # Try live games cache first - always has projected lineups
         try:
             cached = _games_cache.get(today)
-            if cached and cached.get("data"):
-                all_live = cached["data"].get("top_hr_candidates", [])
-                top8_today = sorted(
-                    [b for b in all_live if b.get("hr_prob") is not None],
-                    key=lambda x: x.get("hr_prob", 0), reverse=True
-                )[:8]
-                for b in top8_today:
-                    if "model_hr_pct" not in b:
-                        b["model_hr_pct"] = b.get("hr_prob", 0)
-        except: pass
-        # Fallback to GitHub predictions file
-        if not top8_today:
-            today_content, _ = await github_get_file(f"data/predictions/{today}.json")
-            if today_content:
-                try:
-                    today_recs = json.loads(today_content)
-                    top8_today = sorted(
-                        [r for r in today_recs if r.get("model_hr_pct") is not None],
-                        key=lambda x: x.get("model_hr_pct", 0), reverse=True
-                    )[:8]
-                except: pass
-        # Last fallback - trigger games load if cache empty
-        if not top8_today and _cache.get("ready"):
-            try:
+            if not cached or not cached.get("data"):
                 games_data = await get_games(today, False)
-                all_live = games_data.get("top_hr_candidates", []) if isinstance(games_data, dict) else []
-                top8_today = sorted(
-                    [b for b in all_live if b.get("hr_prob") is not None],
-                    key=lambda x: x.get("hr_prob", 0), reverse=True
-                )[:8]
+                cached = _games_cache.get(today)
+
+            if cached and cached.get("data"):
+                games_list = cached["data"].get("games", [])
+
+                # Collect ALL batters from ALL games
+                all_live = []
+                for game in games_list:
+                    all_live.extend(game.get("top_hr_candidates", []))
+
+                # Build confirmed lineup sets per team
+                confirmed_by_team = {}
+                for game in games_list:
+                    if game.get("lineup_away_status") == "confirmed":
+                        confirmed_by_team[game.get("away", "")] = set(
+                            b.get("name","") for b in game.get("away_lineup", []))
+                    if game.get("lineup_home_status") == "confirmed":
+                        confirmed_by_team[game.get("home", "")] = set(
+                            b.get("name","") for b in game.get("home_lineup", []))
+
+                # Filter scratched players, rank globally, XGBoost only
+                def is_available(b):
+                    team = b.get("team","")
+                    if team in confirmed_by_team:
+                        return b.get("name","") in confirmed_by_team[team]
+                    return True
+
+                available = [b for b in all_live
+                             if is_available(b) and b.get("hr_prob") is not None]
+                top8_today = sorted(available, key=lambda x: x.get("hr_prob", 0), reverse=True)[:8]
                 for b in top8_today:
-                    if "model_hr_pct" not in b:
-                        b["model_hr_pct"] = b.get("hr_prob", 0)
-            except: pass
+                    b["model_hr_pct"] = b.get("hr_prob", 0)
+
+        except Exception as e:
+            print(f"Dashboard top8 error: {e}")
 
         return {
             "stats":      stats,
             "top8_today": top8_today,
             "slate_days": slate_days[:14],  # last 14 days for history display
-            "model_type": "random_forest" if _rf_trained else "multiplicative",
+            "model_type": "xgboost" if _xgb_trained else "random_forest",
             "xgb_trained": _xgb_trained,
             "xgb_cv":     _xgb_oob,
             "rf_oob":     _model_weights.get("oob_score", 0),
@@ -4242,7 +4244,7 @@ async def get_games(date: str = None, refresh: bool = False):
                                      park_factor, batter_wx_mult, breakdown,
                                      bc=bc, b8d=b8d, b_split=b_split, pc=pc, p_split=p_split)
             xgb_prob = xgb_result if isinstance(xgb_result, (int, float)) else (xgb_result[0] if xgb_result else None)
-            display_prob = xgb_prob if (_xgb_trained and xgb_prob is not None) else hr_prob
+            display_prob = xgb_prob  # XGBoost ONLY - no RF fallback
 
             all_batters.append({
                 "name": name, "team": team,
