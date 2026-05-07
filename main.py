@@ -3353,6 +3353,13 @@ async def get_dashboard():
         # ── Load last 30 days of prediction records ──
         url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions"
         headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+        # ── Load top8 files for hit rate tracking (locked-in daily picks) ──
+        top8_url = f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/top8"
+        async with httpx.AsyncClient(timeout=15) as client:
+            r_top8 = await client.get(top8_url, headers=headers)
+        top8_files = r_top8.json() if r_top8.is_success and isinstance(r_top8.json(), list) else []
+
+        # Also load predictions for overall hit rate stats
         async with httpx.AsyncClient(timeout=15) as client:
             r = await client.get(url, headers=headers)
         files = r.json() if r.is_success else []
@@ -3368,6 +3375,18 @@ async def get_dashboard():
                 for rec in recs: rec["_date"] = d
                 all_records.extend(recs)
                 dates.append(d)
+            except: continue
+
+        # ── Build top8 by date - prefer top8 files, fallback to predictions ──
+        top8_by_date = {}
+        for f in sorted(top8_files, key=lambda x: x["name"], reverse=True)[:30]:
+            if not f["name"].endswith(".json"): continue
+            d = f["name"].replace(".json","")
+            content, _ = await github_get_file(f"data/top8/{f['name']}")
+            if not content: continue
+            try:
+                recs = json.loads(content)
+                top8_by_date[d] = recs
             except: continue
 
         # ── Hit rate calculations ──
@@ -3389,8 +3408,18 @@ async def get_dashboard():
         slate_days = []
         for d, recs in sorted(by_date.items(), reverse=True):
             ranked = sorted(recs, key=lambda x: x.get("model_hr_pct",0), reverse=True)
-            t8 = ranked[:8]
-            t4 = ranked[:4]
+            # Use locked-in top8 file if available, otherwise recalculate
+            if d in top8_by_date:
+                t8_recs = top8_by_date[d]
+                # Match outcomes from predictions
+                name_to_outcome = {r["name"]: r.get("hit_hr") for r in recs}
+                for r in t8_recs:
+                    if r.get("hit_hr") is None and r.get("name") in name_to_outcome:
+                        r["hit_hr"] = name_to_outcome[r["name"]]
+                t8 = t8_recs
+            else:
+                t8 = ranked[:8]
+            t4 = sorted(t8, key=lambda x: x.get("model_hr_pct",0), reverse=True)[:4]
             t8_hr = sum(1 for r in t8 if r.get("hit_hr")==1)
             t4_hr = sum(1 for r in t4 if r.get("hit_hr")==1)
             all_hr = sum(1 for r in ranked if r.get("hit_hr")==1)
@@ -3431,18 +3460,45 @@ async def get_dashboard():
             "top8_total_hits":    top8_hits,
         }
 
-        # ── Today's top 8 ──
+        # ── Today's top 8 - use live games cache (projected + confirmed) ──
         today = date.today().isoformat()
-        today_content, _ = await github_get_file(f"data/predictions/{today}.json")
         top8_today = []
-        if today_content:
-            try:
-                today_recs = json.loads(today_content)
-                ranked_today = sorted(
-                    [r for r in today_recs if r.get("model_hr_pct") is not None],
-                    key=lambda x: x.get("model_hr_pct", 0), reverse=True
+        # Try live games cache first - always has projected lineups
+        try:
+            cached = _games_cache.get(today)
+            if cached and cached.get("data"):
+                all_live = cached["data"].get("top_hr_candidates", [])
+                top8_today = sorted(
+                    [b for b in all_live if b.get("hr_prob") is not None],
+                    key=lambda x: x.get("hr_prob", 0), reverse=True
                 )[:8]
-                top8_today = ranked_today
+                for b in top8_today:
+                    if "model_hr_pct" not in b:
+                        b["model_hr_pct"] = b.get("hr_prob", 0)
+        except: pass
+        # Fallback to GitHub predictions file
+        if not top8_today:
+            today_content, _ = await github_get_file(f"data/predictions/{today}.json")
+            if today_content:
+                try:
+                    today_recs = json.loads(today_content)
+                    top8_today = sorted(
+                        [r for r in today_recs if r.get("model_hr_pct") is not None],
+                        key=lambda x: x.get("model_hr_pct", 0), reverse=True
+                    )[:8]
+                except: pass
+        # Last fallback - trigger games load if cache empty
+        if not top8_today and _cache.get("ready"):
+            try:
+                games_data = await get_games(today, False)
+                all_live = games_data.get("top_hr_candidates", []) if isinstance(games_data, dict) else []
+                top8_today = sorted(
+                    [b for b in all_live if b.get("hr_prob") is not None],
+                    key=lambda x: x.get("hr_prob", 0), reverse=True
+                )[:8]
+                for b in top8_today:
+                    if "model_hr_pct" not in b:
+                        b["model_hr_pct"] = b.get("hr_prob", 0)
             except: pass
 
         return {
@@ -3458,6 +3514,65 @@ async def get_dashboard():
         print(f"Dashboard error: {e}")
         import traceback; traceback.print_exc()
         return {"error": str(e)}
+
+
+@app.get("/top8")
+async def get_top8(date: str = None):
+    """
+    Return the top 8 picks for any date.
+    Reads from data/top8/ file if available, falls back to predictions file.
+    Usage: /top8 (today) or /top8?date=2026-05-06
+    """
+    import json
+    d = date or datetime.now().strftime("%Y-%m-%d")
+    # Try top8 file first
+    content, _ = await github_get_file(f"data/top8/{d}.json")
+    if content:
+        try:
+            recs = json.loads(content)
+            return {
+                "date": d,
+                "source": "top8_file",
+                "count": len(recs),
+                "picks": [{
+                    "rank":       i+1,
+                    "name":       r.get("name"),
+                    "team":       r.get("team"),
+                    "opp_pitcher":r.get("opp_pitcher"),
+                    "hr_prob":    r.get("model_hr_pct") or r.get("hr_prob"),
+                    "xgb_prob":   r.get("xgb_prob"),
+                    "hit_hr":     r.get("hit_hr"),
+                    "lineup_source": r.get("lineup_source","unknown"),
+                } for i,r in enumerate(recs)]
+            }
+        except: pass
+    # Fallback to predictions file
+    content, _ = await github_get_file(f"data/predictions/{d}.json")
+    if content:
+        try:
+            recs = json.loads(content)
+            top8 = sorted(
+                [r for r in recs if r.get("model_hr_pct") or r.get("hr_prob")],
+                key=lambda x: x.get("model_hr_pct") or x.get("hr_prob",0),
+                reverse=True
+            )[:8]
+            return {
+                "date": d,
+                "source": "predictions_file_recalculated",
+                "count": len(top8),
+                "picks": [{
+                    "rank":       i+1,
+                    "name":       r.get("name"),
+                    "team":       r.get("team"),
+                    "opp_pitcher":r.get("opp_pitcher"),
+                    "hr_prob":    r.get("model_hr_pct") or r.get("hr_prob"),
+                    "xgb_prob":   r.get("xgb_prob"),
+                    "hit_hr":     r.get("hit_hr"),
+                    "lineup_source": r.get("lineup_source","unknown"),
+                } for i,r in enumerate(top8)]
+            }
+        except: pass
+    return {"date": d, "error": "No data found for this date"}
 
 
 @app.get("/history")
