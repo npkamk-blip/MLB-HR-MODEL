@@ -3667,23 +3667,23 @@ async def debug_l8d(player: str = "Murakami"):
 
 @app.post("/recalibrate")
 async def manual_recalibrate():
-    """Manually trigger RF + XGBoost retrain"""
-    rf_result  = await recalibrate_model()
-    xgb_result = await train_xgboost()
-    return {"rf": rf_result, "xgboost": xgb_result}
+    """Manually trigger RF + XGBoost retrain - runs in background"""
+    asyncio.create_task(recalibrate_model())
+    asyncio.create_task(train_xgboost())
+    return {"status": "retrain started in background - check /version in 3-5 minutes"}
 
 @app.get("/recalibrate")
 async def manual_recalibrate_get():
-    """GET - retrains RF + XGBoost"""
-    rf_result  = await recalibrate_model()
-    xgb_result = await train_xgboost()
-    return {"rf": rf_result, "xgboost": xgb_result}
+    """GET - retrains RF + XGBoost in background"""
+    asyncio.create_task(recalibrate_model())
+    asyncio.create_task(train_xgboost())
+    return {"status": "retrain started in background - check /version in 3-5 minutes"}
 
 @app.get("/retrain-xgboost")
 async def retrain_xgboost_get():
-    """GET - retrain XGBoost only (faster)"""
-    result = await train_xgboost()
-    return result
+    """GET - retrain XGBoost in background"""
+    asyncio.create_task(train_xgboost())
+    return {"status": "XGBoost retrain started in background - check /xgboost-status in 3-5 minutes"}
 
 @app.get("/model-weights")
 async def get_model_weights():
