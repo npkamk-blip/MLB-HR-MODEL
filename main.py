@@ -421,8 +421,8 @@ async def train_xgboost(save_to_github: bool = True):
     spw   = round(n_neg / max(n_pos, 1), 2)
 
     xgb = XGBClassifier(
-        n_estimators=300,
-        max_depth=4,
+        n_estimators=500,
+        max_depth=6,
         learning_rate=0.05,
         subsample=0.8,
         colsample_bytree=0.8,
@@ -1864,7 +1864,7 @@ async def check_lineup_confirmations():
                                               bc=bc2, b8d=b8d2, b_split=b_split2,
                                               pc=pc2, p_split=p_split2)
                         xgb_save2 = xgb_r2 if isinstance(xgb_r2, (int, float)) else (xgb_r2[0] if xgb_r2 else None)
-                        save_prob2 = xgb_save2 if xgb_save2 is not None else None
+                        save_prob2 = xgb_save2
 
                         game_records.append({
                             "date": today, "name": name, "team": team,
@@ -2971,7 +2971,8 @@ def predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mul
 
         row   = [float(feat_vals.get(f) or _xgb_medians.get(f, 0.0)) for f in _xgb_features]
         proba = _xgb_model.predict_proba([row])[0]
-        return round(float(proba[1]) * 100, 1)
+        raw = float(proba[1])
+        return round(raw * 100, 1)
     except Exception as e:
         print(f"XGB predict error for {name}: {e}")
         return None
@@ -4244,13 +4245,13 @@ async def get_games(date: str = None, refresh: bool = False):
                                      park_factor, batter_wx_mult, breakdown,
                                      bc=bc, b8d=b8d, b_split=b_split, pc=pc, p_split=p_split)
             xgb_prob = xgb_result if isinstance(xgb_result, (int, float)) else (xgb_result[0] if xgb_result else None)
-            display_prob = xgb_prob  # XGBoost ONLY - no RF fallback
+            display_prob = xgb_prob
 
             all_batters.append({
                 "name": name, "team": team,
                 "hr_prob":  display_prob,
-                "rf_prob":  hr_prob,
                 "xgb_prob": xgb_prob,
+                "rf_prob":  hr_prob,
                 "archetype": archetype, "trend": trend, "confidence": conf,
                 "reasons": reasons, "opp_pitcher": opp_p_name,
                 "bat_hand": bat_hand, "opp_p_hand": opp_p_hand,
