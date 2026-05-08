@@ -465,6 +465,13 @@ async def train_xgboost(save_to_github: bool = True):
             "records_used": n,
             "cv_auc": xgb_cv,
             "scale_pos_weight": spw,
+            "params": {
+                "n_estimators": 500,
+                "max_depth": 6,
+                "learning_rate": 0.05,
+                "subsample": 0.8,
+                "colsample_bytree": 0.8,
+            },
             "top_features": [k for k, _ in ranked[:8]],
             "feature_importances": dict(ranked),
         }
