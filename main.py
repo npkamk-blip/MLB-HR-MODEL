@@ -629,7 +629,7 @@ _cache = {
 
 _games_cache = {}   # { date_str: { "data": ..., "ts": datetime } }
 _contact_log = {}   # { player_name_lower: [ {date, pitch_type, ev, la, dist, bat_speed, result}, ... ] }
-GAMES_CACHE_TTL = 900  # 15 minutes in seconds
+GAMES_CACHE_TTL = 300  # 5 minutes - keeps site fast and data fresh
 
 PARK_HR_FACTORS = {
     "Colorado Rockies":      {"L":1.40,"R":1.40},
@@ -1350,23 +1350,15 @@ async def refresh_8d():
     _cache["last_8d_update"] = datetime.now().isoformat()
 
 async def daily_refresh_loop():
-    """Run in background - check every hour for scheduled tasks"""
+    """Run in background - check every hour for scheduled tasks.
+    All heavy tasks run as background coroutines so site stays responsive.
+    Cache is never wiped - always updated in place.
+    """
     while True:
         now = datetime.now()
         await asyncio.sleep(3600)  # check every hour
-        if now.hour == 7:
-            try:
-                await load_all_savant_data()
-            except Exception as e:
-                print(f"Daily refresh error: {e}")
-        # Hourly lineup confirmation check - saves top 8 per game as lineups confirm
-        # Runs every hour 10am-8pm ET, replacing noon-only save
-        if 10 <= now.hour <= 20:
-            try:
-                await check_lineup_confirmations()
-            except Exception as e:
-                print(f"Lineup confirmation error: {e}")
-        # Record results at 2am ET - catches most games
+
+        # 2am - record results (fast, non-blocking)
         if now.hour == 2:
             try:
                 yesterday = (date.today() - timedelta(days=1)).isoformat()
@@ -1374,29 +1366,51 @@ async def daily_refresh_loop():
                 await record_parlay_results(yesterday)
             except Exception as e:
                 print(f"Result recording error: {e}")
-        # Retrain RF + XGBoost at 3am ET daily (after results are in)
+
+        # 3am - retrain models in background (site stays up)
         if now.hour == 3:
             try:
-                print(f"Nightly retrain - Round {get_rotation_round()} Day {get_rotation_day()}")
-                await recalibrate_model()
-                await train_xgboost()
+                print(f"Nightly retrain starting - Round {get_rotation_round()} Day {get_rotation_day()}")
+                asyncio.create_task(recalibrate_model())
+                await asyncio.sleep(30)  # stagger RF and XGBoost
+                asyncio.create_task(train_xgboost())
             except Exception as e:
                 print(f"Nightly retrain error: {e}")
-        # 4am second pass - catches West Coast late games (end ~12:30am PT = 3:30am ET)
+
+        # 4am - West Coast late game pass + model log
         if now.hour == 4:
             try:
                 yesterday = (date.today() - timedelta(days=1)).isoformat()
                 print("4am second pass - patching West Coast late game results")
                 await record_results(yesterday)
                 await record_parlay_results(yesterday)
-            except Exception as e:
-                print(f"4am result recording error: {e}")
-        # Save daily model log at 4am ET
-        if now.hour == 4:
-            try:
                 await save_model_log(_model_weights)
             except Exception as e:
-                print(f"Model log error: {e}")
+                print(f"4am pass error: {e}")
+
+        # 7am - refresh Savant data in background, never wipes cache
+        if now.hour == 7:
+            try:
+                print("7am data refresh starting in background")
+                asyncio.create_task(load_all_savant_data())
+            except Exception as e:
+                print(f"Daily refresh error: {e}")
+
+        # 8am - pre-warm games cache so site is fast when users arrive
+        if now.hour == 8:
+            try:
+                today_str = date.today().isoformat()
+                print("8am pre-warming games cache")
+                asyncio.create_task(get_games(today_str, False))
+            except Exception as e:
+                print(f"Cache pre-warm error: {e}")
+
+        # 10am-8pm - hourly lineup confirmations
+        if 10 <= now.hour <= 20:
+            try:
+                await check_lineup_confirmations()
+            except Exception as e:
+                print(f"Lineup confirmation error: {e}")
 
 # -- GitHub Storage --
 async def github_get_file(path: str):
