@@ -9,7 +9,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "confirmed",
     "model_hr_pct": 28.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 27.4,
     "la_season": 13.9,
     "ev_season": 93.2,
@@ -74,7 +74,8 @@
     "pit_era_diff": 0.47,
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
-    "day_of_season": 48
+    "day_of_season": 48,
+    "actual_ab": 5
   },
   {
     "date": "2026-05-07",
@@ -86,7 +87,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "confirmed",
     "model_hr_pct": 21.5,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 18.8,
     "la_season": 10.7,
     "ev_season": 91.1,
@@ -151,7 +152,8 @@
     "pit_era_diff": 0.47,
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
-    "day_of_season": 48
+    "day_of_season": 48,
+    "actual_ab": 3
   },
   {
     "date": "2026-05-07",
@@ -163,7 +165,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "confirmed",
     "model_hr_pct": 17.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 15.2,
     "la_season": 18.1,
     "ev_season": 92.4,
@@ -228,7 +230,8 @@
     "pit_era_diff": 0.47,
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
-    "day_of_season": 48
+    "day_of_season": 48,
+    "actual_ab": 5
   },
   {
     "date": "2026-05-07",
@@ -240,7 +243,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "confirmed",
     "model_hr_pct": 16.6,
-    "hit_hr": null,
+    "hit_hr": 1,
     "barrel_pct_season": 6.8,
     "la_season": 18.6,
     "ev_season": 89.1,
@@ -305,7 +308,8 @@
     "pit_era_diff": 0.47,
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
-    "day_of_season": 48
+    "day_of_season": 48,
+    "actual_ab": 5
   },
   {
     "date": "2026-05-07",
@@ -317,7 +321,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "confirmed",
     "model_hr_pct": 16.4,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 12.2,
     "la_season": 12.6,
     "ev_season": 91.0,
@@ -382,7 +386,8 @@
     "pit_era_diff": 0.47,
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
-    "day_of_season": 48
+    "day_of_season": 48,
+    "actual_ab": 4
   },
   {
     "date": "2026-05-07",
@@ -394,7 +399,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "confirmed",
     "model_hr_pct": 14.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "barrel_pct_season": 0.0,
     "la_season": 12.7,
     "ev_season": 90.9,
@@ -459,7 +464,8 @@
     "pit_era_diff": 0.47,
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
-    "day_of_season": 48
+    "day_of_season": 48,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-07",
@@ -471,7 +477,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "confirmed",
     "model_hr_pct": 13.6,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 0.0,
     "la_season": 0.0,
     "ev_season": 0.0,
@@ -536,7 +542,8 @@
     "pit_era_diff": 0.47,
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
-    "day_of_season": 48
+    "day_of_season": 48,
+    "actual_ab": 4
   },
   {
     "date": "2026-05-07",
@@ -548,7 +555,7 @@
     "home_team": "New York Yankees",
     "lineup_source": "confirmed",
     "model_hr_pct": 13.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "barrel_pct_season": 8.0,
     "la_season": 11.0,
     "ev_season": 91.8,
@@ -613,6 +620,7 @@
     "pit_era_diff": 0.47,
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
-    "day_of_season": 48
+    "day_of_season": 48,
+    "actual_ab": 3
   }
 ]
