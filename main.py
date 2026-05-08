@@ -672,40 +672,40 @@ PARK_HR_FACTORS = {
 }
 
 STADIUMS = {
-    # cf_bearing = compass degrees from home plate toward CF (verified Andrew Clem database)
-    # hr_bearing_R = LF bearing (RHB pull) = (cf+270)%360
-    # hr_bearing_L = RF bearing (LHB pull) = (cf+90)%360
-    # open_factor = wind exposure (1.0=Wrigley fully open)
+    # cf_bearing = compass degrees from home plate toward CF (andrewclem.com verified)
+    # hr_bearing_R = LF direction (RHB pull) = (cf_bearing + 270) % 360
+    # hr_bearing_L = RF direction (LHB pull) = (cf_bearing + 90) % 360
+    # open_factor = wind exposure (1.0=fully open like Wrigley)
     "Arizona Diamondbacks":  {"lat":33.4453,"lon":-112.0667,"dome":True},
-    "Atlanta Braves":        {"lat":33.8907,"lon":-84.4677, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.5},  # NE
-    "Baltimore Orioles":     {"lat":39.2838,"lon":-76.6217, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
-    "Boston Red Sox":        {"lat":42.3467,"lon":-71.0972, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.8},  # NE
-    "Chicago Cubs":          {"lat":41.9484,"lon":-87.6553, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":1.0},  # NE
-    "Chicago White Sox":     {"lat":41.8299,"lon":-87.6338, "dome":False,"cf_bearing":135,"hr_bearing_R":45, "hr_bearing_L":225,"open_factor":0.5},  # SE inverted
-    "Cincinnati Reds":       {"lat":39.0979,"lon":-84.5082, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
-    "Cleveland Guardians":   {"lat":41.4954,"lon":-81.6854, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
-    "Colorado Rockies":      {"lat":39.7559,"lon":-104.9942,"dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.8},  # ENE
-    "Detroit Tigers":        {"lat":42.3390,"lon":-83.0485, "dome":False,"cf_bearing":135,"hr_bearing_R":45, "hr_bearing_L":225,"open_factor":0.5},  # SE inverted
+    "Atlanta Braves":        {"lat":33.8907,"lon":-84.4677, "dome":False,"cf_bearing":135,"hr_bearing_R":45, "hr_bearing_L":225,"open_factor":0.5},  # SE - Truist Park
+    "Baltimore Orioles":     {"lat":39.2838,"lon":-76.6217, "dome":False,"cf_bearing":22, "hr_bearing_R":292,"hr_bearing_L":112,"open_factor":0.6},  # NNE - Camden Yards
+    "Boston Red Sox":        {"lat":42.3467,"lon":-71.0972, "dome":False,"cf_bearing":95, "hr_bearing_R":5,  "hr_bearing_L":185,"open_factor":0.8},  # E - Fenway Park
+    "Chicago Cubs":          {"lat":41.9484,"lon":-87.6553, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":1.0},  # NE - Wrigley Field
+    "Chicago White Sox":     {"lat":41.8299,"lon":-87.6338, "dome":False,"cf_bearing":112,"hr_bearing_R":22, "hr_bearing_L":202,"open_factor":0.5},  # ESE - Guaranteed Rate
+    "Cincinnati Reds":       {"lat":39.0979,"lon":-84.5082, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE - Great American
+    "Cleveland Guardians":   {"lat":41.4954,"lon":-81.6854, "dome":False,"cf_bearing":0,  "hr_bearing_R":270,"hr_bearing_L":90, "open_factor":0.6},  # N - Progressive Field
+    "Colorado Rockies":      {"lat":39.7559,"lon":-104.9942,"dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.8},  # ENE - Coors Field
+    "Detroit Tigers":        {"lat":42.3390,"lon":-83.0485, "dome":False,"cf_bearing":22, "hr_bearing_R":292,"hr_bearing_L":112,"open_factor":0.5},  # NNE - Comerica Park
     "Houston Astros":        {"lat":29.7573,"lon":-95.3555, "dome":True},
-    "Kansas City Royals":    {"lat":39.0517,"lon":-94.4803, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.7},  # NE
-    "Los Angeles Angels":    {"lat":33.8003,"lon":-117.8827,"dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.5},  # NE
-    "Los Angeles Dodgers":   {"lat":34.0739,"lon":-118.2400,"dome":False,"cf_bearing":22, "hr_bearing_R":292,"hr_bearing_L":112,"open_factor":0.5},  # NNE
+    "Kansas City Royals":    {"lat":39.0517,"lon":-94.4803, "dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.7},  # NE - Kauffman Stadium
+    "Los Angeles Angels":    {"lat":33.8003,"lon":-117.8827,"dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.5},  # NE - Angel Stadium
+    "Los Angeles Dodgers":   {"lat":34.0739,"lon":-118.2400,"dome":False,"cf_bearing":22, "hr_bearing_R":292,"hr_bearing_L":112,"open_factor":0.5},  # NNE - Dodger Stadium
     "Miami Marlins":         {"lat":25.7781,"lon":-80.2197, "dome":True},
     "Milwaukee Brewers":     {"lat":43.0282,"lon":-87.9712, "dome":True},
-    "Minnesota Twins":       {"lat":44.9817,"lon":-93.2778, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE
-    "New York Mets":         {"lat":40.7571,"lon":-73.8458, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
-    "New York Yankees":      {"lat":40.8296,"lon":-73.9262, "dome":False,"cf_bearing":90, "hr_bearing_R":0,  "hr_bearing_L":180,"open_factor":0.6},  # E
-    "Oakland Athletics":     {"lat":38.5726,"lon":-121.5088,"dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.5},  # NE
-    "Philadelphia Phillies": {"lat":39.9056,"lon":-75.1665, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
-    "Pittsburgh Pirates":    {"lat":40.4469,"lon":-80.0057, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.7},  # ENE
-    "San Diego Padres":      {"lat":32.7076,"lon":-117.1570,"dome":False,"cf_bearing":315,"hr_bearing_R":225,"hr_bearing_L":45, "open_factor":0.8},  # NW faces downtown
-    "San Francisco Giants":  {"lat":37.7786,"lon":-122.3893,"dome":False,"cf_bearing":90, "hr_bearing_R":0,  "hr_bearing_L":180,"open_factor":0.9},  # E bay wind blows IN
+    "Minnesota Twins":       {"lat":44.9817,"lon":-93.2778, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.6},  # ENE - Target Field
+    "New York Mets":         {"lat":40.7571,"lon":-73.8458, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE - Citi Field
+    "New York Yankees":      {"lat":40.8296,"lon":-73.9262, "dome":False,"cf_bearing":90, "hr_bearing_R":0,  "hr_bearing_L":180,"open_factor":0.6},  # E - Yankee Stadium
+    "Oakland Athletics":     {"lat":38.5726,"lon":-121.5088,"dome":False,"cf_bearing":45, "hr_bearing_R":315,"hr_bearing_L":135,"open_factor":0.5},  # NE - Sutter Health Park
+    "Philadelphia Phillies": {"lat":39.9056,"lon":-75.1665, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE - Citizens Bank Park
+    "Pittsburgh Pirates":    {"lat":40.4469,"lon":-80.0057, "dome":False,"cf_bearing":22, "hr_bearing_R":292,"hr_bearing_L":112,"open_factor":0.7},  # NNE - PNC Park
+    "San Diego Padres":      {"lat":32.7076,"lon":-117.1570,"dome":False,"cf_bearing":315,"hr_bearing_R":225,"hr_bearing_L":45, "open_factor":0.8},  # NW - Petco Park
+    "San Francisco Giants":  {"lat":37.7786,"lon":-122.3893,"dome":False,"cf_bearing":90, "hr_bearing_R":0,  "hr_bearing_L":180,"open_factor":0.9},  # E - Oracle Park (bay wind blows IN)
     "Seattle Mariners":      {"lat":47.5914,"lon":-122.3325,"dome":True},
-    "St. Louis Cardinals":   {"lat":38.6226,"lon":-90.1928, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
+    "St. Louis Cardinals":   {"lat":38.6226,"lon":-90.1928, "dome":False,"cf_bearing":112,"hr_bearing_R":22, "hr_bearing_L":202,"open_factor":0.5},  # ESE - Busch Stadium
     "Tampa Bay Rays":        {"lat":27.7683,"lon":-82.6534, "dome":True},
     "Texas Rangers":         {"lat":32.7473,"lon":-97.0825, "dome":True},
     "Toronto Blue Jays":     {"lat":43.6414,"lon":-79.3894, "dome":True},
-    "Washington Nationals":  {"lat":38.8730,"lon":-77.0074, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE
+    "Washington Nationals":  {"lat":38.8730,"lon":-77.0074, "dome":False,"cf_bearing":67, "hr_bearing_R":337,"hr_bearing_L":157,"open_factor":0.5},  # ENE - Nationals Park
 }
 
 PITCH_TYPE_MAP = {
@@ -4388,6 +4388,11 @@ async def get_games(date: str = None, refresh: bool = False):
             bp = _cache.get("team_bullpen", {}).get(team, {})
             obj["bullpen_hr9"]  = round(bp.get("hr9", LEAGUE_CONSTANTS.get("lg_bullpen_hr9", 1.20)), 2)
 
+        # Exact wind angle relative to CF (0=out to CF, 180=blowing in, +right, -left)
+        _cf_b = STADIUMS.get(home_team, {}).get("cf_bearing", 67)
+        _wind_toward = (wind_dir + 180) % 360
+        _wind_angle_cf = int((_wind_toward - _cf_b + 180) % 360 - 180)
+
         games_out.append({
             "game_id": gid, "away": away_team, "home": home_team, "time": gtime,
             "away_pitcher": away_pit_obj,
@@ -4397,7 +4402,7 @@ async def get_games(date: str = None, refresh: bool = False):
             "home_lineup": home_lineup_ordered,
             "lineup_away_status": lineup_away_status,
             "lineup_home_status": lineup_home_status,
-            "weather": {"label": wx_label, "temp": temp, "wind_speed": wind_speed, "wind_dir": wind_dir, "mult": round(wx_mult, 3)},
+            "weather": {"label": wx_label, "temp": temp, "wind_speed": wind_speed, "wind_dir": wind_dir, "mult": round(wx_mult, 3), "wind_angle_cf": _wind_angle_cf},
             "totals": {
                 "away_exp_hr":    away_lineup_hr_sum,
                 "home_exp_hr":    home_lineup_hr_sum,
