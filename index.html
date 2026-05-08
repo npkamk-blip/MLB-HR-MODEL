@@ -920,7 +920,7 @@ function buildBatterTable(games){
       var sf=windS<10?0.3:windS<16?0.7:1.0;
       wxMult=1.0+(al*sf*0.12);
     }
-    var pf=g.park_factor||g.away_pitcher&&g.away_pitcher.park_factor||1.0;
+    var pf=g.park_factor||g.home_pitcher&&g.home_pitcher.park_factor||1.0;
     var awayP=g.away_pitcher||{};
     var homeP=g.home_pitcher||{};
     var awayP2=g.away_pitcher||{};var homeP2=g.home_pitcher||{};
@@ -954,7 +954,7 @@ function buildBatterTable(games){
     var gtime=g.time||'';
     var timeStr='';
     if(gtime){try{var d=new Date(gtime);timeStr=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'America/New_York'});}catch(e){}}
-    var pf=awayP.park_factor||homeP.park_factor||g.park_factor||1.0;
+    var pf=homeP.park_factor||g.park_factor||1.0; // always home park - never away pitcher's park
     var wxLabel=(wx.label||'').toLowerCase();
     var windSpd=wx.wind_speed||0;
     var isDome=wxLabel.includes('dome');
