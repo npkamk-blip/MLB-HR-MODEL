@@ -4,6 +4,13 @@
   "records_used": 4010,
   "cv_auc": 0.489,
   "scale_pos_weight": 5.64,
+  "params": {
+    "n_estimators": 500,
+    "max_depth": 6,
+    "learning_rate": 0.05,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8
+  },
   "top_features": [
     "day_of_season",
     "bat_speed_l8d",
