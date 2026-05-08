@@ -1002,6 +1002,10 @@ function buildBatterTable(games){
       var l=label.toLowerCase();
       if(wind<4)return'<div style="text-align:center;font-size:10px;color:var(--muted2)">Calm</div>';
       var align=labelToAlign(label);
+      // Override align with angle-based calculation if available
+      if(wx.wind_angle_cf!==undefined){
+        align=Math.cos(wx.wind_angle_cf*Math.PI/180);
+      }
       var arrowC=align>=0.5?'var(--g)':align>=0.1?'var(--y)':align<=-0.4?'var(--r)':'var(--muted2)';
       // Use exact wind angle relative to CF from backend (0=out to CF, 180=blowing in)
       // Fall back to label-based snap if not available
@@ -1016,7 +1020,16 @@ function buildBatterTable(games){
         else if(l.includes('toward rf'))rot=-135;
         else if(l.includes('cross'))rot=90;
       }
-      var shortLabel=l.includes('out')?'OUT':l.includes('in')?'IN':'CROSS';
+      // Derive label from exact angle - consistent with arrow direction
+      var shortLabel;
+      if(wx.wind_angle_cf!==undefined){
+        var absAngle=Math.abs(wx.wind_angle_cf);
+        if(absAngle<=70)shortLabel='OUT';
+        else if(absAngle>=110)shortLabel='IN';
+        else shortLabel='CROSS';
+      } else {
+        shortLabel=l.includes('out')?'OUT':l.includes('in')?'IN':'CROSS';
+      }
       // Diamond is STATIC - only the arrow inside rotates
       return'<div style="display:flex;flex-direction:column;align-items:center;gap:3px">'
         +'<svg width="36" height="36" viewBox="0 0 36 36">'
