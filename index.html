@@ -1003,21 +1003,33 @@ function buildBatterTable(games){
       if(wind<4)return'<div style="text-align:center;font-size:10px;color:var(--muted2)">Calm</div>';
       var align=labelToAlign(label);
       var arrowC=align>=0.5?'var(--g)':align>=0.1?'var(--y)':align<=-0.4?'var(--r)':'var(--muted2)';
-      // Determine rotation - 0=up=out to CF, 180=down=blowing in
+      // Use exact wind angle relative to CF from backend (0=out to CF, 180=blowing in)
+      // Fall back to label-based snap if not available
       var rot=0;
-      if(l.includes('blowing in')||l.includes('slightly in'))rot=180;
-      else if(l.includes('out to lf'))rot=-45;
-      else if(l.includes('out to rf'))rot=45;
-      else if(l.includes('toward lf'))rot=135;
-      else if(l.includes('toward rf'))rot=-135;
-      else if(l.includes('cross'))rot=90;
+      if(wx.wind_angle_cf!==undefined){
+        rot=wx.wind_angle_cf; // exact degrees - positive=right, negative=left, 0=out to CF
+      } else {
+        if(l.includes('blowing in')||l.includes('slightly in'))rot=180;
+        else if(l.includes('out to lf'))rot=-45;
+        else if(l.includes('out to rf'))rot=45;
+        else if(l.includes('toward lf'))rot=135;
+        else if(l.includes('toward rf'))rot=-135;
+        else if(l.includes('cross'))rot=90;
+      }
       var shortLabel=l.includes('out')?'OUT':l.includes('in')?'IN':'CROSS';
+      // Diamond is STATIC - only the arrow inside rotates
       return'<div style="display:flex;flex-direction:column;align-items:center;gap:3px">'
-        +'<svg width="32" height="32" viewBox="0 0 32 32" style="transform:rotate('+rot+'deg)">'
-        +'<rect x="6" y="6" width="20" height="20" rx="2" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1" transform="rotate(45 16 16)"/>'
-        +'<circle cx="16" cy="16" r="2" fill="rgba(255,255,255,0.3)"/>'
-        +'<line x1="16" y1="16" x2="16" y2="4" stroke="'+arrowC+'" stroke-width="2" stroke-linecap="round"/>'
-        +'<polygon points="16,1 13,7 19,7" fill="'+arrowC+'"/>'
+        +'<svg width="36" height="36" viewBox="0 0 36 36">'
+        // Static diamond border - always oriented with top=CF, left=LF, right=RF, bottom=In
+        +'<rect x="8" y="8" width="20" height="20" rx="2" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1" transform="rotate(45 18 18)"/>'
+        // CF label at top point
+        +'<text x="18" y="5" text-anchor="middle" font-size="5" fill="rgba(255,255,255,0.25)">CF</text>'
+        // Rotating arrow group - only this rotates
+        +'<g transform="rotate('+rot+',18,18)">'
+        +'<line x1="18" y1="18" x2="18" y2="6" stroke="'+arrowC+'" stroke-width="2" stroke-linecap="round"/>'
+        +'<polygon points="18,3 15,9 21,9" fill="'+arrowC+'"/>'
+        +'</g>'
+        +'<circle cx="18" cy="18" r="2" fill="rgba(255,255,255,0.3)"/>'
         +'</svg>'
         +'<div style="font-size:10px;font-weight:600;color:'+arrowC+'">'+wind+'mph '+shortLabel+'</div>'
         +'</div>';
