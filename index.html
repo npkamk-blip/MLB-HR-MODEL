@@ -1128,9 +1128,9 @@ function buildBatterTable(games){
     h+='<div style="padding:10px 10px;'+rowBorder+'">';
     h+='<div style="font-size:11px;color:var(--muted2);margin-bottom:3px">'+timeStr+' ET</div>';
     h+='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px">'+awayTeam+' <span style="color:var(--muted2);font-weight:400;font-size:11px">@</span> '+homeTeam+'</div>';
-    h+=pitcherInfo(homeP);
-    h+='<div style="border-top:0.5px solid var(--border2);margin:6px 0"></div>';
     h+=pitcherInfo(awayP);
+    h+='<div style="border-top:0.5px solid var(--border2);margin:6px 0"></div>';
+    h+=pitcherInfo(homeP);
     h+='</div>';
 
     // Col 2 - Projected HRs
