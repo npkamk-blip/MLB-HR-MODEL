@@ -2086,52 +2086,74 @@ async def record_results(target_date: str):
                 except Exception as box_err:
                     print(f"Boxscore error for game {gid}: {box_err}")
                     continue
-        # Update records - patch nulls, fix false negatives (0s that should be 1s),
-        # and fix DNPs that actually hit HRs (West Coast late game timing issue)
+        # Update records - patch nulls, fix false negatives, fix stale DNPs.
+        # NAME MATCHING: exact first, then last-name only when exactly 1 player matches.
+        # The old "any(last in k)" substring check caused phantom HRs - e.g. "walker"
+        # matching "walker buehler", or "taylor" matching the wrong Taylor entirely.
         updated = 0
         dnp_count = 0
+
+        def name_hit(nl, hr_hitters_set, ab_map):
+            """Returns (hit: bool, ab: int). Exact match first, single last-name fallback only."""
+            # 1. Exact lowercase match
+            if nl in hr_hitters_set:
+                return True, ab_map.get(nl, 0)
+            last = nl.split()[-1]
+            # 2. Last-name fallback: ONLY safe when exactly 1 HR hitter has this last name
+            last_hr = [k for k in hr_hitters_set if k.split()[-1] == last]
+            if len(last_hr) == 1:
+                return True, ab_map.get(last_hr[0], 0)
+            # 3. AB lookup for DNP threshold - exact then single last-name
+            ab = ab_map.get(nl, 0)
+            if ab == 0:
+                last_ab = [k for k in ab_map if k.split()[-1] == last]
+                if len(last_ab) == 1:
+                    ab = ab_map.get(last_ab[0], 0)
+            return False, ab
+
         for rec in records:
             nl = rec["name"].lower()
 
-            # Fix DNP records that actually hit a HR - West Coast timing issue
+            # Fix stale DNP records - re-check with boxscore data
             if rec.get("hit_hr") == "DNP":
-                hit = nl in hr_hitters
-                if not hit:
-                    last = nl.split()[-1]
-                    hit = any(last in k for k in hr_hitters)
+                hit, ab = name_hit(nl, hr_hitters, actual_ab)
                 if hit:
                     rec["hit_hr"] = 1
+                    rec["actual_ab"] = ab
                     updated += 1
                     print(f"Corrected DNP->HR: {rec['name']} actually hit a HR")
+                elif ab >= 2:
+                    # Played a late game but no HR - correct from DNP to 0
+                    rec["hit_hr"] = 0
+                    rec["actual_ab"] = ab
+                    updated += 1
+                    print(f"Corrected DNP->0: {rec['name']} played (ab={ab}) but no HR")
                 continue
 
             # Fix false negatives - recorded as 0 but actually hit a HR
             if rec.get("hit_hr") == 0:
-                hit = nl in hr_hitters
-                if not hit:
-                    last = nl.split()[-1]
-                    hit = any(last in k for k in hr_hitters)
+                hit, ab = name_hit(nl, hr_hitters, actual_ab)
                 if hit:
                     rec["hit_hr"] = 1
+                    rec["actual_ab"] = ab
                     updated += 1
                     print(f"Corrected 0->HR: {rec['name']} actually hit a HR")
                 continue
 
-            if rec.get("hit_hr") is not None:
-                continue  # already recorded correctly, skip
-            # Handle null records
-            nl2 = rec["name"].lower()
-            ab = actual_ab.get(nl2, 0)
-            if ab == 0:
-                last = nl2.split()[-1]
-                for k, v in actual_ab.items():
-                    if last in k:
-                        ab = v
-                        break
-            hit = nl2 in hr_hitters
-            if not hit:
-                last = nl2.split()[-1]
-                hit = any(last in k for k in hr_hitters)
+            # Re-verify hit_hr=1 records too - boxscore mid-game can give false positives
+            # (e.g. West Coast game at 2am ET is in progress; player had HR then got erased)
+            if rec.get("hit_hr") == 1:
+                hit, ab = name_hit(nl, hr_hitters, actual_ab)
+                if not hit and ab >= 2:
+                    # Was marked as HR but boxscore says no - correct it
+                    rec["hit_hr"] = 0
+                    rec["actual_ab"] = ab
+                    updated += 1
+                    print(f"Corrected 1->0: {rec['name']} did NOT hit a HR (ab={ab})")
+                continue
+
+            # Handle null records (not yet recorded at all)
+            hit, ab = name_hit(nl, hr_hitters, actual_ab)
             if hit:
                 rec["hit_hr"] = 1
                 rec["actual_ab"] = ab
@@ -2184,8 +2206,9 @@ async def startup_catchup():
             if content:
                 records = json.loads(content)
                 nulls = [r for r in records if r.get("hit_hr") is None]
-                if nulls:
-                    print(f"Startup catchup: recording results for {target} ({len(nulls)} nulls)")
+                dnps  = [r for r in records if r.get("hit_hr") == "DNP"]
+                if nulls or dnps:
+                    print(f"Startup catchup: recording results for {target} ({len(nulls)} nulls, {len(dnps)} DNPs)")
                     await record_results(target)
                 else:
                     print(f"Startup catchup: {target} complete")
@@ -3690,11 +3713,14 @@ async def get_dashboard():
             # Use locked-in top8 file if available, otherwise recalculate
             if d in top8_by_date:
                 t8_recs = top8_by_date[d]
-                # Match outcomes from predictions
-                name_to_outcome = {r["name"]: r.get("hit_hr") for r in recs}
+                # Always overwrite from predictions file - it is the source of truth.
+                # Build from ALL records for this date (not just completed), so DNP/null
+                # values also clear any stale hit_hr=1 left in the top8 file.
+                all_recs_this_date = [rec for rec in all_records if rec.get("_date") == d]
+                name_to_outcome = {r["name"]: r.get("hit_hr") for r in all_recs_this_date}
                 for r in t8_recs:
-                    if r.get("hit_hr") is None and r.get("name") in name_to_outcome:
-                        r["hit_hr"] = name_to_outcome[r["name"]]
+                    if r.get("name") in name_to_outcome:
+                        r["hit_hr"] = name_to_outcome[r["name"]]  # always overwrite
                 t8 = t8_recs
             else:
                 t8 = ranked[:8]
