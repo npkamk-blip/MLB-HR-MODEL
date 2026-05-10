@@ -4014,11 +4014,15 @@ async def manual_record_results_get(target_date: str = None):
     return {"status": "done", "date": d}
 
 @app.get("/cleanup-results")
-async def cleanup_results(days: int = 30):
+async def cleanup_results(days: int = 30, force: bool = False):
     """
-    Reprocess result recording for any date that has DNP records.
-    Fixes historical data corruption from the client shadowing bug.
-    Run once after deploying the boxscore client fix.
+    Reprocess result recording for past dates.
+    - Default: only reprocesses days with DNP or null records
+    - force=true: reprocesses ALL past days regardless (use after deploying fixes
+      to correct fake HRs that were already written as hit_hr=1)
+    Examples:
+      /cleanup-results?days=7           (fix DNPs/nulls in last 7 days)
+      /cleanup-results?days=7&force=true (re-verify everything in last 7 days)
     """
     if not GITHUB_TOKEN:
         return {"error": "No GitHub token"}
@@ -4037,23 +4041,28 @@ async def cleanup_results(days: int = 30):
             d = f["name"].replace(".json", "")
             # Skip today and future dates
             if d >= date.today().isoformat(): continue
-            content, _ = await github_get_file(f"data/predictions/{f['name']}")
-            if not content: continue
+            file_content, _ = await github_get_file(f"data/predictions/{f['name']}")
+            if not file_content: continue
             try:
-                recs = json.loads(content)
+                recs = json.loads(file_content)
             except: continue
-            dnp_count = sum(1 for r in recs if r.get("hit_hr") == "DNP")
+            dnp_count  = sum(1 for r in recs if r.get("hit_hr") == "DNP")
             null_count = sum(1 for r in recs if r.get("hit_hr") is None)
-            if dnp_count > 0 or null_count > 0:
-                print(f"Reprocessing {d} - {dnp_count} DNPs, {null_count} nulls")
+            hr1_count  = sum(1 for r in recs if r.get("hit_hr") == 1)
+            needs_work = dnp_count > 0 or null_count > 0
+            if force or needs_work:
+                reason = "forced" if (force and not needs_work) else f"{dnp_count} DNPs, {null_count} nulls"
+                print(f"Reprocessing {d} - {reason} (also re-verifying {hr1_count} hit_hr=1 records)")
                 await record_results(d)
-                results.append({"date": d, "dnp": dnp_count, "null": null_count, "status": "reprocessed"})
+                results.append({"date": d, "dnp": dnp_count, "null": null_count,
+                                 "hr1_reverified": hr1_count, "status": "reprocessed"})
             else:
                 results.append({"date": d, "status": "clean"})
 
         return {
             "processed": len([r for r in results if r.get("status") == "reprocessed"]),
             "clean":     len([r for r in results if r.get("status") == "clean"]),
+            "force_mode": force,
             "details":   results,
         }
     except Exception as e:
