@@ -4229,6 +4229,36 @@ async def manual_check_lineups():
     await check_lineup_confirmations()
     return {"status": "done", "date": date.today().isoformat()}
 
+@app.get("/resave-today")
+async def resave_today():
+    """
+    Full resave of today's data in one call:
+    1. Saves projected lineups for all games (fallback)
+    2. Overwrites with any confirmed lineups available right now
+    3. Rebuilds projected top8 if no top8 file exists yet
+    Use this after a deploy or any time today's data looks stale.
+    """
+    today = et_today().isoformat()
+    await save_projected_top100(today)
+    await check_lineup_confirmations()
+    import json
+    pred_raw, _ = await github_get_file(f"data/predictions/{today}.json")
+    top8_raw, _ = await github_get_file(f"data/top8/{today}.json")
+    pred_count = len(json.loads(pred_raw)) if pred_raw else 0
+    top8_count = len(json.loads(top8_raw)) if top8_raw else 0
+    confirmed = 0
+    if pred_raw:
+        recs = json.loads(pred_raw)
+        confirmed = sum(1 for r in recs if r.get("lineup_source") == "confirmed")
+    return {
+        "status":    "done",
+        "date":      today,
+        "predictions": pred_count,
+        "confirmed": confirmed,
+        "projected": pred_count - confirmed,
+        "top8":      top8_count,
+    }
+
 @app.post("/record-results")
 async def manual_record_results(target_date: str = None):
     """Manually trigger recording results for a date"""
@@ -5554,28 +5584,54 @@ def status():
 
 @app.get("/version")
 def version():
-    """Quick check - both models now use CV AUC for honest apples-to-apples comparison."""
-    rf_auc  = _model_weights.get("oob_score", 0)  # now CV AUC not OOB
+    """
+    Full system status - models, data pipeline, last run times.
+    Your go-to endpoint to check everything is working.
+    """
+    rf_auc  = _model_weights.get("oob_score", 0)
     xgb_auc = _xgb_oob
     winning = "xgboost" if (_xgb_trained and xgb_auc > rf_auc) else "random_forest"
+
     return {
-        "file_version":    date.today().isoformat(),
-        "active_model":    winning,
-        "metric":          "cv_auc_5fold - both models on same scale (0.5=random, 1.0=perfect)",
+        # -- Models --
+        "active_model":   winning,
         "rf": {
             "trained":      _rf_trained,
             "records_used": _model_weights.get("records_used", 0),
-            "cv_auc":       rf_auc,
+            "cv_auc":       round(rf_auc, 4),
+            "last_trained": _model_weights.get("last_calibrated"),
             "params":       _model_weights.get("rf_params"),
-            "top_features": _model_weights.get("top_features", []),
+            "top_features": _model_weights.get("top_features", [])[:5],
         },
         "xgboost": {
             "trained":      _xgb_trained,
-            "cv_auc":       xgb_auc,
+            "cv_auc":       round(xgb_auc, 4),
             "beats_rf":     _xgb_trained and xgb_auc > rf_auc,
             "gap":          round(xgb_auc - rf_auc, 4),
         },
-        "flip_condition":  "XGBoost goes live when xgb cv_auc > rf cv_auc on same 5-fold split",
+        # -- Data pipeline --
+        "data": {
+            "ready":            _cache["ready"],
+            "last_savant_load": _cache.get("last_updated"),
+            "last_8d_update":   _cache.get("last_8d_update"),
+            "bat_2026_rows":    len(_cache["bat_2026"]),
+            "bat_8d_rows":      len(_cache["bat_8d"]),
+            "pit_2026_rows":    len(_cache["pit_2026"]),
+        },
+        # -- Today --
+        "today": {
+            "date":             et_today().isoformat(),
+            "rotation_round":   get_rotation_round(),
+            "rotation_day":     get_rotation_day(),
+        },
+        # -- Schedule (ET) --
+        "schedule": {
+            "8am":  "projected lineups saved, top8 written",
+            "10am-8pm": "hourly lineup confirmations, top8 updated",
+            "4am":  "end_of_day_save - clean top100 written, top8 outcomes patched",
+            "7am":  "models retrained on clean data + Savant refresh",
+        },
+        "metric": "cv_auc_5fold - 0.5=random, 1.0=perfect",
     }
 
 
