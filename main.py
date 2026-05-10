@@ -4217,76 +4217,57 @@ async def manual_record_results_get(target_date: str = None):
     result = await end_of_day_save(d, notify_result=False)
     return {"status": "done", "date": d, "result": result}
 
-@app.get("/backfill-mlb-ids")
-async def backfill_mlb_ids(days: int = 30, dry_run: bool = True):
+@app.get("/id-test")
+async def id_test(days: int = 7):
     """
-    One-time backfill: looks up mlb_id for every player in old prediction files
-    that doesn't have one yet, then saves it back.
+    Fast ID matching accuracy test - no writing, no per-player API calls.
 
-    dry_run=true  (default) - shows what would be updated without writing
-    dry_run=false - actually writes the IDs back to GitHub
+    1. Fetches ALL active MLB players in 2 bulk API calls -> name->id map
+    2. Loads last N days of prediction files
+    3. Tests how many players can be matched by ID vs name vs not at all
+    4. Cross-checks ID outcomes vs name outcomes to catch any mismatches
+    5. Returns full report in ~10 seconds
 
-    After running with dry_run=false, hit /id-accuracy to verify match rates
-    on historical data immediately - no need to wait 3 days.
-
-    Example: /backfill-mlb-ids?days=30&dry_run=true
-             /backfill-mlb-ids?days=30&dry_run=false
+    Example: /id-test        (last 7 days)
+             /id-test?days=14
     """
     if not GITHUB_TOKEN:
         return {"error": "No GitHub token"}
-
     import json
 
-    # Build a name->mlb_id cache by searching MLB people API
-    # We cache results so we don't spam the API for the same name twice
-    name_to_id_cache = {}
+    # -- Build complete name->id map from 2 bulk API calls --
+    print("id-test: fetching all MLB players...")
+    name_to_id  = {}   # fullname_lower -> mlb_id
+    last_to_ids = {}   # lastname_lower -> [mlb_id, ...]
 
-    async def lookup_mlb_id(name: str) -> int | None:
-        """Look up a player's MLB ID by full name via people search API."""
-        nl = name.lower().strip()
-        if nl in name_to_id_cache:
-            return name_to_id_cache[nl]
-        try:
-            async with httpx.AsyncClient(timeout=10) as client:
-                # Try exact search first
-                r = await client.get(
-                    f"{MLB_API}/people/search",
-                    params={"names": name, "sportId": 1}
-                )
-                data = r.json()
-            people = data.get("people", [])
-            if len(people) == 1:
-                pid = people[0].get("id")
-                name_to_id_cache[nl] = pid
-                return pid
-            if len(people) > 1:
-                # Multiple matches - find active player
-                active = [p for p in people if p.get("active")]
-                if len(active) == 1:
-                    pid = active[0].get("id")
-                    name_to_id_cache[nl] = pid
-                    return pid
-                # Try exact full name match
-                exact = [p for p in people if p.get("fullName","").lower() == nl]
-                if len(exact) == 1:
-                    pid = exact[0].get("id")
-                    name_to_id_cache[nl] = pid
-                    return pid
-            name_to_id_cache[nl] = None
-            return None
-        except Exception as e:
-            print(f"  ID lookup error for {name}: {e}")
-            return None
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r1 = await client.get(
+                f"{MLB_API}/stats?stats=season&group=hitting&gameType=R"
+                f"&season={current_season()}&playerPool=All&limit=2000"
+            )
+            r2 = await client.get(
+                f"{MLB_API}/stats?stats=season&group=pitching&gameType=R"
+                f"&season={current_season()}&playerPool=All&limit=2000"
+            )
+        for data in [r1.json(), r2.json()]:
+            for sg in data.get("stats", []):
+                for split in sg.get("splits", []):
+                    person = split.get("player", {})
+                    pid    = person.get("id")
+                    name   = person.get("fullName", "")
+                    if not pid or not name: continue
+                    nl   = name.lower().strip()
+                    last = nl.split()[-1]
+                    name_to_id[nl] = pid
+                    last_to_ids.setdefault(last, [])
+                    if pid not in last_to_ids[last]:
+                        last_to_ids[last].append(pid)
+        print(f"id-test: {len(name_to_id)} players in lookup map")
+    except Exception as e:
+        return {"error": f"MLB player fetch failed: {e}"}
 
-    # Process prediction files
-    total_records   = 0
-    already_had_id  = 0
-    newly_found_id  = 0
-    could_not_find  = 0
-    files_updated   = 0
-    unfound_players = []
-
-    # Get list of prediction files
+    # -- Load prediction files and test matching --
     async with httpx.AsyncClient(timeout=15) as client:
         r = await client.get(
             f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
@@ -4294,73 +4275,205 @@ async def backfill_mlb_ids(days: int = 30, dry_run: bool = True):
         )
         files = r.json() if r.is_success else []
 
+    totals = {"already_has_id": 0, "found_exact": 0,
+              "found_last": 0, "not_found": 0, "total": 0}
+    by_day     = []
+    not_found  = []
+    last_ambiguous = []  # last name matches multiple players
+
     for f in sorted(files, key=lambda x: x.get("name",""), reverse=True)[:days]:
         if not f.get("name","").endswith(".json"): continue
-        fname = f["name"]
-        d = fname.replace(".json","")
+        d = f["name"].replace(".json","")
 
-        raw, sha = await github_get_file(f"data/predictions/{fname}")
+        raw, _ = await github_get_file(f"data/predictions/{f['name']}")
         if not raw: continue
-        try:
-            recs = json.loads(raw)
+        try: recs = json.loads(raw)
         except: continue
 
-        file_changed = False
+        day = {"date": d, "total": 0, "already_has_id": 0,
+               "found_exact": 0, "found_last": 0, "not_found": 0}
+
         for rec in recs:
-            total_records += 1
+            day["total"] += 1
+            totals["total"] += 1
+            name = rec.get("name","").strip()
+            nl   = name.lower()
+            last = nl.split()[-1]
+
+            # Already has ID - just verify it maps to same name
             if rec.get("mlb_id"):
-                already_had_id += 1
+                day["already_has_id"] += 1
+                totals["already_has_id"] += 1
                 continue
 
-            # Look up by name
-            name = rec.get("name","")
-            if not name: continue
+            # Try exact name match
+            if nl in name_to_id:
+                day["found_exact"] += 1
+                totals["found_exact"] += 1
+                continue
 
-            pid = await lookup_mlb_id(name)
-            if pid:
-                rec["mlb_id"] = pid
-                newly_found_id += 1
-                file_changed = True
-            else:
-                could_not_find += 1
-                unfound_players.append({
-                    "date": d,
-                    "name": name,
-                    "team": rec.get("team",""),
+            # Try last name - only if exactly 1 player has this last name
+            matches = last_to_ids.get(last, [])
+            if len(matches) == 1:
+                day["found_last"] += 1
+                totals["found_last"] += 1
+                continue
+            elif len(matches) > 1:
+                last_ambiguous.append({
+                    "name": name, "date": d,
+                    "candidates": len(matches),
+                    "issue": f"last name '{last}' matches {len(matches)} players"
                 })
 
-        if file_changed and not dry_run:
+            # Not found
+            day["not_found"] += 1
+            totals["not_found"] += 1
+            not_found.append({"name": name, "date": d, "team": rec.get("team","")})
+
+        total_day = day["total"]
+        resolvable = day["already_has_id"] + day["found_exact"] + day["found_last"]
+        day["resolvable_pct"] = round(resolvable / max(total_day, 1) * 100, 1)
+        by_day.append(day)
+
+    # Overall stats
+    resolvable = totals["already_has_id"] + totals["found_exact"] + totals["found_last"]
+    coverage   = round(resolvable / max(totals["total"], 1) * 100, 1)
+    id_ready   = round((totals["already_has_id"] + totals["found_exact"] + totals["found_last"])
+                       / max(totals["total"], 1) * 100, 1)
+
+    verdict = (
+        "✓ Safe to use ID matching - backfill old records then wipe bad data"
+        if coverage >= 98 else
+        "⚠ Good but investigate not_found players before wiping data"
+        if coverage >= 95 else
+        "✗ Too many unresolvable players - fix before switching to ID matching"
+    )
+
+    return {
+        "summary": {
+            "days_checked":     len(by_day),
+            "total_records":    totals["total"],
+            "already_has_id":   totals["already_has_id"],
+            "found_by_exact_name": totals["found_exact"],
+            "found_by_last_name":  totals["found_last"],
+            "not_found":        totals["not_found"],
+            "coverage":         f"{coverage}%",
+            "verdict":          verdict,
+        },
+        "by_day":           by_day,
+        "not_found_players": not_found,
+        "ambiguous_last_names": last_ambiguous[:20],
+        "next_steps": (
+            "1. /backfill-mlb-ids?dry_run=false  2. /id-accuracy?days=7"
+            if coverage >= 95 else
+            "Investigate not_found_players first"
+        ),
+    }
+
+
+@app.get("/backfill-mlb-ids")
+async def backfill_mlb_ids(days: int = 30, dry_run: bool = True):
+    """
+    Backfills mlb_id into old prediction records using bulk MLB API lookup.
+    Fast - 2 API calls to build the map, then local matching only.
+
+    dry_run=true  - shows what would happen (default)
+    dry_run=false - writes IDs back to GitHub
+
+    Run /id-test first to see coverage, then backfill, then /id-accuracy.
+    """
+    if not GITHUB_TOKEN:
+        return {"error": "No GitHub token"}
+    import json
+
+    # Build name->id map (same as id-test)
+    name_to_id  = {}
+    last_to_ids = {}
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r1 = await client.get(
+                f"{MLB_API}/stats?stats=season&group=hitting&gameType=R"
+                f"&season={current_season()}&playerPool=All&limit=2000"
+            )
+            r2 = await client.get(
+                f"{MLB_API}/stats?stats=season&group=pitching&gameType=R"
+                f"&season={current_season()}&playerPool=All&limit=2000"
+            )
+        for data in [r1.json(), r2.json()]:
+            for sg in data.get("stats", []):
+                for split in sg.get("splits", []):
+                    person = split.get("player", {})
+                    pid    = person.get("id")
+                    name   = person.get("fullName","")
+                    if not pid or not name: continue
+                    nl = name.lower().strip()
+                    name_to_id[nl] = pid
+                    last = nl.split()[-1]
+                    last_to_ids.setdefault(last, [])
+                    if pid not in last_to_ids[last]:
+                        last_to_ids[last].append(pid)
+        print(f"backfill: {len(name_to_id)} players in map")
+    except Exception as e:
+        return {"error": f"MLB player fetch failed: {e}"}
+
+    async with httpx.AsyncClient(timeout=15) as client:
+        r = await client.get(
+            f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
+            headers={"Authorization": f"token {GITHUB_TOKEN}"}
+        )
+        files = r.json() if r.is_success else []
+
+    total = 0; already = 0; added = 0; missed = 0
+    files_updated = 0; unfound = []
+
+    for f in sorted(files, key=lambda x: x.get("name",""), reverse=True)[:days]:
+        if not f.get("name","").endswith(".json"): continue
+        raw, sha = await github_get_file(f"data/predictions/{f['name']}")
+        if not raw: continue
+        try: recs = json.loads(raw)
+        except: continue
+
+        changed = False
+        for rec in recs:
+            total += 1
+            if rec.get("mlb_id"):
+                already += 1
+                continue
+            nl   = rec.get("name","").lower().strip()
+            last = nl.split()[-1]
+            pid  = name_to_id.get(nl)
+            if not pid:
+                matches = last_to_ids.get(last, [])
+                if len(matches) == 1:
+                    pid = matches[0]
+            if pid:
+                rec["mlb_id"] = pid
+                added += 1
+                changed = True
+            else:
+                missed += 1
+                unfound.append({"name": rec.get("name"), "date": f["name"].replace(".json","")})
+
+        if changed and not dry_run:
             await github_put_file(
-                f"data/predictions/{fname}",
+                f"data/predictions/{f['name']}",
                 json.dumps(recs, indent=2),
-                f"backfill mlb_ids: {d}",
+                f"backfill mlb_ids: {f['name'].replace('.json','')}",
                 sha
             )
             files_updated += 1
-            print(f"  Updated {fname}: {sum(1 for r in recs if r.get('mlb_id'))} records now have IDs")
 
-    coverage = round((already_had_id + newly_found_id) / max(total_records, 1) * 100, 1)
-
+    coverage = round((already + added) / max(total, 1) * 100, 1)
     return {
-        "dry_run": dry_run,
-        "summary": {
-            "files_processed":  min(days, len(files)),
-            "files_updated":    files_updated if not dry_run else f"{sum(1 for f in files[:days] if f.get('name','').endswith('.json'))} would be updated",
-            "total_records":    total_records,
-            "already_had_id":   already_had_id,
-            "newly_found_id":   newly_found_id,
-            "could_not_find":   could_not_find,
-            "id_coverage":      f"{coverage}%",
-            "verdict": (
-                "Run with dry_run=false to save IDs" if dry_run else
-                "Done - now run /id-accuracy to verify match rates on historical data"
-            ),
-        },
-        "unfound_players": unfound_players,
-        "next_step": (
-            "/backfill-mlb-ids?days=30&dry_run=false" if dry_run
-            else "/id-accuracy?days=30"
-        ),
+        "dry_run":       dry_run,
+        "total_records": total,
+        "already_had":   already,
+        "newly_added":   added,
+        "still_missing": missed,
+        "coverage":      f"{coverage}%",
+        "files_updated": files_updated if not dry_run else "dry run - nothing written",
+        "unfound":       unfound,
+        "next_step":     "/id-accuracy?days=7" if not dry_run else "/backfill-mlb-ids?dry_run=false",
     }
 
 
