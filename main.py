@@ -1428,8 +1428,15 @@ async def daily_refresh_loop():
                 xgb_auc = round(_xgb_oob, 3)
                 records = _model_weights.get("records_used", 0)
                 winner  = "XGB" if _xgb_trained and xgb_auc > rf_auc else "RF"
+                # Show progress toward clean data milestone
+                clean_start = "2026-05-10"
+                days_clean  = (et_today() - date.fromisoformat(clean_start)).days
+                days_to_go  = max(0, 30 - days_clean)
                 await notify(
-                    f"Models retrained\nWinner: {winner} | XGB: {xgb_auc} | RF: {rf_auc}\nRecords: {records}",
+                    f"Models retrained\n"
+                    f"Winner: {winner} | XGB: {xgb_auc} | RF: {rf_auc}\n"
+                    f"Records: {records} ({days_clean} clean days)\n"
+                    f"{days_to_go} days until corrupt data purge",
                     "Model Retrained"
                 )
             except Exception as e:
@@ -1448,7 +1455,20 @@ async def daily_refresh_loop():
                 print("8am: saving projected top100 + pre-warming games cache")
                 await save_projected_top100(today_str)
                 asyncio.create_task(get_games(today_str, False))
-                await notify(f"Good morning! {today_str}\nProjected top 100 saved. Site is ready.", "Daily Predictions Ready")
+                # Count today's games
+                try:
+                    async with httpx.AsyncClient(timeout=10) as _gc:
+                        _gr = await _gc.get(f"{MLB_API}/schedule?sportId=1&date={today_str}&hydrate=team")
+                        _gd = _gr.json()
+                    game_count = sum(len(d.get("games",[])) for d in _gd.get("dates",[]))
+                except:
+                    game_count = 0
+                await notify(
+                    f"Good morning! {today_str}\n"
+                    f"{game_count} games today\n"
+                    f"Projected top 8 ready — lineups confirm 10am-8pm",
+                    "Good Morning ⚾"
+                )
             except Exception as e:
                 await notify(f"ERROR at 8am save: {e}", "Save Error", 1)
                 print(f"8am task error: {e}")
@@ -2082,7 +2102,11 @@ async def check_lineup_confirmations():
             print(f"Lineup check: top100 saved ({len(top100)}), top8 saved ({len(top8)} confirmed)")
             if added or removed:
                 print(f"  Top 8 changes - added: {added}, removed: {removed}")
-            await notify(notify_msg, "Lineups Confirmed")
+            # Only push notification if top 8 actually changed or first confirmation of day
+            if added or removed or not existing_top8_content:
+                await notify(notify_msg, "Lineups Confirmed")
+            else:
+                print(f"  Top 8 unchanged - skipping Pushover")
         else:
             print(f"Lineup check: no new confirmations yet")
 
@@ -2338,20 +2362,61 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
     except Exception as e:
         print(f"  Parlay results error (non-fatal): {e}")
 
-    # Step 8: Pushover notification
+    # Step 8: Pushover notification with running totals + goal tracking
     if notify_result:
-        match_summary = (f"ID:{match_log.get('id',0)} "
-                         f"Name:{match_log.get('name_exact',0)} "
-                         f"Last:{match_log.get('name_last',0)} "
-                         f"Miss:{match_log.get('not_found',0)}")
+        import json as _ej
+        # Build running totals across all tracked days for goal progress
+        try:
+            total_hrs_all   = 0
+            total_recs_all  = 0
+            days_tracked    = 0
+            async with httpx.AsyncClient(timeout=10) as _hc:
+                _r = await _hc.get(
+                    f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
+                    headers={"Authorization": f"token {GITHUB_TOKEN}"}
+                )
+                _files = _r.json() if _r.is_success else []
+            for _f in sorted(_files, key=lambda x: x.get("name",""), reverse=True)[:30]:
+                if not _f.get("name","").endswith(".json"): continue
+                _d = _f["name"].replace(".json","")
+                if _d >= et_today().isoformat(): continue
+                _raw, _ = await github_get_file(f"data/predictions/{_f['name']}")
+                if not _raw: continue
+                try:
+                    _recs = _ej.loads(_raw)
+                    _completed = [r for r in _recs if r.get("hit_hr") in [0,1]]
+                    if _completed:
+                        total_hrs_all  += sum(1 for r in _completed if r.get("hit_hr") == 1)
+                        total_recs_all += len(_completed)
+                        days_tracked   += 1
+                except: pass
+            running_rate = round(total_hrs_all / max(total_recs_all, 1) * 100, 1)
+            # Goal: 25-45 HRs per 100 = 25-45% hit rate on top 100
+            goal_status = (
+                "ON FIRE" if hr_rate >= 45 else
+                "WIN" if hr_rate >= 25 else
+                "BELOW TARGET" if hr_rate >= 15 else
+                "LEARNING"
+            )
+        except Exception as _e:
+            running_rate = 0
+            days_tracked = 0
+            goal_status  = "?"
+            total_hrs_all = 0
+            total_recs_all = 0
+
+        top8_hit_str  = f"{top8_hrs}/{top8_total}" if isinstance(top8_hrs, int) else "?/?"
+        top8_rate     = round(int(top8_hrs) / max(int(top8_total), 1) * 100, 1) if isinstance(top8_hrs, int) and isinstance(top8_total, int) else 0
+
         notify_msg = (
-            f"{target_date}"
-            + "\nTop 100: " + str(hr_count) + " HRs / " + str(len(top100)) + " (" + str(hr_rate) + "%)"
-            + "\nTop 8: " + str(top8_hrs) + " / " + str(top8_total)
-            + "\nMatching: " + str(match_summary)
-            + "\nGames: " + str(games_final) + " final, " + str(games_pending) + " still pending"
+            f"Results: {target_date}"
+            + f"\nToday: {hr_count}/100 HRs ({hr_rate}%) — {goal_status}"
+            + f"\nTop 8: {top8_hit_str} ({top8_rate}%)"
+            + f"\n{days_tracked}d avg: {total_hrs_all}/{total_recs_all} ({running_rate}%)"
+            + f"\nGoal: 25-45 HRs per 100"
+            + f"\nGames: {games_final} final"
         )
-        await notify(notify_msg, "End of Day", priority=0)
+        await notify(notify_msg, "End of Day ✓", priority=0)
 
 
     return {
