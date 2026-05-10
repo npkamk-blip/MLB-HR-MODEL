@@ -5833,7 +5833,6 @@ async def get_games(date: str = None, refresh: bool = False):
     all_player_ids = set()
     games_list = dates[0].get("games", [])
     for game in games_list:
-        if game.get("status", {}).get("abstractGameState") == "Final": continue
         for side in ["away", "home"]:
             pid = game["teams"][side].get("probablePitcher", {}).get("id")
             if pid: all_player_ids.add(pid)
@@ -5849,9 +5848,10 @@ async def get_games(date: str = None, refresh: bool = False):
 
     games_out = []
     for game in games_list:
-        if game.get("status", {}).get("abstractGameState") == "Final": continue
-
         gid = game["gamePk"]
+        game_state  = game.get("status", {}).get("abstractGameState", "")
+        game_detail = game.get("status", {}).get("detailedState", "")
+        is_final    = game_state == "Final"
         away_team = game["teams"]["away"]["team"]["name"]
         home_team = game["teams"]["home"]["team"]["name"]
         away_team_id = game["teams"]["away"]["team"]["id"]
@@ -6057,6 +6057,8 @@ async def get_games(date: str = None, refresh: bool = False):
 
         games_out.append({
             "game_id": gid, "away": away_team, "home": home_team, "time": gtime,
+            "is_final": is_final,
+            "game_status": game_detail,
             "away_pitcher": away_pit_obj,
             "home_pitcher": home_pit_obj,
             "top_hr_candidates": all_batters,
