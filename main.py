@@ -29,13 +29,16 @@ NTFY_TOPIC = "uncle-nicky-mlb-9x7k2"
 async def notify(msg: str, title: str = "MLB HR Model", priority: str = "default"):
     """Send push notification via ntfy.sh"""
     try:
-        async with httpx.AsyncClient(timeout=5) as client:
-            await client.post(
+        import httpx as _httpx
+        async with _httpx.AsyncClient(timeout=5) as c:
+            await c.post(
                 f"https://ntfy.sh/{NTFY_TOPIC}",
                 content=msg.encode("utf-8"),
                 headers={"Title": title, "Priority": priority}
             )
-    except: pass
+        print(f"Notification sent: {title}")
+    except Exception as e:
+        print(f"Notification failed (non-fatal): {e}")
     """Return today's date in US Eastern Time (UTC-4 EDT / UTC-5 EST).
     Railway runs in UTC - this prevents saving files with tomorrow's date at night."""
     from datetime import timezone, timedelta as td
