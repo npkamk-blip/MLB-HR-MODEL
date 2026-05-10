@@ -1391,7 +1391,10 @@ async def daily_refresh_loop():
     Cache is never wiped - always updated in place.
     """
     while True:
-        now = datetime.now()
+        # Use Eastern Time for all scheduling (Railway runs UTC)
+        from datetime import timezone, timedelta as _td
+        et_now = datetime.now(timezone.utc) + _td(hours=-4)
+        now = et_now
         await asyncio.sleep(3600)  # check every hour
 
         # 2am - record results (fast, non-blocking)
