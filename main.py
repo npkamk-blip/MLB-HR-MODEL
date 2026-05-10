@@ -5860,6 +5860,19 @@ async def get_games(date: str = None, refresh: bool = False):
         home_p = game["teams"]["home"].get("probablePitcher", {})
         gtime = game.get("gameDate", "")
 
+        # Final games - return minimal data, no heavy recomputation
+        if is_final:
+            games_out.append({
+                "game_id": gid, "away": away_team, "home": home_team, "time": gtime,
+                "is_final": True, "game_status": game_detail,
+                "away_pitcher": {"name": away_p.get("fullName","TBD"), "hand": "R"},
+                "home_pitcher": {"name": home_p.get("fullName","TBD"), "hand": "R"},
+                "top_hr_candidates": [], "away_lineup": [], "home_lineup": [],
+                "lineup_away_status": "final", "lineup_home_status": "final",
+                "weather": {}, "totals": {}, "strikeouts": {},
+            })
+            continue
+
         away_p_hand = home_p_hand = "R"
         if away_p.get("id"):
             info = await fetch_player_hand(away_p.get("id"))
