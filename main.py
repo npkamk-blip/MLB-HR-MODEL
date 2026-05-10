@@ -2073,10 +2073,79 @@ async def check_lineup_confirmations():
                 f"lineups confirmed: {today} ({len(top100)} records)", sha)
 
             # Save top 8 to top8 file (betting record)
+            # SMART FREEZE RULES (per-player not per-slate):
+            # - Game Live/Final -> player LOCKED IN, never dropped
+            # - Game Pre-game   -> still eligible to be swapped if scratched
+            # - New pre-game player -> can enter top 8 if higher ranked
+            # Example: Muncy locked in after his 2pm game ends.
+            # 7pm player scratched at 6:55pm still gets swapped out.
             top8_path = f"data/top8/{today}.json"
             existing_top8_content, top8_sha = await github_get_file(top8_path)
-            await github_put_file(top8_path, json.dumps(top8, indent=2),
-                                  f"top8: {today} ({len(top8)} confirmed picks)", top8_sha)
+
+            # Build game status map {team-opp_pitcher: started(bool)}
+            game_states = {}
+            try:
+                async with httpx.AsyncClient(timeout=10) as _sc:
+                    _sr = await _sc.get(
+                        f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher"
+                    )
+                    _sd = _sr.json()
+                started_states = {"Live", "Final", "Game Over", "Completed"}
+                for _gd in _sd.get("dates", []):
+                    for _g in _gd.get("games", []):
+                        _state    = _g.get("status",{}).get("abstractGameState","")
+                        _started  = _state in started_states
+                        _away     = _g["teams"]["away"]["team"]["name"]
+                        _home     = _g["teams"]["home"]["team"]["name"]
+                        _away_pit = _g["teams"]["away"].get("probablePitcher",{}).get("fullName","TBD")
+                        _home_pit = _g["teams"]["home"].get("probablePitcher",{}).get("fullName","TBD")
+                        game_states[f"{_away}-{_home_pit}"] = _started
+                        game_states[f"{_home}-{_away_pit}"] = _started
+            except: pass
+
+            # Load existing top 8
+            existing_top8 = []
+            if existing_top8_content:
+                try:
+                    existing_top8 = json.loads(existing_top8_content)
+                except: pass
+
+            if existing_top8:
+                # Split existing top 8 into locked (game started) and unlocked (pre-game)
+                locked   = []
+                unlocked = []
+                for r in existing_top8:
+                    gk = f"{r.get('team','')}-{r.get('opp_pitcher','')}"
+                    if game_states.get(gk, False):
+                        locked.append(r)    # game started - keep forever
+                    else:
+                        unlocked.append(r)  # pre-game - eligible for replacement
+
+                # New candidates: from ranked pool, exclude locked players,
+                # exclude anyone whose game has already started
+                locked_names = {r.get("name") for r in locked}
+                candidates = [
+                    r for r in top8
+                    if r.get("name") not in locked_names
+                    and not game_states.get(
+                        f"{r.get('team','')}-{r.get('opp_pitcher','')}", False
+                    )
+                ]
+
+                # Fill remaining slots (8 - locked count) with best candidates
+                slots_needed = 8 - len(locked)
+                final_top8 = sorted(
+                    locked + candidates[:slots_needed],
+                    key=lambda x: x.get("model_hr_pct", 0), reverse=True
+                )
+                print(f"  Top 8: {len(locked)} locked, {len(candidates[:slots_needed])} pre-game slots")
+            else:
+                # No existing top 8 yet - use full ranked pool
+                final_top8 = top8
+
+            top8 = final_top8  # use updated list for notification below
+            await github_put_file(top8_path, json.dumps(final_top8, indent=2),
+                                  f"top8: {today} ({len(final_top8)} picks)", top8_sha)
 
             # Build notification showing any replacements
             prev_top8_names = set()
