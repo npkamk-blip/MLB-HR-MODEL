@@ -9,7 +9,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 69.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 28.0,
     "barrel_pct_season": 17.2,
     "la_season": 14.3,
@@ -55,7 +55,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 69.0
+    "xgb_prob": 69.0,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -67,7 +68,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 59.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 28.0,
     "barrel_pct_season": 22.8,
     "la_season": 16.0,
@@ -113,7 +114,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 59.1
+    "xgb_prob": 59.1,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -125,7 +127,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 37.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 18.7,
     "barrel_pct_season": 15.5,
     "la_season": 11.7,
@@ -171,7 +173,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 37.4
+    "xgb_prob": 37.4,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -183,7 +186,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 34.6,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 13.7,
     "barrel_pct_season": 10.3,
     "la_season": 12.6,
@@ -229,7 +232,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 34.6
+    "xgb_prob": 34.6,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -241,7 +245,7 @@
     "home_team": "Arizona Diamondbacks",
     "lineup_source": "projected",
     "model_hr_pct": 34.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 28.0,
     "barrel_pct_season": 14.8,
     "la_season": 19.5,
@@ -287,7 +291,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 34.0
+    "xgb_prob": 34.0,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -299,7 +304,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 32.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 19.6,
     "barrel_pct_season": 17.6,
     "la_season": 12.2,
@@ -345,7 +350,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 32.1
+    "xgb_prob": 32.1,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -357,7 +363,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 31.6,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 16.2,
     "barrel_pct_season": 3.6,
     "la_season": 14.4,
@@ -403,7 +409,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 31.6
+    "xgb_prob": 31.6,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -415,7 +422,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 31.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 18.0,
     "barrel_pct_season": 4.8,
     "la_season": 16.2,
@@ -461,7 +468,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 31.1
+    "xgb_prob": 31.1,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -473,7 +481,7 @@
     "home_team": "Cleveland Guardians",
     "lineup_source": "projected",
     "model_hr_pct": 27.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 15.3,
     "barrel_pct_season": 10.1,
     "la_season": 18.2,
@@ -519,7 +527,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 27.4
+    "xgb_prob": 27.4,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -531,7 +540,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 26.6,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 14.1,
     "barrel_pct_season": 8.3,
     "la_season": 21.1,
@@ -577,7 +586,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 26.6
+    "xgb_prob": 26.6,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -589,7 +599,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 21.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 12.6,
     "barrel_pct_season": 6.3,
     "la_season": 15.0,
@@ -635,7 +645,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 21.3
+    "xgb_prob": 21.3,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -647,7 +658,7 @@
     "home_team": "Cleveland Guardians",
     "lineup_source": "projected",
     "model_hr_pct": 19.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 14.7,
     "barrel_pct_season": 8.6,
     "la_season": 15.0,
@@ -693,7 +704,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 19.8
+    "xgb_prob": 19.8,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -705,7 +717,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 19.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 28.0,
     "barrel_pct_season": 26.1,
     "la_season": 14.7,
@@ -751,7 +763,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 19.8
+    "xgb_prob": 19.8,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -763,7 +776,7 @@
     "home_team": "San Francisco Giants",
     "lineup_source": "projected",
     "model_hr_pct": 18.5,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 18.1,
     "barrel_pct_season": 16.1,
     "la_season": 20.1,
@@ -809,7 +822,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 18.5
+    "xgb_prob": 18.5,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -821,7 +835,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 17.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 23.7,
     "barrel_pct_season": 19.5,
     "la_season": 18.4,
@@ -867,7 +881,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 17.8
+    "xgb_prob": 17.8,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -879,7 +894,7 @@
     "home_team": "Arizona Diamondbacks",
     "lineup_source": "projected",
     "model_hr_pct": 17.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 18.3,
     "barrel_pct_season": 11.2,
     "la_season": 12.7,
@@ -925,7 +940,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 17.3
+    "xgb_prob": 17.3,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -937,7 +953,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 17.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 14.2,
     "barrel_pct_season": 7.7,
     "la_season": 13.7,
@@ -983,7 +999,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 17.2
+    "xgb_prob": 17.2,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -995,7 +1012,7 @@
     "home_team": "Arizona Diamondbacks",
     "lineup_source": "projected",
     "model_hr_pct": 16.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 16.3,
     "barrel_pct_season": 5.4,
     "la_season": 14.0,
@@ -1041,7 +1058,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 16.4
+    "xgb_prob": 16.4,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -1053,7 +1071,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 15.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 13.2,
     "barrel_pct_season": 6.1,
     "la_season": 15.2,
@@ -1099,7 +1117,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 15.1
+    "xgb_prob": 15.1,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -1111,7 +1130,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 15.1,
-    "hit_hr": null,
+    "hit_hr": 1,
     "rf_prob": 16.3,
     "barrel_pct_season": 6.3,
     "la_season": 17.7,
@@ -1157,7 +1176,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 15.1
+    "xgb_prob": 15.1,
+    "actual_ab": 5
   },
   {
     "date": "2026-05-09",
@@ -1169,7 +1189,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 14.7,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 15.8,
     "barrel_pct_season": 9.2,
     "la_season": 20.0,
@@ -1215,7 +1235,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 14.7
+    "xgb_prob": 14.7,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -1227,7 +1248,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 14.6,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 14.4,
     "barrel_pct_season": 7.3,
     "la_season": 14.7,
@@ -1273,7 +1294,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 14.6
+    "xgb_prob": 14.6,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -1285,7 +1307,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 14.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 18.8,
     "barrel_pct_season": 6.7,
     "la_season": 11.6,
@@ -1331,7 +1353,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 14.4
+    "xgb_prob": 14.4,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -1343,7 +1366,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 14.0,
-    "hit_hr": null,
+    "hit_hr": 0,
     "rf_prob": 25.8,
     "barrel_pct_season": 18.9,
     "la_season": 13.9,
@@ -1389,7 +1412,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 14.0
+    "xgb_prob": 14.0,
+    "actual_ab": 4
   },
   {
     "date": "2026-05-09",
@@ -1401,7 +1425,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 13.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 12.5,
     "barrel_pct_season": 9.9,
     "la_season": 10.3,
@@ -1447,7 +1471,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 13.8
+    "xgb_prob": 13.8,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -1459,7 +1484,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 12.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 20.1,
     "barrel_pct_season": 10.1,
     "la_season": 13.6,
@@ -1505,7 +1530,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 12.3
+    "xgb_prob": 12.3,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -1517,7 +1543,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 11.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 12.9,
     "barrel_pct_season": 6.0,
     "la_season": 14.3,
@@ -1563,7 +1589,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 11.9
+    "xgb_prob": 11.9,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -1575,7 +1602,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 11.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 8.6,
     "barrel_pct_season": 7.1,
     "la_season": 18.6,
@@ -1621,7 +1648,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 11.9
+    "xgb_prob": 11.9,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -1633,7 +1661,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 11.9,
-    "hit_hr": null,
+    "hit_hr": 1,
     "rf_prob": 24.1,
     "barrel_pct_season": 11.5,
     "la_season": 2.8,
@@ -1679,7 +1707,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 11.9
+    "xgb_prob": 11.9,
+    "actual_ab": 5
   },
   {
     "date": "2026-05-09",
@@ -1691,7 +1720,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 11.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 16.0,
     "barrel_pct_season": 10.1,
     "la_season": 18.6,
@@ -1737,7 +1766,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 11.2
+    "xgb_prob": 11.2,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -1749,7 +1779,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 11.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 16.4,
     "barrel_pct_season": 11.0,
     "la_season": 8.8,
@@ -1795,7 +1825,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 11.1
+    "xgb_prob": 11.1,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -1807,7 +1838,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 11.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 28.0,
     "barrel_pct_season": 22.0,
     "la_season": 17.4,
@@ -1853,7 +1884,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 11.0
+    "xgb_prob": 11.0,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -1865,7 +1897,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 10.5,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 24.1,
     "barrel_pct_season": 17.2,
     "la_season": 14.7,
@@ -1911,7 +1943,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 10.5
+    "xgb_prob": 10.5,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -1923,7 +1956,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 10.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 9.9,
     "barrel_pct_season": 9.3,
     "la_season": 14.4,
@@ -1969,7 +2002,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 10.4
+    "xgb_prob": 10.4,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -1981,7 +2015,7 @@
     "home_team": "Arizona Diamondbacks",
     "lineup_source": "projected",
     "model_hr_pct": 10.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 16.8,
     "barrel_pct_season": 10.4,
     "la_season": 14.1,
@@ -2027,7 +2061,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 10.4
+    "xgb_prob": 10.4,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2039,7 +2074,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 9.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 19.3,
     "barrel_pct_season": 12.5,
     "la_season": 5.2,
@@ -2085,7 +2120,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 9.9
+    "xgb_prob": 9.9,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2097,7 +2133,7 @@
     "home_team": "San Francisco Giants",
     "lineup_source": "projected",
     "model_hr_pct": 9.6,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 11.9,
     "barrel_pct_season": 7.9,
     "la_season": 22.2,
@@ -2143,7 +2179,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 9.6
+    "xgb_prob": 9.6,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2155,7 +2192,7 @@
     "home_team": "Cleveland Guardians",
     "lineup_source": "projected",
     "model_hr_pct": 9.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 14.2,
     "barrel_pct_season": 9.2,
     "la_season": 12.9,
@@ -2201,7 +2238,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 9.4
+    "xgb_prob": 9.4,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2213,7 +2251,7 @@
     "home_team": "Cleveland Guardians",
     "lineup_source": "projected",
     "model_hr_pct": 9.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 15.4,
     "barrel_pct_season": 10.4,
     "la_season": 16.0,
@@ -2259,7 +2297,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 9.0
+    "xgb_prob": 9.0,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2271,7 +2310,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 8.6,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 21.4,
     "barrel_pct_season": 15.3,
     "la_season": 19.9,
@@ -2317,7 +2356,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 8.6
+    "xgb_prob": 8.6,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2329,7 +2369,7 @@
     "home_team": "Cleveland Guardians",
     "lineup_source": "projected",
     "model_hr_pct": 8.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 15.8,
     "barrel_pct_season": 9.4,
     "la_season": 20.4,
@@ -2375,7 +2415,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 8.3
+    "xgb_prob": 8.3,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2387,7 +2428,7 @@
     "home_team": "Arizona Diamondbacks",
     "lineup_source": "projected",
     "model_hr_pct": 7.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 16.3,
     "barrel_pct_season": 3.9,
     "la_season": 5.3,
@@ -2433,7 +2474,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 7.8
+    "xgb_prob": 7.8,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2445,7 +2487,7 @@
     "home_team": "San Francisco Giants",
     "lineup_source": "projected",
     "model_hr_pct": 7.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 12.9,
     "barrel_pct_season": 6.8,
     "la_season": 11.3,
@@ -2491,7 +2533,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 7.8
+    "xgb_prob": 7.8,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2503,7 +2546,7 @@
     "home_team": "San Francisco Giants",
     "lineup_source": "projected",
     "model_hr_pct": 7.5,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 11.7,
     "barrel_pct_season": 8.2,
     "la_season": 11.8,
@@ -2549,7 +2592,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 7.5
+    "xgb_prob": 7.5,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2561,7 +2605,7 @@
     "home_team": "Cleveland Guardians",
     "lineup_source": "projected",
     "model_hr_pct": 7.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 14.1,
     "barrel_pct_season": 4.3,
     "la_season": 7.9,
@@ -2607,7 +2651,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 7.2
+    "xgb_prob": 7.2,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2619,7 +2664,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 7.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "rf_prob": 13.2,
     "barrel_pct_season": 9.1,
     "la_season": 18.0,
@@ -2665,7 +2710,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 7.1
+    "xgb_prob": 7.1,
+    "actual_ab": 4
   },
   {
     "date": "2026-05-09",
@@ -2677,7 +2723,7 @@
     "home_team": "Arizona Diamondbacks",
     "lineup_source": "projected",
     "model_hr_pct": 6.9,
-    "hit_hr": null,
+    "hit_hr": 0,
     "rf_prob": 10.9,
     "barrel_pct_season": 5.3,
     "la_season": 21.6,
@@ -2723,7 +2769,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.9
+    "xgb_prob": 6.9,
+    "actual_ab": 2
   },
   {
     "date": "2026-05-09",
@@ -2735,7 +2782,7 @@
     "home_team": "San Francisco Giants",
     "lineup_source": "projected",
     "model_hr_pct": 6.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 16.2,
     "barrel_pct_season": 14.1,
     "la_season": 8.9,
@@ -2781,7 +2828,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.8
+    "xgb_prob": 6.8,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2793,7 +2841,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 6.7,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 16.7,
     "barrel_pct_season": 10.5,
     "la_season": 19.8,
@@ -2839,7 +2887,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.7
+    "xgb_prob": 6.7,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2851,7 +2900,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 6.6,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 19.3,
     "barrel_pct_season": 21.4,
     "la_season": 18.7,
@@ -2897,7 +2946,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.6
+    "xgb_prob": 6.6,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2909,7 +2959,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 6.5,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 11.1,
     "barrel_pct_season": 4.0,
     "la_season": 8.8,
@@ -2955,7 +3005,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.5
+    "xgb_prob": 6.5,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -2967,7 +3018,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 6.5,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 14.8,
     "barrel_pct_season": 0,
     "la_season": 0,
@@ -3013,7 +3064,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.5
+    "xgb_prob": 6.5,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -3025,7 +3077,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 6.5,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 13.2,
     "barrel_pct_season": 9.8,
     "la_season": 14.1,
@@ -3071,7 +3123,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.5
+    "xgb_prob": 6.5,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -3083,7 +3136,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 6.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 16.3,
     "barrel_pct_season": 0.0,
     "la_season": 6.0,
@@ -3129,7 +3182,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.3
+    "xgb_prob": 6.3,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -3141,7 +3195,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 6.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 16.9,
     "barrel_pct_season": 6.0,
     "la_season": 15.6,
@@ -3187,7 +3241,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.3
+    "xgb_prob": 6.3,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -3199,7 +3254,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 6.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 10.5,
     "barrel_pct_season": 8.2,
     "la_season": 9.2,
@@ -3245,7 +3300,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.3
+    "xgb_prob": 6.3,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -3257,7 +3313,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 6.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "rf_prob": 11.1,
     "barrel_pct_season": 9.3,
     "la_season": 22.6,
@@ -3303,7 +3359,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.2
+    "xgb_prob": 6.2,
+    "actual_ab": 2
   },
   {
     "date": "2026-05-09",
@@ -3315,7 +3372,7 @@
     "home_team": "San Francisco Giants",
     "lineup_source": "projected",
     "model_hr_pct": 6.2,
-    "hit_hr": null,
+    "hit_hr": 0,
     "rf_prob": 17.1,
     "barrel_pct_season": 13.5,
     "la_season": 16.0,
@@ -3361,7 +3418,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.2
+    "xgb_prob": 6.2,
+    "actual_ab": 4
   },
   {
     "date": "2026-05-09",
@@ -3373,7 +3431,7 @@
     "home_team": "Cleveland Guardians",
     "lineup_source": "projected",
     "model_hr_pct": 6.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 12.2,
     "barrel_pct_season": 15.5,
     "la_season": 13.0,
@@ -3419,7 +3477,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.1
+    "xgb_prob": 6.1,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -3431,7 +3490,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 6.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 14.7,
     "barrel_pct_season": 9.6,
     "la_season": 11.9,
@@ -3477,7 +3536,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.1
+    "xgb_prob": 6.1,
+    "actual_ab": 1
   },
   {
     "date": "2026-05-09",
@@ -3489,7 +3549,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 6.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 17.6,
     "barrel_pct_season": 13.9,
     "la_season": 18.5,
@@ -3535,7 +3595,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 6.0
+    "xgb_prob": 6.0,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -3547,7 +3608,7 @@
     "home_team": "Arizona Diamondbacks",
     "lineup_source": "projected",
     "model_hr_pct": 5.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 11.8,
     "barrel_pct_season": 6.5,
     "la_season": 19.5,
@@ -3593,7 +3654,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 5.9
+    "xgb_prob": 5.9,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -3605,7 +3667,7 @@
     "home_team": "San Francisco Giants",
     "lineup_source": "projected",
     "model_hr_pct": 5.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 18.5,
     "barrel_pct_season": 8.2,
     "la_season": 15.6,
@@ -3651,7 +3713,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 5.9
+    "xgb_prob": 5.9,
+    "actual_ab": 1
   },
   {
     "date": "2026-05-09",
@@ -3663,7 +3726,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 5.7,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 11.1,
     "barrel_pct_season": 8.6,
     "la_season": 16.4,
@@ -3709,7 +3772,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 5.7
+    "xgb_prob": 5.7,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -3721,7 +3785,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 5.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 13.6,
     "barrel_pct_season": 6.5,
     "la_season": 11.7,
@@ -3767,7 +3831,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 5.4
+    "xgb_prob": 5.4,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -3779,7 +3844,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 5.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 13.1,
     "barrel_pct_season": 0.0,
     "la_season": 13.2,
@@ -3825,7 +3890,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 5.4
+    "xgb_prob": 5.4,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -3837,7 +3903,7 @@
     "home_team": "San Francisco Giants",
     "lineup_source": "projected",
     "model_hr_pct": 5.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 16.0,
     "barrel_pct_season": 9.3,
     "la_season": 25.5,
@@ -3883,7 +3949,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 5.4
+    "xgb_prob": 5.4,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -3895,7 +3962,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 5.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 23.6,
     "barrel_pct_season": 15.4,
     "la_season": 20.4,
@@ -3941,7 +4008,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 5.3
+    "xgb_prob": 5.3,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -3953,7 +4021,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 5.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 18.7,
     "barrel_pct_season": 18.9,
     "la_season": 14.5,
@@ -3999,7 +4067,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 5.3
+    "xgb_prob": 5.3,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4011,7 +4080,7 @@
     "home_team": "Cleveland Guardians",
     "lineup_source": "projected",
     "model_hr_pct": 5.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 20.2,
     "barrel_pct_season": 0.0,
     "la_season": 24.2,
@@ -4057,7 +4126,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 5.2
+    "xgb_prob": 5.2,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4069,7 +4139,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 5.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 17.7,
     "barrel_pct_season": 11.9,
     "la_season": 18.3,
@@ -4115,7 +4185,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 5.0
+    "xgb_prob": 5.0,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4127,7 +4198,7 @@
     "home_team": "Cleveland Guardians",
     "lineup_source": "projected",
     "model_hr_pct": 4.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 10.6,
     "barrel_pct_season": 4.1,
     "la_season": 8.8,
@@ -4173,7 +4244,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 4.9
+    "xgb_prob": 4.9,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4185,7 +4257,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 4.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 16.9,
     "barrel_pct_season": 6.8,
     "la_season": 16.6,
@@ -4231,7 +4303,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 4.9
+    "xgb_prob": 4.9,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4243,7 +4316,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 4.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 28.0,
     "barrel_pct_season": 40.0,
     "la_season": 8.4,
@@ -4289,7 +4362,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 4.9
+    "xgb_prob": 4.9,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4301,7 +4375,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 4.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 10.6,
     "barrel_pct_season": 11.6,
     "la_season": 11.0,
@@ -4347,7 +4421,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 4.8
+    "xgb_prob": 4.8,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4359,7 +4434,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 4.7,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 11.0,
     "barrel_pct_season": 4.6,
     "la_season": 10.6,
@@ -4405,7 +4480,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 4.7
+    "xgb_prob": 4.7,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4417,7 +4493,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 4.7,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 15.8,
     "barrel_pct_season": 12.5,
     "la_season": 22.2,
@@ -4463,7 +4539,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 4.7
+    "xgb_prob": 4.7,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4475,7 +4552,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 4.5,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 20.3,
     "barrel_pct_season": 14.0,
     "la_season": 11.3,
@@ -4521,7 +4598,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 4.5
+    "xgb_prob": 4.5,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4533,7 +4611,7 @@
     "home_team": "Arizona Diamondbacks",
     "lineup_source": "projected",
     "model_hr_pct": 4.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 11.6,
     "barrel_pct_season": 4.7,
     "la_season": 9.5,
@@ -4579,7 +4657,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 4.3
+    "xgb_prob": 4.3,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4591,7 +4670,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 4.0,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 24.2,
     "barrel_pct_season": 17.5,
     "la_season": 7.1,
@@ -4637,7 +4716,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 4.0
+    "xgb_prob": 4.0,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4649,7 +4729,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 3.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 14.8,
     "barrel_pct_season": 6.1,
     "la_season": 7.8,
@@ -4695,7 +4775,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.8
+    "xgb_prob": 3.8,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4707,7 +4788,7 @@
     "home_team": "Arizona Diamondbacks",
     "lineup_source": "projected",
     "model_hr_pct": 3.7,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 10.8,
     "barrel_pct_season": 4.2,
     "la_season": 15.4,
@@ -4753,7 +4834,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.7
+    "xgb_prob": 3.7,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4765,7 +4847,7 @@
     "home_team": "Arizona Diamondbacks",
     "lineup_source": "projected",
     "model_hr_pct": 3.7,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 10.0,
     "barrel_pct_season": 4.0,
     "la_season": 10.7,
@@ -4811,7 +4893,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.7
+    "xgb_prob": 3.7,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4823,7 +4906,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 3.6,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 14.2,
     "barrel_pct_season": 8.5,
     "la_season": 10.7,
@@ -4869,7 +4952,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.6
+    "xgb_prob": 3.6,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4881,7 +4965,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 3.6,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 11.7,
     "barrel_pct_season": 13.8,
     "la_season": 10.5,
@@ -4927,7 +5011,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.6
+    "xgb_prob": 3.6,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4939,7 +5024,7 @@
     "home_team": "Texas Rangers",
     "lineup_source": "projected",
     "model_hr_pct": 3.5,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 15.4,
     "barrel_pct_season": 14.1,
     "la_season": 8.9,
@@ -4985,7 +5070,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.5
+    "xgb_prob": 3.5,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -4997,7 +5083,7 @@
     "home_team": "Cleveland Guardians",
     "lineup_source": "projected",
     "model_hr_pct": 3.4,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 9.8,
     "barrel_pct_season": 2.7,
     "la_season": 10.6,
@@ -5043,7 +5129,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.4
+    "xgb_prob": 3.4,
+    "actual_ab": 1
   },
   {
     "date": "2026-05-09",
@@ -5055,7 +5142,7 @@
     "home_team": "Cleveland Guardians",
     "lineup_source": "projected",
     "model_hr_pct": 3.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 10.0,
     "barrel_pct_season": 7.0,
     "la_season": 10.6,
@@ -5101,7 +5188,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.3
+    "xgb_prob": 3.3,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -5113,7 +5201,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 3.3,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 16.1,
     "barrel_pct_season": 10.1,
     "la_season": 9.4,
@@ -5159,7 +5247,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.3
+    "xgb_prob": 3.3,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -5171,7 +5260,7 @@
     "home_team": "Arizona Diamondbacks",
     "lineup_source": "projected",
     "model_hr_pct": 3.2,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 12.4,
     "barrel_pct_season": 0.0,
     "la_season": 14.1,
@@ -5217,7 +5306,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.2
+    "xgb_prob": 3.2,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -5229,7 +5319,7 @@
     "home_team": "Cleveland Guardians",
     "lineup_source": "projected",
     "model_hr_pct": 3.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 11.3,
     "barrel_pct_season": 10.3,
     "la_season": 23.4,
@@ -5275,7 +5365,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.1
+    "xgb_prob": 3.1,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -5287,7 +5378,7 @@
     "home_team": "Arizona Diamondbacks",
     "lineup_source": "projected",
     "model_hr_pct": 3.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 18.7,
     "barrel_pct_season": 21.7,
     "la_season": 16.4,
@@ -5333,7 +5424,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.1
+    "xgb_prob": 3.1,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -5345,7 +5437,7 @@
     "home_team": "San Diego Padres",
     "lineup_source": "projected",
     "model_hr_pct": 3.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 11.7,
     "barrel_pct_season": 9.4,
     "la_season": 11.6,
@@ -5391,7 +5483,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.1
+    "xgb_prob": 3.1,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -5403,7 +5496,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 3.1,
-    "hit_hr": null,
+    "hit_hr": 0,
     "rf_prob": 16.3,
     "barrel_pct_season": 9.6,
     "la_season": 18.2,
@@ -5449,7 +5542,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.1
+    "xgb_prob": 3.1,
+    "actual_ab": 3
   },
   {
     "date": "2026-05-09",
@@ -5461,7 +5555,7 @@
     "home_team": "Los Angeles Dodgers",
     "lineup_source": "projected",
     "model_hr_pct": 3.1,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 13.6,
     "barrel_pct_season": 13.0,
     "la_season": 10.7,
@@ -5507,7 +5601,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.1
+    "xgb_prob": 3.1,
+    "actual_ab": 1
   },
   {
     "date": "2026-05-09",
@@ -5519,7 +5614,7 @@
     "home_team": "Milwaukee Brewers",
     "lineup_source": "projected",
     "model_hr_pct": 3.0,
-    "hit_hr": null,
+    "hit_hr": 1,
     "rf_prob": 23.7,
     "barrel_pct_season": 12.5,
     "la_season": 17.2,
@@ -5565,7 +5660,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 3.0
+    "xgb_prob": 3.0,
+    "actual_ab": 4
   },
   {
     "date": "2026-05-09",
@@ -5577,7 +5673,7 @@
     "home_team": "Arizona Diamondbacks",
     "lineup_source": "projected",
     "model_hr_pct": 2.9,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 11.6,
     "barrel_pct_season": 7.8,
     "la_season": 14.8,
@@ -5623,7 +5719,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 2.9
+    "xgb_prob": 2.9,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -5635,7 +5732,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 2.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 16.2,
     "barrel_pct_season": 12.6,
     "la_season": 22.5,
@@ -5681,7 +5778,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 2.8
+    "xgb_prob": 2.8,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -5693,7 +5791,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 2.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 13.5,
     "barrel_pct_season": 5.7,
     "la_season": 5.8,
@@ -5739,7 +5837,8 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 2.8
+    "xgb_prob": 2.8,
+    "actual_ab": 0
   },
   {
     "date": "2026-05-09",
@@ -5751,7 +5850,7 @@
     "home_team": "Chicago White Sox",
     "lineup_source": "projected",
     "model_hr_pct": 2.8,
-    "hit_hr": null,
+    "hit_hr": "DNP",
     "rf_prob": 20.0,
     "barrel_pct_season": 13.3,
     "la_season": 11.6,
@@ -5797,6 +5896,7 @@
     "rotation_round": 1,
     "rotation_day": 27,
     "day_of_season": 50,
-    "xgb_prob": 2.8
+    "xgb_prob": 2.8,
+    "actual_ab": 0
   }
 ]
