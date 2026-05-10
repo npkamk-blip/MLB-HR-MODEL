@@ -2057,7 +2057,7 @@ async def record_results(target_date: str):
             r = await client.get(f"{MLB_API}/schedule?sportId=1&date={target_date}&hydrate=team")
             sched = r.json()
         hr_hitters = set()
-        actual_ab = {}  # name.lower() -> ab count
+        actual_pa = {}  # name.lower() -> plate appearances (PA catches walks/HBP/sac, AB misses them)
         for game_date in sched.get("dates", []):
             for game in game_date.get("games", []):
                 game_state    = game.get("status", {}).get("abstractGameState", "")
@@ -2079,8 +2079,13 @@ async def record_results(target_date: str):
                             stats = p.get("stats", {}).get("batting", {})
                             name = p.get("person", {}).get("fullName", "")
                             if not name: continue
-                            ab = int(stats.get("atBats", 0) or 0)
-                            actual_ab[name.lower()] = ab
+                            ab  = int(stats.get("atBats", 0) or 0)
+                            bb  = int(stats.get("baseOnBalls", 0) or 0)
+                            hbp = int(stats.get("hitByPitch", 0) or 0)
+                            sf  = int(stats.get("sacFlies", 0) or 0)
+                            sh  = int(stats.get("sacBunts", 0) or 0)
+                            pa  = ab + bb + hbp + sf + sh
+                            actual_pa[name.lower()] = pa
                             if int(stats.get("homeRuns", 0) or 0) > 0:
                                 hr_hitters.add(name.lower())
                 except Exception as box_err:
@@ -2114,58 +2119,60 @@ async def record_results(target_date: str):
         for rec in records:
             nl = rec["name"].lower()
 
-            # Fix stale DNP records - re-check with boxscore data
+            # Fix stale DNP records - re-check with final boxscore PA
             if rec.get("hit_hr") == "DNP":
-                hit, ab = name_hit(nl, hr_hitters, actual_ab)
+                hit, pa = name_hit(nl, hr_hitters, actual_pa)
                 if hit:
                     rec["hit_hr"] = 1
-                    rec["actual_ab"] = ab
+                    rec["actual_pa"] = pa
                     updated += 1
                     print(f"Corrected DNP->HR: {rec['name']} actually hit a HR")
-                elif ab >= 2:
-                    # Played a late game but no HR - correct from DNP to 0
+                elif pa >= 1:
+                    # Had a plate appearance in a late game - real 0, not a DNP
                     rec["hit_hr"] = 0
-                    rec["actual_ab"] = ab
+                    rec["actual_pa"] = pa
                     updated += 1
-                    print(f"Corrected DNP->0: {rec['name']} played (ab={ab}) but no HR")
+                    print(f"Corrected DNP->0: {rec['name']} played (pa={pa}) but no HR")
                 continue
 
             # Fix false negatives - recorded as 0 but actually hit a HR
             if rec.get("hit_hr") == 0:
-                hit, ab = name_hit(nl, hr_hitters, actual_ab)
+                hit, pa = name_hit(nl, hr_hitters, actual_pa)
                 if hit:
                     rec["hit_hr"] = 1
-                    rec["actual_ab"] = ab
+                    rec["actual_pa"] = pa
                     updated += 1
                     print(f"Corrected 0->HR: {rec['name']} actually hit a HR")
                 continue
 
-            # Re-verify hit_hr=1 records too - boxscore mid-game can give false positives
-            # (e.g. West Coast game at 2am ET is in progress; player had HR then got erased)
+            # Re-verify hit_hr=1 - mid-game boxscore at 2am ET can give false positives
             if rec.get("hit_hr") == 1:
-                hit, ab = name_hit(nl, hr_hitters, actual_ab)
-                if not hit and ab >= 2:
-                    # Was marked as HR but boxscore says no - correct it
+                hit, pa = name_hit(nl, hr_hitters, actual_pa)
+                if not hit and pa >= 1:
+                    # Final boxscore confirms no HR but player batted - correct to 0
                     rec["hit_hr"] = 0
-                    rec["actual_ab"] = ab
+                    rec["actual_pa"] = pa
                     updated += 1
-                    print(f"Corrected 1->0: {rec['name']} did NOT hit a HR (ab={ab})")
+                    print(f"Corrected 1->0: {rec['name']} did NOT hit a HR (pa={pa})")
                 continue
 
             # Handle null records (not yet recorded at all)
-            hit, ab = name_hit(nl, hr_hitters, actual_ab)
+            hit, pa = name_hit(nl, hr_hitters, actual_pa)
             if hit:
                 rec["hit_hr"] = 1
-                rec["actual_ab"] = ab
+                rec["actual_pa"] = pa
                 updated += 1
-            elif ab < 2:
+            elif pa < 1:
+                # pa=0: truly did not bat (DNP, pinch runner, or game not final yet)
                 rec["hit_hr"] = "DNP"
-                rec["actual_ab"] = ab
+                rec["actual_pa"] = pa
                 dnp_count += 1
             else:
+                # pa>=1: had at least one plate appearance - valid 0 for training data
                 rec["hit_hr"] = 0
-                rec["actual_ab"] = ab
+                rec["actual_pa"] = pa
                 updated += 1
+
         content_updated = json.dumps(records, indent=2)
         await github_put_file(path, content_updated, f"results: {target_date} ({len(hr_hitters)} HRs, {dnp_count} DNP)", sha)
         print(f"Recorded results for {target_date}: {len(hr_hitters)} HR hitters, {dnp_count} DNP, {updated} records updated")
