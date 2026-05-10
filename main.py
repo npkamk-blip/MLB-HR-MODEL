@@ -4217,6 +4217,317 @@ async def manual_record_results_get(target_date: str = None):
     result = await end_of_day_save(d, notify_result=False)
     return {"status": "done", "date": d, "result": result}
 
+@app.get("/backfill-mlb-ids")
+async def backfill_mlb_ids(days: int = 30, dry_run: bool = True):
+    """
+    One-time backfill: looks up mlb_id for every player in old prediction files
+    that doesn't have one yet, then saves it back.
+
+    dry_run=true  (default) - shows what would be updated without writing
+    dry_run=false - actually writes the IDs back to GitHub
+
+    After running with dry_run=false, hit /id-accuracy to verify match rates
+    on historical data immediately - no need to wait 3 days.
+
+    Example: /backfill-mlb-ids?days=30&dry_run=true
+             /backfill-mlb-ids?days=30&dry_run=false
+    """
+    if not GITHUB_TOKEN:
+        return {"error": "No GitHub token"}
+
+    import json
+
+    # Build a name->mlb_id cache by searching MLB people API
+    # We cache results so we don't spam the API for the same name twice
+    name_to_id_cache = {}
+
+    async def lookup_mlb_id(name: str) -> int | None:
+        """Look up a player's MLB ID by full name via people search API."""
+        nl = name.lower().strip()
+        if nl in name_to_id_cache:
+            return name_to_id_cache[nl]
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                # Try exact search first
+                r = await client.get(
+                    f"{MLB_API}/people/search",
+                    params={"names": name, "sportId": 1}
+                )
+                data = r.json()
+            people = data.get("people", [])
+            if len(people) == 1:
+                pid = people[0].get("id")
+                name_to_id_cache[nl] = pid
+                return pid
+            if len(people) > 1:
+                # Multiple matches - find active player
+                active = [p for p in people if p.get("active")]
+                if len(active) == 1:
+                    pid = active[0].get("id")
+                    name_to_id_cache[nl] = pid
+                    return pid
+                # Try exact full name match
+                exact = [p for p in people if p.get("fullName","").lower() == nl]
+                if len(exact) == 1:
+                    pid = exact[0].get("id")
+                    name_to_id_cache[nl] = pid
+                    return pid
+            name_to_id_cache[nl] = None
+            return None
+        except Exception as e:
+            print(f"  ID lookup error for {name}: {e}")
+            return None
+
+    # Process prediction files
+    total_records   = 0
+    already_had_id  = 0
+    newly_found_id  = 0
+    could_not_find  = 0
+    files_updated   = 0
+    unfound_players = []
+
+    # Get list of prediction files
+    async with httpx.AsyncClient(timeout=15) as client:
+        r = await client.get(
+            f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
+            headers={"Authorization": f"token {GITHUB_TOKEN}"}
+        )
+        files = r.json() if r.is_success else []
+
+    for f in sorted(files, key=lambda x: x.get("name",""), reverse=True)[:days]:
+        if not f.get("name","").endswith(".json"): continue
+        fname = f["name"]
+        d = fname.replace(".json","")
+
+        raw, sha = await github_get_file(f"data/predictions/{fname}")
+        if not raw: continue
+        try:
+            recs = json.loads(raw)
+        except: continue
+
+        file_changed = False
+        for rec in recs:
+            total_records += 1
+            if rec.get("mlb_id"):
+                already_had_id += 1
+                continue
+
+            # Look up by name
+            name = rec.get("name","")
+            if not name: continue
+
+            pid = await lookup_mlb_id(name)
+            if pid:
+                rec["mlb_id"] = pid
+                newly_found_id += 1
+                file_changed = True
+            else:
+                could_not_find += 1
+                unfound_players.append({
+                    "date": d,
+                    "name": name,
+                    "team": rec.get("team",""),
+                })
+
+        if file_changed and not dry_run:
+            await github_put_file(
+                f"data/predictions/{fname}",
+                json.dumps(recs, indent=2),
+                f"backfill mlb_ids: {d}",
+                sha
+            )
+            files_updated += 1
+            print(f"  Updated {fname}: {sum(1 for r in recs if r.get('mlb_id'))} records now have IDs")
+
+    coverage = round((already_had_id + newly_found_id) / max(total_records, 1) * 100, 1)
+
+    return {
+        "dry_run": dry_run,
+        "summary": {
+            "files_processed":  min(days, len(files)),
+            "files_updated":    files_updated if not dry_run else f"{sum(1 for f in files[:days] if f.get('name','').endswith('.json'))} would be updated",
+            "total_records":    total_records,
+            "already_had_id":   already_had_id,
+            "newly_found_id":   newly_found_id,
+            "could_not_find":   could_not_find,
+            "id_coverage":      f"{coverage}%",
+            "verdict": (
+                "Run with dry_run=false to save IDs" if dry_run else
+                "Done - now run /id-accuracy to verify match rates on historical data"
+            ),
+        },
+        "unfound_players": unfound_players,
+        "next_step": (
+            "/backfill-mlb-ids?days=30&dry_run=false" if dry_run
+            else "/id-accuracy?days=30"
+        ),
+    }
+
+
+@app.get("/id-accuracy")
+async def id_accuracy(days: int = 7):
+    """
+    Tests how accurately mlb_id matching works across recent boxscores.
+
+    For each day in the last N days:
+    1. Fetches all final boxscores - builds pa_by_id and pa_by_name
+    2. Loads our predictions file
+    3. For each prediction record attempts to match:
+       - By mlb_id (ideal)
+       - By exact name (fallback)
+       - By last name (last resort)
+       - Not found (problem)
+    4. Reports match rates and any players that couldn't be matched
+
+    This tells you exactly how reliable ID matching is before committing
+    to wiping old name-only data.
+    Example: /id-accuracy?days=7
+    """
+    if not GITHUB_TOKEN:
+        return {"error": "No GitHub token"}
+
+    import json
+    results_by_day = []
+    totals = {"id": 0, "name_exact": 0, "name_last": 0, "not_found": 0, "no_mlb_id": 0}
+    not_found_players = []
+
+    for days_ago in range(1, days + 1):
+        target = (et_today() - timedelta(days=days_ago)).isoformat()
+
+        # Load predictions file
+        raw, _ = await github_get_file(f"data/predictions/{target}.json")
+        if not raw:
+            results_by_day.append({"date": target, "status": "no predictions file"})
+            continue
+        try:
+            preds = json.loads(raw)
+        except:
+            results_by_day.append({"date": target, "status": "parse error"})
+            continue
+
+        # Only look at records that have outcomes (completed days)
+        completed = [r for r in preds if r.get("hit_hr") in [0, 1]]
+        if not completed:
+            results_by_day.append({"date": target, "status": "no completed records yet"})
+            continue
+
+        # Build boxscore lookup for this date
+        hr_by_id, pa_by_id, hr_by_name, pa_by_name, games_final, games_pending =             await build_boxscore_outcomes(target)
+
+        if not pa_by_id:
+            results_by_day.append({"date": target, "status": "boxscore fetch failed"})
+            continue
+
+        # Test each prediction record
+        day_counts = {"id": 0, "name_exact": 0, "name_last": 0, "not_found": 0, "no_mlb_id": 0}
+        day_mismatches = []
+
+        for rec in completed:
+            mlb_id = rec.get("mlb_id")
+            nl     = rec.get("name", "").lower()
+            last   = nl.split()[-1] if nl else ""
+
+            if not mlb_id:
+                day_counts["no_mlb_id"] += 1
+                continue
+
+            # Try ID match
+            if mlb_id in pa_by_id:
+                day_counts["id"] += 1
+                # Verify ID match gives same outcome as name match (sanity check)
+                id_hit  = mlb_id in hr_by_id
+                name_hit = nl in hr_by_name
+                if id_hit != name_hit and nl in pa_by_name:
+                    day_mismatches.append({
+                        "name": rec.get("name"),
+                        "mlb_id": mlb_id,
+                        "id_says": id_hit,
+                        "name_says": name_hit,
+                        "issue": "ID and name give different outcomes!"
+                    })
+                continue
+
+            # ID not found in boxscore - try name
+            if nl in pa_by_name:
+                day_counts["name_exact"] += 1
+                not_found_players.append({
+                    "date": target,
+                    "name": rec.get("name"),
+                    "mlb_id": mlb_id,
+                    "issue": "mlb_id not in boxscore but name matched - ID mismatch"
+                })
+                continue
+
+            # Last name fallback
+            last_matches = [k for k in pa_by_name if k.split()[-1] == last]
+            if len(last_matches) == 1:
+                day_counts["name_last"] += 1
+                not_found_players.append({
+                    "date": target,
+                    "name": rec.get("name"),
+                    "mlb_id": mlb_id,
+                    "boxscore_name": last_matches[0],
+                    "issue": "mlb_id not in boxscore, matched by last name only"
+                })
+                continue
+
+            # Truly not found
+            day_counts["not_found"] += 1
+            not_found_players.append({
+                "date": target,
+                "name": rec.get("name"),
+                "mlb_id": mlb_id,
+                "issue": "not found by ID, name, or last name"
+            })
+
+        total_day = sum(day_counts.values())
+        id_rate = round(day_counts["id"] / max(total_day - day_counts["no_mlb_id"], 1) * 100, 1)
+
+        results_by_day.append({
+            "date":         target,
+            "total":        total_day,
+            "id_match":     day_counts["id"],
+            "name_exact":   day_counts["name_exact"],
+            "name_last":    day_counts["name_last"],
+            "not_found":    day_counts["not_found"],
+            "no_mlb_id":    day_counts["no_mlb_id"],
+            "id_match_rate": f"{id_rate}%",
+            "mismatches":   day_mismatches,
+            "games_final":  games_final,
+        })
+
+        for k, v in day_counts.items():
+            totals[k] = totals.get(k, 0) + v
+
+    total_with_id = totals["id"] + totals["name_exact"] + totals["name_last"] + totals["not_found"]
+    overall_id_rate = round(totals["id"] / max(total_with_id, 1) * 100, 1)
+    overall_found_rate = round((totals["id"] + totals["name_exact"] + totals["name_last"]) / max(total_with_id, 1) * 100, 1)
+
+    verdict = (
+        "ID matching is reliable - safe to use as primary key"
+        if overall_id_rate >= 95 else
+        "ID matching is good but some gaps - investigate not_found players"
+        if overall_id_rate >= 85 else
+        "ID matching needs work - too many fallbacks to name matching"
+    )
+
+    return {
+        "summary": {
+            "days_checked":       days,
+            "overall_id_rate":    f"{overall_id_rate}%",
+            "overall_found_rate": f"{overall_found_rate}%",
+            "total_records":      total_with_id,
+            "matched_by_id":      totals["id"],
+            "matched_by_name":    totals["name_exact"] + totals["name_last"],
+            "not_found":          totals["not_found"],
+            "no_mlb_id_in_rec":   totals["no_mlb_id"],
+            "verdict":            verdict,
+        },
+        "by_day":           results_by_day,
+        "problem_players":  not_found_players,
+    }
+
+
 @app.get("/debug-player")
 async def debug_player(player: str = "Murakami"):
     """
