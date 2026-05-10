@@ -774,7 +774,10 @@ async def fetch_savant_csv(url: str, session: httpx.AsyncClient) -> pd.DataFrame
         return pd.DataFrame()
 
 def parse_player_name(df: pd.DataFrame) -> pd.DataFrame:
-    """Convert 'last_name, first_name' column to 'name' column"""
+    """Convert 'last_name, first_name' column to 'name' column.
+    Also preserves player_id (MLB ID) from Savant CSV if present -
+    used as fallback in fuzzy_match for international players whose
+    names may differ between Savant and MLB Stats API."""
     name_col = None
     for col in df.columns:
         if 'last_name' in col.lower() or 'first_name' in col.lower():
@@ -782,6 +785,10 @@ def parse_player_name(df: pd.DataFrame) -> pd.DataFrame:
             break
     if name_col and name_col in df.columns:
         df['name'] = df[name_col].apply(lambda x: reverse_name(str(x)) if pd.notna(x) else "")
+    # Savant CSVs include player_id = MLB Stats API ID - same as our mlb_id
+    # Rename to mlb_id so fuzzy_match can use it as fallback
+    if 'player_id' in df.columns and 'mlb_id' not in df.columns:
+        df['mlb_id'] = pd.to_numeric(df['player_id'], errors='coerce')
     return df
 
 def reverse_name(s: str) -> str:
@@ -2582,30 +2589,48 @@ async def save_projected_top100(target_date: str = None):
 
 
 # -- Player matching --
-def fuzzy_match(name: str, df: pd.DataFrame, col="name"):
+def fuzzy_match(name: str, df: pd.DataFrame, col="name", mlb_id: int = None):
+    """Match a player name to a row in a Savant dataframe.
+    Priority:
+    1. mlb_id exact match (if provided and df has mlb_id column) - most reliable
+    2. Exact lowercase name match
+    3. Last name match (only when exactly 1 result)
+    4. First + last name match (when multiple last name matches)
+    """
     if df is None or df.empty or col not in df.columns:
         return None
+
+    # 1. MLB ID match - immune to name formatting differences
+    # Catches international players like Murakami where Savant name
+    # may differ slightly from MLB Stats API name
+    if mlb_id and 'mlb_id' in df.columns:
+        id_match = df[df['mlb_id'] == mlb_id]
+        if not id_match.empty:
+            return id_match.iloc[0]
+
     nl = name.lower().strip()
-    # Exact match first
+
+    # 2. Exact name match
     exact = df[df[col].str.lower().str.strip() == nl]
     if not exact.empty:
         return exact.iloc[0]
-    # Last name match
+
+    # 3. Last name match - only when exactly 1 result
     parts = nl.split()
     if not parts: return None
     last = parts[-1]
     matches = df[df[col].str.lower().str.contains(last, na=False)]
     if len(matches) == 1:
         return matches.iloc[0]
+
+    # 4. First + last name when multiple last name matches
     if len(matches) > 1:
-        # Try first name too
         first = parts[0]
         refined = matches[matches[col].str.lower().str.contains(first, na=False)]
         if not refined.empty:
             return refined.iloc[0]
-        # Multiple last name matches, no first name match - too ambiguous, return None
-        # This prevents e.g. "Murakami" matching the wrong player
         return None
+
     return None
 
 def gs(row, *keys, default=0.0):
@@ -2622,10 +2647,10 @@ def gs(row, *keys, default=0.0):
     return default
 
 # -- Stat getters --
-def get_batter_stats(name, year=2026):
+def get_batter_stats(name, year=2026, mlb_id=None):
     """2026-only. year param kept for call-site compatibility."""
     df = _cache["bat_2026"]
-    row = fuzzy_match(name, df)
+    row = fuzzy_match(name, df, mlb_id=mlb_id)
     if row is None:
         return {}
     stats = {
@@ -2644,7 +2669,7 @@ def get_batter_stats(name, year=2026):
         "hr": gs(row, "hr"),
     }
     return stats
-def get_batter_8d(name):
+def get_batter_8d(name, mlb_id=None):
     """L8D stats from two sources:
     1. bat_8d cache - pitch-by-pitch Statcast aggregated by calc_statcast_8d
        gives: barrel%, EV, LA, hard hit%, bat speed, xwOBA, xSLG, pull%, K%, HR, PA
@@ -2653,7 +2678,7 @@ def get_batter_8d(name):
     Statcast source is preferred for Statcast metrics, MLB API for counting stats."""
     # -- Statcast aggregated data (pitch-by-pitch) --
     df = _cache["bat_8d"]
-    row = fuzzy_match(name, df)
+    row = fuzzy_match(name, df, mlb_id=mlb_id)
 
     # -- MLB API counting stats (reliable) --
     nl = name.lower().strip()
@@ -2752,9 +2777,9 @@ def get_avg_pa_per_game(name):
         if last in k: return v
     return {"games": 0, "avg_pa_per_game": 3.1, "avg_ab_per_game": 2.8}
 
-def get_batter_split(name, pit_hand):
+def get_batter_split(name, pit_hand, mlb_id=None):
     df = _cache["bat_vs_lhp"] if pit_hand == "L" else _cache["bat_vs_rhp"]
-    row = fuzzy_match(name, df)
+    row = fuzzy_match(name, df, mlb_id=mlb_id)
     if row is None:
         return {}
     return {
