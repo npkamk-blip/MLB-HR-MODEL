@@ -86,7 +86,8 @@
       "discipline": 54,
       "platoon": 53
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 665926
   },
   {
     "date": "2026-05-03",
@@ -176,7 +177,8 @@
       "platoon": 51
     },
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 678218
   },
   {
     "date": "2026-05-03",
@@ -265,7 +267,8 @@
       "discipline": 54,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 662139
   },
   {
     "date": "2026-05-03",
@@ -354,7 +357,8 @@
       "discipline": 56,
       "platoon": 52
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 676914
   },
   {
     "date": "2026-05-03",
@@ -443,7 +447,8 @@
       "discipline": 74,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 676391
   },
   {
     "date": "2026-05-03",
@@ -532,7 +537,8 @@
       "discipline": 82,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 543807
   },
   {
     "date": "2026-05-03",
@@ -621,7 +627,8 @@
       "discipline": 45,
       "platoon": 51
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 660821
   },
   {
     "date": "2026-05-03",
@@ -710,7 +717,8 @@
       "discipline": 62,
       "platoon": 57
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 672960
   },
   {
     "date": "2026-05-03",
@@ -799,7 +807,8 @@
       "discipline": 40,
       "platoon": 46
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 672820
   },
   {
     "date": "2026-05-03",
@@ -888,7 +897,8 @@
       "discipline": 87,
       "platoon": 52
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 664702
   },
   {
     "date": "2026-05-03",
@@ -977,7 +987,8 @@
       "discipline": 33,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 623168
   },
   {
     "date": "2026-05-03",
@@ -1066,7 +1077,8 @@
       "discipline": 79,
       "platoon": 44
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 665489
   },
   {
     "date": "2026-05-03",
@@ -1244,7 +1256,8 @@
       "discipline": 100,
       "platoon": 48
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 668885
   },
   {
     "date": "2026-05-03",
@@ -1333,7 +1346,8 @@
       "discipline": 55,
       "platoon": 54
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 686797
   },
   {
     "date": "2026-05-03",
@@ -1422,7 +1436,8 @@
       "discipline": 48,
       "platoon": 63
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 621439
   },
   {
     "date": "2026-05-03",
@@ -1511,7 +1526,8 @@
       "discipline": 66,
       "platoon": 45
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 681546
   },
   {
     "date": "2026-05-03",
@@ -1600,7 +1616,8 @@
       "discipline": 61,
       "platoon": 48
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 605137
   },
   {
     "date": "2026-05-03",
@@ -1689,7 +1706,8 @@
       "discipline": 49,
       "platoon": 53
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 665019
   },
   {
     "date": "2026-05-03",
@@ -1778,7 +1796,8 @@
       "discipline": 55,
       "platoon": 44
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 807712
   },
   {
     "date": "2026-05-03",
@@ -1867,7 +1886,8 @@
       "discipline": 44,
       "platoon": 47
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 670242
   },
   {
     "date": "2026-05-03",
@@ -1956,7 +1976,8 @@
       "discipline": 40,
       "platoon": 58
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 668904
   },
   {
     "date": "2026-05-03",
@@ -2045,7 +2066,8 @@
       "discipline": 58,
       "platoon": 53
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 680777
   },
   {
     "date": "2026-05-03",
@@ -2134,7 +2156,8 @@
       "discipline": 53,
       "platoon": 52
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 663616
   },
   {
     "date": "2026-05-03",
@@ -2223,7 +2246,8 @@
       "discipline": 31,
       "platoon": 51
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 656484
   },
   {
     "date": "2026-05-03",
@@ -2312,7 +2336,8 @@
       "discipline": 51,
       "platoon": 53
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 605170
   },
   {
     "date": "2026-05-03",
@@ -2402,7 +2427,8 @@
       "platoon": 50
     },
     "actual_ab": 0,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 669699
   },
   {
     "date": "2026-05-03",
@@ -2491,7 +2517,8 @@
       "discipline": 44,
       "platoon": 55
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 694728
   },
   {
     "date": "2026-05-03",
@@ -2580,7 +2607,8 @@
       "discipline": 34,
       "platoon": 49
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 701358
   },
   {
     "date": "2026-05-03",
@@ -2669,7 +2697,8 @@
       "discipline": 52,
       "platoon": 60
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 621043
   },
   {
     "date": "2026-05-03",
@@ -2758,7 +2787,8 @@
       "discipline": 63,
       "platoon": 60
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 543877
   },
   {
     "date": "2026-05-03",
@@ -2847,7 +2877,8 @@
       "discipline": 60,
       "platoon": 59
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 572233
   },
   {
     "date": "2026-05-03",
@@ -2937,7 +2968,8 @@
       "platoon": 54
     },
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 669288
   },
   {
     "date": "2026-05-03",
@@ -3027,7 +3059,8 @@
       "platoon": 53
     },
     "actual_ab": 1,
-    "actual_pa": 2
+    "actual_pa": 2,
+    "mlb_id": 687957
   },
   {
     "date": "2026-05-03",
@@ -3116,7 +3149,8 @@
       "discipline": 80,
       "platoon": 48
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 670623
   },
   {
     "date": "2026-05-03",
@@ -3205,7 +3239,8 @@
       "discipline": 67,
       "platoon": 45
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 514888
   },
   {
     "date": "2026-05-03",
@@ -3295,7 +3330,8 @@
       "platoon": 50
     },
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 694376
   },
   {
     "date": "2026-05-03",
@@ -3384,7 +3420,8 @@
       "discipline": 61,
       "platoon": 46
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 673237
   },
   {
     "date": "2026-05-03",
@@ -3473,7 +3510,8 @@
       "discipline": 79,
       "platoon": 65
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 670541
   },
   {
     "date": "2026-05-03",
@@ -3562,7 +3600,8 @@
       "discipline": 65,
       "platoon": 47
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 655316
   },
   {
     "date": "2026-05-03",
@@ -3651,7 +3690,8 @@
       "discipline": 84,
       "platoon": 46
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 702332
   },
   {
     "date": "2026-05-03",
@@ -3740,7 +3780,8 @@
       "discipline": 34,
       "platoon": 47
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 665966
   },
   {
     "date": "2026-05-03",
@@ -3829,7 +3870,8 @@
       "discipline": 40,
       "platoon": 43
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 678882
   },
   {
     "date": "2026-05-03",
@@ -3918,7 +3960,8 @@
       "discipline": 77,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 657136
   },
   {
     "date": "2026-05-03",
@@ -4008,7 +4051,8 @@
       "platoon": 50
     },
     "actual_ab": 0,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 643396
   },
   {
     "date": "2026-05-03",
@@ -4097,7 +4141,8 @@
       "discipline": 57,
       "platoon": 46
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 680776
   },
   {
     "date": "2026-05-03",
@@ -4186,7 +4231,8 @@
       "discipline": 86,
       "platoon": 45
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 691785
   },
   {
     "date": "2026-05-03",
@@ -4276,7 +4322,8 @@
       "platoon": 42
     },
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 807799
   },
   {
     "date": "2026-05-03",
@@ -4365,7 +4412,8 @@
       "discipline": 50,
       "platoon": 47
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 701350
   },
   {
     "date": "2026-05-03",
@@ -4454,7 +4502,8 @@
       "discipline": 46,
       "platoon": 46
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 596115
   },
   {
     "date": "2026-05-03",
@@ -4543,7 +4592,8 @@
       "discipline": 42,
       "platoon": 54
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 575929
   },
   {
     "date": "2026-05-03",
@@ -4632,7 +4682,8 @@
       "discipline": 82,
       "platoon": 53
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 677800
   },
   {
     "date": "2026-05-03",
@@ -4722,7 +4773,8 @@
       "platoon": 50
     },
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 667472
   },
   {
     "date": "2026-05-03",
@@ -4811,7 +4863,8 @@
       "discipline": 48,
       "platoon": 58
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 682829
   },
   {
     "date": "2026-05-03",
@@ -4900,7 +4953,8 @@
       "discipline": 82,
       "platoon": 63
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 668709
   },
   {
     "date": "2026-05-03",
@@ -4989,7 +5043,8 @@
       "discipline": 56,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 624431
   },
   {
     "date": "2026-05-03",
@@ -5078,7 +5133,8 @@
       "discipline": 46,
       "platoon": 43
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 663647
   },
   {
     "date": "2026-05-03",
@@ -5167,7 +5223,8 @@
       "discipline": 47,
       "platoon": 46
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 680574
   },
   {
     "date": "2026-05-03",
@@ -5256,7 +5313,8 @@
       "discipline": 65,
       "platoon": 62
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 663993
   },
   {
     "date": "2026-05-03",
@@ -5345,7 +5403,8 @@
       "discipline": 27,
       "platoon": 48
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 677956
   },
   {
     "date": "2026-05-03",
@@ -5434,7 +5493,8 @@
       "discipline": 57,
       "platoon": 58
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 701398
   },
   {
     "date": "2026-05-03",
@@ -5523,7 +5583,8 @@
       "discipline": 65,
       "platoon": 53
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 668715
   },
   {
     "date": "2026-05-03",
@@ -5612,7 +5673,8 @@
       "discipline": 57,
       "platoon": 47
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 670770
   },
   {
     "date": "2026-05-03",
@@ -5701,7 +5763,8 @@
       "discipline": 59,
       "platoon": 49
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 663886
   },
   {
     "date": "2026-05-03",
@@ -5790,7 +5853,8 @@
       "discipline": 53,
       "platoon": 53
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 666181
   },
   {
     "date": "2026-05-03",
@@ -5879,7 +5943,8 @@
       "discipline": 19,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 695257
   },
   {
     "date": "2026-05-03",
@@ -5968,7 +6033,8 @@
       "discipline": 44,
       "platoon": 60
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 664040
   },
   {
     "date": "2026-05-03",
@@ -6057,7 +6123,8 @@
       "discipline": 49,
       "platoon": 51
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 668804
   },
   {
     "date": "2026-05-03",
@@ -6146,7 +6213,8 @@
       "discipline": 51,
       "platoon": 51
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 680779
   },
   {
     "date": "2026-05-03",
@@ -6236,7 +6304,8 @@
       "platoon": 42
     },
     "actual_ab": 0,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 663968
   },
   {
     "date": "2026-05-03",
@@ -6325,7 +6394,8 @@
       "discipline": 39,
       "platoon": 49
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 663698
   },
   {
     "date": "2026-05-03",
@@ -6414,7 +6484,8 @@
       "discipline": 43,
       "platoon": 48
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 804606
   },
   {
     "date": "2026-05-03",
@@ -6503,7 +6574,8 @@
       "discipline": 43,
       "platoon": 47
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 542303
   },
   {
     "date": "2026-05-03",
@@ -6592,7 +6664,8 @@
       "discipline": 59,
       "platoon": 44
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 693304
   },
   {
     "date": "2026-05-03",
@@ -6681,7 +6754,8 @@
       "discipline": 33,
       "platoon": 53
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 665833
   },
   {
     "date": "2026-05-03",
@@ -6770,7 +6844,8 @@
       "discipline": 49,
       "platoon": 53
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 656811
   },
   {
     "date": "2026-05-03",
@@ -6859,7 +6934,8 @@
       "discipline": 84,
       "platoon": 51
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 687462
   },
   {
     "date": "2026-05-03",
@@ -6948,7 +7024,8 @@
       "discipline": 62,
       "platoon": 62
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 668939
   },
   {
     "date": "2026-05-03",
@@ -7037,7 +7114,8 @@
       "discipline": 36,
       "platoon": 50
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 677942
   },
   {
     "date": "2026-05-03",
@@ -7126,7 +7204,8 @@
       "discipline": 40,
       "platoon": 60
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 691723
   },
   {
     "date": "2026-05-03",
@@ -7215,7 +7294,8 @@
       "discipline": 40,
       "platoon": 52
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 681297
   },
   {
     "date": "2026-05-03",
@@ -7304,7 +7384,8 @@
       "discipline": 54,
       "platoon": 51
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 687637
   },
   {
     "date": "2026-05-03",
@@ -7393,7 +7474,8 @@
       "discipline": 37,
       "platoon": 62
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 683002
   },
   {
     "date": "2026-05-03",
@@ -7482,7 +7564,8 @@
       "discipline": 51,
       "platoon": 49
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 669236
   },
   {
     "date": "2026-05-03",
@@ -7571,7 +7654,8 @@
       "discipline": 56,
       "platoon": 48
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 665750
   },
   {
     "date": "2026-05-03",
@@ -7660,7 +7744,8 @@
       "discipline": 78,
       "platoon": 49
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 624413
   },
   {
     "date": "2026-05-03",
@@ -7749,7 +7834,8 @@
       "discipline": 42,
       "platoon": 54
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 694212
   },
   {
     "date": "2026-05-03",
@@ -7838,7 +7924,8 @@
       "discipline": 86,
       "platoon": 57
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 621493
   },
   {
     "date": "2026-05-03",
@@ -7927,7 +8014,8 @@
       "discipline": 60,
       "platoon": 52
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 641933
   },
   {
     "date": "2026-05-03",
@@ -8016,7 +8104,8 @@
       "discipline": 76,
       "platoon": 48
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 642215
   },
   {
     "date": "2026-05-03",
@@ -8105,7 +8194,8 @@
       "discipline": 49,
       "platoon": 59
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 592450
   },
   {
     "date": "2026-05-03",
@@ -8194,7 +8284,8 @@
       "discipline": 46,
       "platoon": 53
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 642708
   },
   {
     "date": "2026-05-03",
@@ -8283,7 +8374,8 @@
       "discipline": 83,
       "platoon": 50
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 669224
   },
   {
     "date": "2026-05-03",
@@ -8372,7 +8464,8 @@
       "discipline": 69,
       "platoon": 61
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 700250
   },
   {
     "date": "2026-05-03",
@@ -8461,7 +8554,8 @@
       "discipline": 59,
       "platoon": 52
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 641355
   },
   {
     "date": "2026-05-03",
@@ -8550,7 +8644,8 @@
       "discipline": 42,
       "platoon": 47
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 641555
   },
   {
     "date": "2026-05-03",
@@ -8639,7 +8734,8 @@
       "discipline": 50,
       "platoon": 50
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 691176
   },
   {
     "date": "2026-05-03",
@@ -8728,7 +8824,8 @@
       "discipline": 51,
       "platoon": 48
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 665862
   },
   {
     "date": "2026-05-03",
@@ -8817,7 +8914,8 @@
       "discipline": 58,
       "platoon": 46
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 676609
   },
   {
     "date": "2026-05-03",
@@ -8906,7 +9004,8 @@
       "discipline": 50,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 680474
   },
   {
     "date": "2026-05-03",
@@ -8995,7 +9094,8 @@
       "discipline": 49,
       "platoon": 60
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 502671
   },
   {
     "date": "2026-05-03",
@@ -9084,7 +9184,8 @@
       "discipline": 45,
       "platoon": 47
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 641857
   },
   {
     "date": "2026-05-03",
@@ -9173,7 +9274,8 @@
       "discipline": 74,
       "platoon": 53
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 663757
   },
   {
     "date": "2026-05-03",
@@ -9262,7 +9364,8 @@
       "discipline": 50,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 663368
   },
   {
     "date": "2026-05-03",
@@ -9351,7 +9454,8 @@
       "discipline": 38,
       "platoon": 45
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 663604
   },
   {
     "date": "2026-05-03",
@@ -9440,7 +9544,8 @@
       "discipline": 62,
       "platoon": 55
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 668930
   },
   {
     "date": "2026-05-03",
@@ -9529,7 +9634,8 @@
       "discipline": 53,
       "platoon": 42
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 666152
   },
   {
     "date": "2026-05-03",
@@ -9618,7 +9724,8 @@
       "discipline": 50,
       "platoon": 48
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 669003
   },
   {
     "date": "2026-05-03",
@@ -9707,7 +9814,8 @@
       "discipline": 67,
       "platoon": 53
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 596142
   },
   {
     "date": "2026-05-03",
@@ -9796,7 +9904,8 @@
       "discipline": 32,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 675659
   },
   {
     "date": "2026-05-03",
@@ -9885,7 +9994,8 @@
       "discipline": 60,
       "platoon": 54
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 641343
   },
   {
     "date": "2026-05-03",
@@ -9974,7 +10084,8 @@
       "discipline": 65,
       "platoon": 50
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 687401
   },
   {
     "date": "2026-05-03",
@@ -10063,7 +10174,8 @@
       "discipline": 82,
       "platoon": 47
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 650859
   },
   {
     "date": "2026-05-03",
@@ -10152,7 +10264,8 @@
       "discipline": 88,
       "platoon": 47
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 686217
   },
   {
     "date": "2026-05-03",
@@ -10241,7 +10354,8 @@
       "discipline": 70,
       "platoon": 52
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 672012
   },
   {
     "date": "2026-05-03",
@@ -10330,7 +10444,8 @@
       "discipline": 80,
       "platoon": 49
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 661388
   },
   {
     "date": "2026-05-03",
@@ -10420,7 +10535,8 @@
       "platoon": 47
     },
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 691781
   },
   {
     "date": "2026-05-03",
@@ -10509,7 +10625,8 @@
       "discipline": 45,
       "platoon": 60
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 682928
   },
   {
     "date": "2026-05-03",
@@ -10599,7 +10716,8 @@
       "platoon": 56
     },
     "actual_ab": 1,
-    "actual_pa": 2
+    "actual_pa": 2,
+    "mlb_id": 678554
   },
   {
     "date": "2026-05-03",
@@ -10688,7 +10806,8 @@
       "discipline": 41,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 695734
   },
   {
     "date": "2026-05-03",
@@ -10777,7 +10896,8 @@
       "discipline": 37,
       "platoon": 42
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 686452
   },
   {
     "date": "2026-05-03",
@@ -10866,7 +10986,8 @@
       "discipline": 51,
       "platoon": 47
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 696285
   },
   {
     "date": "2026-05-03",
@@ -10955,7 +11076,8 @@
       "discipline": 45,
       "platoon": 58
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 695578
   },
   {
     "date": "2026-05-03",
@@ -11044,7 +11166,8 @@
       "discipline": 34,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 686894
   },
   {
     "date": "2026-05-03",
@@ -11133,7 +11256,8 @@
       "discipline": 62,
       "platoon": 43
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 678391
   },
   {
     "date": "2026-05-03",
@@ -11222,7 +11346,8 @@
       "discipline": 33,
       "platoon": 46
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 677588
   },
   {
     "date": "2026-05-03",
@@ -11311,7 +11436,8 @@
       "discipline": 55,
       "platoon": 44
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 660688
   },
   {
     "date": "2026-05-03",
@@ -11400,7 +11526,8 @@
       "discipline": 51,
       "platoon": 47
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 671277
   },
   {
     "date": "2026-05-03",
@@ -11489,7 +11616,8 @@
       "discipline": 54,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 683083
   },
   {
     "date": "2026-05-03",
@@ -11578,7 +11706,8 @@
       "discipline": 70,
       "platoon": 52
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 669477
   },
   {
     "date": "2026-05-03",
@@ -11667,7 +11796,8 @@
       "discipline": 53,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 683766
   },
   {
     "date": "2026-05-03",
@@ -11756,7 +11886,8 @@
       "discipline": 63,
       "platoon": 50
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 687551
   },
   {
     "date": "2026-05-03",
@@ -11845,7 +11976,8 @@
       "discipline": 39,
       "platoon": 50
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 606992
   },
   {
     "date": "2026-05-03",
@@ -11934,7 +12066,8 @@
       "discipline": 41,
       "platoon": 53
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 671218
   },
   {
     "date": "2026-05-03",
@@ -12023,7 +12156,8 @@
       "discipline": 36,
       "platoon": 44
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 666464
   },
   {
     "date": "2026-05-03",
@@ -12112,7 +12246,8 @@
       "discipline": 73,
       "platoon": 47
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 808982
   },
   {
     "date": "2026-05-03",
@@ -12201,7 +12336,8 @@
       "discipline": 79,
       "platoon": 47
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 650333
   },
   {
     "date": "2026-05-03",
@@ -12290,7 +12426,8 @@
       "discipline": 41,
       "platoon": 47
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 656305
   },
   {
     "date": "2026-05-03",
@@ -12379,7 +12516,8 @@
       "discipline": 43,
       "platoon": 52
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 672275
   },
   {
     "date": "2026-05-03",
@@ -12468,7 +12606,8 @@
       "discipline": 41,
       "platoon": 45
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 646240
   },
   {
     "date": "2026-05-03",
@@ -12557,7 +12696,8 @@
       "discipline": 33,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 686823
   },
   {
     "date": "2026-05-03",
@@ -12646,7 +12786,8 @@
       "discipline": 38,
       "platoon": 43
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 642715
   },
   {
     "date": "2026-05-03",
@@ -12735,7 +12876,8 @@
       "discipline": 50,
       "platoon": 43
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 810938
   },
   {
     "date": "2026-05-03",
@@ -12824,7 +12966,8 @@
       "discipline": 58,
       "platoon": 48
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 656775
   },
   {
     "date": "2026-05-03",
@@ -12913,7 +13056,8 @@
       "discipline": 74,
       "platoon": 42
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 802415
   },
   {
     "date": "2026-05-03",
@@ -13003,7 +13147,8 @@
       "platoon": 43
     },
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 676439
   },
   {
     "date": "2026-05-03",
@@ -13092,7 +13237,8 @@
       "discipline": 54,
       "platoon": 52
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 641584
   },
   {
     "date": "2026-05-03",
@@ -13181,7 +13327,8 @@
       "discipline": 40,
       "platoon": 55
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 666018
   },
   {
     "date": "2026-05-03",
@@ -13271,7 +13418,8 @@
       "platoon": 45
     },
     "actual_ab": 1,
-    "actual_pa": 2
+    "actual_pa": 2,
+    "mlb_id": 676356
   },
   {
     "date": "2026-05-03",
@@ -13360,7 +13508,8 @@
       "discipline": 50,
       "platoon": 58
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 691406
   },
   {
     "date": "2026-05-03",
@@ -13449,7 +13598,8 @@
       "discipline": 67,
       "platoon": 54
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 663743
   },
   {
     "date": "2026-05-03",
@@ -13538,7 +13688,8 @@
       "discipline": 47,
       "platoon": 46
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 680700
   },
   {
     "date": "2026-05-03",
@@ -13627,7 +13778,8 @@
       "discipline": 82,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 668723
   },
   {
     "date": "2026-05-03",
@@ -13716,7 +13868,8 @@
       "discipline": 45,
       "platoon": 44
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 670764
   },
   {
     "date": "2026-05-03",
@@ -13805,7 +13958,8 @@
       "discipline": 84,
       "platoon": 49
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 650490
   },
   {
     "date": "2026-05-03",
@@ -13894,7 +14048,8 @@
       "discipline": 49,
       "platoon": 48
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 666969
   },
   {
     "date": "2026-05-03",
@@ -13983,7 +14138,8 @@
       "discipline": 64,
       "platoon": 43
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 664761
   },
   {
     "date": "2026-05-03",
@@ -14072,7 +14228,8 @@
       "discipline": 56,
       "platoon": 53
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 669016
   },
   {
     "date": "2026-05-03",
@@ -14161,7 +14318,8 @@
       "discipline": 45,
       "platoon": 53
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 547180
   },
   {
     "date": "2026-05-03",
@@ -14250,7 +14408,8 @@
       "discipline": 42,
       "platoon": 44
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 681082
   },
   {
     "date": "2026-05-03",
@@ -14339,7 +14498,8 @@
       "discipline": 40,
       "platoon": 54
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 624641
   },
   {
     "date": "2026-05-03",
@@ -14428,7 +14588,8 @@
       "discipline": 49,
       "platoon": 51
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 694025
   },
   {
     "date": "2026-05-03",
@@ -14517,7 +14678,8 @@
       "discipline": 42,
       "platoon": 51
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 596117
   },
   {
     "date": "2026-05-03",
@@ -14606,7 +14768,8 @@
       "discipline": 52,
       "platoon": 49
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 592663
   },
   {
     "date": "2026-05-03",
@@ -14695,7 +14858,8 @@
       "discipline": 62,
       "platoon": 48
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 702222
   },
   {
     "date": "2026-05-03",
@@ -14784,7 +14948,8 @@
       "discipline": 47,
       "platoon": 60
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 656941
   },
   {
     "date": "2026-05-03",
@@ -14873,7 +15038,8 @@
       "discipline": 45,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 665561
   },
   {
     "date": "2026-05-03",
@@ -14962,7 +15128,8 @@
       "discipline": 48,
       "platoon": 49
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 607208
   },
   {
     "date": "2026-05-03",
@@ -15051,7 +15218,8 @@
       "discipline": 52,
       "platoon": 59
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 682663
   },
   {
     "date": "2026-05-03",
@@ -15140,7 +15308,8 @@
       "discipline": 46,
       "platoon": 50
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 666624
   },
   {
     "date": "2026-05-03",
@@ -15229,7 +15398,8 @@
       "discipline": 44,
       "platoon": 43
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 681393
   },
   {
     "date": "2026-05-03",
@@ -15318,7 +15488,8 @@
       "discipline": 55,
       "platoon": 60
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 665923
   },
   {
     "date": "2026-05-03",
@@ -15408,7 +15579,8 @@
       "platoon": 50
     },
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 688363
   },
   {
     "date": "2026-05-03",
@@ -15497,7 +15669,8 @@
       "discipline": 50,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 805300
   },
   {
     "date": "2026-05-03",
@@ -15586,7 +15759,8 @@
       "discipline": 63,
       "platoon": 46
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 691594
   },
   {
     "date": "2026-05-03",
@@ -15675,7 +15849,8 @@
       "discipline": 40,
       "platoon": 50
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 669065
   },
   {
     "date": "2026-05-03",
@@ -15764,7 +15939,8 @@
       "discipline": 71,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 677870
   },
   {
     "date": "2026-05-03",
@@ -15853,7 +16029,8 @@
       "discipline": 86,
       "platoon": 54
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 689414
   },
   {
     "date": "2026-05-03",
@@ -15942,7 +16119,8 @@
       "discipline": 42,
       "platoon": 55
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 672640
   },
   {
     "date": "2026-05-03",
@@ -16031,7 +16209,8 @@
       "discipline": 35,
       "platoon": 49
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 683357
   },
   {
     "date": "2026-05-03",
@@ -16120,7 +16299,8 @@
       "discipline": 89,
       "platoon": 43
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 669364
   },
   {
     "date": "2026-05-03",
@@ -16210,7 +16390,8 @@
       "platoon": 45
     },
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 669743
   },
   {
     "date": "2026-05-03",
@@ -16299,7 +16480,8 @@
       "discipline": 55,
       "platoon": 45
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 690976
   },
   {
     "date": "2026-05-03",
@@ -16388,7 +16570,8 @@
       "discipline": 50,
       "platoon": 50
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 681624
   },
   {
     "date": "2026-05-03",
@@ -16477,7 +16660,8 @@
       "discipline": 46,
       "platoon": 61
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 687221
   },
   {
     "date": "2026-05-03",
@@ -16566,7 +16750,8 @@
       "discipline": 75,
       "platoon": 50
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 518692
   },
   {
     "date": "2026-05-03",
@@ -16655,7 +16840,8 @@
       "discipline": 62,
       "platoon": 50
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 808975
   },
   {
     "date": "2026-05-03",
@@ -16744,7 +16930,8 @@
       "discipline": 70,
       "platoon": 47
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 663656
   },
   {
     "date": "2026-05-03",
@@ -16833,7 +17020,8 @@
       "discipline": 34,
       "platoon": 58
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 691777
   },
   {
     "date": "2026-05-03",
@@ -16923,7 +17111,8 @@
       "platoon": 51
     },
     "actual_ab": 1,
-    "actual_pa": 2
+    "actual_pa": 2,
+    "mlb_id": 500743
   },
   {
     "date": "2026-05-03",
@@ -17012,7 +17201,8 @@
       "discipline": 58,
       "platoon": 55
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 669289
   },
   {
     "date": "2026-05-03",
@@ -17101,7 +17291,8 @@
       "discipline": 41,
       "platoon": 52
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 660271
   },
   {
     "date": "2026-05-03",
@@ -17190,7 +17381,8 @@
       "discipline": 54,
       "platoon": 50
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 606192
   },
   {
     "date": "2026-05-03",
@@ -17279,7 +17471,8 @@
       "discipline": 70,
       "platoon": 48
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 669257
   },
   {
     "date": "2026-05-03",
@@ -17368,7 +17561,8 @@
       "discipline": 53,
       "platoon": 50
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 676475
   },
   {
     "date": "2026-05-03",
@@ -17457,7 +17651,8 @@
       "discipline": 56,
       "platoon": 51
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 671056
   },
   {
     "date": "2026-05-03",
@@ -17546,7 +17741,8 @@
       "discipline": 69,
       "platoon": 52
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 802139
   },
   {
     "date": "2026-05-03",
@@ -17635,7 +17831,8 @@
       "discipline": 43,
       "platoon": 63
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 691023
   },
   {
     "date": "2026-05-03",
@@ -17724,7 +17921,8 @@
       "discipline": 66,
       "platoon": 62
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 665877
   },
   {
     "date": "2026-05-03",
@@ -17813,7 +18011,8 @@
       "discipline": 58,
       "platoon": 51
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 691026
   },
   {
     "date": "2026-05-03",
@@ -17902,7 +18101,8 @@
       "discipline": 44,
       "platoon": 51
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 701675
   },
   {
     "date": "2026-05-03",
@@ -17992,7 +18192,8 @@
       "platoon": 47
     },
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 669357
   },
   {
     "date": "2026-05-03",
@@ -18081,7 +18282,8 @@
       "discipline": 42,
       "platoon": 44
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 686780
   },
   {
     "date": "2026-05-03",
@@ -18170,7 +18372,8 @@
       "discipline": 71,
       "platoon": 62
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 602104
   },
   {
     "date": "2026-05-03",
@@ -18259,7 +18462,8 @@
       "discipline": 33,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 695336
   },
   {
     "date": "2026-05-03",
@@ -18348,7 +18552,8 @@
       "discipline": 44,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 687363
   },
   {
     "date": "2026-05-03",
@@ -18437,7 +18642,8 @@
       "discipline": 43,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 650968
   },
   {
     "date": "2026-05-03",
@@ -18526,7 +18732,8 @@
       "discipline": 38,
       "platoon": 50
     },
-    "actual_ab": 1
+    "actual_ab": 1,
+    "mlb_id": 680728
   },
   {
     "date": "2026-05-03",
@@ -18615,7 +18822,8 @@
       "discipline": 51,
       "platoon": 48
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 677950
   },
   {
     "date": "2026-05-03",
@@ -18704,7 +18912,8 @@
       "discipline": 38,
       "platoon": 60
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 682998
   },
   {
     "date": "2026-05-03",
@@ -18793,7 +19002,8 @@
       "discipline": 42,
       "platoon": 50
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 672515
   },
   {
     "date": "2026-05-03",
@@ -18882,7 +19092,8 @@
       "discipline": 66,
       "platoon": 54
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 672695
   },
   {
     "date": "2026-05-03",
@@ -18971,7 +19182,8 @@
       "discipline": 76,
       "platoon": 62
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 545121
   },
   {
     "date": "2026-05-03",
@@ -19060,7 +19272,8 @@
       "discipline": 32,
       "platoon": 43
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 543510
   },
   {
     "date": "2026-05-03",
@@ -19149,7 +19362,8 @@
       "discipline": 51,
       "platoon": 57
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 678489
   },
   {
     "date": "2026-05-03",
@@ -19238,7 +19452,8 @@
       "discipline": 61,
       "platoon": 43
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 699912
   },
   {
     "date": "2026-05-03",
@@ -19327,7 +19542,8 @@
       "discipline": 51,
       "platoon": 44
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 606466
   },
   {
     "date": "2026-05-03",
@@ -19416,7 +19632,8 @@
       "discipline": 54,
       "platoon": 45
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 666971
   },
   {
     "date": "2026-05-03",
@@ -19505,7 +19722,8 @@
       "discipline": 59,
       "platoon": 48
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 571448
   },
   {
     "date": "2026-05-03",
@@ -19594,7 +19812,8 @@
       "discipline": 40,
       "platoon": 48
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 694374
   },
   {
     "date": "2026-05-03",
@@ -19683,7 +19902,8 @@
       "discipline": 76,
       "platoon": 49
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 608324
   },
   {
     "date": "2026-05-03",
@@ -19772,7 +19992,8 @@
       "discipline": 63,
       "platoon": 48
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 608348
   },
   {
     "date": "2026-05-03",
@@ -19861,7 +20082,8 @@
       "discipline": 68,
       "platoon": 51
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 621020
   },
   {
     "date": "2026-05-03",
@@ -19950,7 +20172,8 @@
       "discipline": 49,
       "platoon": 60
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 664023
   },
   {
     "date": "2026-05-03",
@@ -20039,7 +20262,8 @@
       "discipline": 50,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 807713
   },
   {
     "date": "2026-05-03",
@@ -20128,7 +20352,8 @@
       "discipline": 45,
       "platoon": 46
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 683737
   },
   {
     "date": "2026-05-03",
@@ -20217,7 +20442,8 @@
       "discipline": 55,
       "platoon": 52
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 624424
   },
   {
     "date": "2026-05-03",
@@ -20306,7 +20532,8 @@
       "discipline": 56,
       "platoon": 53
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 665804
   },
   {
     "date": "2026-05-03",
@@ -20395,7 +20622,8 @@
       "discipline": 78,
       "platoon": 60
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 694208
   },
   {
     "date": "2026-05-03",
@@ -20484,7 +20712,8 @@
       "discipline": 42,
       "platoon": 51
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 670032
   },
   {
     "date": "2026-05-03",
@@ -20573,7 +20802,8 @@
       "discipline": 79,
       "platoon": 49
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 663538
   },
   {
     "date": "2026-05-03",
@@ -20662,7 +20892,8 @@
       "discipline": 32,
       "platoon": 46
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 691718
   },
   {
     "date": "2026-05-03",
@@ -20751,7 +20982,8 @@
       "discipline": 60,
       "platoon": 56
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 673548
   },
   {
     "date": "2026-05-03",
@@ -20840,7 +21072,8 @@
       "discipline": 35,
       "platoon": 49
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 663586
   },
   {
     "date": "2026-05-03",
@@ -20929,7 +21162,8 @@
       "discipline": 72,
       "platoon": 51
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 642086
   },
   {
     "date": "2026-05-03",
@@ -21018,7 +21252,8 @@
       "discipline": 43,
       "platoon": 55
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 686948
   },
   {
     "date": "2026-05-03",
@@ -21107,7 +21342,8 @@
       "discipline": 46,
       "platoon": 51
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 642201
   },
   {
     "date": "2026-05-03",
@@ -21196,7 +21432,8 @@
       "discipline": 64,
       "platoon": 46
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 641680
   },
   {
     "date": "2026-05-03",
@@ -21285,7 +21522,8 @@
       "discipline": 28,
       "platoon": 50
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 622761
   },
   {
     "date": "2026-05-03",
@@ -21374,7 +21612,8 @@
       "discipline": 31,
       "platoon": 47
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 571657
   },
   {
     "date": "2026-05-03",
@@ -21463,7 +21702,8 @@
       "discipline": 71,
       "platoon": 60
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 621566
   },
   {
     "date": "2026-05-03",
@@ -21552,7 +21792,8 @@
       "discipline": 68,
       "platoon": 45
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 643289
   },
   {
     "date": "2026-05-03",
@@ -21641,7 +21882,8 @@
       "discipline": 54,
       "platoon": 49
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 671739
   },
   {
     "date": "2026-05-03",
@@ -21730,7 +21972,8 @@
       "discipline": 46,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 573262
   },
   {
     "date": "2026-05-03",
@@ -21819,7 +22062,8 @@
       "discipline": 76,
       "platoon": 58
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 645277
   },
   {
     "date": "2026-05-03",
@@ -21908,7 +22152,8 @@
       "discipline": 52,
       "platoon": 47
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 660670
   },
   {
     "date": "2026-05-03",
@@ -21997,7 +22242,8 @@
       "discipline": 35,
       "platoon": 44
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 686668
   },
   {
     "date": "2026-05-03",
@@ -22086,7 +22332,8 @@
       "discipline": 51,
       "platoon": 46
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 664954
   },
   {
     "date": "2026-05-03",
@@ -22175,7 +22422,8 @@
       "discipline": 53,
       "platoon": 49
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 666397
   },
   {
     "date": "2026-05-03",
@@ -22264,7 +22512,8 @@
       "discipline": 34,
       "platoon": 46
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 678662
   },
   {
     "date": "2026-05-03",
@@ -22353,7 +22602,8 @@
       "discipline": 33,
       "platoon": 59
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 696100
   },
   {
     "date": "2026-05-03",
@@ -22442,7 +22692,8 @@
       "discipline": 76,
       "platoon": 46
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 664983
   },
   {
     "date": "2026-05-03",
@@ -22531,7 +22782,8 @@
       "discipline": 37,
       "platoon": 42
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 687597
   },
   {
     "date": "2026-05-03",
@@ -22620,7 +22872,8 @@
       "discipline": 49,
       "platoon": 45
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 691720
   },
   {
     "date": "2026-05-03",
@@ -22709,7 +22962,8 @@
       "discipline": 40,
       "platoon": 60
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 666160
   },
   {
     "date": "2026-05-03",
@@ -22798,7 +23052,8 @@
       "discipline": 67,
       "platoon": 51
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 681198
   },
   {
     "date": "2026-05-03",
@@ -22887,7 +23142,8 @@
       "discipline": 48,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 687859
   },
   {
     "date": "2026-05-03",
@@ -22976,7 +23232,8 @@
       "discipline": 79,
       "platoon": 41
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 671289
   },
   {
     "date": "2026-05-03",
@@ -23065,7 +23322,8 @@
       "discipline": 47,
       "platoon": 46
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 650489
   },
   {
     "date": "2026-05-03",
@@ -23154,7 +23412,8 @@
       "discipline": 42,
       "platoon": 56
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 682657
   },
   {
     "date": "2026-05-03",
@@ -23243,7 +23502,8 @@
       "discipline": 45,
       "platoon": 46
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 595978
   },
   {
     "date": "2026-05-03",
@@ -23333,7 +23593,8 @@
       "platoon": 43
     },
     "actual_ab": 1,
-    "actual_pa": 2
+    "actual_pa": 2,
+    "mlb_id": 666310
   },
   {
     "date": "2026-05-03",
@@ -23422,7 +23683,8 @@
       "discipline": 79,
       "platoon": 46
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 677587
   },
   {
     "date": "2026-05-03",
@@ -23511,7 +23773,8 @@
       "discipline": 89,
       "platoon": 57
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 800050
   },
   {
     "date": "2026-05-03",
@@ -23600,7 +23863,8 @@
       "discipline": 36,
       "platoon": 55
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 682177
   },
   {
     "date": "2026-05-03",
@@ -23689,7 +23953,8 @@
       "discipline": 45,
       "platoon": 56
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 681807
   },
   {
     "date": "2026-05-03",
@@ -23778,7 +24043,8 @@
       "discipline": 67,
       "platoon": 48
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 608070
   },
   {
     "date": "2026-05-03",
@@ -23867,7 +24133,8 @@
       "discipline": 48,
       "platoon": 46
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 700932
   },
   {
     "date": "2026-05-03",
@@ -23956,7 +24223,8 @@
       "discipline": 50,
       "platoon": 54
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 656555
   },
   {
     "date": "2026-05-03",
@@ -24045,7 +24313,8 @@
       "discipline": 81,
       "platoon": 45
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 680757
   },
   {
     "date": "2026-05-03",
@@ -24134,7 +24403,8 @@
       "discipline": 54,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 683953
   },
   {
     "date": "2026-05-03",
@@ -24223,7 +24493,8 @@
       "discipline": 46,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 642851
   },
   {
     "date": "2026-05-03",
@@ -24312,7 +24583,8 @@
       "discipline": 45,
       "platoon": 51
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 667670
   },
   {
     "date": "2026-05-03",
@@ -24401,7 +24673,8 @@
       "discipline": 60,
       "platoon": 53
     },
-    "actual_ab": 1
+    "actual_ab": 1,
+    "mlb_id": 695391
   },
   {
     "date": "2026-05-03",
@@ -24490,7 +24763,8 @@
       "discipline": 73,
       "platoon": 61
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 666126
   },
   {
     "date": "2026-05-03",
@@ -24579,7 +24853,8 @@
       "discipline": 63,
       "platoon": 51
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 687515
   },
   {
     "date": "2026-05-03",
@@ -24668,7 +24943,8 @@
       "discipline": 76,
       "platoon": 48
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 687231
   },
   {
     "date": "2026-05-03",
@@ -24757,7 +25033,8 @@
       "discipline": 74,
       "platoon": 47
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 805779
   },
   {
     "date": "2026-05-03",
@@ -24846,7 +25123,8 @@
       "discipline": 82,
       "platoon": 46
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 643446
   },
   {
     "date": "2026-05-03",
@@ -24935,7 +25213,8 @@
       "discipline": 48,
       "platoon": 43
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 671732
   },
   {
     "date": "2026-05-03",
@@ -25024,7 +25303,8 @@
       "discipline": 49,
       "platoon": 45
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 701762
   },
   {
     "date": "2026-05-03",
@@ -25113,7 +25393,8 @@
       "discipline": 77,
       "platoon": 62
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 669127
   },
   {
     "date": "2026-05-03",
@@ -25202,7 +25483,8 @@
       "discipline": 59,
       "platoon": 46
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 691016
   },
   {
     "date": "2026-05-03",
@@ -25291,7 +25573,8 @@
       "discipline": 59,
       "platoon": 52
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 680869
   },
   {
     "date": "2026-05-03",
@@ -25380,7 +25663,8 @@
       "discipline": 47,
       "platoon": 50
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 596103
   },
   {
     "date": "2026-05-03",
@@ -25469,7 +25753,8 @@
       "discipline": 60,
       "platoon": 43
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 666182
   },
   {
     "date": "2026-05-03",
@@ -25558,7 +25843,8 @@
       "discipline": 55,
       "platoon": 46
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 683146
   },
   {
     "date": "2026-05-03",
@@ -25647,7 +25933,8 @@
       "discipline": 54,
       "platoon": 46
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 701807
   },
   {
     "date": "2026-05-03",
@@ -25736,7 +26023,8 @@
       "discipline": 41,
       "platoon": 53
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 682626
   },
   {
     "date": "2026-05-03",
@@ -25825,7 +26113,8 @@
       "discipline": 83,
       "platoon": 58
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 665742
   },
   {
     "date": "2026-05-03",
@@ -25914,7 +26203,8 @@
       "discipline": 55,
       "platoon": 46
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 620443
   },
   {
     "date": "2026-05-03",
@@ -26003,7 +26293,8 @@
       "discipline": 38,
       "platoon": 61
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 669004
   },
   {
     "date": "2026-05-03",
@@ -26092,7 +26383,8 @@
       "discipline": 57,
       "platoon": 45
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 543760
   },
   {
     "date": "2026-05-03",
@@ -26181,7 +26473,8 @@
       "discipline": 43,
       "platoon": 46
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 668901
   },
   {
     "date": "2026-05-03",
@@ -26270,7 +26563,8 @@
       "discipline": 29,
       "platoon": 47
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 677595
   },
   {
     "date": "2026-05-03",
@@ -26359,7 +26653,8 @@
       "discipline": 61,
       "platoon": 52
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 621438
   },
   {
     "date": "2026-05-03",
@@ -26448,7 +26743,8 @@
       "discipline": 46,
       "platoon": 52
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 624428
   },
   {
     "date": "2026-05-03",
@@ -26537,7 +26833,8 @@
       "discipline": 31,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 669326
   },
   {
     "date": "2026-05-03",
@@ -26626,7 +26923,8 @@
       "discipline": 44,
       "platoon": 41
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 666176
   },
   {
     "date": "2026-05-03",
@@ -26715,7 +27013,8 @@
       "discipline": 56,
       "platoon": 59
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 624585
   },
   {
     "date": "2026-05-03",
@@ -26804,7 +27103,8 @@
       "discipline": 45,
       "platoon": 52
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 666139
   },
   {
     "date": "2026-05-03",
@@ -26893,7 +27193,8 @@
       "discipline": 58,
       "platoon": 59
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 545361
   },
   {
     "date": "2026-05-03",
@@ -26982,7 +27283,8 @@
       "discipline": 74,
       "platoon": 50
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 694384
   },
   {
     "date": "2026-05-03",
@@ -27071,7 +27373,8 @@
       "discipline": 39,
       "platoon": 47
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 672724
   },
   {
     "date": "2026-05-03",
@@ -27160,7 +27463,8 @@
       "discipline": 50,
       "platoon": 50
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 665861
   },
   {
     "date": "2026-05-03",
@@ -27249,7 +27553,8 @@
       "discipline": 74,
       "platoon": 43
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 518595
   },
   {
     "date": "2026-05-03",
@@ -27338,7 +27643,8 @@
       "discipline": 85,
       "platoon": 57
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 687093
   },
   {
     "date": "2026-05-03",
@@ -27428,7 +27734,8 @@
       "platoon": 50
     },
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 660162
   },
   {
     "date": "2026-05-03",
@@ -27517,7 +27824,8 @@
       "discipline": 34,
       "platoon": 53
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 687263
   },
   {
     "date": "2026-05-03",
@@ -27606,7 +27914,8 @@
       "discipline": 78,
       "platoon": 45
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 677951
   },
   {
     "date": "2026-05-03",
@@ -27695,7 +28004,8 @@
       "discipline": 47,
       "platoon": 57
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 695600
   },
   {
     "date": "2026-05-03",
@@ -27784,7 +28094,8 @@
       "discipline": 78,
       "platoon": 54
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 553869
   },
   {
     "date": "2026-05-03",
@@ -27873,7 +28184,8 @@
       "discipline": 61,
       "platoon": 47
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 686555
   },
   {
     "date": "2026-05-03",
@@ -27962,7 +28274,8 @@
       "discipline": 37,
       "platoon": 51
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 695506
   },
   {
     "date": "2026-05-03",
@@ -28051,7 +28364,8 @@
       "discipline": 39,
       "platoon": 55
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 664728
   },
   {
     "date": "2026-05-03",
@@ -28140,7 +28454,8 @@
       "discipline": 74,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 657041
   },
   {
     "date": "2026-05-03",
@@ -28229,7 +28544,8 @@
       "discipline": 59,
       "platoon": 47
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 672580
   },
   {
     "date": "2026-05-03",
@@ -28318,7 +28634,8 @@
       "discipline": 44,
       "platoon": 50
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 686681
   },
   {
     "date": "2026-05-03",
@@ -28407,7 +28724,8 @@
       "discipline": 94,
       "platoon": 47
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 679845
   },
   {
     "date": "2026-05-03",
@@ -28496,7 +28814,8 @@
       "discipline": 44,
       "platoon": 48
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 521692
   },
   {
     "date": "2026-05-03",
@@ -28585,7 +28904,8 @@
       "discipline": 42,
       "platoon": 51
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 516782
   },
   {
     "date": "2026-05-03",
@@ -28674,7 +28994,8 @@
       "discipline": 49,
       "platoon": 54
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 686469
   },
   {
     "date": "2026-05-03",
@@ -28763,7 +29084,8 @@
       "discipline": 42,
       "platoon": 46
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 663728
   },
   {
     "date": "2026-05-03",
@@ -28852,7 +29174,8 @@
       "discipline": 63,
       "platoon": 55
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 702284
   },
   {
     "date": "2026-05-03",
@@ -28941,7 +29264,8 @@
       "discipline": 36,
       "platoon": 63
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 656582
   },
   {
     "date": "2026-05-03",
@@ -29031,7 +29355,8 @@
       "platoon": 50
     },
     "actual_ab": 0,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 686527
   },
   {
     "date": "2026-05-03",
@@ -29120,7 +29445,8 @@
       "discipline": 94,
       "platoon": 48
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 641487
   },
   {
     "date": "2026-05-03",
@@ -29209,7 +29535,8 @@
       "discipline": 55,
       "platoon": 50
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 647304
   },
   {
     "date": "2026-05-03",
@@ -29298,7 +29625,8 @@
       "discipline": 57,
       "platoon": 62
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 677594
   },
   {
     "date": "2026-05-03",
@@ -29387,7 +29715,8 @@
       "discipline": 55,
       "platoon": 50
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 660844
   },
   {
     "date": "2026-05-03",
@@ -29476,7 +29805,8 @@
       "discipline": 31,
       "platoon": 50
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 670042
   },
   {
     "date": "2026-05-03",
@@ -29565,7 +29895,8 @@
       "discipline": 50,
       "platoon": 43
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 641598
   },
   {
     "date": "2026-05-03",
@@ -29654,7 +29985,8 @@
       "discipline": 39,
       "platoon": 57
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 668227
   },
   {
     "date": "2026-05-03",
@@ -29743,7 +30075,8 @@
       "discipline": 71,
       "platoon": 53
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 608701
   },
   {
     "date": "2026-05-03",
@@ -29832,7 +30165,8 @@
       "discipline": 35,
       "platoon": 51
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 643217
   },
   {
     "date": "2026-05-03",
@@ -29921,7 +30255,8 @@
       "discipline": 37,
       "platoon": 46
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 669720
   },
   {
     "date": "2026-05-03",
@@ -30010,7 +30345,8 @@
       "discipline": 52,
       "platoon": 44
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 805367
   },
   {
     "date": "2026-05-03",
@@ -30099,7 +30435,8 @@
       "discipline": 57,
       "platoon": 54
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 695657
   },
   {
     "date": "2026-05-03",
@@ -30188,7 +30525,8 @@
       "discipline": 35,
       "platoon": 50
     },
-    "actual_ab": 1
+    "actual_ab": 1,
+    "mlb_id": 656537
   },
   {
     "date": "2026-05-03",
@@ -30277,7 +30615,8 @@
       "discipline": 89,
       "platoon": 60
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 691011
   },
   {
     "date": "2026-05-03",
@@ -30367,7 +30706,8 @@
       "platoon": 41
     },
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 700337
   },
   {
     "date": "2026-05-03",
@@ -30456,7 +30796,8 @@
       "discipline": 33,
       "platoon": 50
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 672284
   },
   {
     "date": "2026-05-03",
@@ -30545,7 +30886,8 @@
       "discipline": 49,
       "platoon": 41
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 682668
   },
   {
     "date": "2026-05-03",
@@ -30634,7 +30976,8 @@
       "discipline": 71,
       "platoon": 46
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 678246
   },
   {
     "date": "2026-05-03",
@@ -30723,7 +31066,8 @@
       "discipline": 46,
       "platoon": 60
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 808959
   },
   {
     "date": "2026-05-03",
@@ -30812,7 +31156,8 @@
       "discipline": 86,
       "platoon": 53
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 803011
   },
   {
     "date": "2026-05-03",
@@ -30901,7 +31246,8 @@
       "discipline": 74,
       "platoon": 43
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 671976
   },
   {
     "date": "2026-05-03",
@@ -30990,7 +31336,8 @@
       "discipline": 41,
       "platoon": 50
     },
-    "actual_ab": 1
+    "actual_ab": 1,
+    "mlb_id": 669369
   },
   {
     "date": "2026-05-03",
@@ -31079,7 +31426,8 @@
       "discipline": 45,
       "platoon": 52
     },
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 665487
   },
   {
     "date": "2026-05-03",
@@ -31168,7 +31516,8 @@
       "discipline": 45,
       "platoon": 53
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 666023
   },
   {
     "date": "2026-05-03",
@@ -31258,7 +31607,8 @@
       "platoon": 52
     },
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 657757
   },
   {
     "date": "2026-05-03",
@@ -31347,7 +31697,8 @@
       "discipline": 37,
       "platoon": 49
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 701538
   },
   {
     "date": "2026-05-03",
@@ -31436,7 +31787,8 @@
       "discipline": 58,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 630105
   },
   {
     "date": "2026-05-03",
@@ -31525,7 +31877,8 @@
       "discipline": 43,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 669134
   },
   {
     "date": "2026-05-03",
@@ -31614,7 +31967,8 @@
       "discipline": 54,
       "platoon": 52
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 592518
   },
   {
     "date": "2026-05-03",
@@ -31703,7 +32057,8 @@
       "discipline": 67,
       "platoon": 46
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 609280
   },
   {
     "date": "2026-05-03",
@@ -31792,7 +32147,8 @@
       "discipline": 34,
       "platoon": 50
     },
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 592206
   },
   {
     "date": "2026-05-03",
@@ -31881,7 +32237,8 @@
       "discipline": 36,
       "platoon": 45
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 657656
   },
   {
     "date": "2026-05-03",
@@ -31970,7 +32327,8 @@
       "discipline": 80,
       "platoon": 45
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 664034
   },
   {
     "date": "2026-05-03",
@@ -32059,7 +32417,8 @@
       "discipline": 44,
       "platoon": 44
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 593428
   },
   {
     "date": "2026-05-03",
@@ -32149,7 +32508,8 @@
       "platoon": 55
     },
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 696030
   },
   {
     "date": "2026-05-03",
@@ -32238,7 +32598,8 @@
       "discipline": 41,
       "platoon": 53
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 457705
   },
   {
     "date": "2026-05-03",
@@ -32327,7 +32688,8 @@
       "discipline": 66,
       "platoon": 51
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 607043
   },
   {
     "date": "2026-05-03",
@@ -32416,7 +32778,8 @@
       "discipline": 46,
       "platoon": 46
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 608369
   },
   {
     "date": "2026-05-03",
@@ -32505,7 +32868,8 @@
       "discipline": 44,
       "platoon": 44
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 643376
   },
   {
     "date": "2026-05-03",
@@ -32594,7 +32958,8 @@
       "discipline": 52,
       "platoon": 54
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 694497
   },
   {
     "date": "2026-05-03",
@@ -32683,7 +33048,8 @@
       "discipline": 78,
       "platoon": 44
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 677649
   },
   {
     "date": "2026-05-03",
@@ -32772,7 +33138,8 @@
       "discipline": 39,
       "platoon": 47
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 669394
   },
   {
     "date": "2026-05-03",
@@ -32861,7 +33228,8 @@
       "discipline": 63,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 592626
   },
   {
     "date": "2026-05-03",
@@ -32950,7 +33318,8 @@
       "discipline": 74,
       "platoon": 52
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 673962
   },
   {
     "date": "2026-05-03",
@@ -33039,7 +33408,8 @@
       "discipline": 55,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 669701
   },
   {
     "date": "2026-05-03",
@@ -33128,7 +33498,8 @@
       "discipline": 42,
       "platoon": 50
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 543309
   },
   {
     "date": "2026-05-03",
@@ -33217,7 +33588,8 @@
       "discipline": 34,
       "platoon": 50
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 664059
   },
   {
     "date": "2026-05-03",
@@ -33306,7 +33678,8 @@
       "discipline": 66,
       "platoon": 45
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 690993
   },
   {
     "date": "2026-05-03",
@@ -33395,7 +33768,8 @@
       "discipline": 55,
       "platoon": 58
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 693307
   },
   {
     "date": "2026-05-03",
@@ -33484,7 +33858,8 @@
       "discipline": 91,
       "platoon": 49
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 650402
   },
   {
     "date": "2026-05-03",
@@ -33573,7 +33948,8 @@
       "discipline": 44,
       "platoon": 47
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 701678
   },
   {
     "date": "2026-05-03",
@@ -33662,7 +34038,8 @@
       "discipline": 74,
       "platoon": 53
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 690291
   },
   {
     "date": "2026-05-03",
@@ -33751,7 +34128,8 @@
       "discipline": 37,
       "platoon": 53
     },
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 663330
   },
   {
     "date": "2026-05-03",
@@ -33840,7 +34218,8 @@
       "discipline": 44,
       "platoon": 42
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 668670
   },
   {
     "date": "2026-05-03",
@@ -33929,7 +34308,8 @@
       "discipline": 45,
       "platoon": 59
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 681481
   },
   {
     "date": "2026-05-03",
@@ -34018,7 +34398,8 @@
       "discipline": 72,
       "platoon": 56
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 805808
   },
   {
     "date": "2026-05-03",
@@ -34107,7 +34488,8 @@
       "discipline": 77,
       "platoon": 49
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 663837
   },
   {
     "date": "2026-05-03",
@@ -34196,7 +34578,8 @@
       "discipline": 43,
       "platoon": 51
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 682985
   },
   {
     "date": "2026-05-03",
@@ -34285,7 +34668,8 @@
       "discipline": 66,
       "platoon": 56
     },
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 679529
   },
   {
     "date": "2026-05-03",
@@ -34374,6 +34758,7 @@
       "discipline": 86,
       "platoon": 47
     },
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 672761
   }
 ]
