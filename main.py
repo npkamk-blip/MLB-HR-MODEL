@@ -3778,7 +3778,7 @@ async def get_dashboard():
             except: continue
 
         # -- Build top8 by date - prefer top8 files, fallback to predictions --
-        TRACKING_START = "2026-05-07"
+        TRACKING_START = "2026-05-10"
         top8_by_date = {}
         for f in sorted(top8_files, key=lambda x: x["name"], reverse=True)[:30]:
             if not f["name"].endswith(".json"): continue
@@ -4120,6 +4120,118 @@ async def manual_end_of_day(target_date: str = None):
     d = target_date or (et_today() - timedelta(days=1)).isoformat()
     result = await end_of_day_save(d, notify_result=True)
     return {"status": "done", "date": d, "result": result}
+
+@app.get("/patch-record")
+async def patch_record(date: str, player: str, hit_hr: int):
+    """
+    Manually correct a player's hit_hr outcome in the predictions AND top8 files.
+    hit_hr must be 0 or 1.
+    Example: /patch-record?date=2026-05-09&player=Fernando+Tatis+Jr.&hit_hr=0
+    """
+    if not GITHUB_TOKEN:
+        return {"error": "No GitHub token"}
+    if hit_hr not in [0, 1]:
+        return {"error": "hit_hr must be 0 or 1"}
+    import json
+
+    results = {}
+    for file_type, path in [
+        ("predictions", f"data/predictions/{date}.json"),
+        ("top8",        f"data/top8/{date}.json"),
+    ]:
+        raw, sha = await github_get_file(path)
+        if not raw:
+            results[file_type] = "file not found"
+            continue
+        try:
+            recs = json.loads(raw)
+        except:
+            results[file_type] = "parse error"
+            continue
+
+        # Find the player - exact match first, then case-insensitive
+        matched = None
+        for r in recs:
+            if r.get("name", "").lower() == player.lower():
+                matched = r
+                break
+        if not matched:
+            # Try last name
+            last = player.split()[-1].lower()
+            for r in recs:
+                if r.get("name", "").split()[-1].lower() == last:
+                    matched = r
+                    break
+
+        if not matched:
+            results[file_type] = f"player '{player}' not found"
+            continue
+
+        old_val = matched.get("hit_hr")
+        matched["hit_hr"] = hit_hr
+        matched["actual_pa"] = matched.get("actual_pa", 1)  # ensure pa>=1 so not dropped
+
+        await github_put_file(
+            path,
+            json.dumps(recs, indent=2),
+            f"manual patch: {matched['name']} hit_hr={hit_hr} on {date}",
+            sha
+        )
+        results[file_type] = f"patched '{matched['name']}': {old_val} -> {hit_hr}"
+
+    return {"date": date, "player": player, "hit_hr": hit_hr, "results": results}
+
+
+@app.get("/delete-player")
+async def delete_player(date: str, player: str):
+    """
+    Remove a player entirely from predictions AND top8 files for a date.
+    Use when a game was postponed or data is completely unrecoverable.
+    Example: /delete-player?date=2026-05-09&player=Fernando+Tatis+Jr.
+    """
+    if not GITHUB_TOKEN:
+        return {"error": "No GitHub token"}
+    import json
+
+    results = {}
+    for file_type, path in [
+        ("predictions", f"data/predictions/{date}.json"),
+        ("top8",        f"data/top8/{date}.json"),
+    ]:
+        raw, sha = await github_get_file(path)
+        if not raw:
+            results[file_type] = "file not found"
+            continue
+        try:
+            recs = json.loads(raw)
+        except:
+            results[file_type] = "parse error"
+            continue
+
+        before = len(recs)
+        player_lower = player.lower()
+        last = player.split()[-1].lower()
+
+        # Remove exact match or last-name match
+        filtered = [r for r in recs
+                    if r.get("name","").lower() != player_lower
+                    and r.get("name","").split()[-1].lower() != last]
+
+        removed = before - len(filtered)
+        if removed == 0:
+            results[file_type] = f"player '{player}' not found"
+            continue
+
+        await github_put_file(
+            path,
+            json.dumps(filtered, indent=2),
+            f"deleted {player} from {date}",
+            sha
+        )
+        results[file_type] = f"removed {removed} record(s)"
+
+    return {"date": date, "player": player, "results": results}
+
 
 @app.get("/cleanup-results")
 async def cleanup_results(days: int = 30, force: bool = False):
