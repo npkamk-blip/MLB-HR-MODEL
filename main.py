@@ -24,21 +24,27 @@ from collections import defaultdict
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-NTFY_TOPIC = "uncle-nicky-mlb-9x7k2"
+PUSHOVER_TOKEN = "ah1dns17qdi5q5soafnjs8ksy29fcb"
+PUSHOVER_USER  = "utvy26j5q66kae27ncwxsftfcuhi92"
 
-async def notify(msg: str, title: str = "MLB HR Model", priority: str = "default"):
-    """Send push notification via ntfy.sh"""
+async def notify(msg: str, title: str = "MLB HR Model", priority: int = 0):
+    """Send push notification via Pushover - instant delivery"""
     try:
         import httpx as _httpx
         async with _httpx.AsyncClient(timeout=5) as c:
             await c.post(
-                f"https://ntfy.sh/{NTFY_TOPIC}",
-                content=msg.encode("utf-8"),
-                headers={"Title": title, "Priority": priority}
+                "https://api.pushover.net/1/messages.json",
+                data={
+                    "token":   PUSHOVER_TOKEN,
+                    "user":    PUSHOVER_USER,
+                    "title":   title,
+                    "message": msg,
+                    "priority": priority,
+                }
             )
-        print(f"Notification sent: {title}")
+        print(f"Pushover sent: {title}")
     except Exception as e:
-        print(f"Notification failed (non-fatal): {e}")
+        print(f"Pushover failed (non-fatal): {e}")
 
 def et_today():
     """Return today's date in US Eastern Time (UTC-4 EDT / UTC-5 EST).
@@ -1405,7 +1411,7 @@ async def daily_refresh_loop():
                     rate = round(hrs/total*100,1) if total else 0
                     await notify(f"Results recorded for {yesterday}\n{hrs} HRs / {total} batters ({rate}%)", "Results Recorded")
             except Exception as e:
-                await notify(f"ERROR recording results: {e}", "Results Error", "high")
+                await notify(f"ERROR recording results: {e}", "Results Error", 1)
                 print(f"Result recording error: {e}")
 
         # 3am - retrain models in background (site stays up)
@@ -1421,7 +1427,7 @@ async def daily_refresh_loop():
                     "Model Retrained"
                 )
             except Exception as e:
-                await notify(f"ERROR in nightly retrain: {e}", "Retrain Error", "high")
+                await notify(f"ERROR in nightly retrain: {e}", "Retrain Error", 1)
                 print(f"Nightly retrain error: {e}")
 
         # 4am - West Coast late game pass + model log
@@ -1452,7 +1458,7 @@ async def daily_refresh_loop():
                 asyncio.create_task(get_games(today_str, False))
                 await notify(f"Good morning! {today_str}\nProjected top 100 saved. Site is ready.", "Daily Predictions Ready")
             except Exception as e:
-                await notify(f"ERROR at 8am save: {e}", "Save Error", "high")
+                await notify(f"ERROR at 8am save: {e}", "Save Error", 1)
                 print(f"8am task error: {e}")
 
         # 10am-8pm - hourly lineup confirmations
@@ -4069,13 +4075,13 @@ async def debug_boxscore(target_date: str = None):
 
 @app.get("/test-notify")
 async def test_notify():
-    """Send a test notification to verify ntfy setup is working."""
+    """Send a test notification via Pushover."""
     await notify(
-        f"Test notification from MLB HR Model!\nDate: {et_today().isoformat()}\nXGBoost AUC: {round(_xgb_oob,3)}\nRecords: {_model_weights.get('records_used',0)}",
+        f"Test from MLB HR Model!\nDate: {et_today().isoformat()}\nXGBoost AUC: {round(_xgb_oob,3)}\nRecords: {_model_weights.get('records_used',0)}",
         "Test - Uncle Nicky MLB",
-        "high"
+        priority=1
     )
-    return {"status": "sent", "topic": NTFY_TOPIC, "url": f"https://ntfy.sh/{NTFY_TOPIC}"}
+    return {"status": "sent via Pushover"}
 
 
 @app.get("/reset-tracking")
