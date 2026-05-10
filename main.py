@@ -1397,60 +1397,42 @@ async def daily_refresh_loop():
         now = et_now
         await asyncio.sleep(3600)  # check every hour
 
-        # 2am - record results (fast, non-blocking)
-        if now.hour == 2:
-            try:
-                yesterday = (et_today() - timedelta(days=1)).isoformat()
-                await record_results(yesterday)
-                await record_parlay_results(yesterday)
-                # Notify after results recorded
-                path = f"data/predictions/{yesterday}.json"
-                content, _ = await github_get_file(path)
-                if content:
-                    import json as _j
-                    recs = _j.loads(content)
-                    hrs = sum(1 for r in recs if r.get("hit_hr") == 1)
-                    total = sum(1 for r in recs if r.get("hit_hr") in [0,1])
-                    rate = round(hrs/total*100,1) if total else 0
-                    await notify(f"Results recorded for {yesterday}\n{hrs} HRs / {total} batters ({rate}%)", "Results Recorded")
-            except Exception as e:
-                await notify(f"ERROR recording results: {e}", "Results Error", 1)
-                print(f"Result recording error: {e}")
+        # 2am - nothing, let West Coast games finish (they end ~1-2am ET)
 
-        # 3am - retrain models in background (site stays up)
-        if now.hour == 3:
-            try:
-                print(f"Nightly retrain starting - Round {get_rotation_round()} Day {get_rotation_day()}")
-                asyncio.create_task(recalibrate_model())
-                await asyncio.sleep(30)
-                asyncio.create_task(train_xgboost())
-                await asyncio.sleep(300)  # wait ~5 min for both to finish
-                await notify(
-                    f"Nightly retrain complete\nXGBoost AUC: {round(_xgb_oob,3)} | RF AUC: {round(_model_weights.get('oob_score',0),3)}\nRecords: {_model_weights.get('records_used',0)}",
-                    "Model Retrained"
-                )
-            except Exception as e:
-                await notify(f"ERROR in nightly retrain: {e}", "Retrain Error", 1)
-                print(f"Nightly retrain error: {e}")
-
-        # 4am - West Coast late game pass + model log
+        # 4am - end of day save: all games final, build clean training file + notify
         if now.hour == 4:
             try:
                 yesterday = (et_today() - timedelta(days=1)).isoformat()
-                print("4am second pass - patching West Coast late game results")
-                await record_results(yesterday)
-                await record_parlay_results(yesterday)
+                print(f"4am end_of_day_save starting for {yesterday}")
+                result = await end_of_day_save(yesterday, notify_result=True)
                 await save_model_log(_model_weights)
+                print(f"4am end_of_day_save complete: {result}")
             except Exception as e:
-                print(f"4am pass error: {e}")
+                await notify(f"ERROR in 4am end_of_day_save: {e}", "End of Day ERROR", 1)
+                print(f"4am error: {e}")
 
-        # 7am - refresh Savant data in background, never wipes cache
+        # 7am - retrain RF + XGBoost on clean data, then refresh Savant
         if now.hour == 7:
             try:
-                print("7am data refresh starting in background")
+                print(f"7am retrain starting - Round {get_rotation_round()} Day {get_rotation_day()}")
+                rf_result  = await recalibrate_model()
+                xgb_result = await train_xgboost()
+                rf_auc  = round(_model_weights.get("oob_score", 0), 3)
+                xgb_auc = round(_xgb_oob, 3)
+                records = _model_weights.get("records_used", 0)
+                winner  = "XGB" if _xgb_trained and xgb_auc > rf_auc else "RF"
+                await notify(
+                    f"Models retrained\nWinner: {winner} | XGB: {xgb_auc} | RF: {rf_auc}\nRecords: {records}",
+                    "Model Retrained"
+                )
+            except Exception as e:
+                await notify(f"ERROR in 7am retrain: {e}", "Retrain ERROR", 1)
+                print(f"7am retrain error: {e}")
+            try:
+                print("7am Savant refresh starting in background")
                 asyncio.create_task(load_all_savant_data())
             except Exception as e:
-                print(f"Daily refresh error: {e}")
+                print(f"7am Savant refresh error: {e}")
 
         # 8am - save projected top100 as fallback + pre-warm games cache
         if now.hour == 8:
@@ -1941,6 +1923,7 @@ async def check_lineup_confirmations():
 
                         game_records.append({
                             "date": today, "name": name, "team": team,
+                            "mlb_id": pid,
                             "opp_pitcher": opp_p_name, "opp_pitcher_hand": opp_p_hand,
                             "bat_hand": bat_hand, "home_team": home_team,
                             "lineup_source": "confirmed",
@@ -2038,147 +2021,256 @@ async def check_lineup_confirmations():
         import traceback; traceback.print_exc()
 
 
-async def record_results(target_date: str):
-    """Fetch actual HR results for target_date and update the predictions file"""
-    if not GITHUB_TOKEN: return
-    path = f"data/predictions/{target_date}.json"
-    content, sha = await github_get_file(path)
-    if not content:
-        print(f"No predictions file found for {target_date}")
-        return
-    import json
-    try:
-        records = json.loads(content)
-    except Exception:
-        return
-    # Fetch box scores for that date
+async def build_boxscore_outcomes(target_date: str):
+    """
+    Fetch all FINAL game boxscores for target_date.
+    Returns dicts keyed by mlb_id AND name (lowercase) for flexible matching.
+    PA = AB + BB + HBP + SF + SH — catches walks/HBP/sac, which AB alone misses.
+    """
+    hr_by_id   = {}   # {mlb_id: True}
+    pa_by_id   = {}   # {mlb_id: pa}
+    hr_by_name = set()  # {name_lower}
+    pa_by_name = {}   # {name_lower: pa}
+    games_final   = 0
+    games_pending = 0
+    not_finished  = {"Preview", "Live", "Postponed", "Suspended", "Cancelled", "Warmup"}
     try:
         async with httpx.AsyncClient(timeout=30) as client:
             r = await client.get(f"{MLB_API}/schedule?sportId=1&date={target_date}&hydrate=team")
             sched = r.json()
-        hr_hitters = set()
-        actual_pa = {}  # name.lower() -> plate appearances (PA catches walks/HBP/sac, AB misses them)
         for game_date in sched.get("dates", []):
             for game in game_date.get("games", []):
-                game_state    = game.get("status", {}).get("abstractGameState", "")
-                detailed_state = game.get("status", {}).get("detailedState", "")
-                code          = game.get("status", {}).get("statusCode", "")
-                # Skip only games that are clearly not finished
-                not_finished = {"Preview", "Live", "Postponed", "Suspended", "Cancelled", "Warmup"}
-                if game_state in not_finished:
-                    print(f"Skipping game {game.get('gamePk')} - state: {game_state}/{detailed_state}/{code}")
+                state  = game.get("status", {}).get("abstractGameState", "")
+                detail = game.get("status", {}).get("detailedState", "")
+                if state in not_finished:
+                    games_pending += 1
+                    print(f"  Pending: {game.get('gamePk')} ({state}/{detail})")
                     continue
-                print(f"Processing game {game.get('gamePk')} - state: {game_state}/{detailed_state}/{code}")
                 gid = game["gamePk"]
                 try:
-                    async with httpx.AsyncClient(timeout=10) as box_client:
-                        r2 = await box_client.get(f"{MLB_API}/game/{gid}/boxscore")
+                    async with httpx.AsyncClient(timeout=15) as bc:
+                        r2 = await bc.get(f"{MLB_API}/game/{gid}/boxscore")
                         box = r2.json()
                     for side in ["away", "home"]:
                         for _, p in box.get("teams", {}).get(side, {}).get("players", {}).items():
-                            stats = p.get("stats", {}).get("batting", {})
-                            name = p.get("person", {}).get("fullName", "")
+                            person = p.get("person", {})
+                            pid    = person.get("id")
+                            name   = person.get("fullName", "")
                             if not name: continue
+                            stats = p.get("stats", {}).get("batting", {})
                             ab  = int(stats.get("atBats", 0) or 0)
                             bb  = int(stats.get("baseOnBalls", 0) or 0)
                             hbp = int(stats.get("hitByPitch", 0) or 0)
                             sf  = int(stats.get("sacFlies", 0) or 0)
                             sh  = int(stats.get("sacBunts", 0) or 0)
                             pa  = ab + bb + hbp + sf + sh
-                            actual_pa[name.lower()] = pa
-                            if int(stats.get("homeRuns", 0) or 0) > 0:
-                                hr_hitters.add(name.lower())
-                except Exception as box_err:
-                    print(f"Boxscore error for game {gid}: {box_err}")
-                    continue
-        # Update records - patch nulls, fix false negatives, fix stale DNPs.
-        # NAME MATCHING: exact first, then last-name only when exactly 1 player matches.
-        # The old "any(last in k)" substring check caused phantom HRs - e.g. "walker"
-        # matching "walker buehler", or "taylor" matching the wrong Taylor entirely.
-        updated = 0
-        dnp_count = 0
-
-        def name_hit(nl, hr_hitters_set, ab_map):
-            """Returns (hit: bool, ab: int). Exact match first, single last-name fallback only."""
-            # 1. Exact lowercase match
-            if nl in hr_hitters_set:
-                return True, ab_map.get(nl, 0)
-            last = nl.split()[-1]
-            # 2. Last-name fallback: ONLY safe when exactly 1 HR hitter has this last name
-            last_hr = [k for k in hr_hitters_set if k.split()[-1] == last]
-            if len(last_hr) == 1:
-                return True, ab_map.get(last_hr[0], 0)
-            # 3. AB lookup for DNP threshold - exact then single last-name
-            ab = ab_map.get(nl, 0)
-            if ab == 0:
-                last_ab = [k for k in ab_map if k.split()[-1] == last]
-                if len(last_ab) == 1:
-                    ab = ab_map.get(last_ab[0], 0)
-            return False, ab
-
-        for rec in records:
-            nl = rec["name"].lower()
-
-            # Fix stale DNP records - re-check with final boxscore PA
-            if rec.get("hit_hr") == "DNP":
-                hit, pa = name_hit(nl, hr_hitters, actual_pa)
-                if hit:
-                    rec["hit_hr"] = 1
-                    rec["actual_pa"] = pa
-                    updated += 1
-                    print(f"Corrected DNP->HR: {rec['name']} actually hit a HR")
-                elif pa >= 1:
-                    # Had a plate appearance in a late game - real 0, not a DNP
-                    rec["hit_hr"] = 0
-                    rec["actual_pa"] = pa
-                    updated += 1
-                    print(f"Corrected DNP->0: {rec['name']} played (pa={pa}) but no HR")
-                continue
-
-            # Fix false negatives - recorded as 0 but actually hit a HR
-            if rec.get("hit_hr") == 0:
-                hit, pa = name_hit(nl, hr_hitters, actual_pa)
-                if hit:
-                    rec["hit_hr"] = 1
-                    rec["actual_pa"] = pa
-                    updated += 1
-                    print(f"Corrected 0->HR: {rec['name']} actually hit a HR")
-                continue
-
-            # Re-verify hit_hr=1 - mid-game boxscore at 2am ET can give false positives
-            if rec.get("hit_hr") == 1:
-                hit, pa = name_hit(nl, hr_hitters, actual_pa)
-                if not hit and pa >= 1:
-                    # Final boxscore confirms no HR but player batted - correct to 0
-                    rec["hit_hr"] = 0
-                    rec["actual_pa"] = pa
-                    updated += 1
-                    print(f"Corrected 1->0: {rec['name']} did NOT hit a HR (pa={pa})")
-                continue
-
-            # Handle null records (not yet recorded at all)
-            hit, pa = name_hit(nl, hr_hitters, actual_pa)
-            if hit:
-                rec["hit_hr"] = 1
-                rec["actual_pa"] = pa
-                updated += 1
-            elif pa < 1:
-                # pa=0: truly did not bat (DNP, pinch runner, or game not final yet)
-                rec["hit_hr"] = "DNP"
-                rec["actual_pa"] = pa
-                dnp_count += 1
-            else:
-                # pa>=1: had at least one plate appearance - valid 0 for training data
-                rec["hit_hr"] = 0
-                rec["actual_pa"] = pa
-                updated += 1
-
-        content_updated = json.dumps(records, indent=2)
-        await github_put_file(path, content_updated, f"results: {target_date} ({len(hr_hitters)} HRs, {dnp_count} DNP)", sha)
-        print(f"Recorded results for {target_date}: {len(hr_hitters)} HR hitters, {dnp_count} DNP, {updated} records updated")
+                            hr  = int(stats.get("homeRuns", 0) or 0) > 0
+                            nl  = name.lower()
+                            if pid:
+                                pa_by_id[pid] = pa
+                                if hr: hr_by_id[pid] = True
+                            pa_by_name[nl] = pa
+                            if hr: hr_by_name.add(nl)
+                    games_final += 1
+                except Exception as e:
+                    print(f"  Boxscore error game {gid}: {e}")
     except Exception as e:
-        print(f"record_results error: {e}")
-        import traceback; traceback.print_exc()
+        print(f"build_boxscore_outcomes error: {e}")
+    print(f"Boxscores: {games_final} final, {games_pending} pending | "
+          f"{len(pa_by_id)} players by ID, {len(hr_by_id)} HRs by ID")
+    return hr_by_id, pa_by_id, hr_by_name, pa_by_name, games_final, games_pending
+
+
+def resolve_outcome(rec, hr_by_id, pa_by_id, hr_by_name, pa_by_name):
+    """
+    Match a prediction record to a boxscore outcome.
+    Priority: mlb_id → name exact → last name (only if exactly 1 match).
+    Returns (hit_hr: int|None, pa: int, method: str)
+      1 = HR,  0 = played no HR,  None = not found in any final boxscore
+    """
+    mlb_id = rec.get("mlb_id")
+    nl     = rec.get("name", "").lower()
+    last   = nl.split()[-1] if nl else ""
+
+    # 1. MLB player ID — immune to name formatting, Jr., accents, etc.
+    if mlb_id and mlb_id in pa_by_id:
+        pa  = pa_by_id[mlb_id]
+        hit = mlb_id in hr_by_id
+        return (1 if hit else 0), pa, "id"
+
+    # 2. Exact lowercase name match
+    if nl in pa_by_name:
+        pa  = pa_by_name[nl]
+        hit = nl in hr_by_name
+        return (1 if hit else 0), pa, "name_exact"
+
+    # 3. Last name — only when exactly 1 player in all boxscores has this last name
+    last_matches = [k for k in pa_by_name if k.split()[-1] == last]
+    if len(last_matches) == 1:
+        matched = last_matches[0]
+        pa  = pa_by_name[matched]
+        hit = matched in hr_by_name
+        print(f"  Last-name match: '{rec.get('name')}' -> '{matched}'")
+        return (1 if hit else 0), pa, "name_last"
+
+    return None, 0, "not_found"
+
+
+async def end_of_day_save(target_date: str, notify_result: bool = True):
+    """
+    4am ET job — builds the clean training file for target_date.
+
+    Steps:
+    1. Fetch all final boxscores -> outcome lookup by ID + name
+    2. Load predictions file (all players, nulls everywhere)
+    3. Match each player to boxscore. PA>=1 = played, keep. PA=0 or not found = drop.
+    4. Rank survivors by model_hr_pct, keep top 100
+    5. Save clean file — only players with real outcomes, zero nulls
+    6. Update top8 file with correct outcomes for dashboard hit rate tracking
+    7. Run parlay results
+    8. Send Pushover notification
+    """
+    if not GITHUB_TOKEN: return
+    import json
+
+    print(f"end_of_day_save starting: {target_date}")
+
+    # Step 1: Build outcome lookup from final boxscores
+    hr_by_id, pa_by_id, hr_by_name, pa_by_name, games_final, games_pending =         await build_boxscore_outcomes(target_date)
+
+    if games_final == 0:
+        msg = f"end_of_day_save {target_date}: 0 final games ({games_pending} pending) - will retry"
+        print(msg)
+        if notify_result:
+            await notify(msg, "End of Day - No Final Games", priority=0)
+        return
+
+    # Step 2: Load predictions file
+    pred_path = f"data/predictions/{target_date}.json"
+    raw, sha  = await github_get_file(pred_path)
+    if not raw:
+        print(f"end_of_day_save: no predictions file for {target_date}")
+        return
+    try:
+        all_preds = json.loads(raw)
+    except Exception as e:
+        print(f"end_of_day_save JSON error: {e}")
+        return
+    print(f"  Loaded {len(all_preds)} raw prediction records")
+
+    # Step 3: Match each player to boxscore outcome
+    matched  = []
+    dropped  = []
+    match_log = {"id": 0, "name_exact": 0, "name_last": 0, "not_found": 0}
+
+    for rec in all_preds:
+        outcome, pa, method = resolve_outcome(rec, hr_by_id, pa_by_id, hr_by_name, pa_by_name)
+        match_log[method] = match_log.get(method, 0) + 1
+
+        if outcome is None or pa < 1:
+            # Not found in any final boxscore, or found but truly DNP (pa=0)
+            dropped.append(rec.get("name", "?"))
+            continue
+
+        rec["hit_hr"]      = outcome
+        rec["actual_pa"]   = pa
+        rec["match_method"] = method
+        matched.append(rec)
+
+    print(f"  Matched {len(matched)} played, dropped {len(dropped)} (DNP/postponed/not found)")
+    print(f"  Match methods: {match_log}")
+
+    if not matched:
+        msg = f"ERROR: end_of_day_save {target_date} - 0 players matched. Check boxscore API."
+        print(msg)
+        if notify_result:
+            await notify(msg, "End of Day - ERROR", priority=1)
+        return
+
+    # Step 4: Rank by model score, keep top 100 who actually played
+    ranked   = sorted(matched, key=lambda x: x.get("model_hr_pct") or 0, reverse=True)
+    top100   = ranked[:100]
+    hr_count = sum(1 for r in top100 if r.get("hit_hr") == 1)
+    hr_rate  = round(hr_count / len(top100) * 100, 1) if top100 else 0
+    print(f"  Top 100: {hr_count} HRs ({hr_rate}%)")
+
+    # Step 5: Save clean predictions file - no nulls, no DNPs, just real outcomes
+    await github_put_file(
+        pred_path,
+        json.dumps(top100, indent=2),
+        f"end_of_day: {target_date} | {hr_count}/{len(top100)} HRs ({hr_rate}%)",
+        sha
+    )
+    print(f"  Saved clean predictions: {len(top100)} records")
+
+    # Step 6: Update top8 file outcomes for dashboard hit rate tracking
+    top8_hrs   = "?"
+    top8_total = "?"
+    top8_path  = f"data/top8/{target_date}.json"
+    top8_raw, top8_sha = await github_get_file(top8_path)
+    if top8_raw:
+        try:
+            top8_recs = json.loads(top8_raw)
+            # Build fast lookup from our verified top100
+            out_by_id   = {r["mlb_id"]: r["hit_hr"] for r in top100 if r.get("mlb_id")}
+            out_by_name = {r["name"].lower(): r["hit_hr"] for r in top100}
+            patched = 0
+            for r in top8_recs:
+                mid = r.get("mlb_id")
+                nl  = r.get("name", "").lower()
+                if mid and mid in out_by_id:
+                    r["hit_hr"] = out_by_id[mid]
+                    patched += 1
+                elif nl in out_by_name:
+                    r["hit_hr"] = out_by_name[nl]
+                    patched += 1
+            await github_put_file(
+                top8_path,
+                json.dumps(top8_recs, indent=2),
+                f"top8 outcomes: {target_date}",
+                top8_sha
+            )
+            top8_hrs   = sum(1 for r in top8_recs if r.get("hit_hr") == 1)
+            top8_total = len(top8_recs)
+            print(f"  Top8 updated: {patched}/{top8_total} outcomes patched, {top8_hrs} HRs")
+        except Exception as e:
+            print(f"  Top8 update error: {e}")
+
+    # Step 7: Parlay results
+    try:
+        await record_parlay_results(target_date)
+    except Exception as e:
+        print(f"  Parlay results error (non-fatal): {e}")
+
+    # Step 8: Pushover notification
+    if notify_result:
+        match_summary = (f"ID:{match_log.get('id',0)} "
+                         f"Name:{match_log.get('name_exact',0)} "
+                         f"Last:{match_log.get('name_last',0)} "
+                         f"Miss:{match_log.get('not_found',0)}")
+        notify_msg = (
+            f"{target_date}"
+            + "\nTop 100: " + str(hr_count) + " HRs / " + str(len(top100)) + " (" + str(hr_rate) + "%)"
+            + "\nTop 8: " + str(top8_hrs) + " / " + str(top8_total)
+            + "\nMatching: " + str(match_summary)
+            + "\nGames: " + str(games_final) + " final, " + str(games_pending) + " still pending"
+        )
+        await notify(notify_msg, "End of Day", priority=0)
+
+
+    return {
+        "date": target_date, "top100": len(top100),
+        "hr_count": hr_count, "hr_rate": hr_rate,
+        "games_final": games_final, "games_pending": games_pending,
+        "match_log": match_log, "dropped": len(dropped),
+    }
+
+
+async def record_results(target_date: str):
+    """Legacy - kept for /record-results manual endpoint. Calls end_of_day_save."""
+    return await end_of_day_save(target_date, notify_result=False)
+
+
 
 def run_async(coro):
     loop = asyncio.new_event_loop()
@@ -2205,22 +2297,22 @@ async def startup_catchup():
     await asyncio.sleep(60)  # wait for data to load first
     import json
 
-    # Record results for last 3 days
+    # Re-run end_of_day_save for last 3 days if predictions file has nulls
+    # (means 4am didn't run - deploy happened overnight)
     for days_ago in [1, 2, 3]:
         try:
             target = (date.today() - timedelta(days=days_ago)).isoformat()
-            content, _ = await github_get_file(f"data/predictions/{target}.json")
-            if content:
-                records = json.loads(content)
+            raw, _ = await github_get_file(f"data/predictions/{target}.json")
+            if raw:
+                records = json.loads(raw)
                 nulls = [r for r in records if r.get("hit_hr") is None]
-                dnps  = [r for r in records if r.get("hit_hr") == "DNP"]
-                if nulls or dnps:
-                    print(f"Startup catchup: recording results for {target} ({len(nulls)} nulls, {len(dnps)} DNPs)")
-                    await record_results(target)
+                if nulls:
+                    print(f"Startup catchup: {target} has {len(nulls)} nulls - running end_of_day_save")
+                    await end_of_day_save(target, notify_result=False)
                 else:
-                    print(f"Startup catchup: {target} complete")
+                    print(f"Startup catchup: {target} already clean")
         except Exception as e:
-            print(f"Startup catchup results error ({days_ago}d): {e}")
+            print(f"Startup catchup error ({days_ago}d): {e}")
 
     # Save today with projected lineups first - never miss a day
     try:
@@ -2338,6 +2430,7 @@ async def save_projected_top100(target_date: str = None):
 
                         all_candidates.append({
                             "date": today, "name": name, "team": team,
+                            "mlb_id": pid,
                             "opp_pitcher": opp_p_name, "opp_pitcher_hand": opp_p_hand,
                             "bat_hand": bat_hand, "home_team": home_team,
                             "lineup_source": "projected",
@@ -4014,11 +4107,19 @@ async def manual_record_results(target_date: str = None):
 
 @app.get("/record-results")
 async def manual_record_results_get(target_date: str = None):
-    """GET version - browser accessible"""
+    """GET version - browser accessible. Calls end_of_day_save."""
     d = target_date or (date.today() - timedelta(days=1)).isoformat()
-    await record_results(d)
-    await record_parlay_results(d)
-    return {"status": "done", "date": d}
+    result = await end_of_day_save(d, notify_result=False)
+    return {"status": "done", "date": d, "result": result}
+
+@app.get("/end-of-day")
+async def manual_end_of_day(target_date: str = None):
+    """Manually trigger end_of_day_save for any date.
+    Example: /end-of-day?target_date=2026-05-09
+    Fetches final boxscores, builds clean top100 training file, updates top8 outcomes."""
+    d = target_date or (et_today() - timedelta(days=1)).isoformat()
+    result = await end_of_day_save(d, notify_result=True)
+    return {"status": "done", "date": d, "result": result}
 
 @app.get("/cleanup-results")
 async def cleanup_results(days: int = 30, force: bool = False):
