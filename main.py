@@ -2151,16 +2151,37 @@ async def build_boxscore_outcomes(target_date: str):
     return hr_by_id, pa_by_id, hr_by_name, pa_by_name, games_final, games_pending
 
 
+# Known ID corrections - players where our stored ID doesn't match boxscore
+# Max Muncy (veteran, ID 571771) vs Max Muncy (prospect, ID 691777)
+# Add any other known mismatches here
+KNOWN_ID_CORRECTIONS = {
+    691777: 571771,  # Max Muncy - we have prospect ID, need veteran ID
+}
+
+# Name normalizations - accents/special chars that differ between APIs
+# key = what we store, value = what boxscore returns
+NAME_NORMALIZATIONS = {
+    "ronald acuña jr.": "ronald acuna jr.",
+    "ronald acuna jr.": "ronald acuna jr.",
+}
+
 def resolve_outcome(rec, hr_by_id, pa_by_id, hr_by_name, pa_by_name):
     """
     Match a prediction record to a boxscore outcome.
-    Priority: mlb_id → name exact → last name (only if exactly 1 match).
+    Priority: mlb_id → name exact → normalized name → last name (only if 1 match).
     Returns (hit_hr: int|None, pa: int, method: str)
       1 = HR,  0 = played no HR,  None = not found in any final boxscore
     """
     mlb_id = rec.get("mlb_id")
     nl     = rec.get("name", "").lower()
     last   = nl.split()[-1] if nl else ""
+
+    # Apply known ID corrections
+    if mlb_id and mlb_id in KNOWN_ID_CORRECTIONS:
+        mlb_id = KNOWN_ID_CORRECTIONS[mlb_id]
+
+    # Normalize name for accent/special char issues
+    nl = NAME_NORMALIZATIONS.get(nl, nl)
 
     # 1. MLB player ID — immune to name formatting, Jr., accents, etc.
     if mlb_id and mlb_id in pa_by_id:
@@ -2174,14 +2195,19 @@ def resolve_outcome(rec, hr_by_id, pa_by_id, hr_by_name, pa_by_name):
         hit = nl in hr_by_name
         return (1 if hit else 0), pa, "name_exact"
 
-    # 3. Last name — only when exactly 1 player in all boxscores has this last name
+    # 3. Last name — only when exactly 1 player has this last name AND
+    #    first name also matches (prevents Greg Jones -> Jahmai Jones)
+    first = nl.split()[0] if nl else ""
     last_matches = [k for k in pa_by_name if k.split()[-1] == last]
     if len(last_matches) == 1:
         matched = last_matches[0]
-        pa  = pa_by_name[matched]
-        hit = matched in hr_by_name
-        print(f"  Last-name match: '{rec.get('name')}' -> '{matched}'")
-        return (1 if hit else 0), pa, "name_last"
+        matched_first = matched.split()[0] if matched else ""
+        # Require first name to start with same letter at minimum
+        if first and matched_first and first[0] == matched_first[0]:
+            pa  = pa_by_name[matched]
+            hit = matched in hr_by_name
+            print(f"  Last-name match: '{rec.get('name')}' -> '{matched}'")
+            return (1 if hit else 0), pa, "name_last"
 
     return None, 0, "not_found"
 
