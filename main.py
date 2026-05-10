@@ -1993,26 +1993,89 @@ async def check_lineup_confirmations():
             kept = [r for r in existing_records
                     if f"{r.get('team','')}-{r.get('opp_pitcher','')}" not in confirmed_keys]
 
-            # Global ranking - top 100 for training, top 8 for betting
-            all_confirmed = kept + new_records
-            ranked_all = sorted(all_confirmed, key=lambda x: x.get("model_hr_pct", 0), reverse=True)
+            # Merge all records - confirmed replaces projected for same game
+            all_records_today = kept + new_records
+
+            # Top 100 for training - all players regardless of lineup source
+            ranked_all = sorted(all_records_today, key=lambda x: x.get("model_hr_pct", 0), reverse=True)
             top100 = ranked_all[:100]
-            top8   = ranked_all[:8]
+
+            # Top 8 for betting — live blend of confirmed + projected.
+            # Rules:
+            # 1. For each game, confirmed players REPLACE their projected counterparts.
+            #    Confirmed always wins over projected for the same team/game.
+            # 2. If a player was projected top 8 but is NOT in the confirmed lineup
+            #    (scratched), they are dropped. The next best available player slides in.
+            # 3. Global re-rank every time a new lineup confirms.
+            # 4. Result: seamless transition from projected → confirmed throughout the day.
+
+            # Build one record per player - confirmed beats projected for same game
+            # Key = (team, opp_pitcher) identifies a game side
+            best_by_game = {}  # game_key -> {player_name -> record}
+            for r in all_records_today:
+                game_key = f"{r.get('team','')}-{r.get('opp_pitcher','')}"
+                name = r.get("name", "")
+                if game_key not in best_by_game:
+                    best_by_game[game_key] = {}
+                existing = best_by_game[game_key].get(name)
+                # Confirmed always beats projected for same player/game
+                if not existing or r.get("lineup_source") == "confirmed":
+                    best_by_game[game_key][name] = r
+
+            # Flatten to single list - one record per player
+            pool = []
+            for game_key, players in best_by_game.items():
+                # For confirmed games: only include players in the confirmed lineup
+                # For projected games: include all projected players
+                game_records = list(players.values())
+                is_confirmed = any(r.get("lineup_source") == "confirmed" for r in game_records)
+                if is_confirmed:
+                    # Only keep confirmed players - drops scratched projected players
+                    pool.extend([r for r in game_records if r.get("lineup_source") == "confirmed"])
+                else:
+                    # Game not confirmed yet - keep projected players
+                    pool.extend(game_records)
+
+            # Global rank - top 8 from best available (mix of confirmed + projected)
+            ranked_pool = sorted(pool, key=lambda x: x.get("model_hr_pct", 0), reverse=True)
+            top8 = ranked_pool[:8]
 
             # Save top 100 to predictions (training data)
             content = json.dumps(top100, indent=2)
             await github_put_file(path, content,
-                f"lineups confirmed: {today} ({len(top100)} top100)", sha)
+                f"lineups confirmed: {today} ({len(top100)} records)", sha)
 
             # Save top 8 to top8 file (betting record)
             top8_path = f"data/top8/{today}.json"
             existing_top8_content, top8_sha = await github_get_file(top8_path)
             await github_put_file(top8_path, json.dumps(top8, indent=2),
-                                  f"top8: {today} ({len(top8)} picks)", top8_sha)
+                                  f"top8: {today} ({len(top8)} confirmed picks)", top8_sha)
 
-            print(f"Lineup check: top100 saved ({len(top100)}), top8 saved ({len(top8)})")
-            top8_names = ", ".join(r.get("name","?").split()[-1] for r in top8[:4])
-            await notify(f"Lineups confirmed {et_today().isoformat()}\nTop 8 saved: {top8_names}...\n{len(top100)} training records", "Lineups Confirmed")
+            # Build notification showing any replacements
+            prev_top8_names = set()
+            if existing_top8_content:
+                try:
+                    import json as _j
+                    prev = _j.loads(existing_top8_content)
+                    prev_top8_names = {r.get("name","") for r in prev}
+                except: pass
+            new_top8_names  = {r.get("name","") for r in top8}
+            added   = new_top8_names - prev_top8_names
+            removed = prev_top8_names - new_top8_names
+            games_confirmed_count = len({f"{r['team']}-{r['opp_pitcher']}" for r in all_confirmed_only}) // 2
+
+            notify_msg  = f"Lineups confirmed {et_today().isoformat()}"
+            notify_msg += f"\n{games_confirmed_count} games confirmed"
+            notify_msg += f"\nTop 8: " + ", ".join(r.get("name","?").split()[-1] for r in top8[:4]) + "..."
+            if added:
+                notify_msg += f"\nAdded: {', '.join(n.split()[-1] for n in added)}"
+            if removed:
+                notify_msg += f"\nDropped: {', '.join(n.split()[-1] for n in removed)}"
+
+            print(f"Lineup check: top100 saved ({len(top100)}), top8 saved ({len(top8)} confirmed)")
+            if added or removed:
+                print(f"  Top 8 changes - added: {added}, removed: {removed}")
+            await notify(notify_msg, "Lineups Confirmed")
         else:
             print(f"Lineup check: no new confirmations yet")
 
@@ -2494,6 +2557,23 @@ async def save_projected_top100(target_date: str = None):
         await github_put_file(path, json.dumps(top100, indent=2),
                               f"projected top100: {today} ({len(top100)} players)", sha)
         print(f"save_projected_top100: saved {len(top100)} projected players for {today}")
+
+        # Save projected top 8 so dashboard shows picks early before lineups confirm.
+        # Only write if no top8 file exists yet - confirmed lineups will overwrite later.
+        top8_path = f"data/top8/{today}.json"
+        existing_top8, existing_top8_sha = await github_get_file(top8_path)
+        if not existing_top8:
+            top8 = ranked[:8]
+            await github_put_file(
+                top8_path,
+                json.dumps(top8, indent=2),
+                f"projected top8: {today}",
+                None
+            )
+            top8_names = ", ".join(r.get("name","?").split()[-1] for r in top8[:4])
+            print(f"save_projected_top100: saved projected top8 ({top8_names}...)")
+        else:
+            print(f"save_projected_top100: top8 file already exists for {today} - skipping")
 
     except Exception as e:
         print(f"save_projected_top100 error: {e}")
@@ -4111,6 +4191,260 @@ async def manual_record_results_get(target_date: str = None):
     d = target_date or (date.today() - timedelta(days=1)).isoformat()
     result = await end_of_day_save(d, notify_result=False)
     return {"status": "done", "date": d, "result": result}
+
+@app.get("/debug-player")
+async def debug_player(player: str = "Murakami"):
+    """
+    Debug name matching for any player.
+    Shows exactly what the MLB API calls them vs what we have stored,
+    and whether ID matching would work.
+    Example: /debug-player?player=Murakami
+    Example: /debug-player?player=Fernando+Tatis+Jr.
+    """
+    import json
+
+    # Search MLB Stats API people endpoint
+    mlb_results = []
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(f"{MLB_API}/people/search?names={player}&sportId=1")
+            data = r.json()
+        for p in data.get("people", []):
+            mlb_results.append({
+                "mlb_id":    p.get("id"),
+                "full_name": p.get("fullName"),
+                "first":     p.get("firstName"),
+                "last":      p.get("lastName"),
+                "bat_side":  p.get("batSide", {}).get("code"),
+                "active":    p.get("active"),
+            })
+    except Exception as e:
+        mlb_results = [{"error": str(e)}]
+
+    # Check what we have in our predictions files (last 7 days)
+    pred_records = []
+    for days_ago in range(0, 8):
+        d = (et_today() - timedelta(days=days_ago)).isoformat()
+        raw, _ = await github_get_file(f"data/predictions/{d}.json")
+        if not raw: continue
+        try:
+            recs = json.loads(raw)
+            for r in recs:
+                if player.lower() in r.get("name","").lower() or                    r.get("name","").lower().split()[-1] == player.lower().split()[-1]:
+                    pred_records.append({
+                        "date":     d,
+                        "name":     r.get("name"),
+                        "mlb_id":   r.get("mlb_id"),
+                        "hit_hr":   r.get("hit_hr"),
+                        "actual_pa": r.get("actual_pa"),
+                        "match_method": r.get("match_method"),
+                        "lineup_source": r.get("lineup_source"),
+                    })
+        except: continue
+
+    # Check Savant data cache
+    savant_name = None
+    bc = get_batter_stats(player, 2026)
+    b8d = get_batter_8d(player)
+
+    # Check what name the boxscore uses - look at yesterday's games
+    boxscore_name = None
+    boxscore_id = None
+    yesterday = (et_today() - timedelta(days=1)).isoformat()
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={yesterday}&hydrate=team")
+            sched = r.json()
+        search_last = player.lower().split()[-1]
+        for game_date in sched.get("dates", []):
+            for game in game_date.get("games", []):
+                if game.get("status",{}).get("abstractGameState") != "Final": continue
+                gid = game["gamePk"]
+                try:
+                    async with httpx.AsyncClient(timeout=10) as bc2:
+                        r2 = await bc2.get(f"{MLB_API}/game/{gid}/boxscore")
+                        box = r2.json()
+                    for side in ["away","home"]:
+                        for _, p in box.get("teams",{}).get(side,{}).get("players",{}).items():
+                            name = p.get("person",{}).get("fullName","")
+                            pid  = p.get("person",{}).get("id")
+                            if search_last in name.lower():
+                                boxscore_name = name
+                                boxscore_id = pid
+                except: continue
+            if boxscore_name: break
+    except: pass
+
+    return {
+        "searched_for": player,
+        "mlb_api_people_search": mlb_results,
+        "boxscore_name_yesterday": boxscore_name,
+        "boxscore_id_yesterday": boxscore_id,
+        "our_prediction_records": pred_records,
+        "savant_has_season_data": bool(bc),
+        "savant_has_8d_data": bool(b8d),
+        "diagnosis": (
+            "ID match will work going forward" if mlb_results and pred_records and pred_records[0].get("mlb_id")
+            else "NO mlb_id in our records - name matching only, check boxscore_name vs our stored name"
+            if pred_records else "Player not found in our recent predictions files"
+        ),
+    }
+
+
+@app.get("/hr-audit")
+async def hr_audit(date: str = None):
+    """
+    Daily HR audit - shows every player who hit a HR that day and whether
+    we captured them correctly in our predictions file.
+
+    Catches:
+    - Players we had in predictions with correct outcome (hit_hr=1) ✓
+    - Players we had but outcome is wrong (hit_hr=0 or DNP or null) ← name/ID bug
+    - Players we never had at all (not in any lineup we saved) ← missed entirely
+
+    Use this every morning after end_of_day_save to verify data quality.
+    Example: /hr-audit?date=2026-05-09
+    """
+    if not GITHUB_TOKEN:
+        return {"error": "No GitHub token"}
+
+    import json
+    target = date or (et_today() - timedelta(days=1)).isoformat()
+
+    # Step 1: Get every HR hitter from final boxscores
+    actual_hrs = []  # {name, mlb_id, team, hr_count}
+    not_finished = {"Preview", "Live", "Postponed", "Suspended", "Cancelled", "Warmup"}
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={target}&hydrate=team")
+            sched = r.json()
+        for game_date in sched.get("dates", []):
+            for game in game_date.get("games", []):
+                state = game.get("status", {}).get("abstractGameState", "")
+                if state in not_finished:
+                    continue
+                gid = game["gamePk"]
+                away = game["teams"]["away"]["team"]["name"]
+                home = game["teams"]["home"]["team"]["name"]
+                try:
+                    async with httpx.AsyncClient(timeout=15) as bc:
+                        r2 = await bc.get(f"{MLB_API}/game/{gid}/boxscore")
+                        box = r2.json()
+                    for side in ["away", "home"]:
+                        team_name = away if side == "away" else home
+                        for _, p in box.get("teams", {}).get(side, {}).get("players", {}).items():
+                            stats = p.get("stats", {}).get("batting", {})
+                            hrs   = int(stats.get("homeRuns", 0) or 0)
+                            if hrs > 0:
+                                person = p.get("person", {})
+                                actual_hrs.append({
+                                    "name":    person.get("fullName", ""),
+                                    "mlb_id":  person.get("id"),
+                                    "team":    team_name,
+                                    "hr_count": hrs,
+                                })
+                except Exception as e:
+                    print(f"Boxscore error game {gid}: {e}")
+    except Exception as e:
+        return {"error": f"Schedule fetch failed: {e}"}
+
+    # Step 2: Load our predictions file for that date
+    raw, _ = await github_get_file(f"data/predictions/{target}.json")
+    preds = []
+    if raw:
+        try:
+            preds = json.loads(raw)
+        except: pass
+
+    # Build fast lookup from predictions
+    pred_by_id   = {r["mlb_id"]: r for r in preds if r.get("mlb_id")}
+    pred_by_name = {r["name"].lower(): r for r in preds}
+
+    # Step 3: Cross reference every actual HR hitter against our predictions
+    captured   = []  # in predictions with hit_hr=1 ✓
+    wrong_val  = []  # in predictions but hit_hr != 1 (bug!)
+    missing    = []  # not in predictions at all
+
+    for hr_player in actual_hrs:
+        name   = hr_player["name"]
+        mlb_id = hr_player["mlb_id"]
+        nl     = name.lower()
+        last   = nl.split()[-1]
+
+        # Find in our predictions - ID first, then name
+        pred = None
+        match_method = None
+
+        if mlb_id and mlb_id in pred_by_id:
+            pred = pred_by_id[mlb_id]
+            match_method = "id"
+        elif nl in pred_by_name:
+            pred = pred_by_name[nl]
+            match_method = "name_exact"
+        else:
+            # Last name fallback
+            last_matches = [k for k in pred_by_name if k.split()[-1] == last]
+            if len(last_matches) == 1:
+                pred = pred_by_name[last_matches[0]]
+                match_method = "name_last"
+
+        if pred is None:
+            missing.append({
+                "name":    name,
+                "mlb_id":  mlb_id,
+                "team":    hr_player["team"],
+                "hr_count": hr_player["hr_count"],
+                "reason":  "not in predictions file at all - lineup not saved or name unresolvable",
+            })
+        elif pred.get("hit_hr") == 1:
+            captured.append({
+                "name":         name,
+                "mlb_id":       mlb_id,
+                "team":         hr_player["team"],
+                "model_hr_pct": pred.get("model_hr_pct"),
+                "match_method": match_method,
+                "hr_count":     hr_player["hr_count"],
+            })
+        else:
+            wrong_val.append({
+                "name":         name,
+                "mlb_id":       mlb_id,
+                "team":         hr_player["team"],
+                "model_hr_pct": pred.get("model_hr_pct"),
+                "hit_hr_saved": pred.get("hit_hr"),
+                "actual_pa":    pred.get("actual_pa"),
+                "match_method": match_method,
+                "hr_count":     hr_player["hr_count"],
+                "reason":       (
+                    "hit_hr=DNP - player played but PA=0, likely name mismatch at record time"
+                    if pred.get("hit_hr") == "DNP" else
+                    "hit_hr=0 - matched but outcome wrong, re-run /end-of-day to fix"
+                    if pred.get("hit_hr") == 0 else
+                    "hit_hr=null - end_of_day_save not run yet for this date"
+                    if pred.get("hit_hr") is None else
+                    f"hit_hr={pred.get('hit_hr')} - unexpected value"
+                ),
+            })
+
+    # Step 4: Summary
+    total_hrs   = len(actual_hrs)
+    capture_rate = round(len(captured) / total_hrs * 100, 1) if total_hrs else 0
+
+    return {
+        "date":          target,
+        "summary": {
+            "total_hr_hitters":  total_hrs,
+            "captured_correct":  len(captured),
+            "wrong_outcome":     len(wrong_val),
+            "missing_entirely":  len(missing),
+            "capture_rate":      f"{capture_rate}%",
+            "predictions_file":  f"{len(preds)} records" if preds else "NOT FOUND",
+        },
+        "captured":  captured,   # ✓ correct
+        "wrong":     wrong_val,  # ← these need fixing
+        "missing":   missing,    # ← these were never in our file
+    }
+
 
 @app.get("/end-of-day")
 async def manual_end_of_day(target_date: str = None):
