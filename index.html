@@ -960,6 +960,20 @@ function buildBatterTable(games){
     } else if(gtime){
       try{var d=new Date(gtime);timeStr=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'America/New_York'});}catch(e){}
     }
+
+    // Final games - show compact card, skip full rendering
+    if(isFinal){
+      h+='<div style="border:0.5px solid var(--border);border-top:none;padding:10px 14px;display:flex;align-items:center;gap:12px;opacity:0.6">';
+      h+='<span style="font-size:11px;font-weight:700;color:var(--g)">FINAL</span>';
+      h+='<span style="font-size:13px;color:var(--text)">'+awayTeam+' <span style="color:var(--muted2)">@</span> '+homeTeam+'</span>';
+      h+='<span style="font-size:11px;color:var(--muted2);margin-left:auto">'+
+        (g.away_pitcher&&g.away_pitcher.name?g.away_pitcher.name:'TBD')+
+        ' vs '+
+        (g.home_pitcher&&g.home_pitcher.name?g.home_pitcher.name:'TBD')+
+      '</span>';
+      h+='</div>';
+      return;
+    }
     var pf=homeP.park_factor||g.park_factor||1.0; // always home park - never away pitcher's park
     var wxLabel=(wx.label||'').toLowerCase();
     var windSpd=wx.wind_speed||0;
