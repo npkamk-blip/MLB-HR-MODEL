@@ -75,7 +75,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 669003
   },
   {
     "date": "2026-05-05",
@@ -153,7 +154,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 668930
   },
   {
     "date": "2026-05-05",
@@ -231,7 +233,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 661388
   },
   {
     "date": "2026-05-05",
@@ -309,7 +312,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 641343
   },
   {
     "date": "2026-05-05",
@@ -387,7 +391,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 596142
   },
   {
     "date": "2026-05-05",
@@ -465,7 +470,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 650859
   },
   {
     "date": "2026-05-05",
@@ -543,7 +549,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 672012
   },
   {
     "date": "2026-05-05",
@@ -621,7 +628,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 663368
   },
   {
     "date": "2026-05-05",
@@ -700,7 +708,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 675659
   },
   {
     "date": "2026-05-05",
@@ -779,7 +788,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 666182
   },
   {
     "date": "2026-05-05",
@@ -858,7 +868,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 665742
   },
   {
     "date": "2026-05-05",
@@ -937,7 +948,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 669004
   },
   {
     "date": "2026-05-05",
@@ -1016,7 +1028,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 3
+    "actual_pa": 3,
+    "mlb_id": 596103
   },
   {
     "date": "2026-05-05",
@@ -1095,7 +1108,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 668901
   },
   {
     "date": "2026-05-05",
@@ -1174,7 +1188,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 683146
   },
   {
     "date": "2026-05-05",
@@ -1253,7 +1268,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 543760
   },
   {
     "date": "2026-05-05",
@@ -1331,7 +1347,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 682626
   },
   {
     "date": "2026-05-05",
@@ -1410,7 +1427,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 3
+    "actual_pa": 3,
+    "mlb_id": 621438
   },
   {
     "date": "2026-05-05",
@@ -1489,7 +1507,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 666160
   },
   {
     "date": "2026-05-05",
@@ -1567,7 +1586,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 687597
   },
   {
     "date": "2026-05-05",
@@ -1646,7 +1666,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 5
+    "actual_pa": 5,
+    "mlb_id": 666397
   },
   {
     "date": "2026-05-05",
@@ -1724,7 +1745,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 696100
   },
   {
     "date": "2026-05-05",
@@ -1802,7 +1824,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 671289
   },
   {
     "date": "2026-05-05",
@@ -1881,7 +1904,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 681198
   },
   {
     "date": "2026-05-05",
@@ -1959,7 +1983,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 686668
   },
   {
     "date": "2026-05-05",
@@ -2038,7 +2063,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 650489
   },
   {
     "date": "2026-05-05",
@@ -2117,7 +2143,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 664954
   },
   {
     "date": "2026-05-05",
@@ -2196,7 +2223,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 2
+    "actual_pa": 2,
+    "mlb_id": 808959
   },
   {
     "date": "2026-05-05",
@@ -2275,7 +2303,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 5
+    "actual_pa": 5,
+    "mlb_id": 678246
   },
   {
     "date": "2026-05-05",
@@ -2354,7 +2383,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 643217
   },
   {
     "date": "2026-05-05",
@@ -2432,7 +2462,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 805367
   },
   {
     "date": "2026-05-05",
@@ -2511,7 +2542,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 5
+    "actual_pa": 5,
+    "mlb_id": 695657
   },
   {
     "date": "2026-05-05",
@@ -2590,7 +2622,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 803011
   },
   {
     "date": "2026-05-05",
@@ -2668,7 +2701,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 669720
   },
   {
     "date": "2026-05-05",
@@ -2747,7 +2781,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 5
+    "actual_pa": 5,
+    "mlb_id": 700337
   },
   {
     "date": "2026-05-05",
@@ -2826,7 +2861,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 2
+    "actual_pa": 2,
+    "mlb_id": 682668
   },
   {
     "date": "2026-05-05",
@@ -2905,7 +2941,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 665833
   },
   {
     "date": "2026-05-05",
@@ -2983,7 +3020,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 664040
   },
   {
     "date": "2026-05-05",
@@ -3062,7 +3100,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 668804
   },
   {
     "date": "2026-05-05",
@@ -3141,7 +3180,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 3
+    "actual_pa": 3,
+    "mlb_id": 656811
   },
   {
     "date": "2026-05-05",
@@ -3220,7 +3260,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 3
+    "actual_pa": 3,
+    "mlb_id": 663968
   },
   {
     "date": "2026-05-05",
@@ -3299,7 +3340,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 693304
   },
   {
     "date": "2026-05-05",
@@ -3378,7 +3420,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 695257
   },
   {
     "date": "2026-05-05",
@@ -3457,7 +3500,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 542303
   },
   {
     "date": "2026-05-05",
@@ -3535,7 +3579,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 687462
   },
   {
     "date": "2026-05-05",
@@ -3614,7 +3659,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 5
+    "actual_pa": 5,
+    "mlb_id": 672695
   },
   {
     "date": "2026-05-05",
@@ -3693,7 +3739,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 5
+    "actual_pa": 5,
+    "mlb_id": 606466
   },
   {
     "date": "2026-05-05",
@@ -3772,7 +3819,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 5
+    "actual_pa": 5,
+    "mlb_id": 682998
   },
   {
     "date": "2026-05-05",
@@ -3851,7 +3899,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 5
+    "actual_pa": 5,
+    "mlb_id": 545121
   },
   {
     "date": "2026-05-05",
@@ -3930,7 +3979,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 5
+    "actual_pa": 5,
+    "mlb_id": 680728
   },
   {
     "date": "2026-05-05",
@@ -4008,7 +4058,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 1
+    "actual_ab": 1,
+    "mlb_id": 666971
   },
   {
     "date": "2026-05-05",
@@ -4087,7 +4138,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 672515
   },
   {
     "date": "2026-05-05",
@@ -4165,7 +4217,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 699912
   },
   {
     "date": "2026-05-05",
@@ -4244,7 +4297,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 571448
   },
   {
     "date": "2026-05-05",
@@ -4322,7 +4376,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 1
+    "actual_ab": 1,
+    "mlb_id": 660670
   },
   {
     "date": "2026-05-05",
@@ -4401,7 +4456,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 686948
   },
   {
     "date": "2026-05-05",
@@ -4480,7 +4536,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 645277
   },
   {
     "date": "2026-05-05",
@@ -4558,7 +4615,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 621566
   },
   {
     "date": "2026-05-05",
@@ -4637,7 +4695,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 643289
   },
   {
     "date": "2026-05-05",
@@ -4715,7 +4774,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 663586
   },
   {
     "date": "2026-05-05",
@@ -4793,7 +4853,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 642201
   },
   {
     "date": "2026-05-05",
@@ -4872,7 +4933,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 671739
   },
   {
     "date": "2026-05-05",
@@ -4951,7 +5013,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 3
+    "actual_pa": 3,
+    "mlb_id": 573262
   },
   {
     "date": "2026-05-05",
@@ -5029,7 +5092,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 657656
   },
   {
     "date": "2026-05-05",
@@ -5107,7 +5171,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 1
+    "actual_ab": 1,
+    "mlb_id": 665487
   },
   {
     "date": "2026-05-05",
@@ -5186,7 +5251,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 5
+    "actual_pa": 5,
+    "mlb_id": 701538
   },
   {
     "date": "2026-05-05",
@@ -5265,7 +5331,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 5
+    "actual_pa": 5,
+    "mlb_id": 592518
   },
   {
     "date": "2026-05-05",
@@ -5343,7 +5410,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 593428
   },
   {
     "date": "2026-05-05",
@@ -5422,7 +5490,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 5
+    "actual_pa": 5,
+    "mlb_id": 609280
   },
   {
     "date": "2026-05-05",
@@ -5500,7 +5569,8 @@
     "pit_hr_fb_pct": 0.0,
     "lineup_k_pct": 0,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 664034
   },
   {
     "date": "2026-05-05",
@@ -5579,7 +5649,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 5
+    "actual_pa": 5,
+    "mlb_id": 657757
   },
   {
     "date": "2026-05-05",
@@ -5658,7 +5729,8 @@
     "lineup_k_pct": 0,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 592206
   },
   {
     "date": "2026-05-05",
@@ -5714,7 +5786,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 6
+    "actual_ab": 6,
+    "mlb_id": 621439
   },
   {
     "date": "2026-05-05",
@@ -5770,7 +5843,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 668904
   },
   {
     "date": "2026-05-05",
@@ -5826,7 +5900,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 680777
   },
   {
     "date": "2026-05-05",
@@ -5882,7 +5957,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 605137
   },
   {
     "date": "2026-05-05",
@@ -5938,7 +6014,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 665019
   },
   {
     "date": "2026-05-05",
@@ -5994,7 +6071,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 807712
   },
   {
     "date": "2026-05-05",
@@ -6050,7 +6128,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 668885
   },
   {
     "date": "2026-05-05",
@@ -6106,7 +6185,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 663616
   },
   {
     "date": "2026-05-05",
@@ -6162,7 +6242,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 680776
   },
   {
     "date": "2026-05-05",
@@ -6218,7 +6299,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 575929
   },
   {
     "date": "2026-05-05",
@@ -6274,7 +6356,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 643396
   },
   {
     "date": "2026-05-05",
@@ -6330,7 +6413,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 596115
   },
   {
     "date": "2026-05-05",
@@ -6386,7 +6470,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 677800
   },
   {
     "date": "2026-05-05",
@@ -6442,7 +6527,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 655316
   },
   {
     "date": "2026-05-05",
@@ -6498,7 +6584,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 678882
   },
   {
     "date": "2026-05-05",
@@ -6554,7 +6641,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 657136
   },
   {
     "date": "2026-05-05",
@@ -6611,7 +6699,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 1,
-    "actual_pa": 1
+    "actual_pa": 1,
+    "mlb_id": 663330
   },
   {
     "date": "2026-05-05",
@@ -6667,7 +6756,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 679529
   },
   {
     "date": "2026-05-05",
@@ -6723,7 +6813,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 682985
   },
   {
     "date": "2026-05-05",
@@ -6779,7 +6870,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 693307
   },
   {
     "date": "2026-05-05",
@@ -6835,7 +6927,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 663837
   },
   {
     "date": "2026-05-05",
@@ -6891,7 +6984,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 672761
   },
   {
     "date": "2026-05-05",
@@ -6947,7 +7041,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 656716
   },
   {
     "date": "2026-05-05",
@@ -7003,7 +7098,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 805808
   },
   {
     "date": "2026-05-05",
@@ -7059,7 +7155,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 672960
   },
   {
     "date": "2026-05-05",
@@ -7115,7 +7212,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 682818
   },
   {
     "date": "2026-05-05",
@@ -7171,7 +7269,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 543807
   },
   {
     "date": "2026-05-05",
@@ -7227,7 +7326,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 660821
   },
   {
     "date": "2026-05-05",
@@ -7283,7 +7383,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 672820
   },
   {
     "date": "2026-05-05",
@@ -7339,7 +7440,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 678218
   },
   {
     "date": "2026-05-05",
@@ -7395,7 +7497,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 676391
   },
   {
     "date": "2026-05-05",
@@ -7451,7 +7554,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 662139
   },
   {
     "date": "2026-05-05",
@@ -7507,7 +7611,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 691406
   },
   {
     "date": "2026-05-05",
@@ -7563,7 +7668,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 650490
   },
   {
     "date": "2026-05-05",
@@ -7619,7 +7725,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 641584
   },
   {
     "date": "2026-05-05",
@@ -7675,7 +7782,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 810938
   },
   {
     "date": "2026-05-05",
@@ -7731,7 +7839,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 666018
   },
   {
     "date": "2026-05-05",
@@ -7787,7 +7896,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 656775
   },
   {
     "date": "2026-05-05",
@@ -7843,7 +7953,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 676439
   },
   {
     "date": "2026-05-05",
@@ -7899,7 +8010,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 680700
   },
   {
     "date": "2026-05-05",
@@ -7955,7 +8067,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 701762
   },
   {
     "date": "2026-05-05",
@@ -8011,7 +8124,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 667670
   },
   {
     "date": "2026-05-05",
@@ -8067,7 +8181,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 680869
   },
   {
     "date": "2026-05-05",
@@ -8123,7 +8238,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 687515
   },
   {
     "date": "2026-05-05",
@@ -8179,7 +8295,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 642851
   },
   {
     "date": "2026-05-05",
@@ -8235,7 +8352,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 691016
   },
   {
     "date": "2026-05-05",
@@ -8291,7 +8409,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 695391
   },
   {
     "date": "2026-05-05",
@@ -8347,7 +8466,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 805779
   },
   {
     "date": "2026-05-05",
@@ -8403,7 +8523,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 656941
   },
   {
     "date": "2026-05-05",
@@ -8459,7 +8580,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 547180
   },
   {
     "date": "2026-05-05",
@@ -8515,7 +8637,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 666969
   },
   {
     "date": "2026-05-05",
@@ -8571,7 +8694,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 607208
   },
   {
     "date": "2026-05-05",
@@ -8627,7 +8751,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 664761
   },
   {
     "date": "2026-05-05",
@@ -8683,7 +8808,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 592663
   },
   {
     "date": "2026-05-05",
@@ -8739,7 +8865,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 669016
   },
   {
     "date": "2026-05-05",
@@ -8795,7 +8922,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 681082
   },
   {
     "date": "2026-05-05",
@@ -8851,7 +8979,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 669065
   },
   {
     "date": "2026-05-05",
@@ -8907,7 +9036,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 683357
   },
   {
     "date": "2026-05-05",
@@ -8963,7 +9093,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 691788
   },
   {
     "date": "2026-05-05",
@@ -9019,7 +9150,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 689414
   },
   {
     "date": "2026-05-05",
@@ -9075,7 +9207,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 805300
   },
   {
     "date": "2026-05-05",
@@ -9131,7 +9264,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 688363
   },
   {
     "date": "2026-05-05",
@@ -9187,7 +9321,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 669364
   },
   {
     "date": "2026-05-05",
@@ -9243,7 +9378,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 681393
   },
   {
     "date": "2026-05-05",
@@ -9299,7 +9435,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 695578
   },
   {
     "date": "2026-05-05",
@@ -9355,7 +9492,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 678554
   },
   {
     "date": "2026-05-05",
@@ -9411,7 +9549,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 677588
   },
   {
     "date": "2026-05-05",
@@ -9467,7 +9606,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 682928
   },
   {
     "date": "2026-05-05",
@@ -9523,7 +9663,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 660688
   },
   {
     "date": "2026-05-05",
@@ -9579,7 +9720,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 696285
   },
   {
     "date": "2026-05-05",
@@ -9635,7 +9777,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 695734
   },
   {
     "date": "2026-05-05",
@@ -9691,7 +9834,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 678391
   },
   {
     "date": "2026-05-05",
@@ -9747,7 +9891,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 457705
   },
   {
     "date": "2026-05-05",
@@ -9803,7 +9948,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 643376
   },
   {
     "date": "2026-05-05",
@@ -9859,7 +10005,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 608369
   },
   {
     "date": "2026-05-05",
@@ -9915,7 +10062,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 592626
   },
   {
     "date": "2026-05-05",
@@ -9971,7 +10119,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 669394
   },
   {
     "date": "2026-05-05",
@@ -10027,7 +10176,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 677649
   },
   {
     "date": "2026-05-05",
@@ -10083,7 +10233,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 673962
   },
   {
     "date": "2026-05-05",
@@ -10140,7 +10291,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 1,
-    "actual_pa": 2
+    "actual_pa": 2,
+    "mlb_id": 696030
   },
   {
     "date": "2026-05-05",
@@ -10196,7 +10348,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 592450
   },
   {
     "date": "2026-05-05",
@@ -10252,7 +10405,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 665862
   },
   {
     "date": "2026-05-05",
@@ -10308,7 +10462,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 641857
   },
   {
     "date": "2026-05-05",
@@ -10364,7 +10519,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 502671
   },
   {
     "date": "2026-05-05",
@@ -10420,7 +10576,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 691176
   },
   {
     "date": "2026-05-05",
@@ -10476,7 +10633,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 663757
   },
   {
     "date": "2026-05-05",
@@ -10532,7 +10690,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 669224
   },
   {
     "date": "2026-05-05",
@@ -10588,7 +10747,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 676609
   },
   {
     "date": "2026-05-05",
@@ -10644,7 +10804,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 691723
   },
   {
     "date": "2026-05-05",
@@ -10700,7 +10861,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 624413
   },
   {
     "date": "2026-05-05",
@@ -10756,7 +10918,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 683002
   },
   {
     "date": "2026-05-05",
@@ -10812,7 +10975,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 687637
   },
   {
     "date": "2026-05-05",
@@ -10868,7 +11032,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 694212
   },
   {
     "date": "2026-05-05",
@@ -10924,7 +11089,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 677942
   },
   {
     "date": "2026-05-05",
@@ -10980,7 +11146,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 681297
   },
   {
     "date": "2026-05-05",
@@ -11036,7 +11203,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 621493
   },
   {
     "date": "2026-05-05",
@@ -11092,7 +11260,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 663993
   },
   {
     "date": "2026-05-05",
@@ -11148,7 +11317,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 668709
   },
   {
     "date": "2026-05-05",
@@ -11204,7 +11374,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 682829
   },
   {
     "date": "2026-05-05",
@@ -11260,7 +11431,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 663647
   },
   {
     "date": "2026-05-05",
@@ -11316,7 +11488,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 701398
   },
   {
     "date": "2026-05-05",
@@ -11372,7 +11545,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 668715
   },
   {
     "date": "2026-05-05",
@@ -11428,7 +11602,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 663886
   },
   {
     "date": "2026-05-05",
@@ -11484,7 +11659,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 670770
   },
   {
     "date": "2026-05-05",
@@ -11540,7 +11716,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 682177
   },
   {
     "date": "2026-05-05",
@@ -11596,7 +11773,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 656555
   },
   {
     "date": "2026-05-05",
@@ -11652,7 +11830,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 700932
   },
   {
     "date": "2026-05-05",
@@ -11708,7 +11887,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 682657
   },
   {
     "date": "2026-05-05",
@@ -11764,7 +11944,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 800050
   },
   {
     "date": "2026-05-05",
@@ -11820,7 +12001,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 683953
   },
   {
     "date": "2026-05-05",
@@ -11876,7 +12058,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 608070
   },
   {
     "date": "2026-05-05",
@@ -11932,7 +12115,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 666310
   },
   {
     "date": "2026-05-05",
@@ -11988,7 +12172,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 695506
   },
   {
     "date": "2026-05-05",
@@ -12044,7 +12229,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 695600
   },
   {
     "date": "2026-05-05",
@@ -12100,7 +12286,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 686555
   },
   {
     "date": "2026-05-05",
@@ -12156,7 +12343,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 677951
   },
   {
     "date": "2026-05-05",
@@ -12212,7 +12400,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 686469
   },
   {
     "date": "2026-05-05",
@@ -12268,7 +12457,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 521692
   },
   {
     "date": "2026-05-05",
@@ -12324,7 +12514,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 672580
   },
   {
     "date": "2026-05-05",
@@ -12380,7 +12571,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 686681
   },
   {
     "date": "2026-05-05",
@@ -12436,7 +12628,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 691777
   },
   {
     "date": "2026-05-05",
@@ -12492,7 +12685,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 687221
   },
   {
     "date": "2026-05-05",
@@ -12548,7 +12742,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 663656
   },
   {
     "date": "2026-05-05",
@@ -12604,7 +12799,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 518692
   },
   {
     "date": "2026-05-05",
@@ -12661,7 +12857,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 1,
-    "actual_pa": 3
+    "actual_pa": 3,
+    "mlb_id": 690976
   },
   {
     "date": "2026-05-05",
@@ -12717,7 +12914,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 669257
   },
   {
     "date": "2026-05-05",
@@ -12773,7 +12971,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 606192
   },
   {
     "date": "2026-05-05",
@@ -12829,7 +13028,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 681624
   },
   {
     "date": "2026-05-05",
@@ -12885,7 +13085,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 5
+    "actual_ab": 5,
+    "mlb_id": 621020
   },
   {
     "date": "2026-05-05",
@@ -12941,7 +13142,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 608324
   },
   {
     "date": "2026-05-05",
@@ -12997,7 +13199,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 664023
   },
   {
     "date": "2026-05-05",
@@ -13053,7 +13256,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 691718
   },
   {
     "date": "2026-05-05",
@@ -13109,7 +13313,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 673548
   },
   {
     "date": "2026-05-05",
@@ -13165,7 +13370,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 683737
   },
   {
     "date": "2026-05-05",
@@ -13221,7 +13427,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 663538
   },
   {
     "date": "2026-05-05",
@@ -13277,7 +13484,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 665804
   },
   {
     "date": "2026-05-05",
@@ -13333,7 +13541,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 691023
   },
   {
     "date": "2026-05-05",
@@ -13389,7 +13598,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 671056
   },
   {
     "date": "2026-05-05",
@@ -13445,7 +13655,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 802139
   },
   {
     "date": "2026-05-05",
@@ -13501,7 +13712,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 676475
   },
   {
     "date": "2026-05-05",
@@ -13557,7 +13769,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 669357
   },
   {
     "date": "2026-05-05",
@@ -13613,7 +13826,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 693409
   },
   {
     "date": "2026-05-05",
@@ -13669,7 +13883,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 687363
   },
   {
     "date": "2026-05-05",
@@ -13725,7 +13940,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 701675
   },
   {
     "date": "2026-05-05",
@@ -13781,7 +13997,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 670541
   },
   {
     "date": "2026-05-05",
@@ -13837,7 +14054,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 572233
   },
   {
     "date": "2026-05-05",
@@ -13893,7 +14111,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 805904
   },
   {
     "date": "2026-05-05",
@@ -13949,7 +14168,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 701358
   },
   {
     "date": "2026-05-05",
@@ -14005,7 +14225,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 621043
   },
   {
     "date": "2026-05-05",
@@ -14061,7 +14282,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 3
+    "actual_ab": 3,
+    "mlb_id": 669397
   },
   {
     "date": "2026-05-05",
@@ -14117,7 +14339,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 670623
   },
   {
     "date": "2026-05-05",
@@ -14173,7 +14396,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 514888
   },
   {
     "date": "2026-05-05",
@@ -14229,7 +14453,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 545361
   },
   {
     "date": "2026-05-05",
@@ -14285,7 +14510,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 624585
   },
   {
     "date": "2026-05-05",
@@ -14342,7 +14568,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 3
+    "actual_pa": 3,
+    "mlb_id": 687093
   },
   {
     "date": "2026-05-05",
@@ -14399,7 +14626,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 3
+    "actual_pa": 3,
+    "mlb_id": 666176
   },
   {
     "date": "2026-05-05",
@@ -14455,7 +14683,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 666139
   },
   {
     "date": "2026-05-05",
@@ -14512,7 +14741,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 3
+    "actual_pa": 3,
+    "mlb_id": 665861
   },
   {
     "date": "2026-05-05",
@@ -14569,7 +14799,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 3
+    "actual_pa": 3,
+    "mlb_id": 660162
   },
   {
     "date": "2026-05-05",
@@ -14625,7 +14856,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 687263
   },
   {
     "date": "2026-05-05",
@@ -14681,7 +14913,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 670042
   },
   {
     "date": "2026-05-05",
@@ -14738,7 +14971,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 3
+    "actual_pa": 3,
+    "mlb_id": 641598
   },
   {
     "date": "2026-05-05",
@@ -14795,7 +15029,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 663728
   },
   {
     "date": "2026-05-05",
@@ -14851,7 +15086,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 641487
   },
   {
     "date": "2026-05-05",
@@ -14908,7 +15144,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 677594
   },
   {
     "date": "2026-05-05",
@@ -14965,7 +15202,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 3
+    "actual_pa": 3,
+    "mlb_id": 702284
   },
   {
     "date": "2026-05-05",
@@ -15022,7 +15260,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 668227
   },
   {
     "date": "2026-05-05",
@@ -15078,7 +15317,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 2
+    "actual_ab": 2,
+    "mlb_id": 647304
   },
   {
     "date": "2026-05-05",
@@ -15135,7 +15375,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 805811
   },
   {
     "date": "2026-05-05",
@@ -15191,7 +15432,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 669477
   },
   {
     "date": "2026-05-05",
@@ -15248,7 +15490,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 671218
   },
   {
     "date": "2026-05-05",
@@ -15305,7 +15548,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 656305
   },
   {
     "date": "2026-05-05",
@@ -15362,7 +15606,8 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 3
+    "actual_pa": 3,
+    "mlb_id": 687551
   },
   {
     "date": "2026-05-05",
@@ -15418,7 +15663,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 0
+    "actual_ab": 0,
+    "mlb_id": 683679
   },
   {
     "date": "2026-05-05",
@@ -15474,7 +15720,8 @@
     "rotation_round": 1,
     "rotation_day": 22,
     "day_of_season": 46,
-    "actual_ab": 4
+    "actual_ab": 4,
+    "mlb_id": 808982
   },
   {
     "date": "2026-05-05",
@@ -15531,6 +15778,7 @@
     "rotation_day": 22,
     "day_of_season": 46,
     "actual_ab": 0,
-    "actual_pa": 4
+    "actual_pa": 4,
+    "mlb_id": 642715
   }
 ]
