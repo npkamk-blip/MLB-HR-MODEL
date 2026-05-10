@@ -24,6 +24,24 @@ from collections import defaultdict
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
+NTFY_TOPIC = "uncle-nicky-mlb-9x7k2"
+
+async def notify(msg: str, title: str = "MLB HR Model", priority: str = "default"):
+    """Send push notification via ntfy.sh"""
+    try:
+        async with httpx.AsyncClient(timeout=5) as client:
+            await client.post(
+                f"https://ntfy.sh/{NTFY_TOPIC}",
+                content=msg.encode("utf-8"),
+                headers={"Title": title, "Priority": priority}
+            )
+    except: pass
+    """Return today's date in US Eastern Time (UTC-4 EDT / UTC-5 EST).
+    Railway runs in UTC - this prevents saving files with tomorrow's date at night."""
+    from datetime import timezone, timedelta as td
+    et_offset = td(hours=-4)  # EDT (daylight saving) - adjust to -5 in winter
+    return (datetime.now(timezone.utc) + et_offset).date()
+
 MLB_API = "https://statsapi.mlb.com/api/v1"
 ODDS_API_KEY = os.environ.get("ODDS_API_KEY", "")
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
@@ -132,7 +150,7 @@ async def save_model_weights(weights_dict, changes=None):
 async def save_model_log(weights_dict):
     """Save daily model log snapshot to GitHub"""
     import json
-    today = date.today().isoformat()
+    today = et_today().isoformat()
     path = f"data/model_log/{today}.json"
     log = {
         "date": today,
@@ -287,7 +305,7 @@ async def recalibrate_model(save_to_github: bool = True):
 
     # -- Save weights/metadata to GitHub --
     new_weights = _model_weights.copy()
-    new_weights["last_calibrated"]   = date.today().isoformat()
+    new_weights["last_calibrated"]   = et_today().isoformat()
     new_weights["records_used"]      = n
     new_weights["calibration_round"] = get_rotation_round()
     new_weights["model_type"]        = "random_forest"
@@ -461,7 +479,7 @@ async def train_xgboost(save_to_github: bool = True):
         import json as _json
         xgb_meta = {
             "model_type": "xgboost",
-            "last_trained": date.today().isoformat(),
+            "last_trained": et_today().isoformat(),
             "records_used": n,
             "cv_auc": xgb_cv,
             "scale_pos_weight": spw,
@@ -1368,10 +1386,21 @@ async def daily_refresh_loop():
         # 2am - record results (fast, non-blocking)
         if now.hour == 2:
             try:
-                yesterday = (date.today() - timedelta(days=1)).isoformat()
+                yesterday = (et_today() - timedelta(days=1)).isoformat()
                 await record_results(yesterday)
                 await record_parlay_results(yesterday)
+                # Notify after results recorded
+                path = f"data/predictions/{yesterday}.json"
+                content, _ = await github_get_file(path)
+                if content:
+                    import json as _j
+                    recs = _j.loads(content)
+                    hrs = sum(1 for r in recs if r.get("hit_hr") == 1)
+                    total = sum(1 for r in recs if r.get("hit_hr") in [0,1])
+                    rate = round(hrs/total*100,1) if total else 0
+                    await notify(f"Results recorded for {yesterday}\n{hrs} HRs / {total} batters ({rate}%)", "Results Recorded")
             except Exception as e:
+                await notify(f"ERROR recording results: {e}", "Results Error", "high")
                 print(f"Result recording error: {e}")
 
         # 3am - retrain models in background (site stays up)
@@ -1379,15 +1408,21 @@ async def daily_refresh_loop():
             try:
                 print(f"Nightly retrain starting - Round {get_rotation_round()} Day {get_rotation_day()}")
                 asyncio.create_task(recalibrate_model())
-                await asyncio.sleep(30)  # stagger RF and XGBoost
+                await asyncio.sleep(30)
                 asyncio.create_task(train_xgboost())
+                await asyncio.sleep(300)  # wait ~5 min for both to finish
+                await notify(
+                    f"Nightly retrain complete\nXGBoost AUC: {round(_xgb_oob,3)} | RF AUC: {round(_model_weights.get('oob_score',0),3)}\nRecords: {_model_weights.get('records_used',0)}",
+                    "Model Retrained"
+                )
             except Exception as e:
+                await notify(f"ERROR in nightly retrain: {e}", "Retrain Error", "high")
                 print(f"Nightly retrain error: {e}")
 
         # 4am - West Coast late game pass + model log
         if now.hour == 4:
             try:
-                yesterday = (date.today() - timedelta(days=1)).isoformat()
+                yesterday = (et_today() - timedelta(days=1)).isoformat()
                 print("4am second pass - patching West Coast late game results")
                 await record_results(yesterday)
                 await record_parlay_results(yesterday)
@@ -1406,11 +1441,13 @@ async def daily_refresh_loop():
         # 8am - save projected top100 as fallback + pre-warm games cache
         if now.hour == 8:
             try:
-                today_str = date.today().isoformat()
+                today_str = et_today().isoformat()
                 print("8am: saving projected top100 + pre-warming games cache")
-                asyncio.create_task(save_projected_top100(today_str))
+                await save_projected_top100(today_str)
                 asyncio.create_task(get_games(today_str, False))
+                await notify(f"Good morning! {today_str}\nProjected top 100 saved. Site is ready.", "Daily Predictions Ready")
             except Exception as e:
+                await notify(f"ERROR at 8am save: {e}", "Save Error", "high")
                 print(f"8am task error: {e}")
 
         # 10am-8pm - hourly lineup confirmations
@@ -1491,7 +1528,7 @@ async def save_daily_predictions():
         print("save_daily_predictions: 8d data stale - refreshing before save")
         await refresh_8d()
         await asyncio.sleep(30)  # let it populate
-    today = date.today().isoformat()
+    today = et_today().isoformat()
     path  = f"data/predictions/{today}.json"
 
     # Load existing file - we merge, not overwrite
@@ -1746,7 +1783,7 @@ async def save_daily_predictions():
                             # -- ROUND 4 CANDIDATES --
                             "pit_k9_season": pit_k9_s,
                             # -- XGBOOST FEATURES --
-                            "day_of_season": (date.today() - date(2026, 3, 20)).days,
+                            "day_of_season": (et_today() - date(2026, 3, 20)).days,
                         })
                     # Take top 8 from this game side by model probability
                     top8 = sorted(game_candidates, key=lambda x: x["model_hr_pct"], reverse=True)[:8]
@@ -1776,7 +1813,7 @@ async def check_lineup_confirmations():
     Merges with existing saved records without duplicating.
     """
     if not _cache["ready"] or not GITHUB_TOKEN: return
-    today = date.today().isoformat()
+    today = et_today().isoformat()
     path  = f"data/predictions/{today}.json"
 
     # Load existing saved records to avoid duplicates
@@ -1940,7 +1977,7 @@ async def check_lineup_confirmations():
                             "games_played": pa_data.get("games",0),
                             "rotation_round": get_rotation_round(),
                             "rotation_day": get_rotation_day(),
-                            "day_of_season": (date.today() - date(2026, 3, 20)).days,
+                            "day_of_season": (et_today() - date(2026, 3, 20)).days,
                             "xgb_prob": predict_xgb(name, bat_hand, opp_p_name, opp_p_hand,
                                                     breakdown.get("park_factor",1.0),
                                                     breakdown.get("weather_mult",1.0),
@@ -1977,6 +2014,8 @@ async def check_lineup_confirmations():
                                   f"top8: {today} ({len(top8)} picks)", top8_sha)
 
             print(f"Lineup check: top100 saved ({len(top100)}), top8 saved ({len(top8)})")
+            top8_names = ", ".join(r.get("name","?").split()[-1] for r in top8[:4])
+            await notify(f"Lineups confirmed {et_today().isoformat()}\nTop 8 saved: {top8_names}...\n{len(top100)} training records", "Lineups Confirmed")
         else:
             print(f"Lineup check: no new confirmations yet")
 
@@ -2141,7 +2180,7 @@ async def startup_catchup():
 
     # Save today with projected lineups first - never miss a day
     try:
-        today = date.today().isoformat()
+        today = et_today().isoformat()
         content, _ = await github_get_file(f"data/predictions/{today}.json")
         if not content:
             print(f"Startup catchup: no data for {today} - saving projected lineup now")
@@ -2305,7 +2344,7 @@ async def save_projected_top100(target_date: str = None):
                             "games_played": pa_data.get("games",0),
                             "rotation_round": get_rotation_round(),
                             "rotation_day": get_rotation_day(),
-                            "day_of_season": (date.today() - date(2026, 3, 20)).days,
+                            "day_of_season": (et_today() - date(2026, 3, 20)).days,
                             "xgb_prob": xgb_prob,
                         })
 
@@ -3688,7 +3727,7 @@ async def get_dashboard():
         }
 
         # -- Today's top 8 - projected all day, scratched when confirmed --
-        today = date.today().isoformat()
+        today = et_today().isoformat()
         top8_today = []
         try:
             cached = _games_cache.get(today)
@@ -4022,6 +4061,17 @@ async def debug_boxscore(target_date: str = None):
         return {"date": d, "games": games}
     except Exception as e:
         return {"error": str(e)}
+
+@app.get("/test-notify")
+async def test_notify():
+    """Send a test notification to verify ntfy setup is working."""
+    await notify(
+        f"Test notification from MLB HR Model!\nDate: {et_today().isoformat()}\nXGBoost AUC: {round(_xgb_oob,3)}\nRecords: {_model_weights.get('records_used',0)}",
+        "Test - Uncle Nicky MLB",
+        "high"
+    )
+    return {"status": "sent", "topic": NTFY_TOPIC, "url": f"https://ntfy.sh/{NTFY_TOPIC}"}
+
 
 @app.get("/reset-tracking")
 async def reset_tracking():
@@ -4787,7 +4837,7 @@ async def save_parlay_combinations():
     saves to data/parlays/{date}.json on GitHub.
     """
     if not GITHUB_TOKEN: return
-    today = date.today().isoformat()
+    today = et_today().isoformat()
     path  = f"data/parlays/{today}.json"
     existing, sha = await github_get_file(path)
     if existing:
