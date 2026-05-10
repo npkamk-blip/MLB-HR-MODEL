@@ -4371,6 +4371,174 @@ async def id_test(days: int = 7):
     }
 
 
+@app.get("/rebuild-history")
+async def rebuild_history(days: int = 30):
+    """
+    One-shot historical data rebuild. Runs in background - check Railway logs for progress.
+    For each past date:
+      1. Backfills mlb_id into prediction records (bulk lookup, fast)
+      2. Runs end_of_day_save to fix outcomes with correct ID matching
+      3. Skips today and future dates
+      4. Sends Pushover when complete
+
+    Example: /rebuild-history         (last 30 days)
+             /rebuild-history?days=60 (last 60 days)
+    """
+    if not GITHUB_TOKEN:
+        return {"error": "No GitHub token"}
+
+    async def _run():
+        import json
+        print(f"rebuild_history: starting for last {days} days")
+
+        # -- Step 1: Build name->id map once (2 API calls) --
+        name_to_id  = {}
+        last_to_ids = {}
+        try:
+            async with httpx.AsyncClient(timeout=30) as client:
+                r1 = await client.get(
+                    f"{MLB_API}/stats?stats=season&group=hitting&gameType=R"
+                    f"&season={current_season()}&playerPool=All&limit=2000"
+                )
+                r2 = await client.get(
+                    f"{MLB_API}/stats?stats=season&group=pitching&gameType=R"
+                    f"&season={current_season()}&playerPool=All&limit=2000"
+                )
+            for data in [r1.json(), r2.json()]:
+                for sg in data.get("stats", []):
+                    for split in sg.get("splits", []):
+                        person = split.get("player", {})
+                        pid    = person.get("id")
+                        name   = person.get("fullName", "")
+                        if not pid or not name: continue
+                        nl   = name.lower().strip()
+                        last = nl.split()[-1]
+                        name_to_id[nl] = pid
+                        last_to_ids.setdefault(last, [])
+                        if pid not in last_to_ids[last]:
+                            last_to_ids[last].append(pid)
+            print(f"rebuild_history: {len(name_to_id)} players in ID map")
+        except Exception as e:
+            print(f"rebuild_history: ID map fetch failed: {e}")
+            await notify(f"rebuild_history failed - ID map fetch: {e}", "Rebuild ERROR", 1)
+            return
+
+        # -- Step 2: Get list of prediction files --
+        try:
+            async with httpx.AsyncClient(timeout=15) as client:
+                r = await client.get(
+                    f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
+                    headers={"Authorization": f"token {GITHUB_TOKEN}"}
+                )
+                files = r.json() if r.is_success else []
+        except Exception as e:
+            print(f"rebuild_history: file list fetch failed: {e}")
+            return
+
+        today = et_today().isoformat()
+        dates_to_process = []
+        for f in sorted(files, key=lambda x: x.get("name",""), reverse=True)[:days]:
+            if not f.get("name","").endswith(".json"): continue
+            d = f["name"].replace(".json","")
+            if d >= today: continue  # skip today and future
+            dates_to_process.append(d)
+
+        print(f"rebuild_history: {len(dates_to_process)} dates to process")
+
+        # -- Step 3: For each date - backfill IDs then rebuild outcomes --
+        results = []
+        ids_added_total   = 0
+        dates_rebuilt     = 0
+        dates_skipped     = 0
+
+        for d in dates_to_process:
+            try:
+                print(f"rebuild_history: processing {d}")
+
+                # Load file
+                raw, sha = await github_get_file(f"data/predictions/{d}.json")
+                if not raw:
+                    print(f"  {d}: no file, skipping")
+                    dates_skipped += 1
+                    continue
+                try:
+                    recs = json.loads(raw)
+                except:
+                    print(f"  {d}: parse error, skipping")
+                    dates_skipped += 1
+                    continue
+
+                # Backfill IDs locally
+                ids_added = 0
+                for rec in recs:
+                    if rec.get("mlb_id"): continue
+                    nl   = rec.get("name","").lower().strip()
+                    last = nl.split()[-1]
+                    pid  = name_to_id.get(nl)
+                    if not pid:
+                        matches = last_to_ids.get(last, [])
+                        if len(matches) == 1:
+                            pid = matches[0]
+                    if pid:
+                        rec["mlb_id"] = pid
+                        ids_added += 1
+
+                # Save with IDs before running end_of_day_save
+                if ids_added > 0:
+                    await github_put_file(
+                        f"data/predictions/{d}.json",
+                        json.dumps(recs, indent=2),
+                        f"backfill ids: {d} (+{ids_added})",
+                        sha
+                    )
+                    ids_added_total += ids_added
+                    print(f"  {d}: added {ids_added} IDs")
+
+                # Now rebuild outcomes with correct ID matching
+                result = await end_of_day_save(d, notify_result=False)
+                if result:
+                    hr_count = result.get("hr_count", 0)
+                    top100   = result.get("top100", 0)
+                    print(f"  {d}: rebuilt - {hr_count}/{top100} HRs")
+                    results.append({"date": d, "hr_count": hr_count,
+                                    "top100": top100, "ids_added": ids_added})
+                    dates_rebuilt += 1
+                else:
+                    print(f"  {d}: end_of_day_save returned no result (games not final?)")
+                    dates_skipped += 1
+
+                # Small delay between dates to avoid hammering APIs
+                await asyncio.sleep(2)
+
+            except Exception as e:
+                print(f"  {d}: error - {e}")
+                dates_skipped += 1
+                continue
+
+        # -- Done --
+        total_hrs = sum(r.get("hr_count",0) for r in results)
+        total_recs = sum(r.get("top100",0) for r in results)
+        hr_rate = round(total_hrs / max(total_recs, 1) * 100, 1)
+
+        summary = (
+            f"rebuild_history complete\n"
+            f"{dates_rebuilt} dates rebuilt, {dates_skipped} skipped\n"
+            f"{ids_added_total} IDs backfilled\n"
+            f"{total_hrs}/{total_recs} HRs across all days ({hr_rate}%)"
+        )
+        print(summary)
+        await notify(summary, "History Rebuilt ✓")
+
+    # Fire and forget - runs in background, returns immediately
+    asyncio.create_task(_run())
+    return {
+        "status": "running in background",
+        "message": f"Rebuilding last {days} days - check Railway logs for progress",
+        "pushover": "You will get a notification when complete",
+        "estimated_time": f"~{days * 3} seconds ({days} dates x ~3s each)",
+    }
+
+
 @app.get("/backfill-mlb-ids")
 async def backfill_mlb_ids(days: int = 30, dry_run: bool = True):
     """
