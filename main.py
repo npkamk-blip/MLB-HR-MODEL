@@ -39,10 +39,12 @@ async def notify(msg: str, title: str = "MLB HR Model", priority: str = "default
         print(f"Notification sent: {title}")
     except Exception as e:
         print(f"Notification failed (non-fatal): {e}")
+
+def et_today():
     """Return today's date in US Eastern Time (UTC-4 EDT / UTC-5 EST).
     Railway runs in UTC - this prevents saving files with tomorrow's date at night."""
     from datetime import timezone, timedelta as td
-    et_offset = td(hours=-4)  # EDT (daylight saving) - adjust to -5 in winter
+    et_offset = td(hours=-4)
     return (datetime.now(timezone.utc) + et_offset).date()
 
 MLB_API = "https://statsapi.mlb.com/api/v1"
