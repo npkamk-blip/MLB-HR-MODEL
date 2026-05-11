@@ -2425,14 +2425,58 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
     except Exception as e:
         print(f"  Parlay results error (non-fatal): {e}")
 
-    # Step 8: Pushover notification with running totals + goal tracking
+    # Step 8: Pushover notification — full daily report card
     if notify_result:
         import json as _ej
-        # Build running totals across all tracked days for goal progress
+
+        # -- Coverage audit: how many of today's HR hitters were in each tier --
         try:
-            total_hrs_all   = 0
-            total_recs_all  = 0
-            days_tracked    = 0
+            # Fetch all actual HR hitters from final boxscores
+            _hr_by_id   = {r: True for r in hr_by_id}   # already built above
+            _hr_by_name = set(hr_by_name)                 # already built above
+            total_mlb_hrs = len(_hr_by_id) + len([n for n in _hr_by_name
+                                if not any(str(v)==str(n) for v in _hr_by_id)])
+
+            # Rank today's top100 and check each tier
+            ranked_today = sorted(top100, key=lambda x: x.get("model_hr_pct",0), reverse=True)
+            def in_tier(recs, hr_id_map, hr_name_set):
+                count = 0
+                for r in recs:
+                    mid = r.get("mlb_id")
+                    nl  = r.get("name","").lower()
+                    if (mid and mid in hr_id_map) or nl in hr_name_set:
+                        count += 1
+                return count
+
+            t25_hrs  = in_tier(ranked_today[:25],  _hr_by_id, _hr_by_name)
+            t50_hrs  = in_tier(ranked_today[:50],  _hr_by_id, _hr_by_name)
+            t75_hrs  = in_tier(ranked_today[:75],  _hr_by_id, _hr_by_name)
+            t100_hrs = in_tier(ranked_today[:100], _hr_by_id, _hr_by_name)
+
+            t25_pct  = round(t25_hrs  / max(total_mlb_hrs, 1) * 100)
+            t50_pct  = round(t50_hrs  / max(total_mlb_hrs, 1) * 100)
+            t75_pct  = round(t75_hrs  / max(total_mlb_hrs, 1) * 100)
+            t100_pct = round(t100_hrs / max(total_mlb_hrs, 1) * 100)
+
+            # Phase 2 goal status for top 25
+            p2_status = (
+                "ON FIRE" if t25_pct >= 50 else
+                "CLOSE"   if t25_pct >= 35 else
+                "BUILDING" if t25_pct >= 20 else
+                "LEARNING"
+            )
+        except Exception as _ce:
+            total_mlb_hrs = 0
+            t25_hrs = t50_hrs = t75_hrs = t100_hrs = 0
+            t25_pct = t50_pct = t75_pct = t100_pct = 0
+            p2_status = "?"
+            print(f"Coverage audit error: {_ce}")
+
+        # -- Running totals --
+        try:
+            total_hrs_all  = 0
+            total_recs_all = 0
+            days_tracked   = 0
             async with httpx.AsyncClient(timeout=10) as _hc:
                 _r = await _hc.get(
                     f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
@@ -2454,30 +2498,29 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
                         days_tracked   += 1
                 except: pass
             running_rate = round(total_hrs_all / max(total_recs_all, 1) * 100, 1)
-            # Goal: 25-45 HRs per 100 = 25-45% hit rate on top 100
-            goal_status = (
-                "ON FIRE" if hr_rate >= 45 else
-                "WIN" if hr_rate >= 25 else
-                "BELOW TARGET" if hr_rate >= 15 else
-                "LEARNING"
-            )
-        except Exception as _e:
+        except:
             running_rate = 0
             days_tracked = 0
-            goal_status  = "?"
             total_hrs_all = 0
             total_recs_all = 0
 
-        top8_hit_str  = f"{top8_hrs}/{top8_total}" if isinstance(top8_hrs, int) else "?/?"
-        top8_rate     = round(int(top8_hrs) / max(int(top8_total), 1) * 100, 1) if isinstance(top8_hrs, int) and isinstance(top8_total, int) else 0
+        top8_hit_str = f"{top8_hrs}/{top8_total}" if isinstance(top8_hrs, int) else "?/?"
+        top8_rate    = round(int(top8_hrs) / max(int(top8_total), 1) * 100) if isinstance(top8_hrs, int) and isinstance(top8_total, int) else 0
+        missed_names = ", ".join(r.get("name","?").split()[-1] for r in dropped[:3]) if dropped else "none"
 
         notify_msg = (
             f"Results: {target_date}"
-            + f"\nToday: {hr_count}/100 HRs ({hr_rate}%) — {goal_status}"
+            + f"\n{'─'*20}"
+            + f"\nCoverage: {t100_hrs}/{total_mlb_hrs} HRs in top 100 ({t100_pct}%)"
+            + f"\n{'─'*20}"
+            + f"\nTop 25:  {t25_hrs}/{total_mlb_hrs} ({t25_pct}%) ← {p2_status}"
+            + f"\nTop 50:  {t50_hrs}/{total_mlb_hrs} ({t50_pct}%)"
+            + f"\nTop 75:  {t75_hrs}/{total_mlb_hrs} ({t75_pct}%)"
+            + f"\nTop 100: {t100_hrs}/{total_mlb_hrs} ({t100_pct}%)"
+            + f"\n{'─'*20}"
             + f"\nTop 8: {top8_hit_str} ({top8_rate}%)"
-            + f"\n{days_tracked}d avg: {total_hrs_all}/{total_recs_all} ({running_rate}%)"
-            + f"\nGoal: 25-45 HRs per 100"
-            + f"\nGames: {games_final} final"
+            + f"\n{days_tracked}d avg: {running_rate}%"
+            + f"\nGoal: 50% in top 25"
         )
         await notify(notify_msg, "End of Day ✓", priority=0)
 
