@@ -2572,13 +2572,16 @@ async def save_projected_top100(target_date: str = None):
 
     # Don't overwrite if confirmed records already exist
     existing, sha = await github_get_file(path)
+    existing_records = []
+    already_saved_teams = set()
     if existing:
         try:
-            records = json.loads(existing)
-            confirmed = [r for r in records if r.get("lineup_source") == "confirmed"]
-            if confirmed:
-                print(f"save_projected_top100: {today} already has {len(confirmed)} confirmed - skipping")
-                return
+            existing_records = json.loads(existing)
+            # Track which teams already have records (confirmed OR projected)
+            # Only skip teams we already have data for - add missing teams
+            for r in existing_records:
+                already_saved_teams.add(r.get("team",""))
+            print(f"save_projected_top100: {len(already_saved_teams)} teams already saved, checking for gaps")
         except: pass
 
     try:
@@ -2616,6 +2619,10 @@ async def save_projected_top100(target_date: str = None):
                     (home_team, away_p, away_p_hand, home_team_id),
                 ]:
                     opp_p_name = opp_p.get("fullName", "TBD")
+                    # Skip teams we already have data for (confirmed or projected)
+                    if team in already_saved_teams:
+                        print(f"  save_projected: {team} already in file, skipping")
+                        continue
                     lineup, _ = await fetch_projected_lineup(team_id, team)
                     if not lineup: continue
 
@@ -2709,15 +2716,17 @@ async def save_projected_top100(target_date: str = None):
                             "xgb_prob": xgb_prob,
                         })
 
-        if not all_candidates:
+        if not all_candidates and not existing_records:
             print(f"save_projected_top100: no candidates for {today}")
             return
 
-        ranked = sorted(all_candidates, key=lambda x: x.get("model_hr_pct",0) or 0, reverse=True)
+        # Merge new projected players with existing records
+        merged = existing_records + all_candidates
+        ranked = sorted(merged, key=lambda x: x.get("model_hr_pct",0) or 0, reverse=True)
         top100 = ranked[:100]
         await github_put_file(path, json.dumps(top100, indent=2),
-                              f"projected top100: {today} ({len(top100)} players)", sha)
-        print(f"save_projected_top100: saved {len(top100)} projected players for {today}")
+                              f"projected top100: {today} ({len(top100)} total, +{len(all_candidates)} new)", sha)
+        print(f"save_projected_top100: saved {len(top100)} players ({len(all_candidates)} new, {len(existing_records)} existing)")
 
         # Save projected top 8 so dashboard shows picks early before lineups confirm.
         # Only write if no top8 file exists yet - confirmed lineups will overwrite later.
