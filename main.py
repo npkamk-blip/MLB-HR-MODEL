@@ -6073,6 +6073,104 @@ async def get_games(date: str = None, refresh: bool = False):
 
     result = {"games": games_out, "date": today, "loading": False}
     _games_cache[today] = {"data": result, "ts": datetime.now()}
+
+    # Sync top8 file with live rankings so dashboard and batters tab match
+    # Only update if games are still pre-game (don't overwrite frozen picks)
+    try:
+        any_started = any(
+            g.get("lineup_away_status") == "confirmed" or
+            g.get("lineup_home_status") == "confirmed"
+            for g in games_out
+        )
+        if any_started:
+            # Collect all confirmed batters, rank globally
+            all_batters_live = []
+            for g in games_out:
+                all_batters_live.extend(g.get("top_hr_candidates", []))
+
+            # Build confirmed sets
+            confirmed_by_team = {}
+            for g in games_out:
+                if g.get("lineup_away_status") == "confirmed":
+                    confirmed_by_team[g.get("away","")] = {
+                        b.get("name","") for b in g.get("away_lineup", [])}
+                if g.get("lineup_home_status") == "confirmed":
+                    confirmed_by_team[g.get("home","")] = {
+                        b.get("name","") for b in g.get("home_lineup", [])}
+
+            available = [
+                b for b in all_batters_live
+                if b.get("hr_prob") is not None
+                and (b.get("team","") not in confirmed_by_team
+                     or b.get("name","") in confirmed_by_team.get(b.get("team",""), set()))
+            ]
+            new_top8 = sorted(available, key=lambda x: x.get("hr_prob", 0), reverse=True)[:8]
+
+            if new_top8:
+                import json as _jg
+                # Convert to match top8 file format
+                top8_records = []
+                for b in new_top8:
+                    top8_records.append({
+                        "name":         b.get("name"),
+                        "team":         b.get("team"),
+                        "opp_pitcher":  b.get("opp_pitcher"),
+                        "mlb_id":       b.get("mlb_id"),
+                        "model_hr_pct": b.get("hr_prob"),
+                        "hit_hr":       None,
+                        "lineup_source": "confirmed" if b.get("team","") in confirmed_by_team else "projected",
+                    })
+                top8_path = f"data/top8/{today}.json"
+                existing, sha = await github_get_file(top8_path)
+
+                # Apply smart freeze - don't drop locked players
+                if existing:
+                    try:
+                        existing_recs = _jg.loads(existing)
+                        # Check game states
+                        started_states = {"Live", "Final", "Game Over", "Completed"}
+                        async with httpx.AsyncClient(timeout=10) as _sc:
+                            _sr = await _sc.get(
+                                f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher"
+                            )
+                            _sd = _sr.json()
+                        game_states = {}
+                        for _gd in _sd.get("dates", []):
+                            for _g in _gd.get("games", []):
+                                _state   = _g.get("status",{}).get("abstractGameState","")
+                                _started = _state in started_states
+                                _away    = _g["teams"]["away"]["team"]["name"]
+                                _home    = _g["teams"]["home"]["team"]["name"]
+                                _away_pit = _g["teams"]["away"].get("probablePitcher",{}).get("fullName","TBD")
+                                _home_pit = _g["teams"]["home"].get("probablePitcher",{}).get("fullName","TBD")
+                                game_states[f"{_away}-{_home_pit}"] = _started
+                                game_states[f"{_home}-{_away_pit}"] = _started
+
+                        locked = [r for r in existing_recs
+                                  if game_states.get(f"{r.get('team','')}-{r.get('opp_pitcher','')}", False)]
+                        if locked:
+                            locked_names = {r.get("name") for r in locked}
+                            candidates   = [r for r in top8_records
+                                            if r.get("name") not in locked_names
+                                            and not game_states.get(
+                                                f"{r.get('team','')}-{r.get('opp_pitcher','')}", False)]
+                            slots = 8 - len(locked)
+                            top8_records = sorted(
+                                locked + candidates[:slots],
+                                key=lambda x: x.get("model_hr_pct", 0), reverse=True
+                            )
+                    except: pass
+
+                await github_put_file(
+                    top8_path,
+                    _jg.dumps(top8_records, indent=2),
+                    f"games sync top8: {today}",
+                    sha if existing else None
+                )
+                print(f"games: synced top8 file with {len(top8_records)} picks")
+    except Exception as _e:
+        print(f"games: top8 sync error (non-fatal): {_e}")
+
     return result
 
 @app.get("/debug-weather")
