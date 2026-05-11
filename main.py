@@ -421,7 +421,7 @@ async def train_xgboost(save_to_github: bool = True):
         "combined_pitch_delta", "xslg_l8d",
         "xwoba_l8d", "xslg_gap_l8d",
         "bat_speed_l8d",
-        "day_of_season",   # XGBoost-specific - captures seasonal patterns - captures seasonal patterns
+        # day_of_season removed - calendar artifact not batting skill, hurts AUC
     ]
 
     import statistics
@@ -4089,7 +4089,7 @@ async def get_dashboard():
             except: continue
 
         # -- Build top8 by date - prefer top8 files, fallback to predictions --
-        TRACKING_START = "2026-05-10"
+        TRACKING_START = "2026-05-11"
         top8_by_date = {}
         for f in sorted(top8_files, key=lambda x: x["name"], reverse=True)[:30]:
             if not f["name"].endswith(".json"): continue
