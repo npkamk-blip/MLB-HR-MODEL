@@ -449,12 +449,31 @@ async def train_xgboost(save_to_github: bool = True):
     n_neg = n - n_pos
     spw   = round(n_neg / max(n_pos, 1), 2)
 
+    # Dynamic params that scale with record count
+    # Small dataset  = shallow, conservative, prevent overfitting
+    # Large dataset  = deeper, more trees, let it explore
+    if n < 200:
+        xgb_depth, xgb_trees, xgb_lr, xgb_mcw = 4,  100, 0.10, 10
+    elif n < 500:
+        xgb_depth, xgb_trees, xgb_lr, xgb_mcw = 5,  200, 0.08, 8
+    elif n < 1000:
+        xgb_depth, xgb_trees, xgb_lr, xgb_mcw = 6,  300, 0.06, 5
+    elif n < 2000:
+        xgb_depth, xgb_trees, xgb_lr, xgb_mcw = 7,  400, 0.05, 3
+    elif n < 4000:
+        xgb_depth, xgb_trees, xgb_lr, xgb_mcw = 8,  500, 0.04, 2
+    else:
+        xgb_depth, xgb_trees, xgb_lr, xgb_mcw = 10, 700, 0.03, 1
+
+    print(f"XGBoost params: n={n} -> depth={xgb_depth}, trees={xgb_trees}, lr={xgb_lr}, mcw={xgb_mcw}")
+
     xgb = XGBClassifier(
-        n_estimators=500,
-        max_depth=6,
-        learning_rate=0.05,
+        n_estimators=xgb_trees,
+        max_depth=xgb_depth,
+        learning_rate=xgb_lr,
         subsample=0.8,
         colsample_bytree=0.8,
+        min_child_weight=xgb_mcw,  # prevents learning from tiny subgroups
         scale_pos_weight=spw,
         eval_metric="logloss",
         random_state=42,
