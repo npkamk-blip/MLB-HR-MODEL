@@ -1418,25 +1418,18 @@ async def daily_refresh_loop():
                 await notify(f"ERROR in 4am end_of_day_save: {e}", "End of Day ERROR", 1)
                 print(f"4am error: {e}")
 
-        # 7am - retrain RF + XGBoost on clean data, then refresh Savant
+        # 7am - retrain XGBoost on clean data, then refresh Savant
         if now.hour == 7:
             try:
-                print(f"7am retrain starting - Round {get_rotation_round()} Day {get_rotation_day()}")
-                rf_result  = await recalibrate_model()
-                xgb_result = await train_xgboost()
-                rf_auc  = round(_model_weights.get("oob_score", 0), 3)
+                print(f"7am XGBoost retrain - Round {get_rotation_round()} Day {get_rotation_day()}")
+                await train_xgboost()
                 xgb_auc = round(_xgb_oob, 3)
                 records = _model_weights.get("records_used", 0)
-                winner  = "XGB" if _xgb_trained and xgb_auc > rf_auc else "RF"
-                # Show progress toward clean data milestone
-                clean_start = "2026-05-10"
+                clean_start = "2026-05-11"
                 days_clean  = (et_today() - date.fromisoformat(clean_start)).days
-                days_to_go  = max(0, 30 - days_clean)
+                days_to_go  = max(0, 29 - days_clean)
                 await notify(
-                    f"Models retrained\n"
-                    f"Winner: {winner} | XGB: {xgb_auc} | RF: {rf_auc}\n"
-                    f"Records: {records} ({days_clean} clean days)\n"
-                    f"{days_to_go} days until corrupt data purge",
+                    f"XGBoost retrained\nAUC: {xgb_auc} | Records: {records}\n{days_clean} clean days | {days_to_go} until purge",
                     "Model Retrained"
                 )
             except Exception as e:
@@ -3523,79 +3516,10 @@ def get_trend(b8d, bc):
 
 def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
     """
-    Main prediction entry point.
-    When RF is trained: uses pure Random Forest probability.
-    Falls back to multiplicative model when RF not yet trained.
+    Returns multiplicative model breakdown for display/fallback.
+    XGBoost is the active model - called separately via predict_xgb().
     """
-    # Always compute multiplicative - used as fallback and for breakdown data
-    mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf = \
-        compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team)
-
-    if not _rf_trained or _rf_model is None:
-        return mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
-
-    # -- Build RF feature vector --
-    try:
-        bc  = get_batter_stats(name, 2026)
-        b8d = get_batter_8d(name)
-        b_split = get_batter_split(name, opp_p_hand)
-        pc  = get_pitcher_stats(opp_p_name, 2026)
-        p_split = get_pitcher_split(opp_p_name, bat_hand)
-        pa_26 = bc.get("pa", 0); pa_25 = 0
-        bwc = 1.0
-        ip_26 = pc.get("ip", 0)
-        pwc = 1.0
-        pitch_score, _ = compute_pitch_matchup(opp_p_name, name)
-
-        def bv(k): return blend(bc.get(k, 0), 0, bwc)
-        def pv(k): return blend(pc.get(k, 0), 0)
-
-        feat_vals = {
-            "barrel_pct_season":    bv("barrel_pct"),
-            "barrel_pct_l8d":       b8d.get("barrel_pct", 0),
-            "la_season":            bv("launch_angle"),
-            "la_l8d":               b8d.get("launch_angle", 0),
-            "ev_season":            bv("exit_velo"),
-            "ev_l8d":               b8d.get("exit_velo", 0),
-            "iso_season":           bv("iso"),
-            "iso_vs_hand":          b_split.get("iso", 0),
-            "hard_hit_season":      bv("hard_hit_pct"),
-            "hard_hit_l8d":         b8d.get("hard_hit_pct", 0),
-            "k_pct_season":         bv("k_pct"),
-            "k_pct_l8d":            b8d.get("k_pct", 0),
-            "pull_pct_season":      bv("pull_pct"),
-            "pit_hr9_season":       pv("hr9"),
-            "pit_hr9_vs_hand":      p_split.get("hr9", 0),
-            "pit_hard_hit_season":  pv("hard_hit_pct"),
-            "pit_era_season":       pv("era"),
-            "pit_k9_season":        pv("k9"),
-            "pit_era_diff":         round(pv("era") - 4.20, 2) if pv("era") > 0 else 0,
-            "pit_slg_vs_hand":      p_split.get("slg", 0),
-            "park_factor":          park_factor,
-            "weather_mult":         weather_mult,
-            "bat_platoon_mult":     breakdown.get("bat_platoon_mult", 1.0),
-            "pit_platoon_mult":     breakdown.get("pit_platoon_mult", 1.0),
-            "bullpen_vuln":         breakdown.get("bullpen_vuln", 1.0),
-            "pitch_matchup_score":  pitch_score,
-            "combined_pitch_delta": breakdown.get("combined_pitch_delta", 0),
-            "xslg_l8d":             b8d.get("xslg", 0),
-            "xwoba_l8d":            b8d.get("xwoba", 0),
-            "xslg_gap_l8d":         round(b8d.get("xslg", 0) - b8d.get("slg", 0), 3) if b8d.get("xslg", 0) > 0 else 0,
-            "bat_speed_l8d":        b8d.get("bat_speed", 0),
-        }
-
-        row = [float(feat_vals.get(f) or _rf_medians.get(f, 0.0)) for f in _rf_features]
-        proba = _rf_model.predict_proba([row])[0]
-        rf_prob = round(min(float(proba[1]) * 100, LEAGUE_CONSTANTS["hr_prob_cap"]), 1)
-
-        breakdown["rf_prob"]   = rf_prob
-        breakdown["mult_prob"] = mult_prob  # kept for debugging only
-
-        return rf_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
-
-    except Exception as e:
-        print(f"RF predict error for {name}: {e} - falling back to multiplicative")
-        return mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
+    return compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team)
 
 
 def predict_xgb(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, breakdown,
@@ -4352,10 +4276,9 @@ async def manual_recalibrate():
 
 @app.get("/recalibrate")
 async def manual_recalibrate_get():
-    """GET - retrains RF + XGBoost in background"""
-    asyncio.create_task(recalibrate_model())
+    """GET - retrains XGBoost only"""
     asyncio.create_task(train_xgboost())
-    return {"status": "retrain started in background - check /version in 3-5 minutes"}
+    return {"status": "XGBoost retrain started - check /version in 3-5 minutes"}
 
 @app.get("/retrain-xgboost")
 async def retrain_xgboost_get():
@@ -5765,20 +5688,13 @@ def version():
 
     return {
         # -- Models --
-        "active_model":   winning,
-        "rf": {
-            "trained":      _rf_trained,
-            "records_used": _model_weights.get("records_used", 0),
-            "cv_auc":       round(rf_auc, 4),
-            "last_trained": _model_weights.get("last_calibrated"),
-            "params":       _model_weights.get("rf_params"),
-            "top_features": _model_weights.get("top_features", [])[:5],
-        },
+        "active_model":   "xgboost",
         "xgboost": {
             "trained":      _xgb_trained,
             "cv_auc":       round(xgb_auc, 4),
-            "beats_rf":     _xgb_trained and xgb_auc > rf_auc,
-            "gap":          round(xgb_auc - rf_auc, 4),
+            "records_used": _model_weights.get("records_used", 0),
+            "last_trained": _model_weights.get("last_calibrated"),
+            "top_features": _model_weights.get("top_features", [])[:5],
         },
         # -- Data pipeline --
         "data": {
