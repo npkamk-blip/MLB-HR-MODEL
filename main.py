@@ -2073,16 +2073,14 @@ async def check_lineup_confirmations():
                 f"lineups confirmed: {today} ({len(top100)} records)", sha)
 
             # Save top 8 to top8 file (betting record)
-            # SMART FREEZE RULES (per-player not per-slate):
+            # SMART FREEZE: per-player game state check
             # - Game Live/Final -> player LOCKED IN, never dropped
-            # - Game Pre-game   -> still eligible to be swapped if scratched
-            # - New pre-game player -> can enter top 8 if higher ranked
-            # Example: Muncy locked in after his 2pm game ends.
-            # 7pm player scratched at 6:55pm still gets swapped out.
+            # - Game Pre-game   -> still eligible to swap if scratched
+            # - New pre-game player -> can enter if higher ranked
             top8_path = f"data/top8/{today}.json"
             existing_top8_content, top8_sha = await github_get_file(top8_path)
 
-            # Build game status map {team-opp_pitcher: started(bool)}
+            # Build game status map {team-opp_pitcher: started}
             game_states = {}
             try:
                 async with httpx.AsyncClient(timeout=10) as _sc:
@@ -2093,10 +2091,10 @@ async def check_lineup_confirmations():
                 started_states = {"Live", "Final", "Game Over", "Completed"}
                 for _gd in _sd.get("dates", []):
                     for _g in _gd.get("games", []):
-                        _state    = _g.get("status",{}).get("abstractGameState","")
-                        _started  = _state in started_states
-                        _away     = _g["teams"]["away"]["team"]["name"]
-                        _home     = _g["teams"]["home"]["team"]["name"]
+                        _state   = _g.get("status",{}).get("abstractGameState","")
+                        _started = _state in started_states
+                        _away    = _g["teams"]["away"]["team"]["name"]
+                        _home    = _g["teams"]["home"]["team"]["name"]
                         _away_pit = _g["teams"]["away"].get("probablePitcher",{}).get("fullName","TBD")
                         _home_pit = _g["teams"]["home"].get("probablePitcher",{}).get("fullName","TBD")
                         game_states[f"{_away}-{_home_pit}"] = _started
@@ -2111,18 +2109,17 @@ async def check_lineup_confirmations():
                 except: pass
 
             if existing_top8:
-                # Split existing top 8 into locked (game started) and unlocked (pre-game)
+                # Split into locked (game started) and unlocked (pre-game)
                 locked   = []
                 unlocked = []
                 for r in existing_top8:
                     gk = f"{r.get('team','')}-{r.get('opp_pitcher','')}"
                     if game_states.get(gk, False):
-                        locked.append(r)    # game started - keep forever
+                        locked.append(r)
                     else:
-                        unlocked.append(r)  # pre-game - eligible for replacement
+                        unlocked.append(r)
 
-                # New candidates: from ranked pool, exclude locked players,
-                # exclude anyone whose game has already started
+                # New candidates from pre-game pool only, excluding already locked
                 locked_names = {r.get("name") for r in locked}
                 candidates = [
                     r for r in top8
@@ -2131,19 +2128,16 @@ async def check_lineup_confirmations():
                         f"{r.get('team','')}-{r.get('opp_pitcher','')}", False
                     )
                 ]
-
-                # Fill remaining slots (8 - locked count) with best candidates
                 slots_needed = 8 - len(locked)
                 final_top8 = sorted(
                     locked + candidates[:slots_needed],
                     key=lambda x: x.get("model_hr_pct", 0), reverse=True
                 )
-                print(f"  Top 8: {len(locked)} locked, {len(candidates[:slots_needed])} pre-game slots")
+                print(f"  Top 8: {len(locked)} locked, {len(candidates[:slots_needed])} pre-game")
             else:
-                # No existing top 8 yet - use full ranked pool
                 final_top8 = top8
 
-            top8 = final_top8  # use updated list for notification below
+            top8 = final_top8
             await github_put_file(top8_path, json.dumps(final_top8, indent=2),
                                   f"top8: {today} ({len(final_top8)} picks)", top8_sha)
 
@@ -4131,46 +4125,37 @@ async def get_dashboard():
             "top8_total_hits":    top8_hits,
         }
 
-        # -- Today's top 8 - projected all day, scratched when confirmed --
+        # -- Today's top 8 - read from saved top8 file first (locked picks) --
+        # Falls back to live games cache only if no top8 file exists yet
         today = et_today().isoformat()
         top8_today = []
         try:
-            cached = _games_cache.get(today)
-            if not cached or not cached.get("data"):
-                games_data = await get_games(today, False)
+            import json as _j8
+            # Always try the saved top8 file first - this has the locked picks
+            top8_raw, _ = await github_get_file(f"data/top8/{today}.json")
+            if top8_raw:
+                saved = _j8.loads(top8_raw)
+                # Format to match expected structure
+                for r in saved:
+                    r["model_hr_pct"] = r.get("model_hr_pct") or r.get("hr_prob") or 0
+                top8_today = sorted(saved, key=lambda x: x.get("model_hr_pct", 0), reverse=True)[:8]
+                print(f"Dashboard top8: loaded {len(top8_today)} from saved top8 file")
+            else:
+                # No saved file yet - fall back to live games cache
                 cached = _games_cache.get(today)
-
-            if cached and cached.get("data"):
-                games_list = cached["data"].get("games", [])
-
-                # Collect ALL batters from ALL games
-                all_live = []
-                for game in games_list:
-                    all_live.extend(game.get("top_hr_candidates", []))
-
-                # Build confirmed lineup sets per team
-                confirmed_by_team = {}
-                for game in games_list:
-                    if game.get("lineup_away_status") == "confirmed":
-                        confirmed_by_team[game.get("away", "")] = set(
-                            b.get("name","") for b in game.get("away_lineup", []))
-                    if game.get("lineup_home_status") == "confirmed":
-                        confirmed_by_team[game.get("home", "")] = set(
-                            b.get("name","") for b in game.get("home_lineup", []))
-
-                # Filter scratched players, rank globally, XGBoost only
-                def is_available(b):
-                    team = b.get("team","")
-                    if team in confirmed_by_team:
-                        return b.get("name","") in confirmed_by_team[team]
-                    return True
-
-                available = [b for b in all_live
-                             if is_available(b) and b.get("hr_prob") is not None]
-                top8_today = sorted(available, key=lambda x: x.get("hr_prob", 0), reverse=True)[:8]
-                for b in top8_today:
-                    b["model_hr_pct"] = b.get("hr_prob", 0)
-
+                if not cached or not cached.get("data"):
+                    games_data = await get_games(today, False)
+                    cached = _games_cache.get(today)
+                if cached and cached.get("data"):
+                    games_list = cached["data"].get("games", [])
+                    all_live = []
+                    for game in games_list:
+                        all_live.extend(game.get("top_hr_candidates", []))
+                    available = [b for b in all_live if b.get("hr_prob") is not None]
+                    top8_today = sorted(available, key=lambda x: x.get("hr_prob", 0), reverse=True)[:8]
+                    for b in top8_today:
+                        b["model_hr_pct"] = b.get("hr_prob", 0)
+                    print(f"Dashboard top8: no saved file, using live games cache ({len(top8_today)} players)")
         except Exception as e:
             print(f"Dashboard top8 error: {e}")
 
@@ -5833,6 +5818,7 @@ async def get_games(date: str = None, refresh: bool = False):
     all_player_ids = set()
     games_list = dates[0].get("games", [])
     for game in games_list:
+        if game.get("status", {}).get("abstractGameState") == "Final": continue
         for side in ["away", "home"]:
             pid = game["teams"][side].get("probablePitcher", {}).get("id")
             if pid: all_player_ids.add(pid)
@@ -5848,10 +5834,9 @@ async def get_games(date: str = None, refresh: bool = False):
 
     games_out = []
     for game in games_list:
+        if game.get("status", {}).get("abstractGameState") == "Final": continue
+
         gid = game["gamePk"]
-        game_state  = game.get("status", {}).get("abstractGameState", "")
-        game_detail = game.get("status", {}).get("detailedState", "")
-        is_final    = game_state == "Final"
         away_team = game["teams"]["away"]["team"]["name"]
         home_team = game["teams"]["home"]["team"]["name"]
         away_team_id = game["teams"]["away"]["team"]["id"]
@@ -5859,19 +5844,6 @@ async def get_games(date: str = None, refresh: bool = False):
         away_p = game["teams"]["away"].get("probablePitcher", {})
         home_p = game["teams"]["home"].get("probablePitcher", {})
         gtime = game.get("gameDate", "")
-
-        # Final games - return minimal data, no heavy recomputation
-        if is_final:
-            games_out.append({
-                "game_id": gid, "away": away_team, "home": home_team, "time": gtime,
-                "is_final": True, "game_status": game_detail,
-                "away_pitcher": {"name": away_p.get("fullName","TBD"), "hand": "R"},
-                "home_pitcher": {"name": home_p.get("fullName","TBD"), "hand": "R"},
-                "top_hr_candidates": [], "away_lineup": [], "home_lineup": [],
-                "lineup_away_status": "final", "lineup_home_status": "final",
-                "weather": {}, "totals": {}, "strikeouts": {},
-            })
-            continue
 
         away_p_hand = home_p_hand = "R"
         if away_p.get("id"):
@@ -6070,8 +6042,6 @@ async def get_games(date: str = None, refresh: bool = False):
 
         games_out.append({
             "game_id": gid, "away": away_team, "home": home_team, "time": gtime,
-            "is_final": is_final,
-            "game_status": game_detail,
             "away_pitcher": away_pit_obj,
             "home_pitcher": home_pit_obj,
             "top_hr_candidates": all_batters,
