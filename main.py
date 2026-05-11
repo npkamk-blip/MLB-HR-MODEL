@@ -1836,7 +1836,7 @@ async def check_lineup_confirmations():
     - Projected in file -> update lineup_source to confirmed (no rescore)
     - New player not in file -> score fresh via XGBoost
     - Projected player not in confirmed lineup -> remove (scratched)
-    - Pull #101 if scratch creates gap
+    - Pull from data/full/{date}.json if scratch creates gap
     - Top 8 = top 8 of predictions file directly
     """
     today = et_today().isoformat()
@@ -1933,7 +1933,6 @@ async def check_lineup_confirmations():
                         if existing_rec:
                             if existing_rec.get("lineup_source") == "confirmed":
                                 continue  # already confirmed - skip
-                            # Was projected - just confirm, keep score
                             existing_rec["lineup_source"] = "confirmed"
                             existing_rec["mlb_id"] = pid or existing_rec.get("mlb_id")
                             any_changes = True
@@ -2000,13 +1999,32 @@ async def check_lineup_confirmations():
             print(f"Lineup check: no changes needed")
             return
 
-        # Rebuild top 100
-        ranked = sorted(
-            list(records_dict.values()),
-            key=lambda x: x.get("model_hr_pct", 0) or 0,
+        # Rebuild top 100 - pull from full file if scratches created gaps
+        current_records = list(records_dict.values())
+        ranked_current  = sorted(
+            current_records,
+            key=lambda x: x.get("model_hr_pct",0) or 0,
             reverse=True
         )
-        top100 = ranked[:100]
+
+        if len(ranked_current) < 100:
+            try:
+                full_raw, _ = await github_get_file(f"data/full/{today}.json")
+                if full_raw:
+                    full_recs     = json.loads(full_raw)
+                    current_names = {r.get("name") for r in ranked_current}
+                    extras  = [r for r in full_recs if r.get("name") not in current_names]
+                    needed  = 100 - len(ranked_current)
+                    ranked_current = sorted(
+                        ranked_current + extras[:needed],
+                        key=lambda x: x.get("model_hr_pct",0) or 0,
+                        reverse=True
+                    )
+                    print(f"  Pulled {min(needed, len(extras))} from full file to fill gaps")
+            except Exception as _fe:
+                print(f"  Full file pull error: {_fe}")
+
+        top100 = ranked_current[:100]
 
         # Save predictions file
         await github_put_file(
@@ -2587,6 +2605,19 @@ async def save_projected_top100(target_date: str = None):
             return
 
         ranked = sorted(all_candidates, key=lambda x: x.get("model_hr_pct",0) or 0, reverse=True)
+
+        # Save FULL file - all players scored, scratch replacement pool, never trained on
+        full_path = f"data/full/{today}.json"
+        _, full_sha = await github_get_file(full_path)
+        await github_put_file(
+            full_path,
+            json.dumps(ranked, indent=2),
+            f"full slate: {today} ({len(ranked)} players)",
+            full_sha
+        )
+        print(f"save_projected_top100: saved {len(ranked)} to full file")
+
+        # Save top 100 - training data only
         top100 = ranked[:100]
         await github_put_file(path, json.dumps(top100, indent=2),
                               f"projected top100: {today} ({len(top100)} players)", sha)
