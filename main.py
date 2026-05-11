@@ -1831,67 +1831,64 @@ async def save_daily_predictions():
 
 async def check_lineup_confirmations():
     """
-    Hourly lineup confirmation - optimized:
-    - Already confirmed in file -> skip entirely (no rescore)
-    - Projected in file -> update lineup_source to confirmed (no rescore)
-    - New player not in file -> score fresh via XGBoost
-    - Projected player not in confirmed lineup -> remove (scratched)
-    - Pull from data/full/{date}.json if scratch creates gap
-    - Top 8 = top 8 of predictions file directly
+    Runs hourly - checks today's games for newly confirmed lineups.
+    When a game's lineup is confirmed, saves top 8 for that game.
+    Merges with existing saved records without duplicating.
     """
+    if not _cache["ready"] or not GITHUB_TOKEN: return
     today = et_today().isoformat()
     path  = f"data/predictions/{today}.json"
 
-    existing_raw, sha = await github_get_file(path)
+    # Load existing saved records to avoid duplicates
+    existing_content, sha = await github_get_file(path)
+    import json
     existing_records = []
-    if existing_raw:
+    already_saved_games = set()
+    if existing_content:
         try:
-            existing_records = json.loads(existing_raw)
+            existing_records = json.loads(existing_content)
+            # Track which game/team combos already saved
+            for r in existing_records:
+                if r.get("lineup_source") == "confirmed":
+                    key = f"{r.get('team','')}-{r.get('opp_pitcher','')}"
+                    already_saved_games.add(key)
         except: pass
-
-    records_dict = {r.get("name",""): r for r in existing_records}
-    by_team = {}
-    for r in existing_records:
-        by_team.setdefault(r.get("team",""), {})[r.get("name","")] = r
 
     try:
         async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(
-                f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher"
-            )
+            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
             data = r.json()
 
-        any_changes = False
-
+        new_records = []
         for game_date in data.get("dates", []):
             for game in game_date.get("games", []):
                 state = game.get("status", {}).get("abstractGameState", "")
                 if state == "Final": continue
 
-                gid       = game["gamePk"]
+                gid = game["gamePk"]
                 home_team = game["teams"]["home"]["team"]["name"]
                 away_team = game["teams"]["away"]["team"]["name"]
-                away_p    = game["teams"]["away"].get("probablePitcher", {})
-                home_p    = game["teams"]["home"].get("probablePitcher", {})
-                gtime     = game.get("gameDate", "")
+                away_team_id = game["teams"]["away"]["team"]["id"]
+                home_team_id = game["teams"]["home"]["team"]["id"]
+                away_p = game["teams"]["away"].get("probablePitcher", {})
+                home_p = game["teams"]["home"].get("probablePitcher", {})
+                gtime = game.get("gameDate", "")
 
+                # Check if confirmed lineup available
                 try:
-                    async with httpx.AsyncClient(timeout=10) as bc:
-                        r2 = await bc.get(f"{MLB_API}/game/{gid}/boxscore")
+                    async with httpx.AsyncClient(timeout=10) as box_client:
+                        r2 = await box_client.get(f"{MLB_API}/game/{gid}/boxscore")
                         box = r2.json()
                     teams = box.get("teams", {})
                     def extract(side):
                         players = teams.get(side, {}).get("players", {})
                         return sorted(
-                            [p for p in players.values()
-                             if p.get("battingOrder") and int(p["battingOrder"]) <= 900],
+                            [p for p in players.values() if p.get("battingOrder") and int(p["battingOrder"]) <= 900],
                             key=lambda x: int(x["battingOrder"])
                         )[:9]
                     confirmed_away = extract("away")
                     confirmed_home = extract("home")
                 except: continue
-
-                if not confirmed_away and not confirmed_home: continue
 
                 away_p_hand = home_p_hand = "R"
                 if away_p.get("id"):
@@ -1904,169 +1901,218 @@ async def check_lineup_confirmations():
                 stadium = STADIUMS.get(home_team, {})
                 temp, wind_speed, wind_dir = 70, 0, 0
                 if not stadium.get("dome") and stadium.get("lat"):
-                    temp, wind_speed, wind_dir = await fetch_weather(
-                        stadium["lat"], stadium["lon"], gtime)
+                    temp, wind_speed, wind_dir = await fetch_weather(stadium["lat"], stadium["lon"], gtime)
 
-                for batters, team, opp_p, opp_p_hand in [
+                for batters, team, opp_p_name, opp_p_hand in [
                     (confirmed_away, away_team, home_p.get("fullName","TBD"), home_p_hand),
                     (confirmed_home, home_team, away_p.get("fullName","TBD"), away_p_hand),
                 ]:
                     if not batters: continue
+                    game_key = f"{team}-{opp_p_name}"
+                    if game_key in already_saved_games:
+                        continue  # already saved confirmed lineup for this game
 
-                    confirmed_names = {b.get("person",{}).get("fullName","") for b in batters}
-                    team_existing   = by_team.get(team, {})
-
-                    # Remove scratched players
-                    for name, rec in list(team_existing.items()):
-                        if rec.get("lineup_source") == "projected" and name not in confirmed_names:
-                            records_dict.pop(name, None)
-                            any_changes = True
-                            print(f"  Scratched: {name} ({team})")
-
+                    game_records = []
                     for batter in batters:
                         name = batter.get("person", {}).get("fullName", "")
                         pid  = batter.get("person", {}).get("id")
                         if not name: continue
-
-                        existing_rec = records_dict.get(name)
-
-                        if existing_rec:
-                            if existing_rec.get("lineup_source") == "confirmed":
-                                continue  # already confirmed - skip
-                            existing_rec["lineup_source"] = "confirmed"
-                            existing_rec["mlb_id"] = pid or existing_rec.get("mlb_id")
-                            any_changes = True
-                            print(f"  Confirmed: {name} ({team}) - score unchanged")
-                            continue
-
-                        # New player - score fresh
-                        print(f"  New player: {name} ({team}) - scoring fresh")
                         bat_hand = "R"
                         if pid:
                             info = await fetch_player_hand(pid)
                             bat_hand = info.get("bat_side", "R")
                         if bat_hand == "S": bat_hand = "L" if opp_p_hand == "R" else "R"
-
                         park_factor = get_park_hr_factor(home_team, bat_hand)
-                        wx_mult, _  = calc_weather_multiplier(
-                            home_team, wind_speed, wind_dir, temp, bat_hand)
+                        wx_mult, _ = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
                         hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(
-                            name, bat_hand, opp_p, opp_p_hand, park_factor, wx_mult, home_team)
+                            name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult, home_team)
+                        # No threshold - take all 9 batters, select top 8 at end
 
-                        bc2      = get_batter_stats(name, 2026, mlb_id=pid)
-                        b8d2     = get_batter_8d(name, mlb_id=pid)
-                        b_split2 = get_batter_split(name, opp_p_hand, mlb_id=pid)
-                        pc2      = get_pitcher_stats(opp_p, 2026)
-                        p_split2 = get_pitcher_split(opp_p, bat_hand)
-                        pa26     = bc2.get("pa", 0)
+                        bc2 = get_batter_stats(name, 2026)
+                        pa26 = bc2.get("pa", 0)
+                        bwc2 = get_batter_blend_weights(pa26, 0)
+                        b8d2 = get_batter_8d(name)
+                        b_split2 = get_batter_split(name, opp_p_hand)
+                        pc2 = get_pitcher_stats(opp_p_name, 2026)
+                        p_split2 = get_pitcher_split(opp_p_name, bat_hand)
+                        pitch_score, _ = compute_pitch_matchup(opp_p_name, name)
+                        top_pitches = get_pitcher_top_pitches(opp_p_name)[:2]
+                        pitch1 = top_pitches[0] if top_pitches else {}
+                        pitch2 = top_pitches[1] if len(top_pitches) > 1 else {}
+                        pa_data = get_avg_pa_per_game(name)
+                        # XGBoost is primary
+                        xgb_r2 = predict_xgb(name, bat_hand, opp_p_name, opp_p_hand,
+                                              park_factor, wx_mult, breakdown,
+                                              bc=bc2, b8d=b8d2, b_split=b_split2,
+                                              pc=pc2, p_split=p_split2)
+                        xgb_save2 = xgb_r2 if isinstance(xgb_r2, (int, float)) else (xgb_r2[0] if xgb_r2 else None)
+                        save_prob2 = xgb_save2
 
-                        xgb_prob  = predict_xgb(
-                            name, bat_hand, opp_p, opp_p_hand,
-                            park_factor, wx_mult, breakdown,
-                            bc=bc2, b8d=b8d2, b_split=b_split2,
-                            pc=pc2, p_split=p_split2)
-                        save_prob = xgb_prob if isinstance(xgb_prob, (int,float))                                     else (xgb_prob[0] if xgb_prob else hr_prob)
-
-                        records_dict[name] = {
+                        game_records.append({
                             "date": today, "name": name, "team": team,
                             "mlb_id": pid,
-                            "opp_pitcher": opp_p, "opp_pitcher_hand": opp_p_hand,
+                            "opp_pitcher": opp_p_name, "opp_pitcher_hand": opp_p_hand,
                             "bat_hand": bat_hand, "home_team": home_team,
                             "lineup_source": "confirmed",
-                            "model_hr_pct": save_prob, "hit_hr": None,
+                            "model_hr_pct": save_prob2, "hit_hr": None,
+                            "rf_prob": hr_prob,
                             "barrel_pct_season": round(bc2.get("barrel_pct",0), 1),
-                            "la_season":         round(bc2.get("launch_angle",0), 1),
-                            "ev_season":         round(bc2.get("exit_velo",0), 1),
-                            "iso_season":        round(bc2.get("iso",0), 3),
-                            "hard_hit_season":   round(bc2.get("hard_hit_pct",0), 1),
-                            "k_pct_season":      round(bc2.get("k_pct",0), 1),
-                            "hr_season":         int(bc2.get("hr",0)),
-                            "pa_season":         pa26,
-                            "barrel_pct_l8d":    round(b8d2.get("barrel_pct",0), 1),
-                            "ev_l8d":            round(b8d2.get("exit_velo",0), 1),
-                            "iso_l8d":           round(b8d2.get("iso",0), 3),
-                            "hard_hit_l8d":      round(b8d2.get("hard_hit_pct",0), 1),
-                            "xslg_l8d":          round(b8d2.get("xslg",0), 3),
-                            "xwoba_l8d":         round(b8d2.get("xwoba",0), 3),
-                            "bat_speed_l8d":     round(b8d2.get("bat_speed",0), 1),
-                            "iso_vs_hand":       round(b_split2.get("iso",0), 3),
-                            "pit_hr9_season":    round(pc2.get("hr9",0), 2),
-                            "pit_era_season":    round(pc2.get("era",0), 2),
-                        }
-                        any_changes = True
+                            "la_season": round(bc2.get("launch_angle",0), 1),
+                            "ev_season": round(bc2.get("exit_velo",0), 1),
+                            "iso_season": round(bc2.get("iso",0), 3),
+                            "hard_hit_season": round(bc2.get("hard_hit_pct",0), 1),
+                            "k_pct_season": round(bc2.get("k_pct",0), 1),
+                            "hr_season": int(bc2.get("hr",0)),
+                            "pa_season": pa26,
+                            "barrel_pct_l8d": round(b8d2.get("barrel_pct",0), 1),
+                            "la_l8d": round(b8d2.get("launch_angle",0), 1),
+                            "ev_l8d": round(b8d2.get("exit_velo",0), 1),
+                            "iso_l8d": round(b8d2.get("iso",0), 3),
+                            "hard_hit_l8d": round(b8d2.get("hard_hit_pct",0), 1),
+                            "k_pct_l8d": round(b8d2.get("k_pct",0), 1),
+                            "pa_l8d": int(b8d2.get("pa",0)),
+                            "l8d_hr": get_l8d_hr(name),
+                            "slg_l8d": round(b8d2.get("slg",0), 3),
+                            "xslg_l8d": round(b8d2.get("xslg",0), 3),
+                            "xslg_gap_l8d": round(b8d2.get("xslg",0) - b8d2.get("slg",0), 3) if b8d2.get("xslg",0) > 0 else 0,
+                            "xwoba_l8d": round(b8d2.get("xwoba",0), 3),
+                            "bat_speed_l8d": round(b8d2.get("bat_speed",0), 1),
+                            "iso_vs_hand": round(b_split2.get("iso",0), 3),
+                            "slg_vs_hand": round(b_split2.get("slg",0), 3),
+                            "hr_vs_hand": int(b_split2.get("hr",0)),
+                            "pa_vs_hand": int(b_split2.get("pa",0)),
+                            "pit_hr9_season": round(pc2.get("hr9",0), 2),
+                            "pit_era_season": round(pc2.get("era",0), 2),
+                            "pit_hard_hit_season": round(pc2.get("hard_hit_pct",0), 1),
+                            "pit_k9_season": round(pc2.get("k9",0), 1),
+                            "pit_hr9_vs_hand": round(p_split2.get("hr9",0), 2),
+                            "pit_slg_vs_hand": round(p_split2.get("slg",0), 3),
+                            "park_factor": breakdown.get("park_factor",1.0),
+                            "weather_mult": breakdown.get("weather_mult",1.0),
+                            "bullpen_vuln": breakdown.get("bullpen_vuln",1.0),
+                            "bat_platoon_mult": breakdown.get("bat_platoon_mult",1.0),
+                            "pit_platoon_mult": breakdown.get("pit_platoon_mult",1.0),
+                            "pitch_matchup_score": round(pitch_score,2),
+                            "combined_pitch_delta": round(
+                                (pitch1.get("usage",0)/100*(pitch1.get("batter_rv",0)-pitch1.get("pit_rv",0)) if pitch1 else 0) +
+                                (pitch2.get("usage",0)/100*(pitch2.get("batter_rv",0)-pitch2.get("pit_rv",0)) if pitch2 else 0), 2),
+                            "pit_era_diff": round(pc2.get("era",0) - 4.20, 2) if pc2.get("era",0) > 0 else 0,
+                            "pull_pct_season": round(bc2.get("pull_pct",0), 1),
+                            "games_played": pa_data.get("games",0),
+                            "rotation_round": get_rotation_round(),
+                            "rotation_day": get_rotation_day(),
+                            "day_of_season": (et_today() - date(2026, 3, 20)).days,
+                            "xgb_prob": predict_xgb(name, bat_hand, opp_p_name, opp_p_hand,
+                                                    breakdown.get("park_factor",1.0),
+                                                    breakdown.get("weather_mult",1.0),
+                                                    breakdown,
+                                                    bc=bc2, b8d=b8d2, b_split=b_split2,
+                                                    pc=pc2, p_split=p_split2)[0],
+                        })
 
-        if not any_changes:
-            print(f"Lineup check: no changes needed")
-            return
+                    # Collect all batters - global ranking happens below
+                    new_records.extend(game_records)
+                    if game_records:
+                        print(f"  Lineup confirmed: {team} vs {opp_p_name} - {len(game_records)} batters")
 
-        # Rebuild top 100 - pull from full file if scratches created gaps
-        current_records = list(records_dict.values())
-        ranked_current  = sorted(
-            current_records,
-            key=lambda x: x.get("model_hr_pct",0) or 0,
-            reverse=True
-        )
+        if new_records:
+            confirmed_keys = {f"{r['team']}-{r['opp_pitcher']}" for r in new_records}
+            kept = [r for r in existing_records
+                    if f"{r.get('team','')}-{r.get('opp_pitcher','')}" not in confirmed_keys]
 
-        if len(ranked_current) < 100:
-            try:
-                full_raw, _ = await github_get_file(f"data/full/{today}.json")
-                if full_raw:
-                    full_recs     = json.loads(full_raw)
-                    current_names = {r.get("name") for r in ranked_current}
-                    extras  = [r for r in full_recs if r.get("name") not in current_names]
-                    needed  = 100 - len(ranked_current)
-                    ranked_current = sorted(
-                        ranked_current + extras[:needed],
-                        key=lambda x: x.get("model_hr_pct",0) or 0,
-                        reverse=True
-                    )
-                    print(f"  Pulled {min(needed, len(extras))} from full file to fill gaps")
-            except Exception as _fe:
-                print(f"  Full file pull error: {_fe}")
+            # Merge all records - confirmed replaces projected for same game
+            all_records_today = kept + new_records
 
-        top100 = ranked_current[:100]
+            # Top 100 for training - all players regardless of lineup source
+            ranked_all = sorted(all_records_today, key=lambda x: x.get("model_hr_pct", 0), reverse=True)
+            top100 = ranked_all[:100]
 
-        # Save predictions file
-        await github_put_file(
-            path,
-            json.dumps(top100, indent=2),
-            f"lineups confirmed: {today} ({len(top100)} records)",
-            sha
-        )
+            # Top 8 for betting — live blend of confirmed + projected.
+            # Rules:
+            # 1. For each game, confirmed players REPLACE their projected counterparts.
+            #    Confirmed always wins over projected for the same team/game.
+            # 2. If a player was projected top 8 but is NOT in the confirmed lineup
+            #    (scratched), they are dropped. The next best available player slides in.
+            # 3. Global re-rank every time a new lineup confirms.
+            # 4. Result: seamless transition from projected → confirmed throughout the day.
 
-        # Top 8 = top 8 from predictions file directly
-        top8      = top100[:8]
-        top8_path = f"data/top8/{today}.json"
-        _, top8_sha = await github_get_file(top8_path)
-        await github_put_file(
-            top8_path,
-            json.dumps(top8, indent=2),
-            f"top8: {today}",
-            top8_sha
-        )
+            # Build one record per player - confirmed beats projected for same game
+            # Key = (team, opp_pitcher) identifies a game side
+            best_by_game = {}  # game_key -> {player_name -> record}
+            for r in all_records_today:
+                game_key = f"{r.get('team','')}-{r.get('opp_pitcher','')}"
+                name = r.get("name", "")
+                if game_key not in best_by_game:
+                    best_by_game[game_key] = {}
+                existing = best_by_game[game_key].get(name)
+                # Confirmed always beats projected for same player/game
+                if not existing or r.get("lineup_source") == "confirmed":
+                    best_by_game[game_key][name] = r
 
-        # Notify only when top 8 names change
-        new_names = {r.get("name") for r in top8}
-        old_raw, _ = await github_get_file(top8_path)
-        old_names  = set()
-        if old_raw:
-            try: old_names = {r.get("name") for r in json.loads(old_raw)}
-            except: pass
-        added   = new_names - old_names
-        removed = old_names - new_names
+            # Flatten to single list - one record per player
+            pool = []
+            for game_key, players in best_by_game.items():
+                # For confirmed games: only include players in the confirmed lineup
+                # For projected games: include all projected players
+                game_records = list(players.values())
+                is_confirmed = any(r.get("lineup_source") == "confirmed" for r in game_records)
+                if is_confirmed:
+                    # Only keep confirmed players - drops scratched projected players
+                    pool.extend([r for r in game_records if r.get("lineup_source") == "confirmed"])
+                else:
+                    # Game not confirmed yet - keep projected players
+                    pool.extend(game_records)
 
-        print(f"Lineup check: {len(top100)} records saved, top8 updated")
-        if added or removed:
-            msg  = f"Lineups updated {today}"
-            msg += f"\nTop 8: " + ", ".join(r.get("name","?").split()[-1] for r in top8[:4]) + "..."
-            if added:   msg += f"\nAdded: {', '.join(n.split()[-1] for n in added)}"
-            if removed: msg += f"\nDropped: {', '.join(n.split()[-1] for n in removed)}"
-            await notify(msg, "Lineups Confirmed")
+            # Global rank - top 8 from best available (mix of confirmed + projected)
+            ranked_pool = sorted(pool, key=lambda x: x.get("model_hr_pct", 0), reverse=True)
+            top8 = ranked_pool[:8]
+
+            # Save top 100 to predictions (training data)
+            content = json.dumps(top100, indent=2)
+            await github_put_file(path, content,
+                f"lineups confirmed: {today} ({len(top100)} records)", sha)
+
+            # Save top 8 to top8 file (betting record)
+            top8_path = f"data/top8/{today}.json"
+            existing_top8_content, top8_sha = await github_get_file(top8_path)
+            await github_put_file(top8_path, json.dumps(top8, indent=2),
+                                  f"top8: {today} ({len(top8)} confirmed picks)", top8_sha)
+
+            # Build notification showing any replacements
+            prev_top8_names = set()
+            if existing_top8_content:
+                try:
+                    import json as _j
+                    prev = _j.loads(existing_top8_content)
+                    prev_top8_names = {r.get("name","") for r in prev}
+                except: pass
+            new_top8_names  = {r.get("name","") for r in top8}
+            added   = new_top8_names - prev_top8_names
+            removed = prev_top8_names - new_top8_names
+            games_confirmed_count = len({f"{r['team']}-{r['opp_pitcher']}" for r in all_confirmed_only}) // 2
+
+            notify_msg  = f"Lineups confirmed {et_today().isoformat()}"
+            notify_msg += f"\n{games_confirmed_count} games confirmed"
+            notify_msg += f"\nTop 8: " + ", ".join(r.get("name","?").split()[-1] for r in top8[:4]) + "..."
+            if added:
+                notify_msg += f"\nAdded: {', '.join(n.split()[-1] for n in added)}"
+            if removed:
+                notify_msg += f"\nDropped: {', '.join(n.split()[-1] for n in removed)}"
+
+            print(f"Lineup check: top100 saved ({len(top100)}), top8 saved ({len(top8)} confirmed)")
+            if added or removed:
+                print(f"  Top 8 changes - added: {added}, removed: {removed}")
+            # Only push notification if top 8 actually changed or first confirmation of day
+            if added or removed or not existing_top8_content:
+                await notify(notify_msg, "Lineups Confirmed")
+            else:
+                print(f"  Top 8 unchanged - skipping Pushover")
+        else:
+            print(f"Lineup check: no new confirmations yet")
 
     except Exception as e:
         print(f"check_lineup_confirmations error: {e}")
         import traceback; traceback.print_exc()
-
 
 
 async def build_boxscore_outcomes(target_date: str):
@@ -2316,14 +2362,57 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
     except Exception as e:
         print(f"  Parlay results error (non-fatal): {e}")
 
-    # Step 8: Pushover notification with running totals + goal tracking
+    # Step 8: Pushover notification - daily report card
     if notify_result:
         import json as _ej
-        # Build running totals across all tracked days for goal progress
+
+        # -- Tier breakdown: where are captured HR hitters ranked? --
         try:
-            total_hrs_all   = 0
-            total_recs_all  = 0
-            days_tracked    = 0
+            # Get total MLB HRs from boxscores (already built above)
+            total_mlb_hrs = len(hr_by_id)
+
+            # Rank today's top100 by model score
+            ranked_today = sorted(top100, key=lambda x: x.get("model_hr_pct",0), reverse=True)
+
+            def hits_in_range(recs, start, end):
+                count = 0
+                for r in recs[start:end]:
+                    mid = r.get("mlb_id")
+                    nl  = r.get("name","").lower()
+                    if (mid and mid in hr_by_id) or nl in hr_by_name:
+                        count += 1
+                return count
+
+            r1_25  = hits_in_range(ranked_today, 0,  25)
+            r26_50 = hits_in_range(ranked_today, 25, 50)
+            r51_75 = hits_in_range(ranked_today, 50, 75)
+            r76_100 = hits_in_range(ranked_today, 75, 100)
+            captured = r1_25 + r26_50 + r51_75 + r76_100
+
+            cov_pct = round(captured / max(total_mlb_hrs, 1) * 100)
+            p1  = round(r1_25   / max(captured, 1) * 100)
+            p2  = round(r26_50  / max(captured, 1) * 100)
+            p3  = round(r51_75  / max(captured, 1) * 100)
+            p4  = round(r76_100 / max(captured, 1) * 100)
+
+            p1_status = (
+                "ON FIRE" if p1 >= 50 else
+                "CLOSE"   if p1 >= 35 else
+                "BUILDING" if p1 >= 20 else
+                "LEARNING"
+            )
+        except Exception as _ce:
+            total_mlb_hrs = captured = 0
+            r1_25 = r26_50 = r51_75 = r76_100 = 0
+            p1 = p2 = p3 = p4 = cov_pct = 0
+            p1_status = "?"
+            print(f"Tier calc error: {_ce}")
+
+        # -- Running average --
+        try:
+            total_hrs_all  = 0
+            total_recs_all = 0
+            days_tracked   = 0
             async with httpx.AsyncClient(timeout=10) as _hc:
                 _r = await _hc.get(
                     f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/data/predictions",
@@ -2338,37 +2427,33 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
                 if not _raw: continue
                 try:
                     _recs = _ej.loads(_raw)
-                    _completed = [r for r in _recs if r.get("hit_hr") in [0,1]]
-                    if _completed:
-                        total_hrs_all  += sum(1 for r in _completed if r.get("hit_hr") == 1)
-                        total_recs_all += len(_completed)
+                    _done = [r for r in _recs if r.get("hit_hr") in [0,1]]
+                    if _done:
+                        total_hrs_all  += sum(1 for r in _done if r.get("hit_hr") == 1)
+                        total_recs_all += len(_done)
                         days_tracked   += 1
                 except: pass
             running_rate = round(total_hrs_all / max(total_recs_all, 1) * 100, 1)
-            # Goal: 25-45 HRs per 100 = 25-45% hit rate on top 100
-            goal_status = (
-                "ON FIRE" if hr_rate >= 45 else
-                "WIN" if hr_rate >= 25 else
-                "BELOW TARGET" if hr_rate >= 15 else
-                "LEARNING"
-            )
-        except Exception as _e:
+        except:
             running_rate = 0
             days_tracked = 0
-            goal_status  = "?"
-            total_hrs_all = 0
-            total_recs_all = 0
 
-        top8_hit_str  = f"{top8_hrs}/{top8_total}" if isinstance(top8_hrs, int) else "?/?"
-        top8_rate     = round(int(top8_hrs) / max(int(top8_total), 1) * 100, 1) if isinstance(top8_hrs, int) and isinstance(top8_total, int) else 0
+        top8_hit_str = f"{top8_hrs}/{top8_total}" if isinstance(top8_hrs, int) else "?/?"
+        top8_rate    = round(int(top8_hrs) / max(int(top8_total), 1) * 100) if isinstance(top8_hrs, int) and isinstance(top8_total, int) else 0
 
         notify_msg = (
             f"Results: {target_date}"
-            + f"\nToday: {hr_count}/100 HRs ({hr_rate}%) — {goal_status}"
+            + f"\n{'─'*20}"
+            + f"\nCoverage: {captured}/{total_mlb_hrs} HRs ({cov_pct}%)"
+            + f"\n{'─'*20}"
+            + f"\n1-25:    {r1_25}/{captured} ({p1}%) ← {p1_status}"
+            + f"\n26-50:   {r26_50}/{captured} ({p2}%)"
+            + f"\n51-75:   {r51_75}/{captured} ({p3}%)"
+            + f"\n76-100:  {r76_100}/{captured} ({p4}%)"
+            + f"\n{'─'*20}"
             + f"\nTop 8: {top8_hit_str} ({top8_rate}%)"
-            + f"\n{days_tracked}d avg: {total_hrs_all}/{total_recs_all} ({running_rate}%)"
-            + f"\nGoal: 25-45 HRs per 100"
-            + f"\nGames: {games_final} final"
+            + f"\n{days_tracked}d avg: {running_rate}%"
+            + f"\nGoal: 50% in 1-25"
         )
         await notify(notify_msg, "End of Day ✓", priority=0)
 
@@ -2605,19 +2690,6 @@ async def save_projected_top100(target_date: str = None):
             return
 
         ranked = sorted(all_candidates, key=lambda x: x.get("model_hr_pct",0) or 0, reverse=True)
-
-        # Save FULL file - all players scored, scratch replacement pool, never trained on
-        full_path = f"data/full/{today}.json"
-        _, full_sha = await github_get_file(full_path)
-        await github_put_file(
-            full_path,
-            json.dumps(ranked, indent=2),
-            f"full slate: {today} ({len(ranked)} players)",
-            full_sha
-        )
-        print(f"save_projected_top100: saved {len(ranked)} to full file")
-
-        # Save top 100 - training data only
         top100 = ranked[:100]
         await github_put_file(path, json.dumps(top100, indent=2),
                               f"projected top100: {today} ({len(top100)} players)", sha)
