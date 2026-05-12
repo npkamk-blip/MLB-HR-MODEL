@@ -496,12 +496,6 @@ async def train_xgboost(save_to_github: bool = True):
     _xgb_trained  = True
     _xgb_oob      = xgb_cv
 
-    # Update model weights so /version shows correct record count and features
-    _model_weights["records_used"]  = n
-    _model_weights["last_calibrated"] = et_today().isoformat()
-    _model_weights["top_features"]  = [f for f, _ in ranked[:10]]
-    _model_weights["model_type"]    = "xgboost"
-
     print(f"XGBoost trained - {n} records, CV AUC={xgb_cv:.3f}, "
           f"scale_pos_weight={spw}, top={ranked[0][0] if ranked else '?'}")
 
@@ -541,11 +535,11 @@ async def train_xgboost(save_to_github: bool = True):
 
 
 async def startup_train_xgb():
-    """Train XGBoost on startup - in memory only, no GitHub write to prevent deploy loops."""
+    """Train XGBoost on startup - saves to GitHub so weights persist across restarts."""
     await asyncio.sleep(30)  # wait for data to load
     try:
-        print("Startup: training XGBoost (in memory only)...")
-        result = await train_xgboost(save_to_github=False)
+        print("Startup: training XGBoost...")
+        result = await train_xgboost(save_to_github=True)
         if isinstance(result, dict) and result.get("status") == "done":
             auc = result.get("cv_auc", 0)
             records = result.get("records_used", 0)
@@ -686,7 +680,7 @@ _cache = {
 
 _games_cache = {}   # { date_str: { "data": ..., "ts": datetime } }
 _contact_log = {}   # { player_name_lower: [ {date, pitch_type, ev, la, dist, bat_speed, result}, ... ] }
-GAMES_CACHE_TTL = 1800  # 30 minutes - recomputes less often, reduces crashes
+GAMES_CACHE_TTL = 300  # 5 minutes - keeps site fast and data fresh
 
 PARK_HR_FACTORS = {
     "Colorado Rockies":      {"L":1.40,"R":1.40},
@@ -2032,49 +2026,8 @@ async def check_lineup_confirmations():
                 print(f"  Full file error: {_fe}")
 
         top100 = ranked[:100]
-
-        # Save predictions file (top 100 - training data)
         await github_put_file(path, json.dumps(top100, indent=2),
                               f"lineups confirmed: {today} ({len(top100)} records)", sha)
-
-        # Sync full file (270 players - Batters tab display)
-        # Apply same scratch/confirm/new-player changes to full file
-        try:
-            full_path = f"data/full/{today}.json"
-            full_raw, full_sha = await github_get_file(full_path)
-            if full_raw:
-                full_recs  = json.loads(full_raw)
-                full_dict  = {r.get("name",""): r for r in full_recs}
-
-                # Apply same changes: scratches, confirmations, new players
-                for name, rec in list(full_dict.items()):
-                    # Remove scratched players (projected who aren't in any confirmed lineup)
-                    if rec.get("lineup_source") == "projected":
-                        team = rec.get("team","")
-                        # Check if this team has confirmed and player isn't in it
-                        updated = records_dict.get(name)
-                        if updated:
-                            full_dict[name]["lineup_source"] = updated.get("lineup_source", "projected")
-                        elif name not in records_dict:
-                            # Was scratched from predictions - remove from full too
-                            del full_dict[name]
-
-                # Add any new confirmed players not in full file
-                for name, rec in records_dict.items():
-                    if name not in full_dict:
-                        full_dict[name] = rec
-
-                full_ranked = sorted(full_dict.values(),
-                                     key=lambda x: x.get("model_hr_pct",0) or 0, reverse=True)
-                await github_put_file(
-                    full_path,
-                    json.dumps(full_ranked, indent=2),
-                    f"full sync: {today} ({len(full_ranked)} players)",
-                    full_sha
-                )
-                print(f"  Full file synced: {len(full_ranked)} players")
-        except Exception as _fe:
-            print(f"  Full file sync error: {_fe}")
 
         # Notify only when top 8 names change
         top8     = top100[:8]
@@ -2084,6 +2037,14 @@ async def check_lineup_confirmations():
         added   = new_names - old_names
         removed = old_names - new_names
         print(f"Lineup check: {len(top100)} records saved")
+
+        # Update games file so Batters tab stays current
+        try:
+            asyncio.create_task(get_games(today, refresh=True))
+            print(f"  Triggered games file update for {today}")
+        except Exception as _ge:
+            print(f"  Games file update error: {_ge}")
+
         if added or removed:
             msg  = f"Lineups updated {today}"
             msg += f"\nTop 8: " + ", ".join(r.get("name","?").split()[-1] for r in top8[:4]) + "..."
@@ -2691,6 +2652,14 @@ async def save_projected_top100(target_date: str = None):
             print(f"save_projected_top100: saved projected top8 ({top8_names}...)")
         else:
             print(f"save_projected_top100: top8 file already exists for {today} - skipping")
+
+        # Trigger games computation so data/games/{today}.json gets saved
+        # Makes Batters tab instant from 8am onwards
+        try:
+            asyncio.create_task(get_games(today, refresh=True))
+            print(f"save_projected_top100: triggered games file save for {today}")
+        except Exception as _ge:
+            print(f"save_projected_top100: games trigger error: {_ge}")
 
     except Exception as e:
         print(f"save_projected_top100 error: {e}")
@@ -5645,39 +5614,56 @@ def status():
 
 @app.get("/version")
 def version():
-    """Quick status check - XGBoost only."""
-    xgb_auc = round(_xgb_oob, 4)
-    records  = _model_weights.get("records_used", 0)
+    """
+    Full system status - models, data pipeline, last run times.
+    Your go-to endpoint to check everything is working.
+    """
+    rf_auc  = _model_weights.get("oob_score", 0)
+    xgb_auc = _xgb_oob
+    winning = "xgboost" if (_xgb_trained and xgb_auc > rf_auc) else "random_forest"
+
     return {
-        "active_model":   "xgboost",
-        "xgboost": {
-            "trained":      _xgb_trained,
-            "cv_auc":       xgb_auc,
-            "records_used": records,
+        # -- Models --
+        "active_model":   winning,
+        "rf": {
+            "trained":      _rf_trained,
+            "records_used": _model_weights.get("records_used", 0),
+            "cv_auc":       round(rf_auc, 4),
             "last_trained": _model_weights.get("last_calibrated"),
+            "params":       _model_weights.get("rf_params"),
             "top_features": _model_weights.get("top_features", [])[:5],
         },
+        "xgboost": {
+            "trained":      _xgb_trained,
+            "cv_auc":       round(xgb_auc, 4),
+            "beats_rf":     _xgb_trained and xgb_auc > rf_auc,
+            "gap":          round(xgb_auc - rf_auc, 4),
+        },
+        # -- Data pipeline --
         "data": {
             "ready":            _cache["ready"],
             "last_savant_load": _cache.get("last_updated"),
             "last_8d_update":   _cache.get("last_8d_update"),
             "bat_2026_rows":    len(_cache["bat_2026"]),
             "bat_8d_rows":      len(_cache["bat_8d"]),
+            "pit_2026_rows":    len(_cache["pit_2026"]),
         },
+        # -- Today --
         "today": {
-            "date":           et_today().isoformat(),
-            "rotation_round": get_rotation_round(),
-            "rotation_day":   get_rotation_day(),
+            "date":             et_today().isoformat(),
+            "rotation_round":   get_rotation_round(),
+            "rotation_day":     get_rotation_day(),
         },
+        # -- Schedule (ET) --
         "schedule": {
-            "2am":      "8d contact log refresh",
-            "4am":      "end_of_day_save - outcomes recorded",
-            "7am":      "XGBoost retrain + Savant refresh",
-            "8am":      "projected lineups saved, morning notification",
-            "10am-8pm": "hourly lineup confirmations",
+            "8am":  "projected lineups saved, top8 written",
+            "10am-8pm": "hourly lineup confirmations, top8 updated",
+            "4am":  "end_of_day_save - clean top100 written, top8 outcomes patched",
+            "7am":  "models retrained on clean data + Savant refresh",
         },
         "metric": "cv_auc_5fold - 0.5=random, 1.0=perfect",
     }
+
 
 @app.get("/xgboost-status")
 async def xgboost_status():
@@ -5730,24 +5716,12 @@ async def get_games(date: str = None, refresh: bool = False):
     if cached and not refresh and (datetime.now() - cached["ts"]).total_seconds() < GAMES_CACHE_TTL:
         return cached["data"]
 
-    try:
-        async with httpx.AsyncClient(timeout=20) as client:
-            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
-            data = r.json()
-    except Exception as _e:
-        print(f"Schedule fetch error: {_e}")
-        return {"games": [], "date": today, "loading": False, "error": "Schedule unavailable"}
+    async with httpx.AsyncClient(timeout=30) as client:
+        r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
+        data = r.json()
 
-    try:
-        dk_props = await fetch_dk_hr_props()
-    except Exception as _e:
-        print(f"fetch_dk_hr_props error: {_e}")
-        dk_props = {}
-    try:
-        k_props = await fetch_pitcher_k_props()
-    except Exception as _e:
-        print(f"fetch_pitcher_k_props error: {_e}")
-        k_props = {}
+    dk_props = await fetch_dk_hr_props()
+    k_props  = await fetch_pitcher_k_props()
     dates = data.get("dates", [])
     if not dates: return {"games": [], "date": today, "loading": False}
 
@@ -5799,7 +5773,7 @@ async def get_games(date: str = None, refresh: bool = False):
         lineup_away, lineup_home = [], []
         lineup_away_status = lineup_home_status = "projected"
         try:
-            async with httpx.AsyncClient(timeout=8) as client:
+            async with httpx.AsyncClient(timeout=15) as client:
                 r = await client.get(f"{MLB_API}/game/{gid}/boxscore"); box = r.json()
             teams = box.get("teams", {})
             def extract(side):
@@ -6023,6 +5997,22 @@ async def get_games(date: str = None, refresh: bool = False):
 
     result = {"games": games_out, "date": today, "loading": False}
     _games_cache[today] = {"data": result, "ts": datetime.now()}
+
+    # Save full games file to GitHub so frontend can read directly
+    # This makes Batters tab instant - no backend call needed
+    try:
+        games_path = f"data/games/{today}.json"
+        existing_games, games_sha = await github_get_file(games_path)
+        await github_put_file(
+            games_path,
+            json.dumps(result, indent=2),
+            f"games: {today} ({len(games_out)} games)",
+            games_sha
+        )
+        print(f"Saved data/games/{today}.json ({len(games_out)} games)")
+    except Exception as _ge:
+        print(f"Games file save error (non-fatal): {_ge}")
+
     return result
 
 @app.get("/debug-weather")
