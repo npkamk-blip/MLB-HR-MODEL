@@ -686,7 +686,7 @@ _cache = {
 
 _games_cache = {}   # { date_str: { "data": ..., "ts": datetime } }
 _contact_log = {}   # { player_name_lower: [ {date, pitch_type, ev, la, dist, bat_speed, result}, ... ] }
-GAMES_CACHE_TTL = 300  # 5 minutes - keeps site fast and data fresh
+GAMES_CACHE_TTL = 1800  # 30 minutes - recomputes less often, reduces crashes
 
 PARK_HR_FACTORS = {
     "Colorado Rockies":      {"L":1.40,"R":1.40},
@@ -5730,9 +5730,13 @@ async def get_games(date: str = None, refresh: bool = False):
     if cached and not refresh and (datetime.now() - cached["ts"]).total_seconds() < GAMES_CACHE_TTL:
         return cached["data"]
 
-    async with httpx.AsyncClient(timeout=30) as client:
-        r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
-        data = r.json()
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
+            data = r.json()
+    except Exception as _e:
+        print(f"Schedule fetch error: {_e}")
+        return {"games": [], "date": today, "loading": False, "error": "Schedule unavailable"}
 
     try:
         dk_props = await fetch_dk_hr_props()
@@ -5795,7 +5799,7 @@ async def get_games(date: str = None, refresh: bool = False):
         lineup_away, lineup_home = [], []
         lineup_away_status = lineup_home_status = "projected"
         try:
-            async with httpx.AsyncClient(timeout=15) as client:
+            async with httpx.AsyncClient(timeout=8) as client:
                 r = await client.get(f"{MLB_API}/game/{gid}/boxscore"); box = r.json()
             teams = box.get("teams", {})
             def extract(side):
