@@ -2511,13 +2511,9 @@ async def startup_catchup():
     except Exception as e:
         print(f"Startup catchup (projected) error: {e}")
 
-    # Always run lineup confirmations to overwrite projected with confirmed
-    try:
-        print("Startup catchup: running lineup confirmations")
-        await check_lineup_confirmations()
-        print("Startup catchup: lineup confirmations complete")
-    except Exception as e:
-        print(f"Startup catchup (lineups) error: {e}")
+    # Lineup confirmations run hourly via scheduler - not on startup
+    # Running on startup caused deploy loops
+    print("Startup catchup: complete (lineup confirmations run hourly)")
 
 
 async def save_projected_top100(target_date: str = None):
