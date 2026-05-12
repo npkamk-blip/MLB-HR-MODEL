@@ -1411,33 +1411,12 @@ async def daily_refresh_loop():
     All heavy tasks run as background coroutines so site stays responsive.
     Cache is never wiped - always updated in place.
     """
-    from datetime import timezone, timedelta as _td
-
-    # Startup catch - run missed job if server restarted during a window
-    _startup_et   = datetime.now(timezone.utc) + _td(hours=-4)
-    _startup_hour = _startup_et.hour
-    if _startup_hour == 8:
-        print("Startup catch: running missed 8am job")
-        try:
-            _ts = et_today().isoformat()
-            await save_projected_top100(_ts)
-            await notify(f"Good morning! {_ts} (startup catch)", "Good Morning ⚾")
-        except Exception as _se: print(f"Startup 8am error: {_se}")
-    elif _startup_hour == 7:
-        print("Startup catch: running missed 7am retrain")
-        try: await train_xgboost()
-        except Exception as _se: print(f"Startup 7am error: {_se}")
-    elif _startup_hour == 4:
-        print("Startup catch: running missed 4am end_of_day")
-        try:
-            _yd = (et_today() - timedelta(days=1)).isoformat()
-            await end_of_day_save(_yd, notify_result=True)
-        except Exception as _se: print(f"Startup 4am error: {_se}")
-
     while True:
         # Use Eastern Time for all scheduling (Railway runs UTC)
+        from datetime import timezone, timedelta as _td
         et_now = datetime.now(timezone.utc) + _td(hours=-4)
-        now    = et_now
+        now = et_now
+        await asyncio.sleep(3600)  # check every hour
 
         # 2am - nothing, let West Coast games finish (they end ~1-2am ET)
 
@@ -1456,21 +1435,34 @@ async def daily_refresh_loop():
         # 7am - retrain RF + XGBoost on clean data, then refresh Savant
         if now.hour == 7:
             try:
-                print(f"7am XGBoost retrain - Round {get_rotation_round()} Day {get_rotation_day()}")
-                await train_xgboost()
-                xgb_auc    = round(_xgb_oob, 3)
-                records    = _model_weights.get("records_used", 0)
-                clean_start = "2026-05-11"
+                print(f"7am retrain starting - Round {get_rotation_round()} Day {get_rotation_day()}")
+                rf_result  = await recalibrate_model()
+                xgb_result = await train_xgboost()
+                rf_auc  = round(_model_weights.get("oob_score", 0), 3)
+                xgb_auc = round(_xgb_oob, 3)
+                records = _model_weights.get("records_used", 0)
+                winner  = "XGB" if _xgb_trained and xgb_auc > rf_auc else "RF"
+                # Show progress toward clean data milestone
+                clean_start = "2026-05-10"
                 days_clean  = (et_today() - date.fromisoformat(clean_start)).days
-                days_to_go  = max(0, 29 - days_clean)
+                days_to_go  = max(0, 30 - days_clean)
                 await notify(
-                    f"XGBoost retrained\nAUC: {xgb_auc} | Records: {records}\n{days_clean} clean days | {days_to_go} days to go",
+                    f"Models retrained\n"
+                    f"Winner: {winner} | XGB: {xgb_auc} | RF: {rf_auc}\n"
+                    f"Records: {records} ({days_clean} clean days)\n"
+                    f"{days_to_go} days until corrupt data purge",
                     "Model Retrained"
                 )
             except Exception as e:
                 await notify(f"ERROR in 7am retrain: {e}", "Retrain ERROR", 1)
                 print(f"7am retrain error: {e}")
+            try:
+                print("7am Savant refresh starting in background")
+                asyncio.create_task(load_all_savant_data())
+            except Exception as e:
+                print(f"7am Savant refresh error: {e}")
 
+        # 8am - save projected top100 as fallback + pre-warm games cache
         if now.hour == 8:
             try:
                 today_str = et_today().isoformat()
@@ -2427,7 +2419,6 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
             total_hrs_all = 0
             total_recs_all = 0
 
-        # Tier breakdown
         try:
             total_mlb_hrs = len(hr_by_id)
             ranked_today  = sorted(top100, key=lambda x: x.get("model_hr_pct",0), reverse=True)
@@ -2435,25 +2426,24 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
                 return sum(1 for r in recs[s:e]
                            if (r.get("mlb_id") and r.get("mlb_id") in hr_by_id)
                            or r.get("name","").lower() in hr_by_name)
-            r1   = hits_in_range(ranked_today,  0, 25)
-            r2   = hits_in_range(ranked_today, 25, 50)
-            r3   = hits_in_range(ranked_today, 50, 75)
-            r4   = hits_in_range(ranked_today, 75,100)
-            captured = r1 + r2 + r3 + r4
-            cov_pct  = round(captured / max(total_mlb_hrs, 1) * 100)
-            p1 = round(r1 / max(captured, 1) * 100)
-            p2 = round(r2 / max(captured, 1) * 100)
-            p3 = round(r3 / max(captured, 1) * 100)
-            p4 = round(r4 / max(captured, 1) * 100)
+            r1 = hits_in_range(ranked_today,  0, 25)
+            r2 = hits_in_range(ranked_today, 25, 50)
+            r3 = hits_in_range(ranked_today, 50, 75)
+            r4 = hits_in_range(ranked_today, 75,100)
+            captured = r1+r2+r3+r4
+            cov_pct  = round(captured/max(total_mlb_hrs,1)*100)
+            p1 = round(r1/max(captured,1)*100)
+            p2 = round(r2/max(captured,1)*100)
+            p3 = round(r3/max(captured,1)*100)
+            p4 = round(r4/max(captured,1)*100)
             p1_status = ("ON FIRE" if p1>=50 else "CLOSE" if p1>=35 else "BUILDING" if p1>=20 else "LEARNING")
-            slate_type = "FULL SLATE" if games_final >= 12 else "LIGHT SLATE"
+            slate_type = "FULL SLATE" if games_final>=12 else "LIGHT SLATE"
         except:
-            total_mlb_hrs = captured = cov_pct = 0
+            total_mlb_hrs=captured=cov_pct=0
             r1=r2=r3=r4=p1=p2=p3=p4=0
-            p1_status="?"
-            slate_type="?"
+            p1_status="?"; slate_type="?"
 
-        top8_hit_str = f"{top8_hrs}/{top8_total}" if isinstance(top8_hrs, int) else "?/?"
+        top8_hit_str = f"{top8_hrs}/{top8_total}" if isinstance(top8_hrs,int) else "?/?"
         top8_rate    = round(int(top8_hrs)/max(int(top8_total),1)*100) if isinstance(top8_hrs,int) and isinstance(top8_total,int) else 0
 
         notify_msg = (
@@ -2499,7 +2489,7 @@ async def startup_event():
     asyncio.create_task(daily_refresh_loop())
     asyncio.create_task(load_model_weights())
     asyncio.create_task(startup_catchup())
-    asyncio.create_task(startup_train_xgb())  # XGBoost only - RF dropped
+    asyncio.create_task(startup_train_xgb())  # XGBoost only
 
 async def startup_catchup():
     """On startup - never miss a day of training data.
@@ -2705,7 +2695,7 @@ async def save_projected_top100(target_date: str = None):
 
         ranked = sorted(all_candidates, key=lambda x: x.get("model_hr_pct",0) or 0, reverse=True)
 
-        # Save FULL file - all players scored, scratch pool, never trained on
+        # Save full slate file - scratch pool, never trained on
         full_path = f"data/full/{today}.json"
         _, full_sha = await github_get_file(full_path)
         await github_put_file(full_path, json.dumps(ranked, indent=2),
@@ -3468,15 +3458,13 @@ def get_trend(b8d, bc):
     return "Steady"
 
 def compute_hr_probability(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
-    """
-    Returns multiplicative breakdown for display. XGBoost is the active model.
-    """
+    """Returns multiplicative breakdown for display. XGBoost is the active model."""
     mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf = \
         compute_hr_prob_multiplicative(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team)
     return mult_prob, breakdown, archetype, trend, reasons, platoon_tag, conf
 
-def _compute_hr_probability_rf_unused(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
-    """RF code kept for reference but not called."""
+def _rf_predict_unused(name, bat_hand, opp_p_name, opp_p_hand, park_factor, weather_mult, home_team=""):
+    """RF prediction kept for reference - not called."""
     if not _rf_trained or _rf_model is None:
         return None
 
@@ -5709,17 +5697,30 @@ def status():
 
 @app.get("/version")
 def version():
-    """XGBoost only status endpoint."""
-    xgb_auc = round(_xgb_oob, 4)
-    records  = _model_weights.get("records_used", 0)
+    """
+    Full system status - models, data pipeline, last run times.
+    Your go-to endpoint to check everything is working.
+    """
+    rf_auc  = _model_weights.get("oob_score", 0)
+    xgb_auc = _xgb_oob
+    winning = "xgboost" if (_xgb_trained and xgb_auc > rf_auc) else "random_forest"
+
     return {
-        "active_model":   "xgboost",
+        # -- Models --
+        "active_model":   winning,
+        "rf": {
+            "trained":      _rf_trained,
+            "records_used": _model_weights.get("records_used", 0),
+            "cv_auc":       round(rf_auc, 4),
+            "last_trained": _model_weights.get("last_calibrated"),
+            "params":       _model_weights.get("rf_params"),
+            "top_features": _model_weights.get("top_features", [])[:5],
+        },
         "xgboost": {
             "trained":      _xgb_trained,
-            "cv_auc":       xgb_auc,
-            "records_used": records,
-            "last_trained": _model_weights.get("last_calibrated"),
-            "top_features": _model_weights.get("top_features", [])[:5],
+            "cv_auc":       round(xgb_auc, 4),
+            "beats_rf":     _xgb_trained and xgb_auc > rf_auc,
+            "gap":          round(xgb_auc - rf_auc, 4),
         },
         # -- Data pipeline --
         "data": {
