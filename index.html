@@ -903,9 +903,12 @@ function buildGameCard(g, gi){
 function buildBatterRow(b, order, uid){
   var name = b.name||b.fullName||'';
   var pct  = b.hr_prob||b.model_hr_pct||0;
-  var xslg = b.xslg_l8d||0;
-  var brl  = b.barrel_pct_season||0;
-  var la   = b.la_season||0;
+  // Stats are nested in season/l8d objects from /games, or flat from predictions file
+  var l8d  = b.l8d||{};
+  var seas  = b.season||{};
+  var xslg = l8d.xslg||b.xslg_l8d||0;
+  var brl  = l8d.barrel||b.barrel_pct_l8d||b.barrel_pct_season||seas.barrel||0;
+  var la   = l8d.la||b.la_l8d||seas.la||b.la_season||0;
   var isTop25 = top25Names.has(name);
   var pillCls = pctCls(pct) + (isTop25 ? ' top25-pill' : '');
 
