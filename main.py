@@ -496,6 +496,16 @@ async def train_xgboost(save_to_github: bool = True):
     _xgb_trained  = True
     _xgb_oob      = xgb_cv
 
+    # Update _model_weights so /version shows correct XGBoost stats
+    global _model_weights
+    _model_weights["records_used"]   = n
+    _model_weights["last_calibrated"] = et_today().isoformat()
+    _model_weights["top_features"]   = [f for f, _ in ranked[:8]]
+    _model_weights["model_type"]     = "xgboost"
+    _model_weights["scale_pos_weight"] = spw
+    _model_weights["xgb_depth"]      = xgb_depth if "xgb_depth" in dir() else 4
+    _model_weights["xgb_trees"]      = xgb_trees if "xgb_trees" in dir() else 100
+
     print(f"XGBoost trained - {n} records, CV AUC={xgb_cv:.3f}, "
           f"scale_pos_weight={spw}, top={ranked[0][0] if ranked else '?'}")
 
