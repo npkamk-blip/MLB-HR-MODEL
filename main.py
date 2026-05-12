@@ -2038,8 +2038,19 @@ async def check_lineup_confirmations():
                 print(f"  Full file error: {_fe}")
 
         top100 = ranked[:100]
-        await github_put_file(path, json.dumps(top100, indent=2),
-                              f"lineups confirmed: {today} ({len(top100)} records)", sha)
+
+        # Check if meaningful change happened (not just projected->confirmed flag)
+        # Only write to GitHub if player list or scores changed - prevents deploy spam
+        existing_names = {r.get("name") for r in existing_records}
+        new_names_set  = {r.get("name") for r in top100}
+        has_new_players = new_names_set != existing_names
+        has_scratches   = len(top100) != len(existing_records)
+
+        if has_new_players or has_scratches or any_changes:
+            await github_put_file(path, json.dumps(top100, indent=2),
+                                  f"lineups confirmed: {today} ({len(top100)} records)", sha)
+        else:
+            print(f"Lineup check: only source flags updated, skipping GitHub write")
 
         # Notify only when top 8 names change
         top8     = top100[:8]
@@ -2050,12 +2061,13 @@ async def check_lineup_confirmations():
         removed = old_names - new_names
         print(f"Lineup check: {len(top100)} records saved")
 
-        # Update games file so Batters tab stays current
-        try:
-            asyncio.create_task(get_games(today, refresh=True))
-            print(f"  Triggered games file update for {today}")
-        except Exception as _ge:
-            print(f"  Games file update error: {_ge}")
+        # Only update games file if top 8 changed - prevents deploy loop
+        if added or removed:
+            try:
+                asyncio.create_task(get_games(today, refresh=True))
+                print(f"  Triggered games file update for {today}")
+            except Exception as _ge:
+                print(f"  Games file update error: {_ge}")
 
         if added or removed:
             msg  = f"Lineups updated {today}"
