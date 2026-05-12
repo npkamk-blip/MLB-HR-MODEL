@@ -826,32 +826,41 @@ function buildGameCard(g, gi){
   function pitSplits(p){
     if(!p||!p.name||p.name==='TBD') return '<span style="color:var(--muted2);font-size:11px">TBD</span>';
     var vs = p.hand==='L'?'vs RHH':'vs LHH';
-    var hr9 = p.hr9_vs_hand||p.hr9||0;
-    var era = p.era||0;
-    return '<div class="pitcher-name">'+p.name+' <span class="pitcher-hand">'+p.hand+'HP</span></div>'+
-           '<div class="pitcher-splits">HR/9 <span>'+(hr9>0?hr9.toFixed(1):'--')+'</span> · ERA <span>'+(era>0?era.toFixed(2):'--')+'</span></div>';
+    // Use HR/9 vs the opposing batters handedness
+    // away pitcher faces home batters - need vs hand from game context
+    var hr9  = p.hr9||0;
+    var vsL  = p.vs_L_hr9||0;
+    var vsR  = p.vs_R_hr9||0;
+    var vsLbl = p.hand==='L' ? 'vs RHH' : 'vs LHH';
+    var vsHr9 = p.hand==='L' ? vsR : vsL;
+    return '<div class="pitcher-name">'+p.name+' <span class="pitcher-hand">'+(p.hand||'R')+'HP</span></div>'+
+           '<div class="pitcher-splits">HR/9 <span>'+(hr9>0?hr9.toFixed(2):'--')+'</span> · '+vsLbl+' <span>'+(vsHr9>0?vsHr9.toFixed(2):'--')+'</span></div>';
   }
 
   // Wind
   var wx = g.weather||{};
   var windHtml = '';
-  if(wx.wind_label){
-    var align = labelToAlign(wx.wind_label);
+  var windLabel = wx.label||wx.wind_label||'';
+  if(windLabel && windLabel!=='Dome'){
+    var align = labelToAlign(windLabel);
     var arrow = windArrow(align);
     windHtml = '<div class="wind-col">'+
       '<div class="wind-arrow">'+arrow+'</div>'+
-      '<div class="wind-label">'+wx.wind_label+'</div>'+
+      '<div class="wind-label">'+windLabel+(wx.wind_speed&&wx.wind_speed>0?' '+wx.wind_speed+'mph':'')+'</div>'+
     '</div>';
   } else {
-    windHtml = '<div class="wind-col"><div class="wind-label" style="color:var(--muted2)">Dome</div></div>';
+    windHtml = '<div class="wind-col"><div class="wind-label" style="color:var(--muted2)">'+(windLabel||'Dome')+'</div></div>';
   }
 
   // Proj HRs
-  var proj = g.proj_hrs||0;
-  var envLabel = g.env_label||'Normal';
-  var envCls = envLabel.toLowerCase().includes('ideal')?'env-ideal':
-               envLabel.toLowerCase().includes('good')?'env-good':
-               envLabel.toLowerCase().includes('tough')?'env-tough':'env-normal';
+  var totals = g.totals||{};
+  var proj = totals.total_exp_hr||g.proj_hrs||0;
+  var awayProj = totals.away_exp_hr||0;
+  var homeProj = totals.home_exp_hr||0;
+  // Derive env label from weather mult
+  var wxMult = g.weather&&g.weather.mult ? g.weather.mult : 1.0;
+  var envLabel = wxMult>=1.08?'Ideal':wxMult>=1.03?'Good':wxMult<=0.92?'Tough':'Normal';
+  var envCls = envLabel==='Ideal'?'env-ideal':envLabel==='Good'?'env-good':envLabel==='Tough'?'env-tough':'env-normal';
 
   // Batter sections
   function buildBatterSection(batters, team, status, side){
@@ -881,7 +890,7 @@ function buildGameCard(g, gi){
       '<div class="game-col game-col-proj" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">'+
         '<div class="proj-hrs">'+(proj>0?proj.toFixed(1):'--')+'</div>'+
         '<div class="proj-hrs-label">PROJ HRS</div>'+
-        '<div class="proj-hrs-split">'+(awayP.proj_hr||0).toFixed(1)+' / '+(homeP.proj_hr||0).toFixed(1)+'</div>'+
+        '<div class="proj-hrs-split">'+awayProj.toFixed(1)+' / '+homeProj.toFixed(1)+'</div>'+
         '<span class="env-badge '+envCls+'">'+envLabel+'</span>'+
       '</div>'+
       '<div class="game-col game-col-wind">'+windHtml+'</div>'+
@@ -894,9 +903,9 @@ function buildGameCard(g, gi){
 function buildBatterRow(b, order, uid){
   var name = b.name||b.fullName||'';
   var pct  = b.hr_prob||b.model_hr_pct||0;
-  var xslg = b.season&&b.season.xslg ? b.season.xslg : (b.xslg_l8d||0);
-  var brl  = b.season&&b.season.barrel ? b.season.barrel : (b.barrel_pct_season||0);
-  var la   = b.season&&b.season.la ? b.season.la : (b.la_season||0);
+  var xslg = b.xslg_l8d||0;
+  var brl  = b.barrel_pct_season||0;
+  var la   = b.la_season||0;
   var isTop25 = top25Names.has(name);
   var pillCls = pctCls(pct) + (isTop25 ? ' top25-pill' : '');
 
