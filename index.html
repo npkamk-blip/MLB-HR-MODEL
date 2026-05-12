@@ -2157,84 +2157,34 @@ async function load(forceRefresh){
   document.getElementById('game-main').innerHTML='<div class="no-data">Loading...</div>';
   try{
     var dateStr=formatDateForAPI(selectedDate);
-
-    // Load from saved predictions file first (instant) then fall back to /games
-    var gamesData = null;
-    var usedCache = false;
-    try {
-      // Read from full slate file (all 270 scored players) for Batters tab
-      // Falls back to predictions file (top 100) if full file not available yet
-      var predUrl = 'https://raw.githubusercontent.com/npkamk-blip/MLB-HR-MODEL/main/data/full/'+dateStr+'.json';
-      var predResp = await fetch(predUrl);
-      if(predResp.ok) {
-        var predData = await predResp.json();
-        if(predData && predData.length > 0) {
-          // Convert predictions format to games format for display
-          // Group by game (team + opp_pitcher)
-          var gameMap = {};
-          predData.forEach(function(p) {
-            var key = [p.team, p.opp_pitcher].sort().join('|');
-            if(!gameMap[key]) gameMap[key] = {
-              away: p.home_team !== p.team ? p.team : null,
-              home: p.home_team === p.team ? p.team : null,
-              away_pitcher: p.home_team === p.team ? p.opp_pitcher : null,
-              home_pitcher: p.home_team !== p.team ? p.opp_pitcher : null,
-              batters: [], time: null,
-              lineup_away_status: p.lineup_source || 'projected',
-              lineup_home_status: p.lineup_source || 'projected',
-            };
-            gameMap[key].batters.push(p);
-          });
-          usedCache = true;
-          // Build simple game list from predictions
-          allGames = Object.values(gameMap).map(function(g) {
-            var sorted = g.batters.sort(function(a,b){ return (b.model_hr_pct||0)-(a.model_hr_pct||0); });
-            return {
-              away: g.away || sorted[0].team,
-              home: g.home || sorted[0].home_team,
-              away_pitcher: {name: g.away_pitcher || sorted[0].opp_pitcher},
-              home_pitcher: {name: g.home_pitcher || sorted[0].opp_pitcher},
-              top_hr_candidates: sorted.map(function(p) { return {
-                name: p.name, team: p.team, hr_prob: p.model_hr_pct,
-                lineup_source: p.lineup_source,
-                season: {
-                  barrel: p.barrel_pct_season, ev: p.ev_season,
-                  iso: p.iso_season, hh: p.hard_hit_season
-                },
-                l8d: { xslg: p.xslg_l8d, ev: p.ev_l8d, bat_speed: p.bat_speed_l8d }
-              };}),
-              away_lineup: sorted.filter(function(p){ return p.team !== p.home_team; }).map(function(p){ return {name:p.name,hr_prob:p.model_hr_pct}; }),
-              home_lineup: sorted.filter(function(p){ return p.team === p.home_team; }).map(function(p){ return {name:p.name,hr_prob:p.model_hr_pct}; }),
-              lineup_away_status: 'projected',
-              lineup_home_status: 'projected',
-            };
-          });
-        }
-      }
-    } catch(e) { console.log('Predictions cache miss:', e); }
-
-    // Fall back to /games if no predictions file
-    if(!usedCache || forceRefresh) {
-      var url=API+'/games?date='+dateStr+(forceRefresh?'&refresh=true':'');
-      try {
-        var resp=await fetch(url);
-        if(resp.ok) {
-          var data=await resp.json();
-          if(!data.loading && data.games && data.games.length > 0) {
-            allGames=data.games;
-            usedCache = false;
-          }
-        }
-      } catch(e) { console.log('/games error:', e); }
-    }
-
-    if(!allGames || !allGames.length){
-      document.getElementById('batter-main').innerHTML='<div class="no-data" style="padding:40px;text-align:center"><div style="font-size:15px;margin-bottom:8px">⚾ No lineups yet for '+dateStr+'</div><div style="font-size:12px;color:var(--muted2)">Projected lineups load at 8am ET<br>Confirmed lineups post 10am-12pm ET</div></div>';
-      document.getElementById('pitcher-main').innerHTML='<div class="no-data">Check back at 10am ET</div>';
-      document.getElementById('game-main').innerHTML='<div class="no-data">Check back at 10am ET</div>';
+    var url=API+'/games?date='+dateStr+(forceRefresh?'&refresh=true':'');
+    var resp=await fetch(url);
+    if(!resp.ok)throw new Error('Backend error '+resp.status);
+    var data=await resp.json();
+    if(data.loading){document.getElementById('batter-main').innerHTML='<div class="err">'+(data.message||'Data loading - try again in 30 seconds.')+'</div>';btn.disabled=false;return;}
+    allGames=data.games||[];
+    if(!allGames.length){
+      var nm='<div class="no-data">No MLB games on '+dateStr+'.</div>';
+      ['batter-main','pitcher-main','game-main'].forEach(function(id){document.getElementById(id).innerHTML=nm;});
       btn.disabled=false;return;
     }
-
+    // Check if data is ready - silent retry if not, no blocking banner
+    try {
+      var stResp = await fetch(API+'/status');
+      var stData = await stResp.json();
+      if(!stData.ready || !stData.tree_trained) {
+        // Show subtle loading state - auto retry every 8 seconds silently
+        var retryIn = stData.tree_trained === false ? 20 : 8;
+        document.getElementById('batter-main').innerHTML =
+          '<div style="text-align:center;padding:40px 20px;color:var(--muted2)">' +
+          '<div style="font-size:13px;margin-bottom:6px">Loading data...</div>' +
+          '<div style="font-size:11px">Retrying automatically</div>' +
+          '</div>';
+        btn.disabled=false;
+        setTimeout(function(){ load(true); }, retryIn * 1000);
+        return;
+      }
+    } catch(e) {}
     buildBatterTable(allGames);
     buildPitcherTable(allGames);
     buildGameTable(allGames);
