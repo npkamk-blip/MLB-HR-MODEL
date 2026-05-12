@@ -2026,8 +2026,49 @@ async def check_lineup_confirmations():
                 print(f"  Full file error: {_fe}")
 
         top100 = ranked[:100]
+
+        # Save predictions file (top 100 - training data)
         await github_put_file(path, json.dumps(top100, indent=2),
                               f"lineups confirmed: {today} ({len(top100)} records)", sha)
+
+        # Sync full file (270 players - Batters tab display)
+        # Apply same scratch/confirm/new-player changes to full file
+        try:
+            full_path = f"data/full/{today}.json"
+            full_raw, full_sha = await github_get_file(full_path)
+            if full_raw:
+                full_recs  = json.loads(full_raw)
+                full_dict  = {r.get("name",""): r for r in full_recs}
+
+                # Apply same changes: scratches, confirmations, new players
+                for name, rec in list(full_dict.items()):
+                    # Remove scratched players (projected who aren't in any confirmed lineup)
+                    if rec.get("lineup_source") == "projected":
+                        team = rec.get("team","")
+                        # Check if this team has confirmed and player isn't in it
+                        updated = records_dict.get(name)
+                        if updated:
+                            full_dict[name]["lineup_source"] = updated.get("lineup_source", "projected")
+                        elif name not in records_dict:
+                            # Was scratched from predictions - remove from full too
+                            del full_dict[name]
+
+                # Add any new confirmed players not in full file
+                for name, rec in records_dict.items():
+                    if name not in full_dict:
+                        full_dict[name] = rec
+
+                full_ranked = sorted(full_dict.values(),
+                                     key=lambda x: x.get("model_hr_pct",0) or 0, reverse=True)
+                await github_put_file(
+                    full_path,
+                    json.dumps(full_ranked, indent=2),
+                    f"full sync: {today} ({len(full_ranked)} players)",
+                    full_sha
+                )
+                print(f"  Full file synced: {len(full_ranked)} players")
+        except Exception as _fe:
+            print(f"  Full file sync error: {_fe}")
 
         # Notify only when top 8 names change
         top8     = top100[:8]
@@ -5598,56 +5639,39 @@ def status():
 
 @app.get("/version")
 def version():
-    """
-    Full system status - models, data pipeline, last run times.
-    Your go-to endpoint to check everything is working.
-    """
-    rf_auc  = _model_weights.get("oob_score", 0)
-    xgb_auc = _xgb_oob
-    winning = "xgboost" if (_xgb_trained and xgb_auc > rf_auc) else "random_forest"
-
+    """Quick status check - XGBoost only."""
+    xgb_auc = round(_xgb_oob, 4)
+    records  = _model_weights.get("records_used", 0)
     return {
-        # -- Models --
-        "active_model":   winning,
-        "rf": {
-            "trained":      _rf_trained,
-            "records_used": _model_weights.get("records_used", 0),
-            "cv_auc":       round(rf_auc, 4),
-            "last_trained": _model_weights.get("last_calibrated"),
-            "params":       _model_weights.get("rf_params"),
-            "top_features": _model_weights.get("top_features", [])[:5],
-        },
+        "active_model":   "xgboost",
         "xgboost": {
             "trained":      _xgb_trained,
-            "cv_auc":       round(xgb_auc, 4),
-            "beats_rf":     _xgb_trained and xgb_auc > rf_auc,
-            "gap":          round(xgb_auc - rf_auc, 4),
+            "cv_auc":       xgb_auc,
+            "records_used": records,
+            "last_trained": _model_weights.get("last_calibrated"),
+            "top_features": _model_weights.get("top_features", [])[:5],
         },
-        # -- Data pipeline --
         "data": {
             "ready":            _cache["ready"],
             "last_savant_load": _cache.get("last_updated"),
             "last_8d_update":   _cache.get("last_8d_update"),
             "bat_2026_rows":    len(_cache["bat_2026"]),
             "bat_8d_rows":      len(_cache["bat_8d"]),
-            "pit_2026_rows":    len(_cache["pit_2026"]),
         },
-        # -- Today --
         "today": {
-            "date":             et_today().isoformat(),
-            "rotation_round":   get_rotation_round(),
-            "rotation_day":     get_rotation_day(),
+            "date":           et_today().isoformat(),
+            "rotation_round": get_rotation_round(),
+            "rotation_day":   get_rotation_day(),
         },
-        # -- Schedule (ET) --
         "schedule": {
-            "8am":  "projected lineups saved, top8 written",
-            "10am-8pm": "hourly lineup confirmations, top8 updated",
-            "4am":  "end_of_day_save - clean top100 written, top8 outcomes patched",
-            "7am":  "models retrained on clean data + Savant refresh",
+            "2am":      "8d contact log refresh",
+            "4am":      "end_of_day_save - outcomes recorded",
+            "7am":      "XGBoost retrain + Savant refresh",
+            "8am":      "projected lineups saved, morning notification",
+            "10am-8pm": "hourly lineup confirmations",
         },
         "metric": "cv_auc_5fold - 0.5=random, 1.0=perfect",
     }
-
 
 @app.get("/xgboost-status")
 async def xgboost_status():
@@ -5704,8 +5728,16 @@ async def get_games(date: str = None, refresh: bool = False):
         r = await client.get(f"{MLB_API}/schedule?sportId=1&date={today}&hydrate=team,probablePitcher")
         data = r.json()
 
-    dk_props = await fetch_dk_hr_props()
-    k_props  = await fetch_pitcher_k_props()
+    try:
+        dk_props = await fetch_dk_hr_props()
+    except Exception as _e:
+        print(f"fetch_dk_hr_props error: {_e}")
+        dk_props = {}
+    try:
+        k_props = await fetch_pitcher_k_props()
+    except Exception as _e:
+        print(f"fetch_pitcher_k_props error: {_e}")
+        k_props = {}
     dates = data.get("dates", [])
     if not dates: return {"games": [], "date": today, "loading": False}
 
