@@ -5693,32 +5693,25 @@ def status():
 
 @app.get("/version")
 def version():
-    """
-    Full system status - models, data pipeline, last run times.
-    Your go-to endpoint to check everything is working.
-    """
-    rf_auc  = _model_weights.get("oob_score", 0)
-    xgb_auc = _xgb_oob
-    winning = "xgboost" if (_xgb_trained and xgb_auc > rf_auc) else "random_forest"
+    """Your daily health check — model, data pipeline, schedule."""
+    xgb_auc = round(_xgb_oob, 4)
+    records  = _model_weights.get("records_used", 0)
+    clean_start = "2026-05-11"
+    days_clean  = (et_today() - date.fromisoformat(clean_start)).days
 
     return {
-        # -- Models --
-        "active_model":   winning,
-        "rf": {
-            "trained":      _rf_trained,
-            "records_used": _model_weights.get("records_used", 0),
-            "cv_auc":       round(rf_auc, 4),
-            "last_trained": _model_weights.get("last_calibrated"),
-            "params":       _model_weights.get("rf_params"),
-            "top_features": _model_weights.get("top_features", [])[:5],
-        },
+        "active_model": "xgboost",
         "xgboost": {
             "trained":      _xgb_trained,
-            "cv_auc":       round(xgb_auc, 4),
-            "beats_rf":     _xgb_trained and xgb_auc > rf_auc,
-            "gap":          round(xgb_auc - rf_auc, 4),
+            "cv_auc":       xgb_auc,
+            "records_used": records,
+            "last_trained": _model_weights.get("last_calibrated"),
+            "top_features": _model_weights.get("top_features", [])[:8],
+            "scale_pos_weight": round(_model_weights.get("scale_pos_weight", 0), 2),
+            "depth":        _model_weights.get("xgb_depth"),
+            "trees":        _model_weights.get("xgb_trees"),
+            "auc_signal":   "random" if xgb_auc < 0.52 else "weak" if xgb_auc < 0.55 else "learning" if xgb_auc < 0.60 else "good" if xgb_auc < 0.65 else "strong",
         },
-        # -- Data pipeline --
         "data": {
             "ready":            _cache["ready"],
             "last_savant_load": _cache.get("last_updated"),
@@ -5727,22 +5720,29 @@ def version():
             "bat_8d_rows":      len(_cache["bat_8d"]),
             "pit_2026_rows":    len(_cache["pit_2026"]),
         },
-        # -- Today --
+        "training": {
+            "clean_days":    days_clean,
+            "clean_since":   clean_start,
+            "records_needed_for_depth6": max(0, 500 - records),
+            "records_needed_for_depth8": max(0, 2000 - records),
+            "records_needed_for_depth10": max(0, 4000 - records),
+            "current_depth": 4 if records<200 else 5 if records<500 else 6 if records<1000 else 7 if records<2000 else 8 if records<4000 else 10,
+        },
         "today": {
-            "date":             et_today().isoformat(),
-            "rotation_round":   get_rotation_round(),
-            "rotation_day":     get_rotation_day(),
+            "date":           et_today().isoformat(),
+            "rotation_round": get_rotation_round(),
+            "rotation_day":   get_rotation_day(),
         },
-        # -- Schedule (ET) --
         "schedule": {
-            "8am":  "projected lineups saved, top8 written",
-            "10am-8pm": "hourly lineup confirmations, top8 updated",
-            "4am":  "end_of_day_save - clean top100 written, top8 outcomes patched",
-            "7am":  "models retrained on clean data + Savant refresh",
+            "11pm": "save tomorrow projected lineups + games file",
+            "4am":  "end_of_day_save - outcomes recorded, tier notification sent",
+            "7am":  "XGBoost retrain + Savant refresh",
+            "8am":  "projected lineups saved, morning notification",
+            "10am-8pm": "hourly lineup confirmations",
+            "2am":  "8d contact log refresh",
         },
-        "metric": "cv_auc_5fold - 0.5=random, 1.0=perfect",
+        "metric": "cv_auc_5fold: 0.5=random, 0.55=learning, 0.60+=good",
     }
-
 
 @app.get("/xgboost-status")
 async def xgboost_status():
