@@ -937,7 +937,7 @@ function buildDetail(b){
     {label:'Bat Speed L8D', val: l.bat_speed||b.bat_speed_l8d||0, key:'bat_speed_l8d', fmt:function(v){return v>0?v.toFixed(1):'--';}},
     {label:'ISO Season', val: s.iso||b.iso_season||0, key:'iso_season', fmt:fmtXslg},
     {label:'ISO vs Hand', val: b.iso_vs_hand||0, key:'iso_vs_hand', fmt:fmtXslg},
-    {label:'Pit HR/9', val: b.pit_hr9_season||pitP.hr9||0, key:'pit_hr9_season', fmt:function(v){return v>0?v.toFixed(2):'--';}},
+    {label:'Pit HR/9', val: bd.pit_hr9_season||bd.pit_hr9||b.pit_hr9_season||pitP.hr9||0, key:'pit_hr9_season', fmt:function(v){return v>0?v.toFixed(2):'--';}},
     {label:'Park Factor', val: b.park_factor||bd.park_factor||1.0, key:'park_factor', fmt:function(v){return v>0?v.toFixed(2):'--';}},
   ];
 
@@ -967,11 +967,17 @@ function buildDetail(b){
   var la_s=s.la||b.la_season||0, pull_s=s.pull||b.pull_pct_season||0;
   var xslg_l=l.xslg||b.xslg_l8d||0, ev_l=l.ev||b.ev_l8d||0, brl_l=l.barrel||b.barrel_pct_l8d||0;
   var spd_l=l.bat_speed||b.bat_speed_l8d||0, hh_l=l.hh||b.hard_hit_l8d||0;
-  var pit_hr9=b.pit_hr9_season||pitP.hr9||0, pit_hh=b.pit_hard_hit_season||pitP.hard_hit_pct||0;
-  var pit_era=b.pit_era_season||pitP.era||0, pit_slg=b.pit_slg_vs_hand||0;
-  var pf=b.park_factor||1.0, wx=b.weather_mult||1.0;
-  var bat_plat=b.bat_platoon_mult||1.0, pit_plat=b.pit_platoon_mult||1.0;
-  var pitch_sc=b.pitch_matchup_score||0, k_l=l.k_pct||b.k_pct_l8d||0;
+  // Read from breakdown first (games file), then flat fields (predictions file)
+  var pit_hr9  = bd.pit_hr9_season||bd.pit_hr9||b.pit_hr9_season||pitP.hr9||0;
+  var pit_hh   = bd.pit_hard_hit_season||bd.pit_hard||b.pit_hard_hit_season||pitP.hard_hit_pct||0;
+  var pit_era  = bd.pit_era_season||b.pit_era_season||pitP.era||0;
+  var pit_slg  = bd.pit_slg_vs_hand||b.pit_slg_vs_hand||0;
+  var pf       = bd.park_factor||b.park_factor||1.0;
+  var wx       = bd.weather_mult||b.weather_mult||1.0;
+  var bat_plat = bd.bat_platoon_mult||b.bat_platoon_mult||1.0;
+  var pit_plat = bd.pit_platoon_mult||b.pit_platoon_mult||1.0;
+  var pitch_sc = bd.pitch_matchup_score||bd.pitch_bonus||b.pitch_matchup_score||0;
+  var k_l      = l.k_pct||b.k_pct_l8d||0;
 
   var power   = Math.round(norm(brl_s,medians.barrel_pct_season,100)*0.35+norm(iso_s,medians.iso_season,100)*0.30+norm(ev_s,medians.ev_season,100)*0.20+laScore(la_s)*0.08+norm(pull_s,medians.pull_pct_season,100)*0.07);
   var form    = Math.round(norm(xslg_l,medians.xslg_l8d,100)*0.35+norm(ev_l,medians.ev_l8d,100)*0.25+norm(brl_l,medians.barrel_pct_l8d,100)*0.20+norm(spd_l,medians.bat_speed_l8d,100)*0.10+norm(hh_l,medians.hard_hit_l8d,100)*0.05+laScore(0)*0.05);
