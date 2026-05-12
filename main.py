@@ -1488,8 +1488,20 @@ async def daily_refresh_loop():
             try:
                 await check_lineup_confirmations()
             except Exception as e:
-                # Only notify if it fails 2+ times - single failures are normal
                 print(f"Lineup confirmation error (non-fatal): {e}")
+
+        # ── 11pm — Save tomorrow's games file so site is ready overnight ──
+        if now.hour == 23 and _ran_today.get("tomorrow_games") != today_s:
+            _ran_today["tomorrow_games"] = today_s
+            try:
+                from datetime import timedelta as _td2
+                tomorrow_s = (et_today() + _td2(days=1)).isoformat()
+                print(f"11pm: saving tomorrow's projected data for {tomorrow_s}")
+                await save_projected_top100(tomorrow_s)
+                asyncio.create_task(get_games(tomorrow_s, refresh=True))
+                print(f"11pm: triggered games file for {tomorrow_s}")
+            except Exception as e:
+                print(f"11pm tomorrow prep error: {e}")
 
         # ── 2am — Refresh 8d contact log ─────────────────────────────────
         if now.hour == 2 and _ran_today.get("refresh8d") != today_s:
@@ -4275,6 +4287,48 @@ async def manual_check_lineups():
     """Manually trigger lineup confirmation check"""
     await check_lineup_confirmations()
     return {"status": "done", "date": date.today().isoformat()}
+
+@app.get("/update-today")
+async def update_today():
+    """
+    Full update of all today's files in one call:
+    1. Save projected top100 (fills missing teams)
+    2. Run lineup confirmations (confirm/scratch players)
+    3. Recompute and save games file (Batters tab data)
+    4. Returns summary of what was saved
+
+    Use this after a deploy or any time data looks stale.
+    Also works for tomorrow's date to pre-populate overnight.
+    """
+    today = et_today().isoformat()
+    import json as _j
+
+    # Step 1: Save projected lineups
+    await save_projected_top100(today)
+
+    # Step 2: Run lineup confirmations
+    await check_lineup_confirmations()
+
+    # Step 3: Recompute games file
+    asyncio.create_task(get_games(today, refresh=True))
+
+    # Step 4: Summary
+    pred_raw, _ = await github_get_file(f"data/predictions/{today}.json")
+    pred_count  = len(_j.loads(pred_raw)) if pred_raw else 0
+    confirmed   = 0
+    if pred_raw:
+        recs = _j.loads(pred_raw)
+        confirmed = sum(1 for r in recs if r.get("lineup_source") == "confirmed")
+
+    return {
+        "status":      "done",
+        "date":        today,
+        "predictions": pred_count,
+        "confirmed":   confirmed,
+        "projected":   pred_count - confirmed,
+        "games_file":  "saving in background - ready in ~60 seconds",
+    }
+
 
 @app.get("/resave-today")
 async def resave_today():
