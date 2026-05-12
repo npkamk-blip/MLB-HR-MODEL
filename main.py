@@ -496,6 +496,12 @@ async def train_xgboost(save_to_github: bool = True):
     _xgb_trained  = True
     _xgb_oob      = xgb_cv
 
+    # Update model weights so /version shows correct record count and features
+    _model_weights["records_used"]  = n
+    _model_weights["last_calibrated"] = et_today().isoformat()
+    _model_weights["top_features"]  = [f for f, _ in ranked[:10]]
+    _model_weights["model_type"]    = "xgboost"
+
     print(f"XGBoost trained - {n} records, CV AUC={xgb_cv:.3f}, "
           f"scale_pos_weight={spw}, top={ranked[0][0] if ranked else '?'}")
 
@@ -535,11 +541,11 @@ async def train_xgboost(save_to_github: bool = True):
 
 
 async def startup_train_xgb():
-    """Train XGBoost on startup - saves to GitHub so weights persist across restarts."""
+    """Train XGBoost on startup - in memory only, no GitHub write to prevent deploy loops."""
     await asyncio.sleep(30)  # wait for data to load
     try:
-        print("Startup: training XGBoost...")
-        result = await train_xgboost(save_to_github=True)
+        print("Startup: training XGBoost (in memory only)...")
+        result = await train_xgboost(save_to_github=False)
         if isinstance(result, dict) and result.get("status") == "done":
             auc = result.get("cv_auc", 0)
             records = result.get("records_used", 0)
