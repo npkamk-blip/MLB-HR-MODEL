@@ -825,16 +825,11 @@ function buildGameCard(g, gi){
   // Pitcher splits
   function pitSplits(p){
     if(!p||!p.name||p.name==='TBD') return '<span style="color:var(--muted2);font-size:11px">TBD</span>';
-    var vs = p.hand==='L'?'vs RHH':'vs LHH';
-    // Use HR/9 vs the opposing batters handedness
-    // away pitcher faces home batters - need vs hand from game context
-    var hr9  = p.hr9||0;
-    var vsL  = p.vs_L_hr9||0;
-    var vsR  = p.vs_R_hr9||0;
-    var vsLbl = p.hand==='L' ? 'vs RHH' : 'vs LHH';
-    var vsHr9 = p.hand==='L' ? vsR : vsL;
+    var hr9 = p.hr9||0;
+    var vsL = p.vs_L_hr9||p.vsL||0;
+    var vsR = p.vs_R_hr9||p.vsR||0;
     return '<div class="pitcher-name">'+p.name+' <span class="pitcher-hand">'+(p.hand||'R')+'HP</span></div>'+
-           '<div class="pitcher-splits">HR/9 <span>'+(hr9>0?hr9.toFixed(2):'--')+'</span> · '+vsLbl+' <span>'+(vsHr9>0?vsHr9.toFixed(2):'--')+'</span></div>';
+           '<div class="pitcher-splits">HR/9 <span>'+(hr9>0?hr9.toFixed(2):'--')+'</span> · vs LHH <span>'+(vsL>0?vsL.toFixed(2):'--')+'</span> · vs RHH <span>'+(vsR>0?vsR.toFixed(2):'--')+'</span></div>';
   }
 
   // Wind
