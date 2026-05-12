@@ -535,11 +535,11 @@ async def train_xgboost(save_to_github: bool = True):
 
 
 async def startup_train_xgb():
-    """Train XGBoost on startup - saves to GitHub so weights persist across restarts."""
+    """Train XGBoost on startup - in memory only, NO GitHub write to prevent deploy loops."""
     await asyncio.sleep(30)  # wait for data to load
     try:
-        print("Startup: training XGBoost...")
-        result = await train_xgboost(save_to_github=True)
+        print("Startup: training XGBoost (in memory only)...")
+        result = await train_xgboost(save_to_github=False)
         if isinstance(result, dict) and result.get("status") == "done":
             auc = result.get("cv_auc", 0)
             records = result.get("records_used", 0)
@@ -4224,8 +4224,7 @@ async def debug_l8d(player: str = "Murakami"):
 @app.post("/recalibrate")
 async def manual_recalibrate():
     """Manually trigger RF + XGBoost retrain - runs in background"""
-    asyncio.create_task(recalibrate_model())
-    asyncio.create_task(train_xgboost())
+    asyncio.create_task(train_xgboost())  # XGBoost only
     return {"status": "retrain started in background - check /version in 3-5 minutes"}
 
 @app.get("/recalibrate")
