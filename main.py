@@ -2391,6 +2391,24 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
         )
         await notify(notify_msg, "End of Day ✓", priority=0)
 
+    # Cleanup - delete games and full files for this date (no longer needed)
+    # predictions file kept forever (training data)
+    for cleanup_path in [
+        f"data/games/{target_date}.json",
+        f"data/full/{target_date}.json",
+    ]:
+        try:
+            _, del_sha = await github_get_file(cleanup_path)
+            if del_sha:
+                async with httpx.AsyncClient(timeout=10) as _dc:
+                    await _dc.delete(
+                        f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{cleanup_path}",
+                        headers={"Authorization": f"token {GITHUB_TOKEN}"},
+                        json={"message": f"cleanup: {cleanup_path}", "sha": del_sha}
+                    )
+                print(f"Deleted {cleanup_path}")
+        except Exception as _ce:
+            print(f"Cleanup error for {cleanup_path}: {_ce}")
 
     return {
         "date": target_date, "top100": len(top100),
