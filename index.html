@@ -2157,14 +2157,36 @@ async function load(forceRefresh){
   document.getElementById('game-main').innerHTML='<div class="no-data">Loading...</div>';
   try{
     var dateStr=formatDateForAPI(selectedDate);
-    var url=API+'/games?date='+dateStr+(forceRefresh?'&refresh=true':'');
-    var resp=await fetch(url);
-    if(!resp.ok)throw new Error('Backend error '+resp.status);
-    var data=await resp.json();
-    if(data.loading){document.getElementById('batter-main').innerHTML='<div class="err">'+(data.message||'Data loading - try again in 30 seconds.')+'</div>';btn.disabled=false;return;}
-    allGames=data.games||[];
+
+    // Try saved games file first (instant, no backend needed)
+    var loadedFromFile = false;
+    if(!forceRefresh) {
+      try {
+        var fileUrl = 'https://raw.githubusercontent.com/npkamk-blip/MLB-HR-MODEL/main/data/games/'+dateStr+'.json?t='+Date.now();
+        var fileResp = await fetch(fileUrl);
+        if(fileResp.ok) {
+          var fileData = await fileResp.json();
+          if(fileData && fileData.games && fileData.games.length > 0) {
+            allGames = fileData.games;
+            loadedFromFile = true;
+            console.log('Loaded from games file: '+allGames.length+' games');
+          }
+        }
+      } catch(e) { console.log('Games file not available, falling back to API'); }
+    }
+
+    // Fall back to /games API if no file
+    if(!loadedFromFile) {
+      var url=API+'/games?date='+dateStr+(forceRefresh?'&refresh=true':'');
+      var resp=await fetch(url);
+      if(!resp.ok)throw new Error('Backend error '+resp.status);
+      var data=await resp.json();
+      if(data.loading){document.getElementById('batter-main').innerHTML='<div class="err">'+(data.message||'Data loading - try again in 30 seconds.')+'</div>';btn.disabled=false;return;}
+      allGames=data.games||[];
+    }
+
     if(!allGames.length){
-      var nm='<div class="no-data">No MLB games on '+dateStr+'.</div>';
+      var nm='<div class="no-data" style="padding:40px;text-align:center"><div style="font-size:15px;margin-bottom:8px">⚾ No lineups yet for '+dateStr+'</div><div style="font-size:12px;color:var(--muted2)">Lineups post 10am-12pm ET</div></div>';
       ['batter-main','pitcher-main','game-main'].forEach(function(id){document.getElementById(id).innerHTML=nm;});
       btn.disabled=false;return;
     }
