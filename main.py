@@ -535,19 +535,20 @@ async def train_xgboost(save_to_github: bool = True):
 
 
 async def startup_train_xgb():
-    """Train XGBoost on startup - silent, no GitHub write, doesn't affect predictions yet."""
-    await asyncio.sleep(45)  # after RF finishes
+    """Train XGBoost on startup - saves to GitHub so weights persist across restarts."""
+    await asyncio.sleep(30)  # wait for data to load
     try:
-        print("Startup: training XGBoost silently...")
-        result = await train_xgboost(save_to_github=False)
+        print("Startup: training XGBoost...")
+        result = await train_xgboost(save_to_github=True)
         if isinstance(result, dict) and result.get("status") == "done":
-            print(f"Startup XGBoost trained - CV AUC={result.get('cv_auc')}, "
-                  f"top={result.get('top_features',[])[0] if result.get('top_features') else '?'}, "
-                  f"winning={result.get('winning_model')}")
+            auc = result.get("cv_auc", 0)
+            records = result.get("records_used", 0)
+            top = result.get("top_features",["?"])[0]
+            print(f"Startup XGBoost trained - {records} records, AUC={auc}, top={top}")
         else:
             print(f"Startup XGBoost result: {result}")
     except Exception as e:
-        print(f"Startup XGBoost error (non-fatal): {e}")
+        print(f"Startup XGBoost error: {e}")
 
 
 # Every 45 days we rotate candidate stats in/out to find what actually predicts HRs
@@ -1407,92 +1408,102 @@ async def refresh_8d():
     _cache["last_8d_update"] = datetime.now().isoformat()
 
 async def daily_refresh_loop():
-    """Run in background - check every hour for scheduled tasks.
-    All heavy tasks run as background coroutines so site stays responsive.
-    Cache is never wiped - always updated in place.
     """
+    Background scheduler - runs every hour ET.
+    Philosophy: run silently, only notify on errors or success of key jobs.
+    You should never need to touch this manually.
+    """
+    from datetime import timezone, timedelta as _td
+
+    # Track what ran today to prevent double-firing after restarts
+    _ran_today = {}
+
     while True:
-        # Use Eastern Time for all scheduling (Railway runs UTC)
-        from datetime import timezone, timedelta as _td
-        et_now = datetime.now(timezone.utc) + _td(hours=-4)
-        now = et_now
-        await asyncio.sleep(3600)  # check every hour
+        et_now  = datetime.now(timezone.utc) + _td(hours=-4)
+        now     = et_now
+        today_s = et_today().isoformat()
 
-        # 2am - nothing, let West Coast games finish (they end ~1-2am ET)
-
-        # 4am - end of day save: all games final, build clean training file + notify
-        if now.hour == 4:
+        # ── 4am — End of day save ─────────────────────────────────────────
+        if now.hour == 4 and _ran_today.get("eod") != today_s:
+            _ran_today["eod"] = today_s
             try:
                 yesterday = (et_today() - timedelta(days=1)).isoformat()
                 print(f"4am end_of_day_save starting for {yesterday}")
                 result = await end_of_day_save(yesterday, notify_result=True)
                 await save_model_log(_model_weights)
-                print(f"4am end_of_day_save complete: {result}")
+                print(f"4am complete: {result}")
             except Exception as e:
-                await notify(f"ERROR in 4am end_of_day_save: {e}", "End of Day ERROR", 1)
+                await notify(f"4am FAILED: {e}\nManual fix: /end-of-day?target_date={yesterday}", "⚠️ End of Day ERROR", 1)
                 print(f"4am error: {e}")
 
-        # 7am - retrain RF + XGBoost on clean data, then refresh Savant
-        if now.hour == 7:
+        # ── 7am — XGBoost retrain + Savant refresh ───────────────────────
+        if now.hour == 7 and _ran_today.get("retrain") != today_s:
+            _ran_today["retrain"] = today_s
             try:
-                print(f"7am retrain starting - Round {get_rotation_round()} Day {get_rotation_day()}")
-                rf_result  = await recalibrate_model()
-                xgb_result = await train_xgboost()
-                rf_auc  = round(_model_weights.get("oob_score", 0), 3)
-                xgb_auc = round(_xgb_oob, 3)
-                records = _model_weights.get("records_used", 0)
-                winner  = "XGB" if _xgb_trained and xgb_auc > rf_auc else "RF"
-                # Show progress toward clean data milestone
-                clean_start = "2026-05-10"
+                print(f"7am XGBoost retrain starting")
+                await train_xgboost()
+                xgb_auc    = round(_xgb_oob, 3)
+                records    = _model_weights.get("records_used", 0)
+                clean_start = "2026-05-11"
                 days_clean  = (et_today() - date.fromisoformat(clean_start)).days
-                days_to_go  = max(0, 30 - days_clean)
+                days_to_go  = max(0, 29 - days_clean)
                 await notify(
-                    f"Models retrained\n"
-                    f"Winner: {winner} | XGB: {xgb_auc} | RF: {rf_auc}\n"
-                    f"Records: {records} ({days_clean} clean days)\n"
-                    f"{days_to_go} days until corrupt data purge",
+                    f"XGBoost retrained\nAUC: {xgb_auc} | Records: {records}\n{days_clean} clean days | {days_to_go} to go",
                     "Model Retrained"
                 )
             except Exception as e:
-                await notify(f"ERROR in 7am retrain: {e}", "Retrain ERROR", 1)
+                await notify(f"7am retrain FAILED: {e}\nManual fix: /recalibrate", "⚠️ Retrain ERROR", 1)
                 print(f"7am retrain error: {e}")
             try:
-                print("7am Savant refresh starting in background")
                 asyncio.create_task(load_all_savant_data())
             except Exception as e:
                 print(f"7am Savant refresh error: {e}")
 
-        # 8am - save projected top100 as fallback + pre-warm games cache
-        if now.hour == 8:
+        # ── 8am — Save projected lineups + morning notification ───────────
+        if now.hour == 8 and _ran_today.get("morning") != today_s:
+            _ran_today["morning"] = today_s
             try:
-                today_str = et_today().isoformat()
-                print("8am: saving projected top100 + pre-warming games cache")
-                await save_projected_top100(today_str)
-                asyncio.create_task(get_games(today_str, False))
-                # Count today's games
+                print("8am: saving projected top100")
+                await save_projected_top100(today_s)
+                asyncio.create_task(get_games(today_s, False))
                 try:
                     async with httpx.AsyncClient(timeout=10) as _gc:
-                        _gr = await _gc.get(f"{MLB_API}/schedule?sportId=1&date={today_str}&hydrate=team")
+                        _gr = await _gc.get(f"{MLB_API}/schedule?sportId=1&date={today_s}&hydrate=team")
                         _gd = _gr.json()
                     game_count = sum(len(d.get("games",[])) for d in _gd.get("dates",[]))
                 except:
                     game_count = 0
                 await notify(
-                    f"Good morning! {today_str}\n"
+                    f"Good morning! {today_s}\n"
                     f"{game_count} games today\n"
-                    f"Projected top 8 ready — lineups confirm 10am-8pm",
+                    f"Projected top 8 ready",
                     "Good Morning ⚾"
                 )
             except Exception as e:
-                await notify(f"ERROR at 8am save: {e}", "Save Error", 1)
-                print(f"8am task error: {e}")
+                await notify(f"8am save FAILED: {e}\nManual fix: /resave-today", "⚠️ Morning Save ERROR", 1)
+                print(f"8am error: {e}")
 
-        # 10am-8pm - hourly lineup confirmations
+        # ── 10am-8pm — Hourly lineup confirmations ────────────────────────
         if 10 <= now.hour <= 20:
             try:
                 await check_lineup_confirmations()
             except Exception as e:
-                print(f"Lineup confirmation error: {e}")
+                # Only notify if it fails 2+ times - single failures are normal
+                print(f"Lineup confirmation error (non-fatal): {e}")
+
+        # ── 2am — Refresh 8d contact log ─────────────────────────────────
+        if now.hour == 2 and _ran_today.get("refresh8d") != today_s:
+            _ran_today["refresh8d"] = today_s
+            try:
+                asyncio.create_task(refresh_8d())
+                print("2am: 8d contact log refresh started")
+            except Exception as e:
+                print(f"2am 8d refresh error: {e}")
+
+        # Sleep until near next hour - check hour AFTER sleeping
+        _now_min   = (datetime.now(timezone.utc) + _td(hours=-4)).minute
+        _sleep_sec = max(60, (60 - _now_min) * 60)
+        await asyncio.sleep(_sleep_sec)
 
 # -- GitHub Storage --
 async def github_get_file(path: str):
@@ -1846,12 +1857,11 @@ async def save_daily_predictions():
 async def check_lineup_confirmations():
     """
     Hourly lineup confirmation - optimized:
-    - Already confirmed in file -> skip entirely (no rescore)
-    - Projected in file -> update lineup_source to confirmed (no rescore)
-    - New player not in file -> score fresh via XGBoost
-    - Projected player not in confirmed lineup -> remove (scratched)
-    - Pull from data/full/{date}.json if scratch creates gap
-    - Top 8 = top 8 of predictions file directly — always in sync
+    - Already confirmed -> skip (no rescore)
+    - Projected -> update to confirmed (no rescore, score unchanged)
+    - New player -> score fresh via XGBoost
+    - Scratched -> remove, pull from data/full/ if gap
+    - Top 8 = top 8 of predictions file directly
     """
     today = et_today().isoformat()
     path  = f"data/predictions/{today}.json"
@@ -1859,8 +1869,7 @@ async def check_lineup_confirmations():
     existing_raw, sha = await github_get_file(path)
     existing_records = []
     if existing_raw:
-        try:
-            existing_records = json.loads(existing_raw)
+        try: existing_records = json.loads(existing_raw)
         except: pass
 
     records_dict = {r.get("name",""): r for r in existing_records}
@@ -1926,11 +1935,9 @@ async def check_lineup_confirmations():
                     (confirmed_home, home_team, away_p.get("fullName","TBD"), away_p_hand),
                 ]:
                     if not batters: continue
-
                     confirmed_names = {b.get("person",{}).get("fullName","") for b in batters}
                     team_existing   = by_team.get(team, {})
 
-                    # Remove scratched players
                     for name, rec in list(team_existing.items()):
                         if rec.get("lineup_source") == "projected" and name not in confirmed_names:
                             records_dict.pop(name, None)
@@ -1943,17 +1950,15 @@ async def check_lineup_confirmations():
                         if not name: continue
 
                         existing_rec = records_dict.get(name)
-
                         if existing_rec:
                             if existing_rec.get("lineup_source") == "confirmed":
-                                continue  # already confirmed - skip
+                                continue
                             existing_rec["lineup_source"] = "confirmed"
                             existing_rec["mlb_id"] = pid or existing_rec.get("mlb_id")
                             any_changes = True
                             print(f"  Confirmed: {name} ({team}) - score unchanged")
                             continue
 
-                        # New player - score fresh
                         print(f"  New player: {name} ({team}) - scoring fresh")
                         bat_hand = "R"
                         if pid:
@@ -1962,8 +1967,7 @@ async def check_lineup_confirmations():
                         if bat_hand == "S": bat_hand = "L" if opp_p_hand == "R" else "R"
 
                         park_factor = get_park_hr_factor(home_team, bat_hand)
-                        wx_mult, _  = calc_weather_multiplier(
-                            home_team, wind_speed, wind_dir, temp, bat_hand)
+                        wx_mult, _  = calc_weather_multiplier(home_team, wind_speed, wind_dir, temp, bat_hand)
                         hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(
                             name, bat_hand, opp_p, opp_p_hand, park_factor, wx_mult, home_team)
 
@@ -1972,40 +1976,30 @@ async def check_lineup_confirmations():
                         b_split2 = get_batter_split(name, opp_p_hand, mlb_id=pid)
                         pc2      = get_pitcher_stats(opp_p, 2026)
                         p_split2 = get_pitcher_split(opp_p, bat_hand)
-                        pa26     = bc2.get("pa", 0)
 
-                        xgb_prob  = predict_xgb(
-                            name, bat_hand, opp_p, opp_p_hand,
+                        xgb_prob  = predict_xgb(name, bat_hand, opp_p, opp_p_hand,
                             park_factor, wx_mult, breakdown,
-                            bc=bc2, b8d=b8d2, b_split=b_split2,
-                            pc=pc2, p_split=p_split2)
-                        save_prob = xgb_prob if isinstance(xgb_prob, (int,float))                                     else (xgb_prob[0] if xgb_prob else hr_prob)
+                            bc=bc2, b8d=b8d2, b_split=b_split2, pc=pc2, p_split=p_split2)
+                        save_prob = xgb_prob if isinstance(xgb_prob,(int,float))                                     else (xgb_prob[0] if xgb_prob else hr_prob)
 
                         records_dict[name] = {
-                            "date": today, "name": name, "team": team,
-                            "mlb_id": pid,
+                            "date": today, "name": name, "team": team, "mlb_id": pid,
                             "opp_pitcher": opp_p, "opp_pitcher_hand": opp_p_hand,
                             "bat_hand": bat_hand, "home_team": home_team,
-                            "lineup_source": "confirmed",
-                            "model_hr_pct": save_prob, "hit_hr": None,
-                            "barrel_pct_season": round(bc2.get("barrel_pct",0), 1),
-                            "la_season":         round(bc2.get("launch_angle",0), 1),
-                            "ev_season":         round(bc2.get("exit_velo",0), 1),
-                            "iso_season":        round(bc2.get("iso",0), 3),
-                            "hard_hit_season":   round(bc2.get("hard_hit_pct",0), 1),
-                            "k_pct_season":      round(bc2.get("k_pct",0), 1),
+                            "lineup_source": "confirmed", "model_hr_pct": save_prob, "hit_hr": None,
+                            "barrel_pct_season": round(bc2.get("barrel_pct",0),1),
+                            "ev_season":         round(bc2.get("exit_velo",0),1),
+                            "iso_season":        round(bc2.get("iso",0),3),
+                            "hard_hit_season":   round(bc2.get("hard_hit_pct",0),1),
+                            "k_pct_season":      round(bc2.get("k_pct",0),1),
                             "hr_season":         int(bc2.get("hr",0)),
-                            "pa_season":         pa26,
-                            "barrel_pct_l8d":    round(b8d2.get("barrel_pct",0), 1),
-                            "ev_l8d":            round(b8d2.get("exit_velo",0), 1),
-                            "iso_l8d":           round(b8d2.get("iso",0), 3),
-                            "hard_hit_l8d":      round(b8d2.get("hard_hit_pct",0), 1),
-                            "xslg_l8d":          round(b8d2.get("xslg",0), 3),
-                            "xwoba_l8d":         round(b8d2.get("xwoba",0), 3),
-                            "bat_speed_l8d":     round(b8d2.get("bat_speed",0), 1),
-                            "iso_vs_hand":       round(b_split2.get("iso",0), 3),
-                            "pit_hr9_season":    round(pc2.get("hr9",0), 2),
-                            "pit_era_season":    round(pc2.get("era",0), 2),
+                            "pa_season":         bc2.get("pa",0),
+                            "ev_l8d":            round(b8d2.get("exit_velo",0),1),
+                            "xslg_l8d":          round(b8d2.get("xslg",0),3),
+                            "xwoba_l8d":         round(b8d2.get("xwoba",0),3),
+                            "bat_speed_l8d":     round(b8d2.get("bat_speed",0),1),
+                            "iso_vs_hand":       round(b_split2.get("iso",0),3),
+                            "pit_hr9_season":    round(pc2.get("hr9",0),2),
                         }
                         any_changes = True
 
@@ -2014,62 +2008,35 @@ async def check_lineup_confirmations():
             return
 
         # Rebuild top 100 - pull from full file if scratches created gaps
-        current_records = list(records_dict.values())
-        ranked_current  = sorted(
-            current_records,
-            key=lambda x: x.get("model_hr_pct",0) or 0,
-            reverse=True
-        )
+        current = list(records_dict.values())
+        ranked  = sorted(current, key=lambda x: x.get("model_hr_pct",0) or 0, reverse=True)
 
-        if len(ranked_current) < 100:
+        if len(ranked) < 100:
             try:
                 full_raw, _ = await github_get_file(f"data/full/{today}.json")
                 if full_raw:
                     full_recs     = json.loads(full_raw)
-                    current_names = {r.get("name") for r in ranked_current}
-                    extras  = [r for r in full_recs if r.get("name") not in current_names]
-                    needed  = 100 - len(ranked_current)
-                    ranked_current = sorted(
-                        ranked_current + extras[:needed],
-                        key=lambda x: x.get("model_hr_pct",0) or 0,
-                        reverse=True
-                    )
-                    print(f"  Pulled {min(needed, len(extras))} from full file to fill gaps")
+                    current_names = {r.get("name") for r in ranked}
+                    extras = [r for r in full_recs if r.get("name") not in current_names]
+                    needed = 100 - len(ranked)
+                    ranked = sorted(ranked + extras[:needed],
+                                    key=lambda x: x.get("model_hr_pct",0) or 0, reverse=True)
+                    print(f"  Pulled {min(needed,len(extras))} from full file")
             except Exception as _fe:
-                print(f"  Full file pull error: {_fe}")
+                print(f"  Full file error: {_fe}")
 
-        top100 = ranked_current[:100]
-
-        # Save predictions file
-        await github_put_file(
-            path,
-            json.dumps(top100, indent=2),
-            f"lineups confirmed: {today} ({len(top100)} records)",
-            sha
-        )
-
-        # Top 8 = top 8 from predictions file directly — always in sync
-        top8      = top100[:8]
-        top8_path = f"data/top8/{today}.json"
-        _, top8_sha = await github_get_file(top8_path)
-        await github_put_file(
-            top8_path,
-            json.dumps(top8, indent=2),
-            f"top8: {today}",
-            top8_sha
-        )
+        top100 = ranked[:100]
+        await github_put_file(path, json.dumps(top100, indent=2),
+                              f"lineups confirmed: {today} ({len(top100)} records)", sha)
 
         # Notify only when top 8 names change
+        top8     = top100[:8]
+        old_top8 = sorted(existing_records, key=lambda x: x.get("model_hr_pct",0) or 0, reverse=True)[:8]
         new_names = {r.get("name") for r in top8}
-        old_raw, _ = await github_get_file(top8_path)
-        old_names  = set()
-        if old_raw:
-            try: old_names = {r.get("name") for r in json.loads(old_raw)}
-            except: pass
+        old_names = {r.get("name") for r in old_top8}
         added   = new_names - old_names
         removed = old_names - new_names
-
-        print(f"Lineup check: {len(top100)} records saved, top8 updated")
+        print(f"Lineup check: {len(top100)} records saved")
         if added or removed:
             msg  = f"Lineups updated {today}"
             msg += f"\nTop 8: " + ", ".join(r.get("name","?").split()[-1] for r in top8[:4]) + "..."
