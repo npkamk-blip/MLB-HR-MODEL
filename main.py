@@ -1452,14 +1452,29 @@ async def daily_refresh_loop():
             try:
                 print(f"7am XGBoost retrain starting")
                 await train_xgboost()
-                xgb_auc    = round(_xgb_oob, 3)
-                records    = _model_weights.get("records_used", 0)
+                xgb_auc   = round(_xgb_oob, 3)
+                records   = _model_weights.get("records_used", 0)
+                top_feats = _model_weights.get("top_features", [])[:3]
+                depth     = _model_weights.get("xgb_depth", 4)
+                trees     = _model_weights.get("xgb_trees", 100)
+                spw       = round(_model_weights.get("scale_pos_weight", 0), 1)
                 clean_start = "2026-05-11"
                 days_clean  = (et_today() - date.fromisoformat(clean_start)).days
                 days_to_go  = max(0, 29 - days_clean)
+                signal    = ("random" if xgb_auc<0.52 else "weak" if xgb_auc<0.55
+                             else "learning" if xgb_auc<0.60 else "good" if xgb_auc<0.65 else "strong")
+                trained_ok = _xgb_trained and xgb_auc > 0
+                feat_str  = ", ".join(top_feats) if top_feats else "unknown"
+                title = "✅ Model Retrained" if trained_ok else "⚠️ Retrain Issue"
                 await notify(
-                    f"XGBoost retrained\nAUC: {xgb_auc} | Records: {records}\n{days_clean} clean days | {days_to_go} to go",
-                    "Model Retrained"
+                    f"{'SUCCESS' if trained_ok else 'CHECK NEEDED'}\n"
+                    f"{'─'*20}\n"
+                    f"AUC: {xgb_auc} ({signal})\n"
+                    f"Records: {records} | Depth: {depth} | Trees: {trees}\n"
+                    f"Top: {feat_str}\n"
+                    f"{'─'*20}\n"
+                    f"{days_clean} clean days | {days_to_go} to June 9",
+                    title
                 )
             except Exception as e:
                 await notify(f"7am retrain FAILED: {e}\nManual fix: /recalibrate", "⚠️ Retrain ERROR", 1)
