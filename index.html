@@ -852,11 +852,16 @@ function buildGameCard(g, gi){
     windHtml = '<div class="wind-col"><div class="wind-label" style="color:var(--muted2)">'+(windLabel||'Dome')+'</div></div>';
   }
 
-  // Proj HRs
-  var totals = g.totals||{};
-  var proj = totals.total_exp_hr||g.proj_hrs||0;
-  var awayProj = totals.away_exp_hr||0;
-  var homeProj = totals.home_exp_hr||0;
+  // Proj HRs - cap individual player contributions at 30% to prevent crazy totals
+  var totals   = g.totals||{};
+  var awayProj = 0, homeProj = 0;
+  var capProb  = function(p){ return Math.min(p||0, 30)/100; };
+  (g.away_lineup||[]).forEach(function(b){ awayProj += capProb(b.hr_prob); });
+  (g.home_lineup||[]).forEach(function(b){ homeProj += capProb(b.hr_prob); });
+  awayProj = Math.round(awayProj*10)/10;
+  homeProj = Math.round(homeProj*10)/10;
+  var proj = awayProj + homeProj > 0 ? Math.round((awayProj+homeProj)*10)/10
+             : totals.total_exp_hr||0;
   // Derive env label from weather mult
   var wxMult = g.weather&&g.weather.mult ? g.weather.mult : 1.0;
   var envLabel = wxMult>=1.08?'Ideal':wxMult>=1.03?'Good':wxMult<=0.92?'Tough':'Normal';
