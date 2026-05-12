@@ -3,2243 +3,1048 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>MLB Home Run Model by Nick</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<title>Uncle Nicky · MLB HR Model</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#1c1c1e;--surface:#2c2c2e;--s2:#242426;--s3:#1c1c1e;--card2:#252527;
-  --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.06);
-  --accent:#f5f5f5;--blue:#0a84ff;--text:#f5f5f5;
-  --muted:#8e8e93;--muted2:#636366;--danger:#ff453a;--warn:#ff9f0a;--purple:#bf5af2;
-  --g:#32d74b;--y:#ff9f0a;--r:#ff453a;
-  /* Pink/red gradient for stat coloring - top 10% = hot pink, bottom = dark red */
-  --b10:#ff6eb4;--b25:#e0445a;--b50:#b02030;--b75:#6b1020;
+:root {
+  --cream:   #F5F0E8;
+  --cream2:  #EDE8DF;
+  --cream3:  #E4DDD2;
+  --inset:   #DDD6CA;
+  --card:    #F8F4EE;
+  --orange:  #C84B11;
+  --orange2: #E05A1A;
+  --orange-pill: rgba(200,75,17,0.12);
+  --charcoal:#1C1C1E;
+  --text:    #2C2825;
+  --muted:   #6B6560;
+  --muted2:  #9B9390;
+  --border:  rgba(44,40,37,0.10);
+  --border2: rgba(44,40,37,0.06);
+  --g:       #2D7A3A;
+  --g-light: rgba(45,122,58,0.10);
+  --r:       #C0392B;
+  --r-light: rgba(192,57,43,0.10);
+  --shadow:  inset 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-out: 0 2px 12px rgba(0,0,0,0.08);
 }
-body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px}
-header{border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;background:var(--bg)}
-.logo{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:var(--text);text-transform:uppercase;letter-spacing:.05em}
-.logo-sub{font-size:11px;color:var(--muted);border-left:1px solid var(--border);padding-left:10px;text-transform:uppercase;letter-spacing:.1em}
-.hdr-r{display:flex;align-items:center;gap:10px}
-.date-nav{display:flex;align-items:center;gap:6px}
-.date-btn{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:18px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
-.date-btn:hover{border-color:var(--muted);color:var(--text)}
-.date-lbl{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
-.refresh-btn{background:var(--text);color:#1c1c1e;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;cursor:pointer}
-.refresh-btn:hover{opacity:.85}
-.refresh-btn:disabled{opacity:.4;cursor:not-allowed}
-.upd{font-size:11px;color:var(--muted2)}
-.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 20px;position:sticky;top:49px;z-index:99;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
-.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;cursor:pointer;transition:all .15s;margin-bottom:-1px;white-space:nowrap}
-.tab:hover{color:var(--text)}
-.tab.active{color:var(--text);border-bottom-color:var(--text)}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-.container{max-width:1300px;margin:0 auto;padding:12px 10px}
-@media(min-width:600px){.container{padding:16px}}
-.loading{text-align:center;padding:60px 20px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:18px;letter-spacing:.1em}
-.dots{display:inline-flex;gap:6px;margin-left:10px}
-.dots span{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:dot .8s infinite alternate}
-.dots span:nth-child(2){animation-delay:.2s}
-.dots span:nth-child(3){animation-delay:.4s}
-@keyframes dot{from{opacity:.2}to{opacity:1}}
-.err{background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);border-radius:8px;padding:16px;color:var(--danger);margin:20px 0}
-.no-data{text-align:center;padding:40px;color:var(--muted2);font-size:13px}
-.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.section-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text)}
-.section-count{font-size:11px;color:var(--muted2)}
-.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
-table{width:100%;border-collapse:collapse;font-size:12px}
-thead th{background:var(--s2);padding:8px 10px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
-thead th:hover{color:var(--text)}
-thead th.sort-asc::after{content:' ▲';color:var(--muted)}
-thead th.sort-desc::after{content:' ▼';color:var(--muted)}
-thead th.num{text-align:right}
-tbody tr{border-bottom:1px solid var(--border2);cursor:pointer;transition:background .1s}
-tbody tr:hover{background:var(--s2)}
-tbody tr.detail-row{cursor:default;background:var(--s3)}
-tbody tr.detail-row:hover{background:var(--s3)}
-td{padding:8px 10px;vertical-align:middle}
-td.num{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600}
-.player-name{font-weight:600;font-size:13px}
-.player-sub{font-size:10px;color:var(--muted);margin-top:1px}
-.hand-tag{display:inline-block;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;text-transform:uppercase}
-.rhb{background:rgba(255,59,48,0.12);color:#ff453a;border:1px solid rgba(255,59,48,0.2)}
-.lhb{background:rgba(77,166,255,.12);color:var(--blue);border:1px solid rgba(77,166,255,.25)}
-.rhp{background:rgba(255,59,48,0.12);color:#ff453a;border:1px solid rgba(255,59,48,0.2)}
-.lhp{background:rgba(77,166,255,.12);color:var(--blue);border:1px solid rgba(77,166,255,.25)}
-.sc{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600}
-.sc-g{color:var(--g)}
-.sc-y{color:var(--y)}
-.sc-r{color:var(--r)}
-.sc-n{color:var(--muted2)}
-.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:3px;vertical-align:middle}
-.dot-g{background:var(--g)}
-.dot-y{background:var(--y)}
-.dot-r{background:var(--r)}
-.dot-n{background:var(--muted2)}
-.prob-big{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800}
-.p-elite{color:var(--accent)}
-.p-high{color:var(--g)}
-.p-mid{color:var(--y)}
-.p-low{color:var(--muted)}
-.l8d-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
-.l8d-hot{background:rgba(57,211,83,.12);color:var(--g);border:1px solid rgba(57,211,83,.25)}
-.l8d-ok{background:rgba(255,170,51,.1);color:var(--y);border:1px solid rgba(255,170,51,.2)}
-.l8d-cold{background:#1a1a1a;color:var(--muted2);border:1px solid var(--border2)}
-.detail-wrap{padding:12px 16px;background:var(--s3)}
-/* ── Game Card Layout ── */
-.gc-wrap{display:flex;flex-direction:column;gap:14px}
-.gc{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.gc-hdr{padding:10px 14px;border-bottom:1px solid var(--border2)}
-.gc-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.gc-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.02em}
-.gc-time{font-size:11px;color:var(--muted2)}
-.gc-chips{display:flex;gap:5px;flex-wrap:wrap}
-.gchip{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;white-space:nowrap}
-.chip-g{background:rgba(50,215,75,.12);color:var(--g);border:1px solid rgba(50,215,75,.2)}
-.chip-r{background:rgba(255,77,77,.10);color:var(--r);border:1px solid rgba(255,77,77,.2)}
-.chip-n{background:var(--s2);color:var(--muted);border:1px solid var(--border2)}
-.pit-bar{display:flex;align-items:center;gap:12px;padding:8px 14px;background:var(--s2);border-bottom:1px solid var(--border2)}
-.pit-info{flex:1;min-width:0}
-.pit-name{font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px}
-.pit-matchup{font-size:10px;color:var(--muted2);margin-top:1px}
-.pit-stats{display:flex;align-items:center;gap:14px;flex-shrink:0}
-.pit-stat{text-align:center}
-.pit-stat-lbl{font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em}
-.pit-stat-val{font-size:13px;font-weight:600;margin-top:2px}
-.pit-divider{width:1px;height:32px;background:var(--border2);flex-shrink:0}
-.hr9-splits{display:flex;gap:10px;margin-top:2px}
-.hr9-block{text-align:center}
-.hr9-label{font-size:8px;color:var(--muted2);text-transform:uppercase;letter-spacing:.04em}
-.hr9-val{font-size:13px;font-weight:700;margin-top:1px}
-.hr9-hot{color:var(--r)}
-.hr9-warm{color:var(--y)}
-.hr9-ok{color:var(--muted)}
-.hr9-cold{color:var(--g)}
-.stat-hot{color:var(--r)}
-.stat-warm{color:var(--y)}
-.stat-ok{color:var(--muted)}
-.stat-muted{color:var(--muted2)}
-.new-tag{font-size:9px;background:var(--warn);color:#000;border-radius:3px;padding:1px 4px;font-weight:700}
-.bat-row{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border2);cursor:pointer;transition:background .1s}
-.bat-row:hover{background:var(--s2)}
-.bat-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
-.bat-trend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.dot-fire{background:var(--r)}
-.dot-warm{background:var(--y)}
-.dot-neutral{background:var(--muted2)}
-.bat-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bat-team{font-size:10px;color:var(--muted2);margin-top:1px}
-.bat-slot{font-size:9px;color:var(--muted2);font-weight:400;margin-left:5px;font-family:var(--font-sans)}
-.stat-pills{display:flex;gap:4px;flex-shrink:0}
-.spill{font-size:11px;font-weight:700;padding:3px 7px;border-radius:5px;display:flex;flex-direction:column;align-items:center;min-width:42px;font-family:'Barlow Condensed',sans-serif}
-.spill-lbl{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;opacity:.7;margin-top:1px}
-.pill-g{background:rgba(57,211,83,.12);color:var(--g);border:1px solid rgba(57,211,83,.2)}
-.pill-y{background:rgba(255,170,51,.10);color:var(--y);border:1px solid rgba(255,170,51,.2)}
-.pill-m{background:var(--s2);color:var(--muted);border:1px solid var(--border2)}
-.pill-r{background:rgba(255,77,77,.08);color:var(--r);border:1px solid rgba(255,77,77,.15)}
-.bat-l8d{font-size:11px;font-weight:700;min-width:32px;text-align:center;flex-shrink:0;font-family:'Barlow Condensed',sans-serif}
-.l8d-fire{color:var(--r)}
-.l8d-warm{color:var(--y)}
-.l8d-none{color:var(--muted2)}
-.bat-pct{font-size:15px;font-weight:800;min-width:42px;text-align:right;flex-shrink:0;font-family:'Barlow Condensed',sans-serif}
-.bat-xgb{font-size:11px;font-weight:700;min-width:38px;text-align:right;flex-shrink:0;font-family:'Barlow Condensed',sans-serif;color:var(--purple);opacity:0.8;position:relative}
-.xgb-lbl{font-size:8px;color:var(--purple);opacity:0.6;margin-left:1px;vertical-align:super}
-.pct-elite{color:var(--text)}
-.pct-high{color:var(--g)}
-.pct-mid{color:var(--y)}
-.pct-ok{color:var(--muted)}
-.pct-low{color:var(--muted2)}
-.gc-detail{border-top:1px solid var(--border2);background:var(--s3)}
-.dstat-wrap{background:var(--surface);border:1px solid var(--border2);border-radius:8px;overflow:hidden;margin-bottom:10px}
-.drow{display:grid;grid-template-columns:90px 1fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border2);padding:6px 10px;align-items:center}
-.drow:last-child{border-bottom:none}
-.drow-hdr{background:var(--s2)}
-.drow-hdr .drow-s,.drow-hdr .drow-l,.drow-hdr .drow-sp{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;text-align:center}
-.drow-lbl{font-size:11px;color:var(--muted);font-weight:500}
-.drow-s,.drow-l,.drow-sp{text-align:center}
-.drow-note{font-size:9px;color:var(--muted2);grid-column:span 1;text-align:right}
-.dmodel-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-.dmodel-block{background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;display:flex;flex-direction:column;align-items:center;min-width:60px}
-.dmodel-lbl{font-size:8px;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
-.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
-.detail-block{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:10px 12px}
-.detail-block-title{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
-.clog-wrap{background:var(--surface);border:1px solid var(--border2);border-radius:8px;overflow:hidden;margin-top:10px}
-.clog-title{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;padding:8px 12px;border-bottom:1px solid var(--border2)}
-.clog-table{width:100%;border-collapse:collapse;font-size:11px}
-.clog-table th{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;text-align:left;border-bottom:1px solid var(--border2)}
-.clog-table th.num{text-align:right}
-.clog-table td{padding:5px 10px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--fg);font-family:'Barlow Condensed',sans-serif;font-size:13px}
-.clog-table td.num{text-align:right}
-.clog-table tr:last-child td{border-bottom:none}
-.clog-hr td{background:rgba(0,255,100,.06)}
-.clog-xbh td{background:rgba(255,200,0,.04)}
-.clog-out td{opacity:.7}
-.clog-result-hr{color:var(--g);font-weight:700}
-.clog-result-xbh{color:var(--y);font-weight:600}
-.clog-result-out{color:var(--muted)}
-.clog-ev-hot{color:var(--g)}
-.clog-ev-warm{color:var(--y)}
-.clog-ev-cold{color:var(--muted)}
-.chip-row{display:flex;flex-wrap:wrap;gap:4px}
-.chip{display:inline-flex;flex-direction:column;align-items:center;background:#1a1a1a;border:1px solid var(--border2);border-radius:6px;padding:5px 8px;min-width:54px}
-.chip-lbl{font-size:8px;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
-.chip-val{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700}
-.chip-val.g{color:var(--g)}
-.chip-val.y{color:var(--y)}
-.chip-val.r{color:var(--r)}
-.chip-val.n{color:var(--muted2)}
-.edge-pos{color:var(--g);font-weight:700}
-.edge-neg{color:var(--r)}
-.edge-neu{color:var(--muted2)}
-.consistency-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px}
-.con-solid{background:rgba(57,211,83,.1);color:var(--g);border:1px solid rgba(57,211,83,.2)}
-.con-mod{background:rgba(255,170,51,.1);color:var(--y);border:1px solid rgba(255,170,51,.2)}
-.con-small{background:rgba(255,170,51,.08);color:var(--warn);border:1px solid rgba(255,170,51,.15)}
-.con-none{background:#1a1a1a;color:var(--muted2);border:1px solid var(--border2)}
-.team-a{color:var(--blue)}
-.team-h{color:var(--warn)}
-.at-sep{color:var(--muted2);margin:0 4px}
-.ou-over{color:var(--r)}
-.ou-under{color:var(--blue)}
-.ou-push{color:var(--muted)}
-.exp-runs-big{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700}
-.search-row{display:flex;gap:8px;margin-bottom:20px}
-.search-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;padding:10px 14px;outline:none}
-.search-input:focus{border-color:var(--accent)}
-.search-btn{background:var(--accent);color:#0a0a0a;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:10px 20px;cursor:pointer}
-.r-chip{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;min-width:64px;text-align:center;display:inline-block;margin:3px}
-.r-chip-lbl{font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
-.r-chip-val{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700}
-.r-section{margin-bottom:16px}
-.r-section-title{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.research-result{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.r-header{background:var(--s2);padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.r-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800}
-.r-body{padding:16px 18px}
-/* History */
-.hist-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px}
-.hist-stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
-.hist-stat-val{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:var(--accent)}
-.hist-stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
-.hist-hit{background:rgba(57,211,83,.08);border-color:rgba(57,211,83,.2)}
-.hist-hit .hist-stat-val{color:var(--g)}
-.hist-miss{background:rgba(255,77,77,.05)}
-.cal-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
-.cal-day{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border2);font-family:'Barlow Condensed',sans-serif}
-.cal-day:hover{border-color:var(--accent)}
-.cal-day.has-data{background:var(--s2)}
-.cal-day.selected{border-color:var(--accent);background:rgba(200,241,53,.1);color:var(--accent)}
-.cal-day.no-data{color:var(--muted2)}
-.acc-bar-wrap{background:var(--border2);border-radius:4px;height:8px;margin-top:6px;overflow:hidden}
-.acc-bar{height:100%;border-radius:4px;background:var(--accent);transition:width .4s}
-.corr-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border2)}
-.corr-row:last-child{border-bottom:none}
-.corr-lbl{font-size:12px;color:var(--muted);width:140px;flex-shrink:0}
-.corr-bar-wrap{flex:1;background:var(--border2);border-radius:4px;height:6px}
-.corr-bar{height:100%;border-radius:4px;transition:width .4s}
-.corr-val{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;width:40px;text-align:right}
-.hit-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px}
-.hit-yes{background:rgba(57,211,83,.12);color:var(--g);border:1px solid rgba(57,211,83,.25)}
-.hit-no{background:#1a1a1a;color:var(--muted2);border:1px solid var(--border2)}
-.hit-pending{background:rgba(255,170,51,.08);color:var(--warn);border:1px solid rgba(255,170,51,.2)}
-.data-conf{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.03em}
-.conf-full{background:rgba(57,211,83,.15);color:var(--g);border:1px solid rgba(57,211,83,.3)}
-.conf-good{background:rgba(255,200,0,.12);color:var(--y);border:1px solid rgba(255,200,0,.25)}
-.conf-warn{background:rgba(255,100,0,.12);color:var(--warn);border:1px solid rgba(255,100,0,.2)}
-.conf-low{background:#1a1a1a;color:var(--muted2);border:1px solid var(--border2)}
-.model-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
-@media(max-width:768px){.model-layout{grid-template-columns:1fr}}
-.model-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px}
-.model-card-title{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
-.weight-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border2)}
-.weight-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
-.weight-rank{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--muted2);width:18px;flex-shrink:0}
-.weight-name{font-size:11px;color:var(--fg);width:130px;flex-shrink:0}
-.weight-bar-wrap{flex:1;height:6px;background:var(--border2);border-radius:3px;overflow:hidden}
-.weight-bar{height:100%;border-radius:3px;transition:width .3s}
-.weight-val{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;width:38px;text-align:right;flex-shrink:0}
-.weight-delta{font-size:10px;width:42px;text-align:right;flex-shrink:0}
-.stat-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid var(--border2)}
-.stat-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
-.stat-rank{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted2);width:22px;flex-shrink:0;text-align:right}
-.stat-name{font-size:11px;width:150px;flex-shrink:0}
-.stat-bar-wrap{flex:1;height:4px;background:var(--border2);border-radius:2px;overflow:hidden}
-.stat-bar{height:100%;border-radius:2px}
-.stat-corr{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;width:38px;text-align:right;flex-shrink:0}
-.stat-badge{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0}
-.badge-active{background:rgba(57,211,83,.15);color:var(--g);border:1px solid rgba(57,211,83,.3)}
-.badge-candidate{background:rgba(255,200,0,.12);color:var(--y);border:1px solid rgba(255,200,0,.25)}
-.badge-promoted{background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.3)}
-.badge-dropped{background:rgba(255,59,48,.12);color:var(--r);border:1px solid rgba(255,59,48,.25)}
-.recal-btn{background:var(--accent);color:#000;font-weight:700;font-size:11px;padding:5px 12px;border-radius:6px;border:none;cursor:pointer;letter-spacing:.04em}
-.recal-btn:disabled{background:var(--muted2);cursor:not-allowed}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.header {
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+.logo span { color: var(--orange); }
+.header-right { display: flex; align-items: center; gap: 10px; }
+.refresh-btn {
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: background 0.15s;
+}
+.refresh-btn:hover { background: var(--orange2); }
+.date-badge {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--cream);
+  padding: 0 20px;
+  gap: 0;
+}
+.tab {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s;
+  letter-spacing: 0.2px;
+}
+.tab:hover { color: var(--text); }
+.tab.active {
+  color: var(--orange);
+  border-bottom-color: var(--orange);
+  font-weight: 600;
+}
+
+/* ── Main content ── */
+.main { padding: 20px; max-width: 1400px; margin: 0 auto; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* ── Dashboard ── */
+.dash-section { margin-bottom: 28px; }
+.dash-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  color: var(--text);
+  margin-bottom: 14px;
+  letter-spacing: -0.2px;
+}
+.top8-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+@media(max-width: 900px) { .top8-grid { grid-template-columns: repeat(2,1fr); } }
+@media(max-width: 480px) { .top8-grid { grid-template-columns: 1fr; } }
+
+.pick-card {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border2);
+  position: relative;
+}
+.pick-rank {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted2);
+}
+.pick-pct {
+  font-family: 'DM Serif Display', serif;
+  font-size: 26px;
+  color: var(--orange);
+  font-weight: 400;
+  text-align: right;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.pick-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 16px;
+  line-height: 1.2;
+}
+.pick-meta {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.pick-source {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-top: 5px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.pick-source.confirmed { background: var(--g-light); color: var(--g); }
+.pick-source.projected { background: rgba(155,147,144,0.15); color: var(--muted); }
+
+/* ── History ── */
+.history-list { display: flex; flex-direction: column; gap: 6px; }
+.history-row {
+  background: var(--card);
+  border-radius: 8px;
+  border: 1px solid var(--border2);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.history-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  cursor: pointer;
+  gap: 12px;
+  transition: background 0.1s;
+}
+.history-header:hover { background: var(--cream2); }
+.history-date { font-size: 13px; font-weight: 600; color: var(--text); min-width: 80px; }
+.history-rate {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  color: var(--orange);
+}
+.history-rate-label { font-size: 11px; color: var(--muted); margin-left: 4px; }
+.history-chevron { margin-left: auto; font-size: 11px; color: var(--muted2); transition: transform 0.2s; }
+.history-chevron.open { transform: rotate(180deg); }
+.history-body {
+  display: none;
+  padding: 0 14px 12px;
+  border-top: 1px solid var(--border2);
+}
+.history-body.open { display: block; }
+.history-players { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 10px; }
+.history-player {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text);
+  background: var(--cream);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  padding: 4px 8px;
+}
+.hist-check { font-size: 13px; }
+.hist-check.hit { color: var(--g); }
+.hist-check.miss { color: var(--r); }
+.hist-check.pending { color: var(--muted2); }
+
+/* ── Batters Tab ── */
+.slate-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0 14px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.slate-bar strong { color: var(--orange); font-weight: 700; }
+.last-updated { font-size: 11px; color: var(--muted2); }
+
+/* ── Game Card ── */
+.game-card {
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border2);
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.game-grid {
+  display: grid;
+  grid-template-columns: 200px 80px 80px 1fr 1fr;
+  min-height: 120px;
+}
+@media(max-width: 768px) {
+  .game-grid { grid-template-columns: 1fr; }
+  .game-col-info, .game-col-proj, .game-col-wind { display: none; }
+}
+
+.game-col {
+  padding: 12px 10px;
+  border-right: 1px solid var(--border2);
+}
+.game-col:last-child { border-right: none; }
+.game-col-info { padding: 14px 14px; }
+
+.game-time { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.game-teams { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; margin-bottom: 8px; }
+.game-teams .vs { color: var(--muted2); font-weight: 400; font-size: 11px; }
+
+.pitcher-row { margin-bottom: 5px; }
+.pitcher-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.pitcher-hand {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  margin-left: 4px;
+  background: rgba(200,75,17,0.12);
+  color: var(--orange);
+  letter-spacing: 0.5px;
+}
+.pitcher-splits { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.pitcher-splits span { color: var(--orange); font-weight: 600; }
+
+.proj-hrs {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  color: var(--orange);
+  line-height: 1;
+  text-align: center;
+}
+.proj-hrs-label { font-size: 10px; color: var(--muted); text-align: center; margin-top: 2px; }
+.proj-hrs-split { font-size: 10px; color: var(--muted2); text-align: center; }
+.env-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+  text-align: center;
+  width: 100%;
+}
+.env-ideal { background: var(--g-light); color: var(--g); }
+.env-good  { background: rgba(45,122,58,0.07); color: var(--g); }
+.env-normal{ background: rgba(155,147,144,0.12); color: var(--muted); }
+.env-tough { background: var(--r-light); color: var(--r); }
+
+.wind-col { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.wind-label { font-size: 11px; color: var(--muted); text-align: center; }
+.wind-arrow { font-size: 20px; }
+
+/* ── Batter table ── */
+.batter-section { padding: 0; }
+.batter-header {
+  display: grid;
+  grid-template-columns: 20px 1fr 50px 38px 36px 50px;
+  gap: 0;
+  padding: 6px 10px;
+  border-top: 1px solid var(--border2);
+  border-bottom: 1px solid var(--border2);
+  background: var(--cream2);
+}
+.batter-header span {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--muted2);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+.batter-header span:not(:first-child):not(:nth-child(2)) { text-align: right; }
+.batter-row {
+  display: grid;
+  grid-template-columns: 20px 1fr 50px 38px 36px 50px;
+  gap: 0;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border2);
+  cursor: pointer;
+  transition: background 0.1s;
+  align-items: center;
+}
+.batter-row:last-child { border-bottom: none; }
+.batter-row:hover { background: var(--cream2); }
+.batter-row.expanded { background: var(--cream2); }
+
+.bat-order { font-size: 10px; color: var(--muted2); font-weight: 500; }
+.bat-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.bat-name.top25 { color: var(--orange); }
+
+.stat-val { font-size: 12px; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; }
+.stat-val.muted { color: var(--muted2); }
+
+.pct-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 7px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  float: right;
+}
+.pct-elite { background: rgba(200,75,17,0.15); color: var(--orange); }
+.pct-high  { background: rgba(200,75,17,0.09); color: var(--orange); }
+.pct-mid   { background: rgba(44,40,37,0.07); color: var(--text); }
+.pct-ok    { color: var(--muted); background: transparent; }
+.pct-low   { color: var(--muted2); background: transparent; }
+
+.top25-pill {
+  background: var(--orange-pill);
+  border: 1px solid rgba(200,75,17,0.25);
+}
+
+/* ── Batter dropdown ── */
+.batter-detail {
+  display: none;
+  padding: 14px;
+  background: var(--cream2);
+  border-bottom: 1px solid var(--border2);
+}
+.batter-detail.open { display: block; }
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: 16px;
+}
+@media(max-width: 600px) { .detail-grid { grid-template-columns: 1fr; } }
+
+.detail-stats { }
+.detail-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border2);
+  gap: 8px;
+}
+.detail-stat-row:last-child { border-bottom: none; }
+.detail-stat-label { font-size: 11px; color: var(--muted); }
+.detail-stat-val { font-size: 12px; font-weight: 600; color: var(--text); }
+.median-tag {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.med-up { background: var(--g-light); color: var(--g); }
+.med-dn { background: var(--r-light); color: var(--r); }
+
+/* ── Radar ── */
+.radar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.radar-verdict {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  font-style: italic;
+  line-height: 1.4;
+}
+.score-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  width: 100%;
+}
+.score-card {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 6px 8px;
+  text-align: center;
+}
+.score-card-label { font-size: 9px; color: var(--muted); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+.score-card-val {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  line-height: 1.1;
+}
+.score-high { color: var(--g); }
+.score-mid  { color: var(--orange); }
+.score-low  { color: var(--r); }
+
+/* ── More toggle ── */
+.more-toggle {
+  text-align: center;
+  padding: 7px;
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.1s;
+  border-top: 1px solid var(--border2);
+}
+.more-toggle:hover { color: var(--orange); }
+
+/* ── Loading/Error ── */
+.loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 12px;
+}
+.loading-spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 13px; color: var(--muted); }
+.error-wrap {
+  background: var(--r-light);
+  border: 1px solid rgba(192,57,43,0.2);
+  border-radius: 8px;
+  padding: 14px 16px;
+  color: var(--r);
+  font-size: 13px;
+  margin: 20px 0;
+}
+.no-data-wrap {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--muted);
+}
+.no-data-wrap .icon { font-size: 32px; margin-bottom: 10px; }
+.no-data-wrap p { font-size: 14px; font-weight: 500; margin-bottom: 4px; color: var(--text); }
+.no-data-wrap small { font-size: 12px; }
+
+/* ── Lineup status ── */
+.lineup-status {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+.status-confirmed { background: var(--g-light); color: var(--g); }
+.status-projected { background: rgba(155,147,144,0.15); color: var(--muted); }
+
+/* ── Section header ── */
+.section-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--muted2);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 10px 4px;
+  border-top: 1px solid var(--border2);
+}
+
+/* Final game row */
+.final-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  opacity: 0.6;
+  border-top: 1px solid var(--border2);
+}
+.final-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--g);
+  background: var(--g-light);
+  padding: 2px 5px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+}
+.final-teams { font-size: 13px; color: var(--text); }
+.final-pitchers { font-size: 11px; color: var(--muted); margin-left: auto; }
 </style>
 </head>
 <body>
-<header>
-  <div style="display:flex;align-items:center;gap:12px">
-    <div class="logo">Uncle Nicky</div>
-    <div class="logo-sub">MLB HR Model</div>
-  </div>
-  <div class="hdr-r">
-    <div class="date-nav">
-      <button class="date-btn" onclick="changeDate(-1)">&#8249;</button>
-      <span class="date-lbl" id="dateLbl"></span>
-      <button class="date-btn" onclick="changeDate(1)">&#8250;</button>
-    </div>
-    <button class="refresh-btn" id="refreshBtn" onclick="load(true)">Refresh</button>
-    <button class="refresh-btn" style="background:var(--s2);color:var(--accent);border:1px solid var(--accent)" onclick="reloadContact()">⚡ Contact</button>
-    <span class="upd" id="upd"></span>
+
+<header class="header">
+  <div class="logo">Uncle <span>Nicky</span></div>
+  <div class="header-right">
+    <span class="date-badge" id="dateLbl"></span>
+    <button class="refresh-btn" onclick="refreshAll()">Refresh</button>
   </div>
 </header>
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('dashboard',this)">Dashboard</button>
-  <button class="tab" onclick="switchTab('batters',this)">Batters</button>
-  <button class="tab" onclick="switchTab('parlays',this)">Parlays</button>
-  <button class="tab" onclick="switchTab('history',this)">History</button>
-  <button class="tab" onclick="switchTab('model',this)">Model</button>
-</div>
 
-<div id="dashboard-panel" class="tab-panel active">
-  <div class="container"><div id="dashboard-main"><div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div></div></div>
-</div>
-<div id="batters-panel" class="tab-panel">
-  <div class="container">
-    <div id="batter-main"><div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div></div>
-  </div>
-</div>
-<!-- pitchers-panel hidden - adding back later -->
-<div id="pitchers-panel" style="display:none">
-  <div class="container"><div id="pitcher-main"></div></div>
-</div>
-<!-- games-panel hidden - adding back later -->
-<div id="games-panel" style="display:none">
-  <div class="container"><div id="game-main"></div></div>
-</div>
-<!-- parlays-panel - data collection running, UI coming soon -->
-<div id="parlays-panel" class="tab-panel">
-  <div class="container" style="max-width:700px;margin:60px auto;text-align:center;padding:40px 20px">
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:800;color:var(--accent);letter-spacing:.04em">PARLAYS</div>
-    <div style="font-size:13px;color:var(--muted);margin-top:8px;margin-bottom:32px">Coming soon - combination engine in training</div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px">
-      <div style="font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px">What's being built</div>
-      <div style="display:flex;flex-direction:column;gap:12px;text-align:left">
-        <div style="display:flex;align-items:flex-start;gap:12px">
-          <div style="font-size:18px">⚡</div>
-          <div><div style="font-size:12px;font-weight:600;color:var(--text)">Parlay Builder</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Pick any player - Sharp finds the best legs to add. Not a list. A reason.</div></div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:12px">
-          <div style="font-size:18px">🧠</div>
-          <div><div style="font-size:12px;font-weight:600;color:var(--text)">Combination Learning</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Every day the model saves every 2 and 3-leg combination and tracks what hits. Real correlation data, not guesswork.</div></div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:12px">
-          <div style="font-size:18px">📈</div>
-          <div><div style="font-size:12px;font-weight:600;color:var(--text)">Daily Card</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Top plays in plain English. Best 2-leg. Best 3-leg. Best 5-leg shot. Every morning.</div></div>
-        </div>
+<nav class="tabs">
+  <div class="tab active" onclick="switchTab('dashboard',this)">Dashboard</div>
+  <div class="tab" onclick="switchTab('batters',this)">Batters</div>
+</nav>
+
+<div class="main">
+
+  <!-- DASHBOARD -->
+  <div id="tab-dashboard" class="tab-pane active">
+    <div class="dash-section">
+      <div class="dash-title">Today's Top 8</div>
+      <div id="top8-grid" class="top8-grid">
+        <div class="loading-wrap"><div class="loading-spinner"></div><div class="loading-text">Loading picks…</div></div>
       </div>
     </div>
-    <div id="parlay-combo-count" style="font-size:11px;color:var(--muted2)">Loading combination data...</div>
-  </div>
-</div>
-<div id="history-panel" class="tab-panel">
-  <div class="container">
-    <div id="history-main"><div class="no-data">Loading history...</div></div>
-  </div>
-</div>
-<div id="model-panel" class="tab-panel">
-  <div class="container">
-    <div id="model-main"><div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div></div>
-  </div>
-</div>
-<div id="research-panel" style="display:none">
-  <div class="container">
-    <div class="search-row">
-      <input class="search-input" id="searchInput" placeholder="Search player name..." onkeydown="if(event.key==='Enter')searchPlayer()">
-      <button class="search-btn" onclick="searchPlayer()">Search</button>
+    <div class="dash-section">
+      <div class="dash-title">Recent Record</div>
+      <div id="history-list" class="history-list">
+        <div class="loading-wrap"><div class="loading-spinner"></div><div class="loading-text">Loading history…</div></div>
+      </div>
     </div>
-    <div id="research-result"></div>
   </div>
+
+  <!-- BATTERS -->
+  <div id="tab-batters" class="tab-pane">
+    <div class="slate-bar">
+      <span id="slate-info">Loading…</span>
+      <span class="last-updated" id="last-updated"></span>
+    </div>
+    <div id="batters-main">
+      <div class="loading-wrap"><div class="loading-spinner"></div><div class="loading-text">Loading games…</div></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-var API_BASE = 'https://web-production-c0e4.up.railway.app';
-var API=API_BASE;
-var allGames=[];
-var selectedDate=new Date();
-var sortCol='hr_prob',sortDir=-1;
-var pitSortCol='exp_k',pitSortDir=-1;
+var API = 'https://web-production-c0e4.up.railway.app';
+var GITHUB_RAW = 'https://raw.githubusercontent.com/npkamk-blip/MLB-HR-MODEL/main';
+var allGames = [];
+var top25Names = new Set();
 
-function formatDateForAPI(d){var y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day;}
-function fmtDateLabel(d){return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
-function changeDate(n){selectedDate=new Date(selectedDate);selectedDate.setDate(selectedDate.getDate()+n);document.getElementById('dateLbl').textContent=fmtDateLabel(selectedDate);load();}
-function fmtTime(iso){if(!iso)return'--';try{var d=new Date(iso);return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'America/New_York'});}catch(e){return'--';}}
-
-function switchTab(id,btn){
-  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
-  document.getElementById(id+'-panel').classList.add('active');
-  btn.classList.add('active');
-  if(id==='dashboard'&&!dashboardData) loadDashboard();
-  if(id==='history'&&!historyData) loadHistory();
-  if(id==='model') loadModelTab();
-  if(id==='parlays') loadParlayTab();
+// ── Date ──
+var today = new Date();
+function todayStr(){
+  var y=today.getFullYear(), m=String(today.getMonth()+1).padStart(2,'0'), d=String(today.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+d;
 }
+function fmtDateLabel(d){
+  return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+}
+document.getElementById('dateLbl').textContent = fmtDateLabel(today);
 
-var dashboardData=null;
-async function loadDashboard(){
-  var el=document.getElementById('dashboard-main');
-  el.innerHTML='<div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div>';
-  try{
-    var r=await fetch(API+'/dashboard');
-    var d=await r.json();
-    if(d.error){el.innerHTML='<div class="err"><b>Error:</b> '+d.error+'</div>';return;}
-    dashboardData=d; el.innerHTML=buildDashboard(d);
-  }catch(e){el.innerHTML='<div class="err"><b>Error:</b> Failed to fetch</div>';}
+// ── Tab switching ──
+function switchTab(name, el){
+  document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById('tab-'+name).classList.add('active');
+  el.classList.add('active');
+  if(name==='batters' && !allGames.length) loadBatters();
 }
 
-function buildDashboard(d){
-  var stats=d.stats||{},top8=d.top8_today||[],days=d.slate_days||[],h='';
-  h+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px">';
-  function sCard(l,v,s,c){return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 15px"><div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">'+l+'</div><div style="font-family:Barlow Condensed,sans-serif;font-size:26px;font-weight:800;color:'+(c||'var(--text)')+'">'+v+'</div>'+(s?'<div style="font-size:10px;color:var(--muted);margin-top:1px">'+s+'</div>':'')+'</div>';}
-  var t8r=stats.top8_hit_rate||0,t4r=stats.top4_hit_rate||0,p2r=stats.two_of_top4_rate||0,p2t8=stats.two_of_top8_rate||0,ovr=stats.overall_hit_rate||0,daysT=stats.days_tracked||0;
-  h+=sCard('Top 8 Hit Rate',t8r+'%',(stats.top8_total_hits||0)+' HRs / '+(stats.top8_total_picks||0)+' picks',t8r>=25?'var(--g)':t8r>=15?'var(--y)':'var(--r)');
-  h+=sCard('Top 4 Hit Rate',t4r+'%','Last '+daysT+' days',t4r>=25?'var(--g)':t4r>=15?'var(--y)':'var(--r)');
-  h+=sCard('2-of-Top-4 Days',p2r+'%','Parlay signal',p2r>=20?'var(--g)':p2r>=12?'var(--y)':'var(--r)');
-  h+=sCard('2-of-Top-8 Days',p2t8+'%','Wider parlay',p2t8>=20?'var(--g)':p2t8>=12?'var(--y)':'var(--r)');
-  h+=sCard('Slate Hit Rate',ovr+'%','All tracked','var(--muted)');
-  var trackStart=stats.tracking_start||'2026-05-07';
-  h+=sCard('Days Tracked',daysT,'Since '+trackStart,'var(--text)');
-  h+='</div>';
-  var modelC=d.xgb_trained&&d.xgb_cv>d.rf_oob?'var(--purple)':'var(--blue)';
-  var modelLbl=d.xgb_trained&&d.xgb_cv>d.rf_oob?'XGBoost':'Random Forest';
-  h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 15px;margin-bottom:18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap">';
-  h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em">Active Model</div>';
-  h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:800;color:'+modelC+'">'+modelLbl+'</div>';
-  if(d.rf_oob)h+='<div style="font-size:11px;color:var(--muted)">RF AUC <span style="color:var(--text);font-weight:600">'+d.rf_oob.toFixed(3)+'</span></div>';
-  if(d.xgb_trained)h+='<div style="font-size:11px;color:var(--muted)">XGB AUC <span style="color:var(--purple);font-weight:600">'+d.xgb_cv.toFixed(3)+'</span></div>';
-  if(d.xgb_trained&&d.xgb_cv<=d.rf_oob)h+='<div style="font-size:10px;color:var(--muted2)">XGBoost learning - flips live when AUC beats RF</div>';
-  h+='</div>';
-  h+='<div style="margin-bottom:18px"><div style="font-family:Barlow Condensed,sans-serif;font-size:15px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin-bottom:10px">Today\'s Top 8</div>';
-  if(!top8.length){
-    h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;text-align:center;color:var(--muted2);font-size:13px">Confirmed lineups save hourly - check back later</div>';
-  }else{
-    h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px">';
-    top8.forEach(function(p,i){
-      var pct=p.model_hr_pct||0,pc=pct>=18?'var(--g)':pct>=12?'var(--y)':'var(--muted)';
-      var hit=p.hit_hr,hitB=hit===1?'<span style="background:rgba(50,215,75,.15);color:var(--g);border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700;margin-left:5px">HR ✓</span>':hit===0?'<span style="background:rgba(255,69,58,.1);color:var(--r);border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700;margin-left:5px">✗</span>':'';
-      var rankC=i===0?'#ffd60a':i===1?'#e5e5ea':i===2?'#cd7f32':'var(--muted2)';
-      h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 15px;display:flex;align-items:center;gap:10px">';
-      h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:18px;font-weight:800;color:'+rankC+';width:22px;flex-shrink:0">'+(i+1)+'</div>';
-      h+='<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.name+hitB+'</div>';
-      h+='<div style="font-size:10px;color:var(--muted);margin-top:1px">'+(p.team||'')+(p.opp_pitcher?' · vs '+p.opp_pitcher:'')+'</div></div>';
-      h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:20px;font-weight:800;color:'+pc+'">'+pct+'%</div></div>';
-    });
-    h+='</div>';
-  }
-  h+='</div>';
-  if(days.length){
-    h+='<div style="margin-bottom:18px"><div style="font-family:Barlow Condensed,sans-serif;font-size:15px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin-bottom:10px">Recent Record</div>';
-    h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden">';
-    h+='<div style="display:grid;grid-template-columns:90px 1fr 70px 65px;padding:7px 14px;border-bottom:1px solid var(--border2)">';
-    ['Date','Top 8','Hits','Rate'].forEach(function(l){h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em">'+l+'</div>';});
-    h+='</div>';
-    days.slice(0,14).forEach(function(day){
-      var rate=day.top8_total>0?Math.round(day.top8_hits/day.top8_total*100):0;
-      var rc=rate>=25?'var(--g)':rate>=12?'var(--y)':'var(--r)';
-      var dots='';(day.top8||[]).forEach(function(p){var dc=p.hit===1?'var(--g)':p.hit===0?'rgba(255,255,255,0.15)':'rgba(255,255,255,0.08)';dots+='<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+dc+';margin-right:2px"></span>';});
-      h+='<div style="display:grid;grid-template-columns:90px 1fr 70px 65px;padding:9px 14px;border-bottom:1px solid var(--border2)">';
-      h+='<div style="font-size:11px;color:var(--muted)">'+day.date.slice(5)+'</div><div>'+dots+'</div>';
-      h+='<div style="font-size:11px;color:var(--text);font-weight:600">'+day.top8_hits+' / '+day.top8_total+'</div>';
-      h+='<div style="font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:800;color:'+rc+'">'+rate+'%</div></div>';
-    });
-    h+='</div></div>';
-  }
-  return h;
+// ── Refresh ──
+function refreshAll(){
+  loadDashboard();
+  if(document.getElementById('tab-batters').classList.contains('active')) loadBatters(true);
 }
 
-async function loadParlayTab(){
-  var el=document.getElementById('parlay-combo-count');
-  try{
-    var r=await fetch(API+'/parlay-results');
-    var d=await r.json();
-    if(d.error){el.innerHTML='<span style="color:var(--muted2)">Combination tracking starts today - check back tomorrow</span>';return;}
-    var all2=d.all_time&&d.all_time.two_leg_combos||0;
-    var all3=d.all_time&&d.all_time.three_leg_combos||0;
-    var hr2=d.all_time&&d.all_time.two_leg_hit_rate||'--';
-    var hr3=d.all_time&&d.all_time.three_leg_hit_rate||'--';
-    var h='<div style="display:flex;justify-content:center;gap:32px;margin-top:8px">';
-    h+='<div style="text-align:center"><div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:var(--text)">'+all2+'</div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">2-leg combos tracked</div><div style="font-size:11px;color:var(--g);margin-top:2px">'+hr2+' hit rate</div></div>';
-    h+='<div style="text-align:center"><div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:var(--text)">'+all3+'</div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">3-leg combos tracked</div><div style="font-size:11px;color:var(--g);margin-top:2px">'+hr3+' hit rate</div></div>';
-    h+='</div>';
-    el.innerHTML=h;
-  }catch(e){el.innerHTML='<span style="color:var(--muted2)">Combination tracking starting soon</span>';}
+// ── Helpers ──
+function fmtTime(iso){
+  if(!iso) return '--';
+  try{ return new Date(iso).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'America/New_York'}); }
+  catch(e){ return '--'; }
 }
-async function reloadContact(){
-  try{
-    var r=await fetch(API+'/reload-contact');
-    var d=await r.json();
-    alert(d.status+'\n\nHit Refresh in ~30 seconds to see contact data.');
-  }catch(e){alert('Error: '+e.message);}
+function fmtXslg(v){
+  if(!v||v<=0) return '--';
+  if(v>=1.0) return v.toFixed(3);
+  return '.'+String(Math.round(v*1000)).padStart(3,'0');
 }
+function fmtPct(v){ return v>0 ? v.toFixed(1)+'%' : '--'; }
+function pctCls(p){ return p>=15?'pct-elite':p>=11?'pct-high':p>=8?'pct-mid':p>=5?'pct-ok':'pct-low'; }
+function brlCls(b){ return b>=12?'score-high':b>=7?'score-mid':'score-low'; }
+function xslgCls(x){ return x>=0.600?'score-high':x>=0.450?'score-mid':'score-low'; }
+function scoreCls(s){ return s>=65?'score-high':s>=40?'score-mid':'score-low'; }
 
-function probCls(p){return p>=20?'p-elite':p>=15?'p-high':p>=10?'p-mid':'p-low';}
-var modelWeightsData = null;
-async function loadModelTab() {
-  var el = document.getElementById('model-main');
-  el.innerHTML = '<div class="loading">Loading<div class="dots"><span></span><span></span><span></span></div></div>';
-  try {
-    var r = await fetch(API + '/model-weights');
-    modelWeightsData = await r.json();
-    if (!historyData) { var hr = await fetch(API + '/history'); historyData = await hr.json(); if(historyData.records&&historyData.records.length>0)computePercentiles(historyData.records); }
-    renderModelTab(modelWeightsData, historyData);
-  } catch(e) { el.innerHTML = '<div class="err">Failed to load: ' + e.message + '</div>'; }
-}
-async function manualRecalibrate() {
-  var btn = document.getElementById('recalibrate-btn');
-  if(btn){btn.disabled=true;btn.textContent='Recalibrating...';}
-  try {
-    var r = await fetch(API + '/recalibrate', {method:'GET'});
-    var data = await r.json();
-    if(data.error){alert('Failed: '+data.error);}
-    else{
-      var records = data.records_used || '?';
-      var changes = data.weight_changes || 0;
-      var newActive = data.new_active_8 || [];
-      var promoted = data.promoted || [];
-      var dropped = data.dropped || [];
-      var msg = 'Recalibration complete!\n'
-        + records + ' records used\n'
-        + changes + ' weight changes\n'
-        + 'New active 8: ' + newActive.slice(0,4).join(', ') + '...\n'
-        + (promoted.length ? 'Promoted: ' + promoted.join(', ') + '\n' : '')
-        + (dropped.length ? 'Dropped: ' + dropped.join(', ') : '');
-      alert(msg);
-      loadModelTab();
-    }
-  } catch(e){alert('Error: '+e.message);}
-  if(btn){btn.disabled=false;btn.textContent='Recalibrate Now';}
-}
-// ── Stat label map for model feature names ──
-var DT_STAT_LABELS = {
-  'barrel_pct_season':'Barrel% Season','hard_hit_season':'Hard Hit% Season',
-  'ev_season':'Exit Velo Season','iso_season':'ISO Season',
-  'la_season':'Launch Angle Season','pull_pct_season':'Pull% Season',
-  'barrel_pct_l8d':'Barrel% L8D','hard_hit_l8d':'Hard Hit% L8D',
-  'ev_l8d':'Exit Velo L8D','bat_speed_l8d':'Bat Speed L8D',
-  'xwoba_l8d':'xwOBA L8D','xslg_l8d':'xSLG L8D','slg_l8d':'SLG L8D',
-  'iso_l8d':'ISO L8D','k_pct_l8d':'K% L8D','la_l8d':'Launch Angle L8D',
-  'iso_vs_hand':'ISO vs Hand','slg_vs_hand':'SLG vs Hand',
-  'pit_hr9_season':'Pit HR/9 Season','pit_era_season':'Pit ERA Season',
-  'pit_hard_hit_season':'Pit Hard Hit%','pit_k9_season':'Pit K/9 Season',
-  'pit_hr9_vs_hand':'Pit HR/9 vs Hand','pit_slg_vs_hand':'Pit SLG vs Hand',
-  'park_factor':'Park Factor','weather_mult':'Weather Mult',
-  'bullpen_hr9':'Bullpen HR/9','bat_platoon_mult':'Bat Platoon',
-  'pit_platoon_mult':'Pit Platoon','pitch_matchup_score':'Pitch Matchup',
+var medians = {
+  barrel_pct_season:10.7,hard_hit_season:43.5,ev_season:90,iso_season:0.167,
+  la_season:14.1,pull_pct_season:40.4,barrel_pct_l8d:7.7,hard_hit_l8d:28.1,
+  ev_l8d:84,bat_speed_l8d:70.3,xwoba_l8d:0.391,xslg_l8d:0.56,
+  iso_vs_hand:0.181,pit_hr9_season:1.04,pit_hard_hit_season:40.4,
+  pit_hr9_vs_hand:0.93,park_factor:1.05,pit_era_season:3.68,k_pct_l8d:21.6,
 };
-function dtLabel(k){ return DT_STAT_LABELS[k]||k.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();}); }
 
-function renderModelTab(md,hd){
-  var el=document.getElementById('model-main');
-  if(!md){el.innerHTML='<div class="err">No data</div>';return;}
-  var weights=md.weights||{};
-  var calInfo=md.calibration||{};
-
-  // ── Model metadata - handles both Decision Tree and Random Forest ──
-  var modelType      = weights.model_type||'decision_tree';
-  var isForest       = modelType === 'random_forest';
-  var treeDepth      = weights.tree_depth||4;
-  var treeLeaves     = weights.tree_n_leaves||0;
-  var treeMinLeaf    = weights.tree_min_leaf||30;
-  var nEstimators    = weights.n_estimators||200;
-  var recordsUsed    = weights.records_used||0;
-  var calFactor      = weights.calibration_factor||1.0;
-  var calRound       = weights.calibration_round||calInfo.round||1;
-  var lastCal        = weights.last_calibrated||'--';
-  var nextUpgrade    = weights.next_depth_upgrade||1500;
-  var hrRates        = weights.hr_rates_at_leaves||[];
-  var featImport     = weights.feature_importances||{};
-  var treeHrRate     = weights.tree_hr_rate||0;
-
-  // ── History: filter to current calibration round ──
-  var allCompleted=[];
-  if(hd&&hd.records)allCompleted=hd.records.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
-  // Tier stats scoped to current round only - resets each Sunday
-  var roundCompleted = allCompleted.filter(function(r){
-    return (r.rotation_round||1) === calRound;
-  });
-  // Fall back to all if round scoping returns nothing (early data before round tracking)
-  var tierCompleted = roundCompleted.length >= 5 ? roundCompleted : allCompleted;
-
-  // ── Build feature importance list ──
-  var featList = Object.entries(featImport).map(function(e){return{key:e[0],imp:e[1],label:dtLabel(e[0])};});
-  featList.sort(function(a,b){return b.imp-a.imp;});
-  var maxImp = featList.length>0 ? featList[0].imp : 1;
-
-  // ── Header ──
-  var h='';
-  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">';
-  h+='<div><div style="font-size:20px;font-weight:700;color:var(--text)">'+(isForest?'RANDOM FOREST':'DECISION TREE')+'</div>';
-  h+='<div style="font-size:11px;color:var(--muted);margin-top:2px">Trained '+lastCal+' &middot; '+recordsUsed+' records &middot; Round '+calRound+'</div></div>';
-  h+='<div style="display:flex;gap:8px;align-items:center">';
-  var canR=allCompleted.length>=50;
-  h+='<button id="recalibrate-btn" class="recal-btn" onclick="manualRecalibrate()" '+(canR?'':'disabled')+'>'+(canR?'Retrain Now':'Need '+(50-allCompleted.length)+' more')+'</button>';
-  h+='</div></div>';
-
-  // ── Tree Stats Banner ──
-  h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:14px">';
-  function statBox(lbl,val,sub,color){
-    return '<div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center">'
-      +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:22px;font-weight:800;color:'+(color||'var(--text)')+'">'+val+'</div>'
-      +'<div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">'+lbl+'</div>'
-      +(sub?'<div style="font-size:9px;color:var(--muted2);margin-top:1px">'+sub+'</div>':'')
-      +'</div>';
-  }
-  if(isForest){
-    h+=statBox('Trees', nEstimators, 'estimators', 'var(--accent)');
-    h+=statBox('Max Depth', treeDepth, 'per tree', 'var(--blue)');
-    h+=statBox('Min Leaf', treeMinLeaf, 'samples/leaf', 'var(--muted)');
-    h+=statBox('Cal Factor', 'OFF', 'not needed for RF', 'var(--g)');
-    h+=statBox('Dataset HR%', treeHrRate>0?treeHrRate.toFixed(1)+'%':'--', 'train set rate', 'var(--muted)');
-    h+=statBox('Records', recordsUsed, 'training records', recordsUsed>=5000?'var(--g)':'var(--y)');
-  } else {
-    h+=statBox('Depth', treeDepth, 'max split layers', 'var(--accent)');
-    h+=statBox('Leaves', treeLeaves||'--', 'decision nodes', 'var(--blue)');
-    h+=statBox('Min Leaf', treeMinLeaf, 'samples/leaf', 'var(--muted)');
-    h+=statBox('Cal Factor', calFactor<1?calFactor.toFixed(3):'1.0 (off)', calFactor>=1?'stabilized':'bias correction', calFactor>=1?'var(--g)':'var(--y)');
-    h+=statBox('Dataset HR%', treeHrRate>0?treeHrRate.toFixed(1)+'%':'--', 'train set rate', 'var(--muted)');
-    var upgradeLeft = typeof nextUpgrade==='number' ? Math.max(nextUpgrade-recordsUsed,0) : 0;
-    var upgradeStr  = typeof nextUpgrade==='number' ? (upgradeLeft>0?('+'+upgradeLeft+' records'):'ready!') : nextUpgrade;
-    h+=statBox('Next Upgrade', 'D'+(treeDepth+1), upgradeStr, upgradeLeft===0?'var(--g)':'var(--muted2)');
-  }
-  h+='</div>';
-
-  // ── Leaf HR Rate Distribution ──
-  if(hrRates.length>0){
-    h+='<div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px">';
-    // For Random Forest: show realistic output range (individual tree leaves go to 90%+
-    // but averaged across 200 trees outputs cluster 2-25%) - cap display at 30%
-    var dispRates = isForest ? hrRates.filter(function(r){return r<=30;}) : hrRates;
-    var totalRates = hrRates.length;
-    var capped = hrRates.length - dispRates.length;
-    h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">'
-      +(isForest?'Leaf probability range - per-tree distribution':'Leaf HR Rate Distribution')
-      +' ('+(dispRates.length)+(capped>0?' shown, '+capped+' outliers hidden':' leaves')+')</div>';
-    h+='<div style="display:flex;align-items:flex-end;gap:2px;height:36px">';
-    var buckets=[0,0,0,0,0,0,0];
-    dispRates.forEach(function(r){
-      if(r<2)buckets[0]++;else if(r<5)buckets[1]++;else if(r<8)buckets[2]++;
-      else if(r<12)buckets[3]++;else if(r<18)buckets[4]++;else if(r<25)buckets[5]++;else buckets[6]++;
-    });
-    var bktLabels=['<2%','2-5%','5-8%','8-12%','12-18%','18-25%','25-30%'];
-    var bktColors=['var(--muted2)','var(--muted)','var(--y)','var(--warn)','var(--g)','var(--accent)','var(--blue)'];
-    var bktMax=Math.max.apply(null,buckets)||1;
-    buckets.forEach(function(cnt,i){
-      var h2=Math.max(Math.round(cnt/bktMax*36),cnt>0?2:0);
-      h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:1px">';
-      h+='<div style="font-size:7px;color:var(--muted2)">'+cnt+'</div>';
-      h+='<div style="width:100%;height:'+h2+'px;background:'+bktColors[i]+';border-radius:2px 2px 0 0;opacity:0.85"></div>';
-      h+='</div>';
-    });
-    h+='</div>';
-    h+='<div style="display:flex;gap:2px;margin-top:3px">';
-    bktLabels.forEach(function(l){
-      h+='<div style="flex:1;font-size:7px;color:var(--muted2);text-align:center">'+l+'</div>';
-    });
-    h+='</div>'
-    +(capped>0?'<div style="font-size:9px;color:var(--muted2);margin-top:4px">'+capped+' extreme leaves (>30%) in individual trees hidden - Forest averages these out</div>':'')
-    +'</div>';
-  }
-
-  h+='<div class="model-layout">';
-  // ── LEFT: Feature Importances + Tier Panel ──
-  h+='<div style="display:flex;flex-direction:column;gap:12px">';
-  h+='<div class="model-card">';
-  h+='<div class="model-card-title"><span>Feature Importance</span><span style="font-weight:400;color:var(--muted2)">'+(isForest?'averaged across 200 trees':'tree split weight')+'</span></div>';
-  if(!featList.length){
-    h+='<div style="font-size:11px;color:var(--muted);padding:8px 0">No importance data yet - tree needs training.</div>';
-  }
-  featList.slice(0,15).forEach(function(s,i){
-    var pct=maxImp>0?Math.round(s.imp/maxImp*100):0;
-    var barColor = i<3?'var(--accent)':i<6?'var(--g)':i<10?'var(--y)':'var(--muted2)';
-    h+='<div class="weight-row">';
-    h+='<div class="weight-rank">'+(i+1)+'</div>';
-    h+='<div class="weight-name" style="width:150px">'+s.label+'</div>';
-    h+='<div class="weight-bar-wrap"><div class="weight-bar" style="width:'+pct+'%;background:'+barColor+'"></div></div>';
-    h+='<div class="weight-val" style="color:'+barColor+'">'+Math.round(s.imp*1000)/10+'%</div>';
-    h+='</div>';
-  });
-  h+='</div>';
-
-  // ── Tier Performance - scoped to current round ──
-  var tierSince = roundCompleted.length>=5 ? 'Round '+calRound : 'all time';
-  h+='<div class="model-card">';
-  h+='<div class="model-card-title"><span>Hit Rate by Tier</span><span style="font-weight:400;color:var(--muted2);font-size:10px">'+tierSince+' · non-DNP</span></div>';
-  var tiers=[
-    {label:'11%+',   lo:11, hi:999, note:'Bet tier',    color:'var(--g)'},
-    {label:'9–11%',  lo:9,  hi:11,  note:'Strong',      color:'var(--accent)'},
-    {label:'7–9%',   lo:7,  hi:9,   note:'Watchlist',   color:'var(--y)'},
-    {label:'5–7%',   lo:5,  hi:7,   note:'Marginal',    color:'var(--muted)'},
-    {label:'4–5%',   lo:4,  hi:5,   note:'Data only',   color:'var(--muted2)'},
-  ];
-  tiers.forEach(function(t){
-    var tierRecs=tierCompleted.filter(function(r){var p=r.model_hr_pct||0;return p>=t.lo&&p<t.hi;});
-    var n=tierRecs.length, hits=tierRecs.filter(function(r){return r.hit_hr===1;}).length;
-    var rate=n>0?(hits/n*100).toFixed(1):'--';
-    var barW=n>0?Math.min((hits/n)*100*3,100):0;
-    var rc=n===0?'var(--muted2)':hits/n>=0.25?'var(--g)':hits/n>=0.15?'var(--accent)':hits/n>=0.10?'var(--y)':'var(--muted)';
-    h+='<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border2)">';
-    h+='<div style="width:52px;font-size:11px;font-weight:600;color:'+t.color+'">'+t.label+'</div>';
-    h+='<div style="width:55px;font-size:10px;color:var(--muted2)">'+t.note+'</div>';
-    h+='<div style="flex:1;height:5px;background:var(--border2);border-radius:3px;overflow:hidden"><div style="width:'+barW+'%;height:100%;background:'+rc+';border-radius:3px;transition:width .3s"></div></div>';
-    h+='<div style="width:38px;text-align:right;font-size:12px;font-weight:700;color:'+rc+'">'+rate+'%</div>';
-    h+='<div style="width:40px;text-align:right;font-size:10px;color:var(--muted2)">'+hits+'/'+n+'</div>';
-    h+='</div>';
-  });
-  if(tierCompleted.length<20)h+='<div style="font-size:10px;color:var(--muted2);margin-top:8px;text-align:center">Rates stabilize at 200+ records</div>';
-  h+='</div>';
-  h+='</div>'; // close left col
-
-  // ── RIGHT: All features ranked by importance ──
-  h+='<div class="model-card">';
-  h+='<div class="model-card-title"><span>All Features Ranked</span><span style="font-weight:400;color:var(--muted2)">'+recordsUsed+' records · Depth '+treeDepth+'</span></div>';
-  if(!featList.length){
-    h+='<div style="font-size:11px;color:var(--muted);padding:8px 0">Tree not yet trained.</div>';
-  }
-  var allFeatMax = featList.length>0?featList[0].imp:1;
-  featList.forEach(function(s,i){
-    var bW=allFeatMax>0?Math.min(Math.round(s.imp/allFeatMax*100),100):0;
-    var bc=i<3?'var(--accent)':i<6?'var(--g)':i<10?'var(--y)':'var(--muted2)';
-    var impStr = s.imp>0 ? Math.round(s.imp*1000)/10+'%' : '--';
-    h+='<div class="stat-row">';
-    h+='<div class="stat-rank">'+(i+1)+'</div>';
-    h+='<div class="stat-name" style="width:155px;color:'+(i<10?'var(--text)':'var(--muted)')+'">'+s.label+'</div>';
-    h+='<div class="stat-bar-wrap"><div class="stat-bar" style="width:'+bW+'%;background:'+bc+'"></div></div>';
-    h+='<div class="stat-corr" style="color:'+bc+'">'+impStr+'</div>';
-    if(i<3)h+='<span class="stat-badge badge-active">TOP</span>';
-    else if(i<10)h+='<span class="stat-badge badge-candidate">IN</span>';
-    h+='</div>';
-  });
-  h+='</div>';
-  h+='</div>'; // close model-layout
-  el.innerHTML=h;
-}
-
-function barrelCls(v){return v>=12?'sc-g':v>=6?'sc-y':'sc-r';}
-function laCls(v){return(v>=25&&v<=35)?'sc-g':(v>=20&&v<=40)?'sc-y':'sc-r';}
-function isoCls(v){return v>=0.200?'sc-g':v>=0.150?'sc-y':'sc-r';}
-function fmtIso(v){return v>0?'.'+String(Math.round(v*1000)).padStart(3,'0'):'--';}
-function chip(lbl,val,cls){return '<div class="chip"><div class="chip-lbl">'+lbl+'</div><div class="chip-val '+cls+'">'+val+'</div></div>';}
-function barrelCls2(v){return v>=12?'g':v>=6?'y':'r';}
-function laCls2(v){return(v>=25&&v<=35)?'g':(v>=20&&v<=40)?'y':'r';}
-function isoCls2(v){return v>=0.200?'g':v>=0.150?'y':'r';}
-function kCls(v){return v>=30?'r':v>=22?'y':'g';}
-
-function divergenceFlag(season,l8d,higherBetter){
-  if(!l8d||!season||season===0)return{val:season,flag:''};
-  var rel=Math.abs(l8d-season)/season;
-  if(rel<0.50)return{val:season,flag:''};
-  var goingUp=l8d>season;
-  var isHot=higherBetter?goingUp:!goingUp;
-  return{val:l8d,flag:isHot?'🔥':'❄️'};
-}
-function laDivergence(season,l8d){
-  if(!l8d||!season||season===0)return{val:season,flag:''};
-  var rel=Math.abs(l8d-season)/Math.max(Math.abs(season),1);
-  if(rel<0.50)return{val:season,flag:''};
-  var sweet=30,ds=Math.abs(season-sweet),dl=Math.abs(l8d-sweet);
-  return{val:l8d,flag:dl<ds?'🔥':'❄️'};
-}
-function batPlatoonDot(isoVsHand,isoOverall){
-  if(!isoVsHand||!isoOverall||isoOverall===0)return'n';
-  var r=isoVsHand/isoOverall;
-  return r>=1.15?'g':r>=0.90?'y':'r';
-}
-function pitPlatoonDot(slgVsBat,slgOverall){
-  if(!slgVsBat||!slgOverall||slgOverall===0)return'n';
-  var r=slgVsBat/slgOverall;
-  return r>=1.10?'g':r>=0.90?'y':'r';
-}
-function wxIcon(label,temp,wind){
-  var l=(label||'').toLowerCase();
-  if(l.includes('dome'))return'&#127967;';
-  if(l.includes('rain'))return'&#127783;';
-  if(l.includes('out')&&wind>=10)return'&#127782;&#8593;';
-  if(l.includes('in')&&wind>=10)return'&#127782;&#8595;';
-  if(temp<50)return'&#129398;';
-  if(temp>=80)return'&#9728;';
-  return'&#9925;';
-}
-function wxTextCls(label){
-  var l=(label||'').toLowerCase();
-  if(l.includes('out'))return'color:var(--g)';
-  if(l.includes('in'))return'color:var(--r)';
-  return'color:var(--muted)';
-}
-
-function buildBatterTable(games){
-  var el=document.getElementById('batter-main');
-  if(!games||!games.length){el.innerHTML='<div class="no-data">No games today.</div>';return;}
-
-  // ── Helper functions ──
-  // ── Relative-to-median coloring - auto-adjusts as season progresses ──
-  function getMedians(){
-    var fw=modelWeightsData&&modelWeightsData.weights&&modelWeightsData.weights.feature_medians;
-    return fw||{barrel_pct_season:10.2,la_season:14.0,ev_l8d:83.7,xslg_l8d:0.549};
-  }
-  function medCls(val,medKey,invert){
-    var med=getMedians()[medKey]||0;
-    if(!val||val===0||!med)return'pill-m';
-    var ratio=val/med;
-    var good=invert?(ratio<0.85):(ratio>=1.20);
-    var okay=invert?(ratio<1.0):(ratio>=1.0);
-    if(good)return'pill-g';
-    if(okay)return'pill-y';
-    if(invert?(ratio>1.15):(ratio<0.80))return'pill-r';
-    return'pill-m';
-  }
-  // LA uses window logic not median - 18-35deg is always the HR zone
-  function laCls2(la){return(la>=18&&la<=35)?'pill-g':(la>=10&&la<18)||(la>35&&la<=45)?'pill-y':'pill-r';}
-  function evCls(ev){return medCls(ev,'ev_l8d',false);}
-  function brlCls(b){return medCls(b,'barrel_pct_season',false);}
-  function xslgCls(x){return medCls(x,'xslg_l8d',false);}
-  function pctCls2(p){return p>=15?'pct-elite':p>=11?'pct-high':p>=8?'pct-mid':p>=5?'pct-ok':'pct-low';}
-  function l8dHrCls(n){return n>=3?'l8d-fire':n>=1?'l8d-warm':'l8d-none';}
-  function fmtXslg(v){
-    if(!v||v<=0)return'--';
-    if(v>=1.0){return v.toFixed(3);}
-    return'.'+String(Math.round(v*1000)).padStart(3,'0');
-  }
-  // Wind label → alignment score (-1 to 1) for bar coloring
-  function labelToAlign(label){
-    var l=(label||'').toLowerCase();
-    if(l.includes('out to cf'))   return 1.0;
-    if(l.includes('out to lf'))   return 0.8;
-    if(l.includes('out to rf'))   return 0.8;
-    if(l.includes('blowing out')) return 0.6;
-    if(l.includes('toward lf'))   return 0.3;
-    if(l.includes('toward rf'))   return 0.3;
-    if(l.includes('calm'))        return 0.0;
-    if(l.includes('cross'))       return 0.0;
-    if(l.includes('slightly in')) return -0.4;
-    if(l.includes('blowing in'))  return -1.0;
-    return 0;
-  }
-
-  // 3-bar wind display: LF | CF | RF
-  function windBars(wx){
-    if(!wx||!wx.label)return'';
-    var l=(wx.label||'').toLowerCase();
-    var wind=wx.wind_speed||0;
-    if(l.includes('dome'))return'<span class="gchip chip-n">&#127968; Dome</span>';
-    if(wind<4)return'<span class="gchip chip-n" style="font-size:9px">Calm</span>';
-
-    var align=labelToAlign(wx.label);
-    // Calculate alignment per field based on label
-    var lfAlign, cfAlign, rfAlign;
-    if(l.includes('out to lf')){lfAlign=1.0;cfAlign=0.3;rfAlign=-0.2;}
-    else if(l.includes('out to rf')){lfAlign=-0.2;cfAlign=0.3;rfAlign=1.0;}
-    else if(l.includes('out to cf')){lfAlign=0.4;cfAlign=1.0;rfAlign=0.4;}
-    else if(l.includes('toward lf')){lfAlign=0.6;cfAlign=0.2;rfAlign=-0.1;}
-    else if(l.includes('toward rf')){lfAlign=-0.1;cfAlign=0.2;rfAlign=0.6;}
-    else if(l.includes('blowing out')){lfAlign=0.5;cfAlign=0.8;rfAlign=0.5;}
-    else if(l.includes('blowing in')){lfAlign=-0.8;cfAlign=-1.0;rfAlign=-0.8;}
-    else if(l.includes('slightly in')){lfAlign=-0.3;cfAlign=-0.4;rfAlign=-0.3;}
-    else{lfAlign=0;cfAlign=0;rfAlign=0;} // crosswind/calm
-
-    function barColor(a){
-      if(a>=0.6) return'var(--g)';
-      if(a>=0.2) return'var(--y)';
-      if(a<=-0.4) return'var(--r)';
-      return'var(--muted2)';
-    }
-    function barH(a){return Math.max(3,Math.round(Math.abs(a)*20))+'px';}
-    function barDir(a){return a>=0?'flex-end':'flex-start';}
-
-    var speedStr=wind+'mph';
-    var html='<div style="display:flex;align-items:center;gap:4px">';
-    html+='<div style="font-size:9px;color:var(--muted2);margin-right:2px">'+speedStr+'</div>';
-    [[lfAlign,'LF'],[cfAlign,'CF'],[rfAlign,'RF']].forEach(function(item){
-      var a=item[0],lbl=item[1];
-      var c=barColor(a);
-      html+='<div style="display:flex;flex-direction:column;align-items:center;gap:2px">';
-      html+='<div style="width:14px;height:20px;background:rgba(255,255,255,0.06);border-radius:3px;display:flex;align-items:'+barDir(a)+';overflow:hidden">';
-      html+='<div style="width:100%;height:'+barH(a)+';background:'+c+';border-radius:2px;opacity:0.9"></div>';
-      html+='</div>';
-      html+='<div style="font-size:7px;color:var(--muted2);font-weight:500">'+lbl+'</div>';
-      html+='</div>';
-    });
-    html+='</div>';
-    return html;
-  }
-
-  function wxChip(wx, batHand){
-    if(!wx||!wx.label)return'';
-    var l=(wx.label||'').toLowerCase();
-    var temp=wx.temp||70;var wind=wx.wind_speed||0;
-    var parts=[];
-    if(l.includes('dome'))return'<span class="gchip chip-n">&#127968; Dome</span>';
-    // Wind bars
-    if(wind>0) parts.push(windBars(wx));
-    // Temp chip
-    if(temp>=80)parts.push('<span class="gchip chip-g">'+temp+'&#176;</span>');
-    else if(temp>=65)parts.push('<span class="gchip chip-n">'+temp+'&#176;</span>');
-    else parts.push('<span class="gchip chip-r">'+temp+'&#176; cold</span>');
-    return parts.join('');
-  }
-  function parkChip(pf){
-    if(!pf||pf===0)return'';
-    var cls=pf>=1.10?'chip-g':pf>=0.95?'chip-n':'chip-r';
-    return'<span class="gchip '+cls+'">Park '+pf.toFixed(2)+'</span>';
-  }
-  function hr9Cls(v){return v>=2.0?'hr9-hot':v>=1.2?'hr9-warm':v>=0.5?'hr9-ok':'hr9-cold';}
-  function trendDot(b){
-    var s=b.season||{};var l8=b.l8d||{};
-    if((l8.barrel||0)>=(s.barrel||0)*1.2&&(l8.barrel||0)>=10)return'dot-fire';
-    if((b.l8d_hr_count||0)>=2)return'dot-fire';
-    if((b.l8d_hr_count||0)>=1||(l8.xslg||0)>=0.700)return'dot-warm';
-    return'dot-neutral';
-  }
-
-  var totalBatters=0;
-  var h='';
-
-  // ── Slate header ──
-  var totalProjHR = 0;
-  games.forEach(function(g){
-    var wx=g.weather||{};
-    var wxLbl=(wx.label||'').toLowerCase();
-    var windS=wx.wind_speed||0;
-    var wxMult=1.0;
-    if(!wxLbl.includes('dome')&&windS>=5){
-      var al=labelToAlign(wx.label||'');
-      var sf=windS<10?0.3:windS<16?0.7:1.0;
-      wxMult=1.0+(al*sf*0.12);
-    }
-    var pf=g.park_factor||g.home_pitcher&&g.home_pitcher.park_factor||1.0;
-    var awayP=g.away_pitcher||{};
-    var homeP=g.home_pitcher||{};
-    var awayP2=g.away_pitcher||{};var homeP2=g.home_pitcher||{};
-    var aHr9=awayP2.hr9||1.2; var hHr9=homeP2.hr9||1.2;
-    var aIP=awayP2.avg_ip||5.5; var hIP=homeP2.avg_ip||5.5;
-    var aBpHr9=awayP2.bullpen_hr9||1.2; var hBpHr9=homeP2.bullpen_hr9||1.2;
-    var projHR=Math.round(((hHr9/9)*hIP+(hBpHr9/9)*(9-hIP)+(aHr9/9)*aIP+(aBpHr9/9)*(9-aIP))*pf*wxMult*10)/10;
-    totalProjHR+=projHR;
-  });
-  var slateColor=totalProjHR>=32?'var(--g)':totalProjHR>=22?'var(--y)':'var(--muted)';
-  var slateLabel=totalProjHR>=32?'strong day':totalProjHR>=22?'average day':'low HR day';
-  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding:0 2px">';
-  h+='<div style="font-size:11px;color:var(--muted2)">'+games.length+' games today</div>';
-  h+='<div style="font-size:11px;color:var(--muted2)">Slate total: <span style="color:'+slateColor+';font-weight:600">'+totalProjHR.toFixed(0)+' proj. HRs</span> - '+slateLabel+'</div>';
-  h+='</div>';
-
-  // ── Column header ──
-  h+='<div style="display:grid;grid-template-columns:210px 75px 85px 1fr 1fr;gap:0;border-radius:6px 6px 0 0;overflow:hidden;border:0.5px solid var(--border)">';
-  ['Game','Proj HRs','Wind','Away Batters','Home Batters'].forEach(function(lbl){
-    h+='<div style="background:var(--s2);padding:5px 8px;font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;border-bottom:0.5px solid var(--border)">'+lbl+'</div>';
-  });
-  h+='</div>';
-
-  // ── Game rows ──
-  games.forEach(function(g,gi){
-    var awayP=g.away_pitcher||{};
-    var homeP=g.home_pitcher||{};
-    var wx=g.weather||{};
-    var awayTeam=g.away||'';
-    var homeTeam=g.home||'';
-    var gtime=g.time||'';
-    var timeStr='';
-    if(gtime){try{var d=new Date(gtime);timeStr=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'America/New_York'});}catch(e){}}
-    var pf=homeP.park_factor||g.park_factor||1.0; // always home park - never away pitcher's park
-    var wxLabel=(wx.label||'').toLowerCase();
-    var windSpd=wx.wind_speed||0;
-    var isDome=wxLabel.includes('dome');
-    // Use backend-calculated mult when available, otherwise approximate from label
-    var wxMult=wx.mult||1.0;
-    if(!wx.mult && !isDome && windSpd>=5){
-      var align=labelToAlign(wx.label||'');
-      var speedFactor=windSpd<10?0.3:windSpd<16?0.7:1.0;
-      wxMult=1.0+(align*speedFactor*0.12);
-    }
-
-    var allCands=g.top_hr_candidates||[];
-    var awayBatters=allCands.filter(function(b){return b.team===awayTeam;}).sort(function(a,b){return(b.hr_prob||0)-(a.hr_prob||0);});
-    var homeBatters=allCands.filter(function(b){return b.team===homeTeam;}).sort(function(a,b){return(b.hr_prob||0)-(a.hr_prob||0);});
-
-    if(!awayBatters.length&&!homeBatters.length)return;
-    totalBatters+=awayBatters.length+homeBatters.length;
-
-    // ── Projected HR: starter innings + bullpen innings ──
-    var awayHr9=awayP.hr9||1.2;
-    var homeHr9=homeP.hr9||1.2;
-    var awayIP=awayP.avg_ip||5.5;
-    var homeIP=homeP.avg_ip||5.5;
-    var awayBpHr9=awayP.bullpen_hr9||1.2;
-    var homeBpHr9=homeP.bullpen_hr9||1.2;
-    var awayBpIP=Math.max(0, 9-awayIP);
-    var homeBpIP=Math.max(0, 9-homeIP);
-    // away batters face home pitcher + home bullpen
-    var awayStarterProj=(homeHr9/9)*homeIP*pf*wxMult;
-    var awayBullpenProj=(homeBpHr9/9)*homeBpIP*pf*wxMult;
-    var awayProj=Math.round((awayStarterProj+awayBullpenProj)*10)/10;
-    // home batters face away pitcher + away bullpen
-    var homeStarterProj=(awayHr9/9)*awayIP*pf*wxMult;
-    var homeBullpenProj=(awayBpHr9/9)*awayBpIP*pf*wxMult;
-    var homeProj=Math.round((homeStarterProj+homeBullpenProj)*10)/10;
-    var gameProj=Math.round((awayProj+homeProj)*10)/10;
-    var projC=gameProj>=2.8?'var(--g)':gameProj>=2.0?'var(--y)':'var(--muted)';
-    var projLabel=gameProj>=2.8?'IDEAL':gameProj>=2.0?'NORMAL':'LOW';
-
-    // ── Wind direction arrow (rotated SVG) ──
-    function windArrow(wx,isDome){
-      if(isDome)return'<div style="text-align:center;font-size:10px;color:var(--muted2)">Dome</div>';
-      var wind=wx.wind_speed||0;
-      var label=wx.label||'';
-      var l=label.toLowerCase();
-      if(wind<4)return'<div style="text-align:center;font-size:10px;color:var(--muted2)">Calm</div>';
-      var align=labelToAlign(label);
-      // Override align with angle-based calculation if available
-      if(wx.wind_angle_cf!==undefined){
-        align=Math.cos(wx.wind_angle_cf*Math.PI/180);
-      }
-      var arrowC=align>=0.5?'var(--g)':align>=0.1?'var(--y)':align<=-0.4?'var(--r)':'var(--muted2)';
-      // Use exact wind angle relative to CF from backend (0=out to CF, 180=blowing in)
-      // Fall back to label-based snap if not available
-      var rot=0;
-      if(wx.wind_angle_cf!==undefined){
-        rot=wx.wind_angle_cf; // exact degrees - positive=right, negative=left, 0=out to CF
-      } else {
-        if(l.includes('blowing in')||l.includes('slightly in'))rot=180;
-        else if(l.includes('out to lf'))rot=-45;
-        else if(l.includes('out to rf'))rot=45;
-        else if(l.includes('toward lf'))rot=135;
-        else if(l.includes('toward rf'))rot=-135;
-        else if(l.includes('cross'))rot=90;
-      }
-      // Derive label from exact angle - consistent with arrow direction
-      var shortLabel;
-      if(wx.wind_angle_cf!==undefined){
-        var absAngle=Math.abs(wx.wind_angle_cf);
-        if(absAngle<=70)shortLabel='OUT';
-        else if(absAngle>=110)shortLabel='IN';
-        else shortLabel='CROSS';
-      } else {
-        shortLabel=l.includes('out')?'OUT':l.includes('in')?'IN':'CROSS';
-      }
-      // Diamond is STATIC - only the arrow inside rotates
-      return'<div style="display:flex;flex-direction:column;align-items:center;gap:3px">'
-        +'<svg width="36" height="36" viewBox="0 0 36 36">'
-        // Static diamond border - always oriented with top=CF, left=LF, right=RF, bottom=In
-        +'<rect x="8" y="8" width="20" height="20" rx="2" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1" transform="rotate(45 18 18)"/>'
-        // CF label at top point
-        +'<text x="18" y="5" text-anchor="middle" font-size="5" fill="rgba(255,255,255,0.25)">CF</text>'
-        // Rotating arrow group - only this rotates
-        +'<g transform="rotate('+rot+',18,18)">'
-        +'<line x1="18" y1="18" x2="18" y2="6" stroke="'+arrowC+'" stroke-width="2" stroke-linecap="round"/>'
-        +'<polygon points="18,3 15,9 21,9" fill="'+arrowC+'"/>'
-        +'</g>'
-        +'<circle cx="18" cy="18" r="2" fill="rgba(255,255,255,0.3)"/>'
-        +'</svg>'
-        +'<div style="font-size:10px;font-weight:600;color:'+arrowC+'">'+wind+'mph '+shortLabel+'</div>'
-        +'</div>';
-    }
-
-    // ── Pitcher info with HR/9 splits ──
-    function pitcherInfo(p){
-      if(!p||!p.name)return'<div style="font-size:11px;color:var(--muted2)">TBD</div>';
-      var hand=p.hand||'R';
-      var handCls=hand==='L'?'lhp':'rhp';
-      var rhr9=p.vs_R_hr9||0;
-      var lhr9=p.vs_L_hr9||0;
-      var rCls=hr9Cls(rhr9);
-      var lCls=hr9Cls(lhr9);
-      return'<div style="margin-bottom:5px">'
-        +'<div style="display:flex;align-items:center;gap:4px;margin-bottom:3px">'
-        +'<span style="font-size:12px;font-weight:600;color:var(--text)">'+p.name+'</span>'
-        +'<span class="hand-tag '+handCls+'">'+hand+'HP</span>'
-        +'</div>'
-        +'<div style="display:flex;gap:8px">'
-        +'<div style="font-size:10px;color:var(--muted2)">vs RHH <span class="hr9-val '+rCls+'" style="font-size:10px">'+(rhr9>0?rhr9.toFixed(1):'--')+'</span></div>'
-        +'<div style="font-size:10px;color:var(--muted2)">vs LHH <span class="hr9-val '+lCls+'" style="font-size:10px">'+(lhr9>0?lhr9.toFixed(1):'--')+'</span></div>'
-        +'</div>'
-        +'</div>';
-    }
-
-    // ── Compact batter list ──
-    function batterList(batters,pitcher,side,rowPrefix){
-      if(!batters.length)return'<div style="font-size:11px;color:var(--muted2);padding:8px">No data</div>';
-      // Check if lineup is confirmed
-      var isConfirmed=batters.some(function(b){return b.lineup_source==='confirmed'||b.batting_slot>0;});
-      var orderLabel=isConfirmed
-        ?'<span style="color:var(--g);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Confirmed Order</span>'
-        :'<span style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em">Projected Order</span>';
-
-      var sec='<div style="padding:6px 8px">';
-      // Column header
-      sec+=orderLabel;
-      sec+='<div style="display:grid;grid-template-columns:14px 1fr 38px 30px 30px 38px;gap:2px;padding:3px 0 4px;border-bottom:0.5px solid var(--border2);margin-top:4px">';
-      sec+='<div style="font-size:8px;color:var(--muted2)"></div>';
-      sec+='<div style="font-size:8px;color:var(--muted2)">Batter</div>';
-      sec+='<div style="font-size:8px;color:var(--muted2);text-align:right">xSLG</div>';
-      sec+='<div style="font-size:8px;color:var(--muted2);text-align:right">Brl</div>';
-      sec+='<div style="font-size:8px;color:var(--muted2);text-align:right">LA</div>';
-      sec+='<div style="font-size:8px;color:var(--muted2);text-align:right">HR%</div>';
-      sec+='</div>';
-
-      var showN=Math.min(batters.length,5);
-      batters.slice(0,showN).forEach(function(b,bi){
-        b._full=b; b._pitP=pitcher;
-        var s=b.season||{};var l8=b.l8d||{};var bd=b.breakdown||{};
-        var xslg=l8.xslg||bd.xslg_l8d||0;
-        var brl=s.barrel||s.barrel_pct||bd.barrel_season||0;
-        var la=s.la||bd.la_use||0;
-        var pct=b.hr_prob||0;
-        var pc=pctCls2(pct);
-        var slot=b.batting_slot&&b.batting_slot>0?b.batting_slot:bi+1;
-        var rowId=rowPrefix+'-'+bi;
-        var isTop=bi===0;
-        var rowBg=isTop?'background:rgba(50,215,75,0.06);border-radius:4px;':'';
-
-        sec+='<div style="'+rowBg+'" onclick="toggleGcDetail(\''+rowId+'\')" style="cursor:pointer">';
-        sec+='<div style="display:grid;grid-template-columns:14px 1fr 38px 30px 30px 38px;gap:2px;padding:3px 2px;cursor:pointer;align-items:center">';
-        sec+='<div style="font-size:9px;color:var(--muted2);text-align:center">'+slot+'</div>';
-        sec+='<div style="font-size:12px;font-weight:'+(isTop?'600':'400')+';color:'+(isTop?'var(--text)':'var(--muted)')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+b.name+'</div>';
-        sec+='<div style="font-size:10px;color:var(--muted);text-align:right">'+fmtXslg(xslg)+'</div>';
-        sec+='<div style="font-size:10px;color:var(--muted);text-align:right">'+(brl>0?brl.toFixed(1)+'%':'--')+'</div>';
-        sec+='<div style="font-size:10px;color:var(--muted);text-align:right">'+(la>0?la.toFixed(0)+'°':'--')+'</div>';
-        sec+='<div class="bat-pct '+pc+'" style="font-size:12px;text-align:right">'+pct+'%</div>';
-        sec+='</div>';
-        sec+='<div class="gc-detail" id="'+rowId+'" style="display:none">'+buildBatDetail(b)+'</div>';
-        sec+='</div>';
-      });
-
-      if(batters.length>showN){
-        sec+='<div style="text-align:center;padding:4px;font-size:10px;color:var(--muted2);cursor:pointer;border:0.5px solid var(--border2);border-radius:4px;margin-top:4px" onclick="this.parentNode.querySelectorAll(\'.extra-bat\').forEach(function(e){e.style.display=e.style.display===\'none\'?\'block\':\'none\'});this.textContent=this.textContent.includes(\'+\')?\'show less\':\'+ '+(batters.length-showN)+' more\'">'+(batters.length-showN)+' more</div>';
-        batters.slice(showN).forEach(function(b,bi){
-          b._full=b; b._pitP=pitcher;
-          var s=b.season||{};var l8=b.l8d||{};var bd=b.breakdown||{};
-          var xslg=l8.xslg||bd.xslg_l8d||0;
-          var brl=s.barrel||s.barrel_pct||bd.barrel_season||0;
-          var la=s.la||bd.la_use||0;
-          var pct=b.hr_prob||0;
-          var pc=pctCls2(pct);
-          var slot=b.batting_slot&&b.batting_slot>0?b.batting_slot:showN+bi+1;
-          var rowId=rowPrefix+'-extra-'+bi;
-          sec+='<div class="extra-bat" style="display:none">';
-          sec+='<div style="display:grid;grid-template-columns:14px 1fr 38px 30px 30px 38px;gap:2px;padding:3px 2px;cursor:pointer;align-items:center" onclick="toggleGcDetail(\''+rowId+'\')">';
-          sec+='<div style="font-size:9px;color:var(--muted2);text-align:center">'+slot+'</div>';
-          sec+='<div style="font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+b.name+'</div>';
-          sec+='<div style="font-size:10px;color:var(--muted);text-align:right">'+fmtXslg(xslg)+'</div>';
-          sec+='<div style="font-size:10px;color:var(--muted);text-align:right">'+(brl>0?brl.toFixed(1)+'%':'--')+'</div>';
-          sec+='<div style="font-size:10px;color:var(--muted);text-align:right">'+(la>0?la.toFixed(0)+'°':'--')+'</div>';
-          sec+='<div class="bat-pct '+pc+'" style="font-size:12px;text-align:right">'+pct+'%</div>';
-          sec+='</div>';
-          sec+='<div class="gc-detail" id="'+rowId+'" style="display:none">'+buildBatDetail(b)+'</div>';
-          sec+='</div>';
-        });
-      }
-      sec+='</div>';
-      return sec;
-    }
-
-    var rowBorder=gi>0?'border-top:0.5px solid var(--border)':'';
-    h+='<div style="display:grid;grid-template-columns:210px 75px 85px 1fr 1fr;gap:0;border:0.5px solid var(--border);border-top:none">';
-
-    // Col 1 - Game info
-    h+='<div style="padding:10px 10px;'+rowBorder+'">';
-    h+='<div style="font-size:11px;color:var(--muted2);margin-bottom:3px">'+timeStr+' ET</div>';
-    h+='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px">'+awayTeam+' <span style="color:var(--muted2);font-weight:400;font-size:11px">@</span> '+homeTeam+'</div>';
-    h+=pitcherInfo(awayP);
-    h+='<div style="border-top:0.5px solid var(--border2);margin:6px 0"></div>';
-    h+=pitcherInfo(homeP);
-    h+='</div>';
-
-    // Col 2 - Projected HRs
-    h+='<div style="padding:10px 8px;border-left:0.5px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">';
-    h+='<div style="font-size:24px;font-weight:600;color:'+projC+'">'+gameProj.toFixed(1)+'</div>';
-    h+='<div style="font-size:10px;color:var(--muted2)">';
-    h+='<span>'+awayProj.toFixed(1)+'</span><span style="color:var(--border)"> / </span><span>'+homeProj.toFixed(1)+'</span>';
-    h+='</div>';
-    h+='<div style="font-size:9px;font-weight:700;color:'+projC+'">'+projLabel+'</div>';
-    h+='</div>';
-
-    // Col 3 - Wind
-    h+='<div style="padding:10px 8px;border-left:0.5px solid var(--border);display:flex;align-items:center;justify-content:center">';
-    h+=windArrow(wx,isDome);
-    h+='</div>';
-
-    // Col 4 - Away batters
-    h+='<div style="border-left:0.5px solid var(--border)">';
-    h+=batterList(awayBatters,homeP,'away',gi+'-away');
-    h+='</div>';
-
-    // Col 5 - Home batters
-    h+='<div style="border-left:0.5px solid var(--border)">';
-    h+=batterList(homeBatters,awayP,'home',gi+'-home');
-    h+='</div>';
-
-    h+='</div>';
-  });
-
-  if(!totalBatters){el.innerHTML='<div class="no-data">No batters above threshold today.</div>';return;}
-  el.innerHTML='<div class="gc-wrap" style="border-radius:8px;overflow:hidden">'+h+'</div>';
-}
-
-function toggleDD(el){
-  var id=el.dataset.ddid;
-  var d=document.getElementById(id);
-  if(!d)return;
-  var open=d.style.display!=='none';
-  d.style.display=open?'none':'block';
-  var arr=el.querySelector('.dd-arrow');
-  if(arr)arr.textContent=open?'▼':'▲';
-}
-
-function toggleGcDetail(id){
-  var d=document.getElementById(id);
-  if(d)d.style.display=d.style.display==='none'?'block':'none';
-}
-
-// Keep legacy toggleBatRow for history tab compatibility
-function toggleBatRow(i){var d=document.getElementById('bdet-'+i);if(d)d.style.display=d.style.display==='none'?'table-row':'none';}
-
-
-
-function buildBatDetail(b){
-  var s=b._full.season||{},l=b._full.l8d||{},bd=b._full.breakdown||{},pitP=b._pitP||{};
-  var oppHand=b.opp_hand||b._full.opp_p_hand||'R';
-  var hasL8D=l.pa>0;
-  var l8dHR=b.l8d_hr||b._full.l8d_hr_count||0;
-  var clog=b._full.contact_log||b.contact_log||[];
-
-  function fmtVal(val,dec,suffix){return(val!=null&&val!==0&&val!==''&&!isNaN(val))?(+val).toFixed(dec)+(suffix||''):'--';}
-  function fmtSlg(val){return val>0?'.'+String(Math.round(val*1000)).padStart(3,'0'):'--';}
-
-  // ── Feature-importance medians from model (fallback if not loaded) ──
-  var medians = (modelWeightsData&&modelWeightsData.weights&&modelWeightsData.weights.feature_medians)||{
-    barrel_pct_season:10.7, hard_hit_season:43.5, ev_season:90, iso_season:0.167,
-    la_season:14.1, pull_pct_season:40.4, barrel_pct_l8d:7.7, hard_hit_l8d:28.1,
-    ev_l8d:84, bat_speed_l8d:70.3, xwoba_l8d:0.391, xslg_l8d:0.56,
-    slg_l8d:0.424, iso_l8d:0.184, k_pct_l8d:22, la_l8d:17.8,
-    iso_vs_hand:0.181, pit_hr9_season:1.04, pit_hard_hit_season:40.4,
-    pit_hr9_vs_hand:0.93, park_factor:1.05,
-  };
-
-  // ── Get feature importances for this batter ──
-  var fi = bd.feature_importances||{};
-  var fiList = Object.entries(fi).sort(function(a,b){return b[1]-a[1];});
-
-  // ── Stat value map - what we actually have for this batter ──
-  var xslg_l8d  = l.xslg||bd.xslg_l8d||0;
-  var xwoba_l8d = l.xwoba||bd.xwoba_l8d||0;
-  var bat_speed = l.bat_speed||bd.bat_speed_l8d||0;
-  var statVals = {
-    xslg_l8d:      xslg_l8d,
-    pull_pct_season: s.pull||bd.pull_s||0,
-    hard_hit_season: s.hh||bd.hh_season||0,
-    barrel_pct_season: s.barrel||bd.barrel_season||0,
-    iso_l8d:       l.iso||bd.iso_l8d||0,
-    pit_hard_hit_season: pitP.hard_hit_pct||bd.pit_hard||0,
-    k_pct_l8d:     l.k_pct||0,
-    iso_vs_hand:   bd.iso_vs_hand||0,
-    ev_season:     s.ev||bd.ev_season||0,
-    la_season:     s.la||bd.la_use||0,
-    barrel_pct_l8d: l.barrel||bd.barrel_use||0,
-    hard_hit_l8d:  l.hh||0,
-    bat_speed_l8d: bat_speed,
-    xwoba_l8d:     xwoba_l8d,
-    iso_season:    s.iso||bd.iso_season||0,
-    pit_hr9_season: bd.hr9_season||bd.pit_hr9||0,
-    pit_hr9_vs_hand: bd.hr9_split||bd.pit_hr9_vs_hand||0,
-  };
-
-  // Label map
-  var FI_LABELS = {
-    xslg_l8d:'xSLG L8D', pull_pct_season:'Pull% Season', hard_hit_season:'Hard Hit% Season',
-    barrel_pct_season:'Barrel% Season', iso_l8d:'ISO L8D', pit_hard_hit_season:'Pit Hard Hit%',
-    k_pct_l8d:'K% L8D', iso_vs_hand:'ISO vs Hand', ev_season:'Exit Velo Season',
-    la_season:'Launch Angle Season', barrel_pct_l8d:'Barrel% L8D', hard_hit_l8d:'Hard Hit% L8D',
-    bat_speed_l8d:'Bat Speed L8D', xwoba_l8d:'xwOBA L8D', iso_season:'ISO Season',
-    pit_hr9_season:'Pit HR/9 Season', pit_hr9_vs_hand:'Pit HR/9 vs Hand',
-  };
-
-  // Invert logic - lower is better for batter for these
-  var INVERT = {k_pct_l8d:true, pit_hard_hit_season:false, pit_hr9_season:false, pit_hr9_vs_hand:false};
-
-  // Format by stat type
-  function fmtByKey(key, val){
-    if(val==null||val===0)return '--';
-    if(key.includes('pct')||key.includes('hard_hit')||key.includes('pull'))return val.toFixed(1)+'%';
-    if(key.includes('iso')||key.includes('slg')||key.includes('woba'))return fmtSlg(val);
-    if(key.includes('ev')||key.includes('bat_speed'))return val.toFixed(1);
-    if(key.includes('la'))return val.toFixed(1)+'°';
-    if(key.includes('k_pct'))return val.toFixed(1)+'%';
-    if(key.includes('hr9'))return val.toFixed(2);
-    return val.toFixed(2);
-  }
-
-  // Above/below median indicator
-  function medianTag(key, val){
-    var med = medians[key];
-    if(!med||!val||val===0)return '<span style="color:var(--muted2);font-size:9px">--</span>';
-    var isPitStat = key.startsWith('pit_');
-    var isInvert = INVERT[key]||false;
-    var above = val > med;
-    // For pit stats: higher HR/9 = good for batter, higher HH% = bad
-    var good;
-    if(isPitStat && (key.includes('hr9')))good=above;
-    else if(isPitStat)good=!above;
-    else if(isInvert)good=!above;
-    else good=above;
-    var color = good?'var(--g)':'var(--r)';
-    var arrow = above?'↑':'↓';
-    var medStr = fmtByKey(key, med);
-    return '<span style="font-size:9px;color:'+color+';font-weight:700" title="Median: '+medStr+'">'+arrow+' med</span>';
-  }
-
-  // ── LEFT: Feature-importance driven stat display ──
-  var h='<div class="detail-wrap">';
-  // ── RIGHT: Radar Chart - Uncle Nicky Signature ──
-  // 6-axis composite radar showing why this batter scored what he did
-  // Each axis is a composite of multiple underlying stats
-
-  function buildRadar(){
-    // ── Axis scoring helpers ──
-    function norm(val, med, cap){
-      if(!val||!med||val===0) return 50;
-      var ratio = val/med;
-      return Math.min(Math.round(ratio * 50), cap||100);
-    }
-    function normLow(val, med){ // lower is better (K%, pitcher stats)
-      if(!val||!med||val===0) return 50;
-      return Math.min(Math.round((med/val) * 50), 100);
-    }
-    function laScore(la){
-      if(!la||la===0) return 40;
-      var ideal = 26.5;
-      var dist = Math.abs(la - ideal);
-      return Math.max(0, Math.min(100, Math.round(100 - dist*3.5)));
-    }
-
-    // Pull stat values
-    var brl_s  = s.barrel||bd.barrel_season||statVals.barrel_pct_season||0;
-    var iso_s  = s.iso||bd.iso_season||statVals.iso_season||0;
-    var ev_s   = s.ev||bd.ev_season||0;
-    var la_s   = s.la||bd.la_use||statVals.la_season||0;
-    var pull_s = s.pull||bd.pull_s||statVals.pull_pct_season||0;
-    var hh_s   = s.hh||bd.hh_season||statVals.hard_hit_season||0;
-
-    var xslg_l= xslg_l8d||l.xslg||bd.xslg_l8d||0;
-    var ev_l  = l.ev||bd.ev_l8d||0;
-    var brl_l = l.barrel||bd.barrel_pct_l8d||0;
-    var spd_l = l.bat_speed||bd.bat_speed_l8d||0;
-    var hh_l  = l.hh||bd.hard_hit_l8d||statVals.hard_hit_l8d||0;
-    var la_l  = l.la||bd.la_l8d||0;
-
-    var pit_hr9  = pitP.hr9||bd.pit_hr9_season||0;
-    var pit_hh   = pitP.hard_hit_pct||bd.pit_hard||0;
-    var pit_era  = pitP.era||bd.pit_era_season||0;
-    var pit_slg  = pitP.vs_R_slg||pitP.vs_L_slg||bd.pit_slg_vs_hand||0;
-
-    var pf    = bd.park_factor||pitP.park_factor||1.0;
-    var wx    = bd.weather_mult||1.0;
-
-    var k_l   = l.k_pct||statVals.k_pct_l8d||0;
-    var chase = bd.chase_rate||s.chase||0;
-
-    var bat_plat = bd.bat_platoon_mult||1.0;
-    var pit_plat = bd.pit_platoon_mult||1.0;
-    var iso_hand = statVals.iso_vs_hand||bd.iso_vs_hand||s.iso_vs_hand||0;
-    var pitch_sc = bd.pitch_matchup_score||0;
-
-    // ── Composite scores (0-100) ──
-    var power = Math.round((
-      norm(brl_s, medians.barrel_pct_season||10, 100) * 0.35 +
-      norm(iso_s,  medians.iso_season||0.162, 100)    * 0.30 +
-      norm(ev_s,   medians.ev_season||89.7, 100)      * 0.20 +
-      laScore(la_s)                                   * 0.08 +
-      norm(pull_s, medians.pull_pct_season||40, 100)  * 0.07
-    ));
-
-    var form = Math.round((
-      norm(xslg_l, medians.xslg_l8d||0.545, 100)     * 0.35 +
-      norm(ev_l,   medians.ev_l8d||83.5, 100)         * 0.25 +
-      norm(brl_l,  medians.barrel_pct_l8d||7.4, 100)  * 0.20 +
-      norm(spd_l,  medians.bat_speed_l8d||70.1, 100)  * 0.10 +
-      norm(hh_l,   medians.hard_hit_l8d||27.3, 100)   * 0.05 +
-      laScore(la_l)                                   * 0.05
-    ));
-
-    var matchup = Math.round((
-      norm(pit_hr9, medians.pit_hr9_season||1.0, 100) * 0.45 +
-      norm(pit_hh,  medians.pit_hard_hit_season||40.6, 100) * 0.30 +
-      normLow(pit_era, medians.pit_era_season||3.68)  * 0.15 +
-      norm(pit_slg, medians.pit_slg_vs_hand||0.36, 100) * 0.10
-    ));
-
-    var parkWx = Math.round((
-      norm(pf, 1.04, 100)  * 0.60 +
-      norm(wx, 1.00, 100)  * 0.40
-    ));
-    if(pf===1.0&&wx===1.0) parkWx = 50;
-
-    var disc = Math.round((
-      normLow(k_l, medians.k_pct_l8d||21.6) * 0.60 +
-      (chase>0 ? normLow(chase, 30) * 0.40 : 50 * 0.40)
-    ));
-
-    var platoon = Math.round((
-      norm(bat_plat, 1.0, 100)  * 0.35 +
-      norm(pit_plat, 1.0, 100)  * 0.35 +
-      norm(iso_hand, medians.iso_vs_hand||0.167, 100) * 0.20 +
-      (pitch_sc > 0 ? Math.min(pitch_sc*10+50, 100) : 50) * 0.10
-    ));
-
-    var scores = [power, form, matchup, parkWx, disc, platoon];
-    var labels = ['Power','Form','Matchup','Park','Discipline','Platoon'];
-    var avg = Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
-
-    // ── Verdict text ──
-    var strong = scores.filter(function(s){return s>=70;}).length;
-    var weak   = scores.filter(function(s){return s<=35;}).length;
-    var verdict = strong>=4 ? 'Multiple axes aligned - strong spot'
-                : strong>=2&&weak===0 ? 'Solid across the board'
-                : strong>=2 ? 'Mixed signals - watch '+ labels[scores.indexOf(Math.min.apply(null,scores))]
-                : weak>=2 ? 'Thin case - model found specific edge'
-                : 'Average spot - no standout signal';
-
-    // ── Build canvas radar via inline SVG math ──
-    var canvasId = 'radar_'+Math.random().toString(36).slice(2,7);
-    var size = 160, cx = size/2, cy = size/2, r = 58;
-    var n = 6;
-    function pt(idx, val){
-      var ang = (Math.PI*2/n)*idx - Math.PI/2;
-      var rv = r * (val/100);
-      return [cx + rv*Math.cos(ang), cy + rv*Math.sin(ang)];
-    }
-    function ptOuter(idx, mult){
-      var ang = (Math.PI*2/n)*idx - Math.PI/2;
-      return [cx + r*(mult||1)*Math.cos(ang), cy + r*(mult||1)*Math.sin(ang)];
-    }
-
-    // Grid rings
-    var gridSvg = '';
-    [0.33,0.67,1.0].forEach(function(frac){
-      var pts2 = [];
-      for(var i=0;i<n;i++){ var p=ptOuter(i,frac); pts2.push(p[0]+','+p[1]); }
-      gridSvg += '<polygon points="'+pts2.join(' ')+'" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>';
-    });
-    // Spokes
-    for(var i=0;i<n;i++){
-      var op = ptOuter(i);
-      gridSvg += '<line x1="'+cx+'" y1="'+cy+'" x2="'+op[0]+'" y2="'+op[1]+'" stroke="rgba(255,255,255,0.07)" stroke-width="0.5"/>';
-    }
-
-    // Data polygon
-    var dataPts = scores.map(function(v,i){ var p=pt(i,v); return p[0]+','+p[1]; });
-    var fillColor = avg>=65?'rgba(50,215,75,0.18)':avg>=45?'rgba(255,159,10,0.15)':'rgba(255,69,58,0.15)';
-    var strokeColor = avg>=65?'#32d74b':avg>=45?'#ff9f0a':'#ff453a';
-
-    // Labels and value dots
-    var labelsSvg = '';
-    labels.forEach(function(lbl, i){
-      var op = ptOuter(i, 1.32);
-      var dp = pt(i, scores[i]);
-      var score = scores[i];
-      var dotC = score>=70?'#32d74b':score>=45?'#ff9f0a':'#ff453a';
-      labelsSvg += '<text x="'+op[0]+'" y="'+(op[1]+3)+'" text-anchor="middle" font-size="7.5" fill="rgba(255,255,255,0.45)" font-family="sans-serif">'+lbl+'</text>';
-      labelsSvg += '<circle cx="'+dp[0]+'" cy="'+dp[1]+'" r="3" fill="'+dotC+'"/>';
-    });
-
-    // ── Trend indicator for radar center ──
-    var l8b = b.l8d||{};
-    var s8b = b.season||{};
-    var trendD = ((l8b.barrel||0)>=(s8b.barrel||0)*1.2&&(l8b.barrel||0)>=10)||((b.l8d_hr_count||0)>=2)
-                 ? 'fire'
-                 : ((b.l8d_hr_count||0)>=1||(l8b.xslg||0)>=0.700)
-                 ? 'warm' : 'neutral';
-    var trendLabel = trendD==='fire'?'🔥':trendD==='warm'?'↑':'·';
-    var trendColor = trendD==='fire'?'#ff9f0a':trendD==='warm'?'#32d74b':'rgba(255,255,255,0.25)';
-
-    var svgStr = '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'
-      + gridSvg
-      + '<polygon points="'+dataPts.join(' ')+'" fill="'+fillColor+'" stroke="'+strokeColor+'" stroke-width="1.5"/>'
-      + labelsSvg
-      + '<text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" font-size="16" fill="'+trendColor+'" font-family="sans-serif">'+trendLabel+'</text>'
-      + '</svg>';
-
-    // ── Axis breakdown list ──
-    var axisRows = '';
-    labels.forEach(function(lbl, i){
-      var sc = scores[i];
-      var barC = sc>=70?'#32d74b':sc>=45?'#ff9f0a':'#ff453a';
-      var barW = sc+'%';
-      axisRows += '<div style="display:flex;align-items:center;gap:6px;padding:3px 0">'
-        +'<div style="font-size:10px;color:rgba(255,255,255,0.5);width:64px;flex-shrink:0">'+lbl+'</div>'
-        +'<div style="flex:1;height:4px;background:rgba(255,255,255,0.07);border-radius:2px">'
-          +'<div style="width:'+barW+';height:100%;background:'+barC+';border-radius:2px"></div>'
-        +'</div>'
-        +'<div style="font-size:10px;font-weight:600;color:'+barC+';width:28px;text-align:right">'+sc+'</div>'
-      +'</div>';
-    });
-
-    var html = '<div style="display:flex;gap:14px;align-items:flex-start">'
-      +'<div style="flex-shrink:0">'+svgStr+'</div>'
-      +'<div style="flex:1;min-width:0">'
-        +'<div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:2px">'+b.name+'</div>'
-        +'<div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:8px">'+b.hr_prob+'% HR probability</div>'
-        + axisRows
-        +'<div style="margin-top:8px;padding:6px 8px;background:rgba(255,255,255,0.04);border-radius:5px;font-size:10px;color:rgba(255,255,255,0.45);line-height:1.4">'+verdict+'</div>'
-      +'</div>'
-    +'</div>';
-    return html;
-  }
-
-  var rightH = buildRadar();
-
-  h+='<div style="background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;margin-bottom:10px">';
-  h+=rightH;
-  h+='</div>';
-
-  // ── XGBoost SHAP panel ──
-  if(b.xgb_prob!=null && b.xgb_shap){
-    var shap=b.xgb_shap;
-    var contribs=shap.contributions||{};
-    var baseRate=shap.base_rate||0;
-    var xgbProb=shap.xgb_prob||b.xgb_prob;
-    var keys=Object.keys(contribs).sort(function(a,c){return Math.abs(contribs[c])-Math.abs(contribs[a]);}).slice(0,8);
-    function cleanFeat(k){
-      return k.replace(/_season$/,'').replace(/_l8d$/,' L8D').replace(/_vs_hand$/,' vs hand')
-               .replace(/_/g,' ').replace('pit ','pit. ').replace('barrel pct','barrel%')
-               .replace('hard hit','hard hit%').replace('k pct','K%').replace('xslg','xSLG')
-               .replace('iso','ISO').replace('ev ','EV ').replace('la ','LA ').replace('bat speed','bat spd')
-               .replace('bat platoon mult','platoon').replace('pit platoon mult','pit. platoon')
-               .replace('park factor','park').replace('weather mult','weather')
-               .replace('bullpen vuln','bullpen').replace('pitch matchup score','pitch matchup')
-               .replace('combined pitch delta','pitch delta').replace('day of season','day of season');
-    }
-    var maxAbs=Math.max.apply(null,keys.map(function(k){return Math.abs(contribs[k]);}));
-    if(!maxAbs) maxAbs=1;
-    var pushTotal=keys.filter(function(k){return contribs[k]>0;}).reduce(function(s,k){return s+contribs[k];},0);
-    var dragTotal=keys.filter(function(k){return contribs[k]<0;}).reduce(function(s,k){return s+contribs[k];},0);
-
-    h+='<div style="background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;margin-bottom:10px">';
-    h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">';
-    h+='<div style="font-size:9px;font-weight:700;color:var(--purple,#a78bfa);text-transform:uppercase;letter-spacing:.08em">Why XGBoost thinks '+xgbProb+'%</div>';
-    h+='<div style="font-size:9px;color:var(--muted2)">base '+baseRate.toFixed(1)+'%</div>';
-    h+='</div>';
-    // Base row
-    h+='<div style="display:flex;align-items:center;gap:8px;padding-bottom:7px;margin-bottom:5px;border-bottom:1px solid var(--border2)">';
-    h+='<div style="font-size:10px;color:var(--muted2);width:110px;flex-shrink:0">dataset average</div>';
-    h+='<div style="flex:1;height:4px;background:var(--s3,rgba(255,255,255,.06));border-radius:2px"><div style="width:30%;height:100%;background:rgba(255,255,255,.15);border-radius:2px"></div></div>';
-    h+='<div style="font-size:10px;color:var(--muted2);width:34px;text-align:right">'+baseRate.toFixed(1)+'%</div>';
-    h+='</div>';
-    // Feature bars
-    keys.forEach(function(feat){
-      var val=contribs[feat];
-      var isPos=val>=0;
-      var barC=isPos?'#32d74b':'#ff453a';
-      var barW=Math.round(Math.abs(val)/maxAbs*50);
-      var sign=isPos?'+':'';
-      h+='<div style="display:flex;align-items:center;gap:8px;padding:2px 0">';
-      h+='<div style="font-size:10px;color:var(--muted);width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+feat+'">'+cleanFeat(feat)+'</div>';
-      h+='<div style="flex:1;position:relative;height:4px;background:var(--s3,rgba(255,255,255,.06));border-radius:2px">';
-      if(isPos){
-        h+='<div style="position:absolute;left:30%;top:0;height:100%;width:'+barW+'%;background:'+barC+';border-radius:0 2px 2px 0"></div>';
-      }else{
-        var left=Math.max(0,30-barW);
-        h+='<div style="position:absolute;left:'+left+'%;top:0;height:100%;width:'+barW+'%;background:'+barC+';border-radius:2px 0 0 2px"></div>';
-      }
-      h+='</div>';
-      h+='<div style="font-size:10px;font-weight:600;color:'+barC+';width:34px;text-align:right">'+sign+val.toFixed(1)+'%</div>';
-      h+='</div>';
-    });
-    // Summary
-    h+='<div style="margin-top:8px;padding-top:7px;border-top:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between">';
-    h+='<div style="font-size:10px;color:var(--muted2)">'+baseRate.toFixed(1)+'% <span style="color:#32d74b">+'+pushTotal.toFixed(1)+'%</span> <span style="color:#ff453a">'+dragTotal.toFixed(1)+'%</span> = <span style="color:var(--purple,#a78bfa);font-weight:700">'+xgbProb+'%</span></div>';
-    h+='<div style="display:flex;gap:10px;font-size:9px;color:var(--muted2)">';
-    h+='<span style="display:flex;align-items:center;gap:3px"><span style="width:6px;height:6px;border-radius:1px;background:#32d74b;display:inline-block"></span>up</span>';
-    h+='<span style="display:flex;align-items:center;gap:3px"><span style="width:6px;height:6px;border-radius:1px;background:#ff453a;display:inline-block"></span>down</span>';
-    h+='</div></div>';
-    h+='</div>';
-  }
-
-  // ── Deep Dive - collapsible raw stats ──
-  var ddId = 'dd_'+b.name.replace(/ /g,'_')+'_'+Math.random().toString(36).slice(2,5);
-  h+='<div style="border:1px solid var(--border2);border-radius:8px;overflow:hidden">';
-  h+='<div data-ddid="'+ddId+'" onclick="toggleDD(this)" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;background:var(--surface);user-select:none">';
-  h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.09em">Deep Dive - Raw Model Inputs</div>';
-  h+='<span class="dd-arrow" style="font-size:10px;color:var(--muted2)">▼</span>';
-  h+='</div>';
-  h+='<div id="'+ddId+'" style="display:none;padding:10px 12px;background:var(--s3)">';
-
-  // Tree features header
-  h+='<div style="font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;display:flex;justify-content:space-between">';
-  h+='<span>What the tree sees</span><span style="color:var(--muted2)">Value &nbsp; vs median</span></div>';
-
-  // Show stats in feature importance order
-  var shownKeys = [];
-  fiList.forEach(function(fe){
-    var key=fe[0],imp=fe[1];
-    if(!FI_LABELS[key])return;
-    var val=statVals[key]||0;
-    var lbl=FI_LABELS[key];
-    var impPct=Math.round(imp*100);
-    var valStr=fmtByKey(key,val);
-    var med=medians[key]||0;
-    // color the value
-    var isPitStat=key.startsWith('pit_');
-    var isInvert=INVERT[key]||false;
-    var above=val>med;
-    var good;
-    if(isPitStat&&key.includes('hr9'))good=above;
-    else if(isPitStat)good=!above;
-    else if(isInvert)good=!above;
-    else good=above;
-    var valColor=val>0?(good?'var(--g)':'var(--r)'):'var(--muted2)';
-    // importance bar width
-    var maxImp=fiList[0]?fiList[0][1]:1;
-    var barW=maxImp>0?Math.round(imp/maxImp*60):0;
-    h+='<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border2)">';
-    h+='<div style="width:4px;height:28px;background:var(--border);border-radius:2px;flex-shrink:0;position:relative;overflow:hidden">';
-    h+='<div style="position:absolute;bottom:0;width:100%;height:'+barW+'%;background:var(--accent);border-radius:2px"></div></div>';
-    h+='<div style="flex:1;min-width:0">';
-    h+='<div style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+lbl+'</div>';
-    h+='<div style="font-size:8px;color:var(--muted2)">'+impPct+'% tree weight</div>';
-    h+='</div>';
-    h+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:16px;font-weight:700;color:'+valColor+';min-width:52px;text-align:right">'+valStr+'</div>';
-    h+='<div style="min-width:42px;text-align:right">'+medianTag(key,val)+'</div>';
-    h+='</div>';
-    shownKeys.push(key);
-  });
-
-  // If no feature importances yet, fall back to key stats
-  if(shownKeys.length===0){
-    var fallback=[
-      {k:'barrel_pct_season',l:'Barrel% Season',v:s.barrel||0},
-      {k:'hard_hit_season',l:'Hard Hit% Season',v:s.hh||0},
-      {k:'xslg_l8d',l:'xSLG L8D',v:xslg_l8d},
-      {k:'iso_vs_hand',l:'ISO vs Hand',v:bd.iso_vs_hand||0},
-      {k:'la_season',l:'Launch Angle',v:s.la||0},
-    ];
-    fallback.forEach(function(f){
-      var valStr=fmtByKey(f.k,f.v);
-      h+='<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border2)">';
-      h+='<div style="flex:1;font-size:10px;color:var(--muted)">'+f.l+'</div>';
-      h+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:16px;font-weight:700;color:var(--text)">'+valStr+'</div>';
-      h+='<div>'+medianTag(f.k,f.v)+'</div>';
-      h+='</div>';
-    });
-  }
-
-  // Pitcher strip below
-  if(pitP&&pitP.name){
-    h+='<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">';
-    h+='<div style="font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">'+pitP.name+' ('+pitP.hand+'HP)</div>';
-    h+='<div class="chip-row">';
-    h+=chip('ERA',pitP.era?pitP.era.toFixed(2):'--',pitP.era>=4.5?'r':pitP.era>=3.5?'y':'g');
-    h+=chip('HR/9',pitP.hr9?pitP.hr9.toFixed(2):'--',pitP.hr9>=1.4?'g':pitP.hr9>=1?'y':'r');
-    h+=chip('HH%',pitP.hard_hit_pct?pitP.hard_hit_pct+'%':'--',pitP.hard_hit_pct>=42?'r':pitP.hard_hit_pct>=36?'y':'g');
-    var slgKey='vs_'+(b.hand==='L'?'L':'R')+'_slg';
-    var pitSlgV=pitP[slgKey];
-    h+=chip('SLG vs '+b.hand,pitSlgV&&bd.split_ip_vs_bat>=5?fmtSlg(pitSlgV):'--','n');
-    h+='</div></div>';
-  }
-  h+='</div>';
-  h+='</div>';
-
-  h+='</div>'; // detail-wrap
-  return h;
-}
-
-function buildPitcherTable(games){
-  var pitchers=[];
-  games.forEach(function(g){
-    var wx=g.weather||{};
-    [[g.away_pitcher,g.home],[g.home_pitcher,g.away]].forEach(function(arr){
-      var p=arr[0],opp=arr[1];
-      if(!p||!p.name||p.name==='TBD')return;
-      pitchers.push({
-        name:p.name,hand:p.hand||'R',opp_team:opp,
-        opp_lineup_k:p.opp_lineup_k||0,avg_ip:p.avg_ip||5.0,
-        k9:p.k9||0,exp_k:p.exp_k||0,k_prop:p.k_prop||null,
-        k_edge:p.k_edge!=null?p.k_edge:null,gs:p.gs||0,
-        era:p.era||0,hr9:p.hr9||0,
-        wx_label:wx.label||'--',wx_temp:wx.temp||70,wx_wind:wx.wind_speed||0,
-        _full:p,
-      });
-    });
-  });
-  pitchers.sort(function(a,b){
-    if(pitSortCol==='k_edge'){
-      var av=a.k_edge!=null?a.k_edge:-99,bv=b.k_edge!=null?b.k_edge:-99;
-      return pitSortDir*(bv-av);
-    }
-    return pitSortDir*((b[pitSortCol]||0)-(a[pitSortCol]||0));
-  });
-  if(!pitchers.length){document.getElementById('pitcher-main').innerHTML='<div class="no-data">No pitcher data.</div>';return;}
-  var h='<div class="section-hdr"><div class="section-title">Pitcher Strikeouts</div><div class="section-count">'+pitchers.length+' starters</div></div>';
-  h+='<div class="tbl-wrap"><table>';
-  h+='<thead><tr>';
-  h+=pth('Pitcher','name',false);h+=pth('Hand','hand',false);h+=pth('Vs Team','opp_team',false);
-  h+=pth('OPP K%','opp_lineup_k',true);h+=pth('Avg IP','avg_ip',true);h+=pth('K/9','k9',true);
-  h+=pth('Exp Ks','exp_k',true);h+=pth('Prop Line','k_prop',true);h+=pth('Edge','k_edge',true);
-  h+=pth('Starts','gs',false);
-  h+='</tr></thead><tbody>';
-  pitchers.forEach(function(p,i){
-    var hTag='<span class="hand-tag '+(p.hand==='L'?'lhp':'rhp')+'">'+p.hand+'HP</span>';
-    var oppKCls=p.opp_lineup_k>=25?'sc-g':p.opp_lineup_k>=20?'sc-y':'sc-r';
-    var k9Cls=p.k9>=10?'sc-g':p.k9>=8?'sc-y':'sc-r';
-    var edgeCls=p.k_edge!=null?(p.k_edge>=1?'edge-pos':p.k_edge<=-1?'edge-neg':'edge-neu'):'edge-neu';
-    var edgeDisp=p.k_edge!=null?(p.k_edge>0?'+':'')+p.k_edge:'--';
-    var propDisp=p.k_prop?p.k_prop.line.toFixed(1):'--';
-    var conBadge=p.gs<=0?'<span class="consistency-badge con-none">No Data</span>':p.gs<=2?'<span class="consistency-badge con-small">'+p.gs+' GS</span>':p.gs<=5?'<span class="consistency-badge con-mod">'+p.gs+' GS</span>':'<span class="consistency-badge con-solid">'+p.gs+' GS</span>';
-    h+='<tr onclick="togglePitRow('+i+')">';
-    h+='<td><div class="player-name">'+p.name+'</div></td>';
-    h+='<td>'+hTag+'</td>';
-    h+='<td style="font-size:12px;color:var(--muted)">'+p.opp_team+'</td>';
-    h+='<td class="num sc '+oppKCls+'">'+(p.opp_lineup_k>0?p.opp_lineup_k.toFixed(1)+'%':'--')+'</td>';
-    h+='<td class="num sc-n">'+(p.avg_ip>0?p.avg_ip.toFixed(1):'--')+'</td>';
-    h+='<td class="num sc '+k9Cls+'">'+(p.k9>0?p.k9.toFixed(1):'--')+'</td>';
-    h+='<td class="num"><span style="font-family:\'Barlow Condensed\',sans-serif;font-size:18px;font-weight:800;color:var(--text)">'+(p.exp_k>0?p.exp_k.toFixed(1):'--')+'</span></td>';
-    h+='<td class="num" style="font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:600">'+propDisp+'</td>';
-    h+='<td class="num '+edgeCls+'">'+edgeDisp+'</td>';
-    h+='<td>'+conBadge+'</td>';
-    h+='</tr>';
-    h+='<tr class="detail-row" id="pdet-'+i+'" style="display:none"><td colspan="10">'+buildPitDetail(p._full)+'</td></tr>';
-  });
-  h+='</tbody></table></div>';
-  document.getElementById('pitcher-main').innerHTML=h;
-}
-function pth(lbl,col,isNum){
-  var cls=isNum?'num':'';
-  var sc=pitSortCol===col?(pitSortDir===-1?' sort-desc':' sort-asc'):'';
-  return '<th class="'+cls+sc+'" onclick="sortPit(\''+col+'\')">'+lbl+'</th>';
-}
-function sortPit(col){if(pitSortCol===col)pitSortDir*=-1;else{pitSortCol=col;pitSortDir=-1;}buildPitcherTable(allGames);}
-function togglePitRow(i){var d=document.getElementById('pdet-'+i);if(d)d.style.display=d.style.display==='none'?'table-row':'none';}
-function buildPitDetail(p){
-  var h='<div class="detail-wrap"><div class="detail-grid">';
-  h+='<div class="detail-block"><div class="detail-block-title">Stats</div><div class="chip-row">';
-  h+=chip('ERA',p.era?p.era.toFixed(2):'--',p.era>=4.5?'r':p.era>=3.5?'y':'g');
-  h+=chip('HR/9',p.hr9?p.hr9.toFixed(2):'--',p.hr9>=1.4?'r':p.hr9>=1?'y':'g');
-  h+=chip('HH%',p.hard_hit_pct?p.hard_hit_pct+'%':'--',p.hard_hit_pct>=42?'r':p.hard_hit_pct>=36?'y':'g');
-  h+=chip('IP',p.ip_2026?p.ip_2026.toFixed(0):'--','n');
-  h+='</div></div>';
-  h+='<div class="detail-block"><div class="detail-block-title">Splits</div><div class="chip-row">';
-  h+=chip('HR/9 vs L',p.vs_L_hr9!=null?p.vs_L_hr9.toFixed(2):'--',p.vs_L_hr9>=1.4?'r':p.vs_L_hr9>=1?'y':'g');
-  h+=chip('HR/9 vs R',p.vs_R_hr9!=null?p.vs_R_hr9.toFixed(2):'--',p.vs_R_hr9>=1.4?'r':p.vs_R_hr9>=1?'y':'g');
-  h+=chip('K% vs L',p.vs_L_k!=null?p.vs_L_k+'%':'--',p.vs_L_k>=28?'g':p.vs_L_k>=22?'y':'r');
-  h+=chip('K% vs R',p.vs_R_k!=null?p.vs_R_k+'%':'--',p.vs_R_k>=28?'g':p.vs_R_k>=22?'y':'r');
-  h+=chip('SLG vs L',p.vs_L_slg!=null?'.'+String(Math.round(p.vs_L_slg*1000)).padStart(3,'0'):'--','n');
-  h+=chip('SLG vs R',p.vs_R_slg!=null?'.'+String(Math.round(p.vs_R_slg*1000)).padStart(3,'0'):'--','n');
-  h+='</div></div>';
-  if(p.top_pitches&&p.top_pitches.length){
-    h+='<div class="detail-block"><div class="detail-block-title">Arsenal</div><div class="chip-row">';
-    p.top_pitches.forEach(function(pt){h+=chip(pt.name,pt.usage+'%','n');});
-    h+='</div></div>';
-  }
-  if(p.k_prop){
-    h+='<div class="detail-block"><div class="detail-block-title">K Prop</div><div class="chip-row">';
-    h+=chip('Line',p.k_prop.line.toFixed(1),'n');
-    h+=chip('Odds',(p.k_prop.price>0?'+':'')+p.k_prop.price,'n');
-    h+=chip('Book',p.k_prop.book||'--','n');
-    h+='</div></div>';
-  }
-  h+='</div></div>';
-  return h;
-}
-
-function buildGameTable(games){
-  if(!games||!games.length){document.getElementById('game-main').innerHTML='<div class="no-data">No games today.</div>';return;}
-  var h='<div class="section-hdr"><div class="section-title">Game Totals</div><div class="section-count">'+games.length+' games</div></div>';
-  h+='<div class="tbl-wrap"><table>';
-  h+='<thead><tr><th>Matchup</th><th>Time</th><th>Away Starter</th><th>Home Starter</th>';
-  h+='<th class="num">Exp Runs Away</th><th class="num">Exp Runs Home</th><th class="num">Total</th>';
-  h+='<th class="num">Exp HRs</th><th>Weather</th><th class="num">F5 Total</th></tr></thead><tbody>';
-  games.forEach(function(g){
-    var t=g.totals||{},wx=g.weather||{};
-    var awayP=g.away_pitcher||{},homeP=g.home_pitcher||{};
-    var total=t.total_exp_runs||0;
-    var ouCls=total>=9.5?'ou-over':total<=7.5?'ou-under':'ou-push';
-    var ouLbl=total>=9.5?'OVER':total<=7.5?'UNDER':'PUSH';
-    var rpgA=t.away_runs_pg||4.5,rpgH=t.home_runs_pg||4.5;
-    var eraA=awayP.era||4.20,eraH=homeP.era||4.20;
-    var f5A=((eraH/4.20)*rpgA*0.5);
-    var f5H=((eraA/4.20)*rpgH*0.5);
-    var f5T=(f5A+f5H).toFixed(1);
-    var f5Cls=parseFloat(f5T)>=5?'ou-over':parseFloat(f5T)<=3.5?'ou-under':'ou-push';
-    h+='<tr>';
-    h+='<td style="white-space:nowrap"><span class="team-a">'+g.away+'</span><span class="at-sep">@</span><span class="team-h">'+g.home+'</span></td>';
-    h+='<td style="color:var(--muted);font-size:11px">'+fmtTime(g.time)+'</td>';
-    h+='<td><div class="player-name">'+awayP.name+'</div><div class="player-sub">'+(awayP.hand||'R')+'HP &middot; ERA '+(awayP.era||'--')+' &middot; HR/9 '+(awayP.hr9||'--')+'</div></td>';
-    h+='<td><div class="player-name">'+homeP.name+'</div><div class="player-sub">'+(homeP.hand||'R')+'HP &middot; ERA '+(homeP.era||'--')+' &middot; HR/9 '+(homeP.hr9||'--')+'</div></td>';
-    h+='<td class="num"><span class="exp-runs-big team-a">'+(t.away_exp_runs||'--')+'</span></td>';
-    h+='<td class="num"><span class="exp-runs-big team-h">'+(t.home_exp_runs||'--')+'</span></td>';
-    h+='<td class="num"><span class="exp-runs-big '+ouCls+'">'+total+'</span><br><span style="font-size:9px;font-weight:700;letter-spacing:.06em" class="'+ouCls+'">'+ouLbl+'</span></td>';
-    h+='<td class="num" style="color:var(--y);font-family:\'Barlow Condensed\',sans-serif;font-size:14px">'+(t.total_exp_hr||'--')+'</td>';
-    h+='<td style="font-size:11px">'+wxIcon(wx.label,wx.temp,wx.wind_speed)+' '+(wx.temp||'--')+'&#176; <span style="color:var(--muted2)">'+(wx.wind_speed>0?wx.wind_speed+'mph':'calm')+'</span></td>';
-    h+='<td class="num"><span class="exp-runs-big '+f5Cls+'">'+f5T+'</span></td>';
-    h+='</tr>';
-  });
-  h+='</tbody></table></div>';
-  document.getElementById('game-main').innerHTML=h;
-}
-
-async function searchPlayer(){
-  var name=document.getElementById('searchInput').value.trim();
-  if(!name)return;
-  var el=document.getElementById('research-result');
-  el.innerHTML='<div class="loading">Searching<div class="dots"><span></span><span></span><span></span></div></div>';
-  try{
-    var dateStr=formatDateForAPI(selectedDate);
-    var resp=await fetch(API+'/research?player='+encodeURIComponent(name)+'&date='+dateStr);
-    var data=await resp.json();
-    if(data.error){el.innerHTML='<div class="err">'+data.error+'</div>';return;}
-    var p=data.player||{},m=data.matchup||{};
-    var bc=p.season_2026||{},b8d=p.last_8d||{};
-    var h='<div class="research-result"><div class="r-header"><div class="r-name">'+p.name+'</div>';
-    if(m.pitcher_name)h+='<div style="font-size:12px;color:var(--muted)">vs '+m.pitcher_name+' ('+m.pitcher_hand+'HP)</div>';
-    h+='</div><div class="r-body">';
-    h+='<div class="r-section"><div class="r-section-title">2026 Season ('+p.pa_2026+' PA)</div>';
-    h+=rchip('Barrel%',bc.barrel_pct>0?bc.barrel_pct.toFixed(1)+'%':'--');
-    h+=rchip('Launch Angle',bc.launch_angle>0?bc.launch_angle.toFixed(1)+'&#176;':'--');
-    h+=rchip('ISO',bc.iso>0?fmtIso(bc.iso):'--');
-    h+=rchip('Hard Hit%',bc.hard_hit_pct>0?bc.hard_hit_pct.toFixed(1)+'%':'--');
-    h+=rchip('K%',bc.k_pct>0?bc.k_pct.toFixed(1)+'%':'--');
-    h+=rchip('HR',String(bc.hr||0));
-    h+='</div>';
-    if(b8d&&b8d.pa>0){
-      h+='<div class="r-section"><div class="r-section-title">Last 8 Days ('+b8d.pa+' PA)</div>';
-      h+=rchip('Barrel%',b8d.barrel_pct>0?b8d.barrel_pct.toFixed(1)+'%':'--');
-      h+=rchip('LA',b8d.launch_angle>0?b8d.launch_angle.toFixed(1)+'&#176;':'--');
-      h+=rchip('ISO',b8d.iso>0?fmtIso(b8d.iso):'--');
-      h+=rchip('HR',String(b8d.hr||0));
-      h+='</div>';
-    }
-    var sp=p.splits||{};
-    if(sp.vs_lhp||sp.vs_rhp){
-      h+='<div class="r-section"><div class="r-section-title">Splits</div>';
-      if(sp.vs_lhp&&sp.vs_lhp.pa>0){h+=rchip('ISO vs LHP',sp.vs_lhp.iso>0?fmtIso(sp.vs_lhp.iso):'--');h+=rchip('SLG vs LHP',sp.vs_lhp.slg>0?'.'+String(Math.round(sp.vs_lhp.slg*1000)).padStart(3,'0'):'--');}
-      if(sp.vs_rhp&&sp.vs_rhp.pa>0){h+=rchip('ISO vs RHP',sp.vs_rhp.iso>0?fmtIso(sp.vs_rhp.iso):'--');h+=rchip('SLG vs RHP',sp.vs_rhp.slg>0?'.'+String(Math.round(sp.vs_rhp.slg*1000)).padStart(3,'0'):'--');}
-      h+='</div>';
-    }
-    if(m.pitcher_stats){
-      var ps=m.pitcher_stats;
-      h+='<div class="r-section"><div class="r-section-title">Pitcher - '+m.pitcher_name+'</div>';
-      h+=rchip('ERA',ps.era?ps.era.toFixed(2):'--');h+=rchip('HR/9',ps.hr9?ps.hr9.toFixed(2):'--');h+=rchip('HH%',ps.hard_hit_pct?ps.hard_hit_pct+'%':'--');
-      h+='</div>';
-    }
-    h+='</div></div>';
-    el.innerHTML=h;
-  }catch(e){el.innerHTML='<div class="err">'+e.message+'</div>';}
-}
-function rchip(lbl,val){return '<div class="r-chip"><div class="r-chip-lbl">'+lbl+'</div><div class="r-chip-val">'+val+'</div></div>';}
-
-// -- HISTORY --
-var historyData = null;
-var selectedHistDate = null;
-var _statPercentiles = {}; // computed from history records
-var _percentileMode = 'all_predicted'; // switches to 'hr_hitters' at 200+ HR records
-
-function computePercentiles(records) {
-  // Compute 10th, 25th, 50th, 75th percentile for each stat field
-  // Uses all predicted records OR hr_hitters only depending on mode
-  var hrHitters = records.filter(function(r){return r.hit_hr===1;});
-  var pool = (hrHitters.length >= 200) ? hrHitters : records;
-  _percentileMode = (hrHitters.length >= 200) ? 'hr_hitters' : 'all_predicted';
-
-  var fields = [
-    'barrel_pct_season','hard_hit_season','ev_season','iso_season',
-    'iso_vs_hand','xwoba_l8d','xslg_l8d','bat_speed_l8d',
-    'hard_hit_l8d','barrel_pct_l8d','ev_l8d','slg_l8d',
-    'k_pct_season','pit_hr9_season','pit_hr9_vs_hand',
-  ];
-  _statPercentiles = {};
-  fields.forEach(function(f){
-    var vals = pool.map(function(r){return parseFloat(r[f])||0;})
-                   .filter(function(v){return v>0;})
-                   .sort(function(a,b){return a-b;});
-    if(vals.length < 10){_statPercentiles[f]=null;return;}
-    var n=vals.length;
-    _statPercentiles[f]={
-      p10: vals[Math.floor(n*0.10)],
-      p25: vals[Math.floor(n*0.25)],
-      p50: vals[Math.floor(n*0.50)],
-      p75: vals[Math.floor(n*0.75)],
-      mode: _percentileMode,
-      n: n,
-    };
-  });
-}
-
-function pctColor(val, field, invert) {
-  // Returns inline style color based on percentile rank
-  // invert=true for stats where lower is better (K%)
-  if(!val||val===0||!_statPercentiles[field])return'color:var(--muted)';
-  var p=_statPercentiles[field];
-  var rank = invert ? (p.p75 - val) / (p.p75 - p.p10 + 0.001) : (val - p.p10) / (p.p75 - p.p10 + 0.001);
-  if(invert){
-    // for K%: lower is better, flip thresholds
-    if(val<=p.p10)return'color:var(--b10);font-weight:700';
-    if(val<=p.p25)return'color:var(--b25)';
-    if(val<=p.p50)return'color:var(--b50)';
-    return'color:var(--b75)';
-  }
-  if(val>=p.p75)return'color:var(--b10);font-weight:700';
-  if(val>=p.p50)return'color:var(--b25)';
-  if(val>=p.p25)return'color:var(--b50)';
-  return'color:var(--b75)';
-}
-
-async function loadHistory() {
-  var el = document.getElementById('history-main');
-  el.innerHTML = '<div class="loading">Loading history<div class="dots"><span></span><span></span><span></span></div></div>';
+// ── Build top 25 set from predictions ──
+async function buildTop25Set(){
   try {
-    // ── Step 1: Load yesterday only (1 API call) ──
-    var yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
-    var yStr = yesterday.toISOString().split('T')[0];
-    var yResp = await fetch(API + '/history?date=' + yStr);
-    var yData = await yResp.json();
-    var yesterdayRecs = (yData.records || []).filter(function(r){
-      return r.date === yStr;
-    });
-
-    // ── Step 2: Load last 7 days for tier stats (7 API calls max) ──
-    var weekRecs = [];
-    var weekDates = [];
-    for(var i=1; i<=7; i++){
-      var d = new Date(); d.setDate(d.getDate()-i);
-      var ds = d.toISOString().split('T')[0];
-      weekDates.push(ds);
-      try {
-        var wr = await fetch(API + '/history?date=' + ds);
-        var wd = await wr.json();
-        var recs = (wd.records||[]).filter(function(r){return r.date===ds;});
-        weekRecs = weekRecs.concat(recs);
-      } catch(e2) {}
-    }
-
-    // Compute percentiles from week records for color coding
-    if(weekRecs.length > 0) computePercentiles(weekRecs);
-
-    renderHistory(yesterdayRecs, weekRecs, weekDates, yStr);
-  } catch(e) {
-    el.innerHTML = '<div class="err">'+e.message+'</div>';
-  }
+    var r = await fetch(GITHUB_RAW+'/data/predictions/'+todayStr()+'.json?t='+Date.now());
+    if(!r.ok) return;
+    var data = await r.json();
+    var sorted = data.sort(function(a,b){ return (b.model_hr_pct||0)-(a.model_hr_pct||0); });
+    top25Names = new Set(sorted.slice(0,25).map(function(p){ return p.name; }));
+  } catch(e){}
 }
 
-function renderHistory(yesterdayRecs, weekRecs, weekDates, yStr) {
-  var el = document.getElementById('history-main');
-  var h = '';
-
-  // ── SECTION 1: Yesterday's Results ──
-  h += '<div style="margin-bottom:20px">';
-  h += '<div class="section-hdr"><div class="section-title">Yesterday - '+yStr+'</div>';
-  h += '<div style="display:flex;gap:8px">';
-  h += '<button class="refresh-btn" style="font-size:11px;padding:4px 10px" onclick="manualRecord()">Record Results</button>';
-  h += '</div></div>';
-
-  var yCompleted = yesterdayRecs.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
-  var yHits = yCompleted.filter(function(r){return r.hit_hr===1;});
-  var yPending = yesterdayRecs.filter(function(r){return r.hit_hr===null;});
-
-  if(!yesterdayRecs.length){
-    h += '<div style="padding:20px;color:var(--muted2);font-size:13px;text-align:center">No predictions found for yesterday.</div>';
-  } else {
-    // Quick summary strip
-    h += '<div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">';
-    h += statPill(yCompleted.length, 'Settled');
-    h += statPill(yHits.length+'/'+yCompleted.length, 'Hit');
-    h += statPill(yCompleted.length>0?(yHits.length/yCompleted.length*100).toFixed(0)+'%':'--', 'Hit Rate');
-    if(yPending.length) h += statPill(yPending.length, 'Pending');
-    h += '</div>';
-
-    // Batter rows sorted by probability
-    var sorted = yesterdayRecs.slice().sort(function(a,b){return b.model_hr_pct-a.model_hr_pct;});
-    h += '<div style="display:flex;flex-direction:column;gap:4px">';
-    sorted.forEach(function(r){
-      var hit = r.hit_hr===1;
-      var miss = r.hit_hr===0;
-      var pending = r.hit_hr===null;
-      var dnp = r.hit_hr==='DNP';
-      var borderC = hit?'var(--g)':miss?'var(--r)':pending?'var(--border2)':'var(--border2)';
-      var badge = hit?'<span style="font-size:10px;font-weight:700;color:var(--g);background:rgba(50,215,75,.12);padding:2px 8px;border-radius:20px">HR ✓</span>'
-                 :miss?'<span style="font-size:10px;font-weight:700;color:var(--r);background:rgba(255,69,58,.1);padding:2px 8px;border-radius:20px">No HR</span>'
-                 :dnp?'<span style="font-size:10px;color:var(--muted2);background:var(--s2);padding:2px 8px;border-radius:20px">DNP</span>'
-                 :'<span style="font-size:10px;color:var(--y);background:rgba(255,159,10,.1);padding:2px 8px;border-radius:20px">Pending</span>';
-      var pc = r.model_hr_pct||0;
-      var pctColor = pc>=18?'var(--text)':pc>=12?'var(--g)':pc>=8?'var(--y)':'var(--muted)';
-      var radar = r.radar||{};
-      h += '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border:0.5px solid '+borderC+';border-left:3px solid '+borderC+';border-radius:8px">';
-      h += '<div style="flex:1;min-width:0">';
-      h += '<div style="font-size:13px;font-weight:500;color:var(--text)">'+r.name+'</div>';
-      h += '<div style="font-size:10px;color:var(--muted2)">'+r.team+' · vs '+(r.opp_pitcher||'--')+' ('+(r.opp_pitcher_hand||'R')+'HP)</div>';
-      h += '</div>';
-      // Mini radar scores if available
-      if(radar.overall){
-        h += '<div style="display:flex;gap:6px">';
-        [['P',radar.power],['F',radar.form],['M',radar.matchup]].forEach(function(ax){
-          var c=ax[1]>=70?'var(--g)':ax[1]>=45?'var(--y)':'var(--r)';
-          h += '<div style="text-align:center"><div style="font-size:9px;color:var(--muted2)">'+ax[0]+'</div>'
-            + '<div style="font-size:11px;font-weight:600;color:'+c+'">'+ax[1]+'</div></div>';
-        });
-        h += '</div>';
-      }
-      h += '<div style="font-size:18px;font-weight:700;color:'+pctColor+';min-width:42px;text-align:right">'+pc+'%</div>';
-      h += badge;
-      h += '</div>';
-    });
-    h += '</div>';
-  }
-  h += '</div>';
-
-  // ── SECTION 2: 7-Day Tier Hit Rates ──
-  h += '<div style="margin-bottom:20px">';
-  h += '<div class="section-hdr"><div class="section-title">Last 7 Days - Tier Performance</div></div>';
-
-  var settled = weekRecs.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
-
-  function tierRow(label, lo, hi, color){
-    var t = settled.filter(function(r){var p=r.model_hr_pct||0;return p>=lo&&(hi===null||p<hi);});
-    var hits = t.filter(function(r){return r.hit_hr===1;});
-    var rate = t.length>0?(hits.length/t.length*100).toFixed(0)+'%':'--';
-    var barW = t.length>0?Math.min(hits.length/t.length*100,100):0;
-    return '<div style="padding:10px 14px;background:var(--surface);border:0.5px solid var(--border2);border-radius:8px;margin-bottom:6px">'
-      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
-      +'<div style="font-size:12px;font-weight:500;color:var(--text)">'+label+'</div>'
-      +'<div style="display:flex;align-items:center;gap:10px">'
-      +'<div style="font-size:11px;color:var(--muted2)">'+hits.length+' / '+t.length+' hit</div>'
-      +'<div style="font-size:16px;font-weight:700;color:'+color+'">'+rate+'</div>'
-      +'</div></div>'
-      +'<div style="height:4px;background:var(--s2);border-radius:2px">'
-      +'<div style="width:'+barW+'%;height:100%;background:'+color+';border-radius:2px"></div>'
-      +'</div></div>';
-  }
-
-  if(!settled.length){
-    h += '<div style="padding:20px;color:var(--muted2);font-size:13px;text-align:center">No settled records in the last 7 days yet.</div>';
-  } else {
-    h += tierRow('Elite - 18%+',   18, null, 'var(--text)');
-    h += tierRow('Strong - 12-18%', 12, 18,  'var(--g)');
-    h += tierRow('Moderate - 8-12%', 8, 12,  'var(--y)');
-    h += tierRow('Low - Under 8%',   0,  8,  'var(--muted)');
-
-    // Day by day summary
-    h += '<div style="margin-top:14px">';
-    h += '<div style="font-size:9px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Day by Day</div>';
-    h += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
-    weekDates.slice().reverse().forEach(function(d){
-      var dayRecs = weekRecs.filter(function(r){return r.date===d;});
-      var daySettled = dayRecs.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
-      var dayHits = daySettled.filter(function(r){return r.hit_hr===1;});
-      if(!daySettled.length) return;
-      var rate = (dayHits.length/daySettled.length*100).toFixed(0);
-      var c = parseInt(rate)>=25?'var(--g)':parseInt(rate)>=10?'var(--y)':'var(--r)';
-      h += '<div style="padding:6px 10px;background:var(--surface);border:0.5px solid var(--border2);border-radius:6px;text-align:center;min-width:54px">';
-      h += '<div style="font-size:9px;color:var(--muted2)">'+d.slice(5)+'</div>';
-      h += '<div style="font-size:14px;font-weight:700;color:'+c+'">'+rate+'%</div>';
-      h += '<div style="font-size:9px;color:var(--muted2)">'+dayHits.length+'/'+daySettled.length+'</div>';
-      h += '</div>';
-    });
-    h += '</div></div>';
-  }
-  h += '</div>';
-
-  // ── Load More ──
-  h += '<div style="text-align:center;padding:10px 0 20px">';
-  h += '<button onclick="loadMoreHistory()" style="background:transparent;border:1px solid var(--border2);color:var(--muted);font-size:12px;padding:7px 20px;border-radius:6px;cursor:pointer">Load More History</button>';
-  h += '</div>';
-
-  el.innerHTML = h;
+// ── DASHBOARD ──
+async function loadDashboard(){
+  await buildTop25Set();
+  loadTop8();
+  loadHistory();
 }
 
-function statPill(val, lbl){
-  return '<div style="padding:6px 12px;background:var(--surface);border:0.5px solid var(--border2);border-radius:20px;font-size:12px;color:var(--text)">'
-    +'<span style="font-weight:600">'+val+'</span>'
-    +' <span style="color:var(--muted2)">'+lbl+'</span></div>';
-}
-
-async function loadMoreHistory(){
-  var btn = event.target;
-  btn.textContent = 'Loading...';
-  btn.disabled = true;
+async function loadTop8(){
+  var el = document.getElementById('top8-grid');
   try {
-    var resp = await fetch(API + '/history');
-    var data = await resp.json();
-    historyData = data;
-    if(data.records && data.records.length > 0) computePercentiles(data.records);
-    // Show full legacy view
-    var el = document.getElementById('history-main');
-    var records = data.records || [];
-    var completed = records.filter(function(r){return r.hit_hr===0||r.hit_hr===1;});
-    var hits = completed.filter(function(r){return r.hit_hr===1;});
-    var h = '<div style="padding:12px;background:var(--surface);border:0.5px solid var(--border2);border-radius:8px;margin-bottom:16px;font-size:12px;color:var(--muted)">';
-    h += 'Full history - '+records.length+' records, '+completed.length+' settled, '+hits.length+' HRs ('+
-      (completed.length>0?(hits.length/completed.length*100).toFixed(1)+'%':'--')+' hit rate)</div>';
-    var sorted = completed.slice().sort(function(a,b){return b.model_hr_pct-a.model_hr_pct;});
-    sorted.forEach(function(r){
-      var hit=r.hit_hr===1; var miss=r.hit_hr===0;
-      var borderC=hit?'var(--g)':miss?'var(--r)':'var(--border2)';
-      var badge=hit?'<span style="font-size:10px;font-weight:700;color:var(--g)">HR ✓</span>'
-               :miss?'<span style="font-size:10px;color:var(--r)">No HR</span>':'';
-      h += '<div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:var(--surface);border:0.5px solid '+borderC+';border-left:3px solid '+borderC+';border-radius:6px;margin-bottom:3px">';
-      h += '<div style="font-size:10px;color:var(--muted2);min-width:46px">'+r.date+'</div>';
-      h += '<div style="flex:1;font-size:12px;font-weight:500">'+r.name+'</div>';
-      h += '<div style="font-size:14px;font-weight:700;color:'+(r.model_hr_pct>=12?'var(--g)':r.model_hr_pct>=8?'var(--y)':'var(--muted)')+'">'+r.model_hr_pct+'%</div>';
-      h += badge+'</div>';
-    });
-    el.innerHTML = h;
-  } catch(e) {
-    btn.textContent = 'Load More History';
-    btn.disabled = false;
+    var r = await fetch(GITHUB_RAW+'/data/predictions/'+todayStr()+'.json?t='+Date.now());
+    if(!r.ok) throw new Error('No predictions file');
+    var data = await r.json();
+    var sorted = data.sort(function(a,b){ return (b.model_hr_pct||0)-(a.model_hr_pct||0); });
+    var top8 = sorted.slice(0,8);
+    if(!top8.length){ el.innerHTML='<div class="no-data-wrap"><div class="icon">⚾</div><p>No picks yet</p><small>Check back after 8am ET</small></div>'; return; }
+    el.innerHTML = top8.map(function(p,i){
+      var pct = p.model_hr_pct||0;
+      var src = p.lineup_source==='confirmed'?'confirmed':'projected';
+      return '<div class="pick-card">'+
+        '<div class="pick-rank">'+(i+1)+'</div>'+
+        '<div class="pick-pct">'+pct.toFixed(1)+'<span style="font-size:14px;color:var(--muted)">%</span></div>'+
+        '<div class="pick-name">'+p.name+'</div>'+
+        '<div class="pick-meta">'+p.team+' · vs '+p.opp_pitcher+'</div>'+
+        '<span class="pick-source '+src+'">'+src+'</span>'+
+      '</div>';
+    }).join('');
+  } catch(e){
+    el.innerHTML = '<div class="error-wrap">Could not load picks. <a href="#" onclick="loadTop8();return false" style="color:var(--orange)">Retry</a></div>';
   }
 }
 
-
-function histCard(val, lbl, isHit) {
-  return '<div class="hist-stat'+(isHit?' hist-hit':'')+'"><div class="hist-stat-val">'+val+'</div><div class="hist-stat-lbl">'+lbl+'</div></div>';
-}
-
-function selectHistDate(d) {
-  selectedHistDate = selectedHistDate === d ? null : d;
-  if (historyData) renderHistory(historyData);
-}
-
-function pointBiserial(records, key) {
-  // Point-biserial correlation between a continuous stat and binary hit_hr outcome
-  var valid = records.filter(function(r){return r[key] != null && r[key] !== 0;});
-  if (valid.length < 5) return null;
-  var n = valid.length;
-  var n1 = valid.filter(function(r){return r.hit_hr===1;}).length;
-  var n0 = n - n1;
-  if (n1 === 0 || n0 === 0) return null;
-  var vals = valid.map(function(r){return parseFloat(r[key])||0;});
-  var mean_all = vals.reduce(function(s,v){return s+v;},0) / n;
-  var std = Math.sqrt(vals.reduce(function(s,v){return s+Math.pow(v-mean_all,2);},0) / n);
-  if (std === 0) return null;
-  var mean1 = valid.filter(function(r){return r.hit_hr===1;}).reduce(function(s,r){return s+(parseFloat(r[key])||0);},0) / n1;
-  return ((mean1 - mean_all) / std) * Math.sqrt(n1 * n0 / (n * n));
-}
-
-async function manualSave() {
-  try {
-    var r = await fetch(API+'/save-predictions', {method:'GET'});
-    var d = await r.json();
-    alert('Saved predictions for '+d.date);
-    loadHistory();
-  } catch(e) { alert('Error: '+e.message); }
-}
-
-async function manualRecord() {
-  try {
-    var r = await fetch(API+'/record-results', {method:'GET'});
-    var d = await r.json();
-    alert('Recorded results for '+d.date);
-    loadHistory();
-  } catch(e) { alert('Error: '+e.message); }
-}
-
-async function load(forceRefresh){
-  var btn=document.getElementById('refreshBtn'),upd=document.getElementById('upd');
-  btn.disabled=true;
-  if(forceRefresh){
-    dashboardData=null;
-    historyData=null;
-    loadDashboard();
-  }
-  document.getElementById('batter-main').innerHTML='<div class="loading">Loading Uncle Nicky&#39;s Model<div class="dots"><span></span><span></span><span></span></div></div>';
-  document.getElementById('pitcher-main').innerHTML='<div class="no-data">Loading...</div>';
-  document.getElementById('game-main').innerHTML='<div class="no-data">Loading...</div>';
-  try{
-    var dateStr=formatDateForAPI(selectedDate);
-
-    // Try saved games file first (instant, no backend needed)
-    var loadedFromFile = false;
-    if(!forceRefresh) {
-      try {
-        var fileUrl = 'https://raw.githubusercontent.com/npkamk-blip/MLB-HR-MODEL/main/data/games/'+dateStr+'.json?t='+Date.now();
-        var fileResp = await fetch(fileUrl);
-        if(fileResp.ok) {
-          var fileData = await fileResp.json();
-          if(fileData && fileData.games && fileData.games.length > 0) {
-            allGames = fileData.games;
-            loadedFromFile = true;
-            console.log('Loaded from games file: '+allGames.length+' games');
-          }
-        }
-      } catch(e) { console.log('Games file not available, falling back to API'); }
-    }
-
-    // Fall back to /games API if no file
-    if(!loadedFromFile) {
-      var url=API+'/games?date='+dateStr+(forceRefresh?'&refresh=true':'');
-      var resp=await fetch(url);
-      if(!resp.ok)throw new Error('Backend error '+resp.status);
-      var data=await resp.json();
-      if(data.loading){document.getElementById('batter-main').innerHTML='<div class="err">'+(data.message||'Data loading - try again in 30 seconds.')+'</div>';btn.disabled=false;return;}
-      allGames=data.games||[];
-    }
-
-    if(!allGames.length){
-      var nm='<div class="no-data" style="padding:40px;text-align:center"><div style="font-size:15px;margin-bottom:8px">⚾ No lineups yet for '+dateStr+'</div><div style="font-size:12px;color:var(--muted2)">Lineups post 10am-12pm ET</div></div>';
-      ['batter-main','pitcher-main','game-main'].forEach(function(id){document.getElementById(id).innerHTML=nm;});
-      btn.disabled=false;return;
-    }
-    // Check if data is ready - silent retry if not, no blocking banner
+async function loadHistory(){
+  var el = document.getElementById('history-list');
+  var rows = [];
+  var now = new Date();
+  for(var i=1;i<=7;i++){
+    var d = new Date(now); d.setDate(d.getDate()-i);
+    var ds = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
     try {
-      var stResp = await fetch(API+'/status');
-      var stData = await stResp.json();
-      if(!stData.ready || !stData.tree_trained) {
-        // Show subtle loading state - auto retry every 8 seconds silently
-        var retryIn = stData.tree_trained === false ? 20 : 8;
-        document.getElementById('batter-main').innerHTML =
-          '<div style="text-align:center;padding:40px 20px;color:var(--muted2)">' +
-          '<div style="font-size:13px;margin-bottom:6px">Loading data...</div>' +
-          '<div style="font-size:11px">Retrying automatically</div>' +
-          '</div>';
-        btn.disabled=false;
-        setTimeout(function(){ load(true); }, retryIn * 1000);
-        return;
-      }
-    } catch(e) {}
-    buildBatterTable(allGames);
-    buildPitcherTable(allGames);
-    buildGameTable(allGames);
-    upd.textContent='Updated '+new Date().toLocaleTimeString()+' \u00b7 '+dateStr;
-    // Show model version so you know what round you're on
-    try {
-      var stResp2 = await fetch(API+'/status');
-      var stData2 = await stResp2.json();
-      if(stData2.model_round) {
-        upd.textContent += ' \u00b7 Round '+stData2.model_round+' Day '+stData2.model_day;
-      }
-      if(stData2.is_retraining) {
-        upd.textContent += ' \u00b7 Retraining...';
-      }
-    } catch(e) {}
-  }catch(e){document.getElementById('batter-main').innerHTML='<div class="err"><strong>Error:</strong> '+e.message+'</div>';}
-  btn.disabled=false;
+      var r = await fetch(GITHUB_RAW+'/data/predictions/'+ds+'.json?t='+Date.now());
+      if(!r.ok) continue;
+      var data = await r.json();
+      var sorted = data.sort(function(a,b){ return (b.model_hr_pct||0)-(a.model_hr_pct||0); });
+      var top8 = sorted.slice(0,8);
+      var completed = top8.filter(function(p){ return p.hit_hr===0||p.hit_hr===1; });
+      if(!completed.length) continue;
+      var hits = completed.filter(function(p){ return p.hit_hr===1; }).length;
+      rows.push({date:ds, label:d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}), hits:hits, total:completed.length, players:top8});
+    } catch(e){}
+  }
+  if(!rows.length){
+    el.innerHTML='<div class="no-data-wrap"><div class="icon">📊</div><p>No history yet</p><small>Results appear after 4am ET</small></div>';
+    return;
+  }
+  el.innerHTML = rows.map(function(row,idx){
+    var pct = row.total>0?Math.round(row.hits/row.total*100):0;
+    var playersHtml = row.players.map(function(p){
+      var outcome = p.hit_hr===1?'hit':p.hit_hr===0?'miss':'pending';
+      var icon = outcome==='hit'?'✓':outcome==='miss'?'✗':'·';
+      return '<div class="history-player"><span class="hist-check '+outcome+'">'+icon+'</span><span>'+p.name+'</span><span style="color:var(--muted);font-size:11px">'+p.model_hr_pct.toFixed(1)+'%</span></div>';
+    }).join('');
+    return '<div class="history-row">'+
+      '<div class="history-header" onclick="toggleHistory(\'hist-'+idx+'\',this)">'+
+        '<span class="history-date">'+row.label+'</span>'+
+        '<span class="history-rate">'+row.hits+'/'+row.total+'</span>'+
+        '<span class="history-rate-label">('+pct+'%)</span>'+
+        '<span class="history-chevron" id="chev-'+idx+'">▼</span>'+
+      '</div>'+
+      '<div class="history-body" id="hist-'+idx+'">'+
+        '<div class="history-players">'+playersHtml+'</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
 }
-document.getElementById('dateLbl').textContent=fmtDateLabel(selectedDate);
-// Load history in background on startup so percentile colors are ready
-(async function(){
-  try{
-    var r=await fetch(API+'/history');
-    var d=await r.json();
-    historyData=d;
-    if(d.records&&d.records.length>0){
-      computePercentiles(d.records);
-      // Rebuild batter table with colors if already rendered
-      if(allGames.length>0) buildBatterTable(allGames);
+
+function toggleHistory(id, header){
+  var body = document.getElementById(id);
+  var chevIdx = id.replace('hist-','');
+  var chev = document.getElementById('chev-'+chevIdx);
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  if(chev) chev.classList.toggle('open', !isOpen);
+}
+
+// ── BATTERS ──
+async function loadBatters(force){
+  var el = document.getElementById('batters-main');
+  el.innerHTML = '<div class="loading-wrap"><div class="loading-spinner"></div><div class="loading-text">Loading games…</div></div>';
+
+  // Build top25 set
+  await buildTop25Set();
+
+  // Try games file first
+  var data = null;
+  try {
+    var r = await fetch(GITHUB_RAW+'/data/games/'+todayStr()+'.json?t='+Date.now());
+    if(r.ok){
+      var j = await r.json();
+      if(j && j.games && j.games.length>0){ data = j; }
     }
-  }catch(e){console.log('History preload failed:',e.message);}
-})();
-load();
+  } catch(e){}
+
+  // Fallback to API
+  if(!data || force){
+    try {
+      var r2 = await fetch(API+'/games?date='+todayStr()+(force?'&refresh=true':''));
+      if(r2.ok){
+        var j2 = await r2.json();
+        if(j2 && j2.games && j2.games.length>0){ data = j2; }
+      }
+    } catch(e){}
+  }
+
+  if(!data || !data.games || !data.games.length){
+    el.innerHTML = '<div class="no-data-wrap"><div class="icon">⚾</div><p>No lineups yet for today</p><small>Games file saves at 8am ET · Confirmations post 10am-12pm ET</small></div>';
+    document.getElementById('slate-info').textContent = 'No games loaded';
+    return;
+  }
+
+  allGames = data.games;
+  renderBatters(data);
+}
+
+function renderBatters(data){
+  var games = data.games||[];
+  var el = document.getElementById('batters-main');
+  var projHRs = 0;
+  games.forEach(function(g){ projHRs += (g.proj_hrs||0); });
+
+  document.getElementById('slate-info').textContent = games.length+' games today';
+  document.getElementById('last-updated').textContent = 'Updated '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+
+  // Separate final and active games
+  var active = games.filter(function(g){ return !g.is_final; });
+  var final  = games.filter(function(g){ return g.is_final; });
+
+  var html = '';
+
+  active.forEach(function(g, gi){
+    html += buildGameCard(g, gi);
+  });
+
+  if(final.length){
+    html += '<div style="margin-top:20px;margin-bottom:6px;font-size:10px;font-weight:700;color:var(--muted2);letter-spacing:1px;text-transform:uppercase;">Completed Games</div>';
+    final.forEach(function(g){
+      html += '<div class="final-row">'+
+        '<span class="final-badge">FINAL</span>'+
+        '<span class="final-teams">'+g.away+' @ '+g.home+'</span>'+
+        '<span class="final-pitchers">'+(g.away_pitcher&&g.away_pitcher.name?g.away_pitcher.name:'TBD')+' vs '+(g.home_pitcher&&g.home_pitcher.name?g.home_pitcher.name:'TBD')+'</span>'+
+      '</div>';
+    });
+  }
+
+  el.innerHTML = html;
+}
+
+function buildGameCard(g, gi){
+  var awayP = g.away_pitcher||{};
+  var homeP = g.home_pitcher||{};
+  var time  = fmtTime(g.time);
+  var awayStatus = g.lineup_away_status||'projected';
+  var homeStatus = g.lineup_home_status||'projected';
+
+  // Pitcher splits
+  function pitSplits(p){
+    if(!p||!p.name||p.name==='TBD') return '<span style="color:var(--muted2);font-size:11px">TBD</span>';
+    var vs = p.hand==='L'?'vs RHH':'vs LHH';
+    var hr9 = p.hr9_vs_hand||p.hr9||0;
+    var era = p.era||0;
+    return '<div class="pitcher-name">'+p.name+' <span class="pitcher-hand">'+p.hand+'HP</span></div>'+
+           '<div class="pitcher-splits">HR/9 <span>'+(hr9>0?hr9.toFixed(1):'--')+'</span> · ERA <span>'+(era>0?era.toFixed(2):'--')+'</span></div>';
+  }
+
+  // Wind
+  var wx = g.weather||{};
+  var windHtml = '';
+  if(wx.wind_label){
+    var align = labelToAlign(wx.wind_label);
+    var arrow = windArrow(align);
+    windHtml = '<div class="wind-col">'+
+      '<div class="wind-arrow">'+arrow+'</div>'+
+      '<div class="wind-label">'+wx.wind_label+'</div>'+
+    '</div>';
+  } else {
+    windHtml = '<div class="wind-col"><div class="wind-label" style="color:var(--muted2)">Dome</div></div>';
+  }
+
+  // Proj HRs
+  var proj = g.proj_hrs||0;
+  var envLabel = g.env_label||'Normal';
+  var envCls = envLabel.toLowerCase().includes('ideal')?'env-ideal':
+               envLabel.toLowerCase().includes('good')?'env-good':
+               envLabel.toLowerCase().includes('tough')?'env-tough':'env-normal';
+
+  // Batter sections
+  function buildBatterSection(batters, team, status, side){
+    if(!batters||!batters.length) return '<div style="padding:20px;color:var(--muted2);font-size:12px;text-align:center">Lineup TBD</div>';
+    var statusHtml = '<div style="padding:6px 10px 2px"><span class="lineup-status status-'+status+'">'+status+'</span></div>';
+    var headerHtml = '<div class="batter-header"><span>#</span><span>Batter</span><span style="text-align:right">xSLG</span><span style="text-align:right">Brl%</span><span style="text-align:right">LA</span><span style="text-align:right">HR%</span></div>';
+    var show5 = batters.slice(0,5);
+    var rest  = batters.slice(5);
+    var uid   = 'game'+gi+'_'+side;
+
+    var rowsHtml = show5.map(function(b,bi){ return buildBatterRow(b, bi+1, gi+'_'+side+'_'+bi); }).join('');
+    var restHtml = rest.length ? rest.map(function(b,bi){ return buildBatterRow(b, bi+6, gi+'_'+side+'_r'+bi); }).join('') : '';
+    var moreHtml = rest.length ? '<div class="more-toggle" onclick="toggleMore(\'more-'+uid+'\',this)">+ '+rest.length+' more</div><div id="more-'+uid+'" style="display:none">'+restHtml+'</div>' : '';
+
+    return statusHtml + headerHtml + rowsHtml + moreHtml;
+  }
+
+  return '<div class="game-card">'+
+    '<div class="game-grid">'+
+      '<div class="game-col game-col-info">'+
+        '<div class="game-time">'+time+' ET</div>'+
+        '<div class="game-teams">'+g.away+' <span class="vs">@</span> '+g.home+'</div>'+
+        '<div class="pitcher-row">'+pitSplits(awayP)+'</div>'+
+        '<div style="border-top:1px solid var(--border2);margin:6px 0"></div>'+
+        '<div class="pitcher-row">'+pitSplits(homeP)+'</div>'+
+      '</div>'+
+      '<div class="game-col game-col-proj" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">'+
+        '<div class="proj-hrs">'+(proj>0?proj.toFixed(1):'--')+'</div>'+
+        '<div class="proj-hrs-label">PROJ HRS</div>'+
+        '<div class="proj-hrs-split">'+(awayP.proj_hr||0).toFixed(1)+' / '+(homeP.proj_hr||0).toFixed(1)+'</div>'+
+        '<span class="env-badge '+envCls+'">'+envLabel+'</span>'+
+      '</div>'+
+      '<div class="game-col game-col-wind">'+windHtml+'</div>'+
+      '<div class="game-col" style="padding:0">'+buildBatterSection(g.away_lineup||g.top_hr_candidates&&g.top_hr_candidates.filter(function(b){return b.team===g.away;}), g.away, awayStatus, 'away')+'</div>'+
+      '<div class="game-col" style="padding:0;border-right:none">'+buildBatterSection(g.home_lineup||g.top_hr_candidates&&g.top_hr_candidates.filter(function(b){return b.team===g.home;}), g.home, homeStatus, 'home')+'</div>'+
+    '</div>'+
+  '</div>';
+}
+
+function buildBatterRow(b, order, uid){
+  var name = b.name||b.fullName||'';
+  var pct  = b.hr_prob||b.model_hr_pct||0;
+  var xslg = b.season&&b.season.xslg ? b.season.xslg : (b.xslg_l8d||0);
+  var brl  = b.season&&b.season.barrel ? b.season.barrel : (b.barrel_pct_season||0);
+  var la   = b.season&&b.season.la ? b.season.la : (b.la_season||0);
+  var isTop25 = top25Names.has(name);
+  var pillCls = pctCls(pct) + (isTop25 ? ' top25-pill' : '');
+
+  return '<div class="batter-row" onclick="toggleDetail(\'det-'+uid+'\')" id="row-'+uid+'">'+
+    '<span class="bat-order">'+order+'</span>'+
+    '<span class="bat-name'+(isTop25?' top25':'')+'">'+name+'</span>'+
+    '<span class="stat-val '+(xslg>0?xslgCls(xslg):'muted')+'">'+fmtXslg(xslg)+'</span>'+
+    '<span class="stat-val '+(brl>0?brlCls(brl):'muted')+'">'+(brl>0?brl.toFixed(1)+'%':'--')+'</span>'+
+    '<span class="stat-val '+(la>0?'':'muted')+'">'+(la>0?la.toFixed(0)+'°':'--')+'</span>'+
+    '<span><span class="pct-pill '+pillCls+'">'+(pct>0?pct.toFixed(1)+'%':'--')+'</span></span>'+
+  '</div>'+
+  '<div class="batter-detail" id="det-'+uid+'">'+buildDetail(b)+'</div>';
+}
+
+function buildDetail(b){
+  var bd = b.breakdown||b;
+  var s  = b.season||{};
+  var l  = b.l8d||{};
+  var pitP = b.pitcher||{};
+
+  // Stat rows
+  var stats = [
+    {label:'xSLG L8D', val: l.xslg||b.xslg_l8d||0, key:'xslg_l8d', fmt:fmtXslg},
+    {label:'Barrel% Season', val: s.barrel||b.barrel_pct_season||0, key:'barrel_pct_season', fmt:function(v){return v>0?v.toFixed(1)+'%':'--';}},
+    {label:'EV L8D', val: l.ev||b.ev_l8d||0, key:'ev_l8d', fmt:function(v){return v>0?v.toFixed(1):'--';}},
+    {label:'Bat Speed L8D', val: l.bat_speed||b.bat_speed_l8d||0, key:'bat_speed_l8d', fmt:function(v){return v>0?v.toFixed(1):'--';}},
+    {label:'ISO Season', val: s.iso||b.iso_season||0, key:'iso_season', fmt:fmtXslg},
+    {label:'ISO vs Hand', val: b.iso_vs_hand||0, key:'iso_vs_hand', fmt:fmtXslg},
+    {label:'Pit HR/9', val: b.pit_hr9_season||pitP.hr9||0, key:'pit_hr9_season', fmt:function(v){return v>0?v.toFixed(2):'--';}},
+    {label:'Park Factor', val: b.park_factor||bd.park_factor||1.0, key:'park_factor', fmt:function(v){return v>0?v.toFixed(2):'--';}},
+  ];
+
+  var statsHtml = stats.map(function(st){
+    var med = medians[st.key];
+    var tag = '';
+    if(med&&st.val&&st.val!==0){
+      var above = st.val>med;
+      var isPit = st.key.startsWith('pit_');
+      var good = isPit&&st.key.includes('hr9') ? above : isPit ? !above : above;
+      tag = '<span class="median-tag '+(good?'med-up':'med-dn')+'">'+(above?'↑':'↓')+' med</span>';
+    }
+    return '<div class="detail-stat-row">'+
+      '<span class="detail-stat-label">'+st.label+'</span>'+
+      '<div style="display:flex;align-items:center;gap:5px">'+
+        '<span class="detail-stat-val">'+st.fmt(st.val)+'</span>'+tag+
+      '</div>'+
+    '</div>';
+  }).join('');
+
+  // Radar scores
+  function norm(val,med,cap){ if(!val||!med||val===0)return 50; return Math.min(Math.round(val/med*50),cap||100); }
+  function normLow(val,med){ if(!val||!med||val===0)return 50; return Math.min(Math.round(med/val*50),100); }
+  function laScore(la){ if(!la||la===0)return 40; return Math.max(0,Math.min(100,Math.round(100-Math.abs(la-26.5)*3.5))); }
+
+  var brl_s=s.barrel||b.barrel_pct_season||0, iso_s=s.iso||b.iso_season||0, ev_s=s.ev||b.ev_season||0;
+  var la_s=s.la||b.la_season||0, pull_s=s.pull||b.pull_pct_season||0;
+  var xslg_l=l.xslg||b.xslg_l8d||0, ev_l=l.ev||b.ev_l8d||0, brl_l=l.barrel||b.barrel_pct_l8d||0;
+  var spd_l=l.bat_speed||b.bat_speed_l8d||0, hh_l=l.hh||b.hard_hit_l8d||0;
+  var pit_hr9=b.pit_hr9_season||pitP.hr9||0, pit_hh=b.pit_hard_hit_season||pitP.hard_hit_pct||0;
+  var pit_era=b.pit_era_season||pitP.era||0, pit_slg=b.pit_slg_vs_hand||0;
+  var pf=b.park_factor||1.0, wx=b.weather_mult||1.0;
+  var bat_plat=b.bat_platoon_mult||1.0, pit_plat=b.pit_platoon_mult||1.0;
+  var pitch_sc=b.pitch_matchup_score||0, k_l=l.k_pct||b.k_pct_l8d||0;
+
+  var power   = Math.round(norm(brl_s,medians.barrel_pct_season,100)*0.35+norm(iso_s,medians.iso_season,100)*0.30+norm(ev_s,medians.ev_season,100)*0.20+laScore(la_s)*0.08+norm(pull_s,medians.pull_pct_season,100)*0.07);
+  var form    = Math.round(norm(xslg_l,medians.xslg_l8d,100)*0.35+norm(ev_l,medians.ev_l8d,100)*0.25+norm(brl_l,medians.barrel_pct_l8d,100)*0.20+norm(spd_l,medians.bat_speed_l8d,100)*0.10+norm(hh_l,medians.hard_hit_l8d,100)*0.05+laScore(0)*0.05);
+  var matchup = Math.round(norm(pit_hr9,medians.pit_hr9_season,100)*0.45+norm(pit_hh,medians.pit_hard_hit_season,100)*0.30+normLow(pit_era,medians.pit_era_season)*0.15+norm(pit_slg,0.36,100)*0.10);
+  var parkWx  = (pf===1.0&&wx===1.0)?50:Math.round(norm(pf,1.04,100)*0.60+norm(wx,1.00,100)*0.40);
+  var disc    = Math.round(normLow(k_l,medians.k_pct_l8d)*0.60+50*0.40);
+  var platoon = Math.round(norm(bat_plat,1.0,100)*0.35+norm(pit_plat,1.0,100)*0.35+norm(b.iso_vs_hand||0,medians.iso_vs_hand,100)*0.20+(pitch_sc>0?Math.min(pitch_sc*10+50,100):50)*0.10);
+
+  var scores  = [power,form,matchup,parkWx,disc,platoon];
+  var labels  = ['Power','Form','Matchup','Park','Disc','Platoon'];
+  var avg     = Math.round(scores.reduce(function(a,c){return a+c;},0)/6);
+
+  // SVG radar
+  var size=160,cx=80,cy=80,r=58,n=6;
+  function pt(i,v){ var a=(Math.PI*2/n)*i-Math.PI/2,rv=r*(v/100); return[cx+rv*Math.cos(a),cy+rv*Math.sin(a)]; }
+  function ptO(i,m){ var a=(Math.PI*2/n)*i-Math.PI/2; return[cx+r*(m||1)*Math.cos(a),cy+r*(m||1)*Math.sin(a)]; }
+  var grid='';
+  [0.33,0.67,1.0].forEach(function(f){
+    var ps=[];for(var i=0;i<n;i++){var p=ptO(i,f);ps.push(p[0]+','+p[1]);}
+    grid+='<polygon points="'+ps.join(' ')+'" fill="none" stroke="rgba(44,40,37,0.08)" stroke-width="0.5"/>';
+  });
+  for(var i=0;i<n;i++){var op=ptO(i);grid+='<line x1="'+cx+'" y1="'+cy+'" x2="'+op[0]+'" y2="'+op[1]+'" stroke="rgba(44,40,37,0.08)" stroke-width="0.5"/>';}
+  var dataPts=scores.map(function(v,i){var p=pt(i,v);return p[0]+','+p[1];});
+  var fc=avg>=65?'rgba(45,122,58,0.15)':avg>=45?'rgba(200,75,17,0.12)':'rgba(192,57,43,0.12)';
+  var sc=avg>=65?'#2D7A3A':avg>=45?'#C84B11':'#C0392B';
+  var lbls='';
+  labels.forEach(function(lbl,i){
+    var op=ptO(i,1.35),dp=pt(i,scores[i]),s=scores[i];
+    var dc=s>=65?'#2D7A3A':s>=45?'#C84B11':'#C0392B';
+    lbls+='<text x="'+op[0]+'" y="'+(op[1]+3)+'" text-anchor="middle" font-size="7.5" fill="var(--muted)" font-family="DM Sans,sans-serif">'+lbl+'</text>';
+    lbls+='<circle cx="'+dp[0]+'" cy="'+dp[1]+'" r="3" fill="'+dc+'"/>';
+  });
+  var svgStr='<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'+grid+'<polygon points="'+dataPts.join(' ')+'" fill="'+fc+'" stroke="'+sc+'" stroke-width="1.5"/>'+lbls+'<text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" font-size="13" fill="'+sc+'" font-weight="700" font-family="DM Serif Display,serif">'+avg+'</text></svg>';
+
+  var strong=scores.filter(function(s){return s>=70;}).length;
+  var weak=scores.filter(function(s){return s<=35;}).length;
+  var verdict=strong>=4?'Multiple axes aligned — strong spot':strong>=2&&weak===0?'Solid across the board':weak>=2?'Thin case — model found specific edge':'Average spot — no standout signal';
+
+  var scoreCardsHtml = scores.map(function(s,i){
+    return '<div class="score-card"><div class="score-card-label">'+labels[i]+'</div><div class="score-card-val '+scoreCls(s)+'">'+s+'</div></div>';
+  }).join('');
+
+  return '<div class="detail-grid">'+
+    '<div class="detail-stats">'+statsHtml+'</div>'+
+    '<div class="radar-wrap">'+
+      svgStr+
+      '<div class="radar-verdict">'+verdict+'</div>'+
+      '<div class="score-cards">'+scoreCardsHtml+'</div>'+
+    '</div>'+
+  '</div>';
+}
+
+function toggleDetail(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.classList.toggle('open');
+  var row = el.previousElementSibling;
+  if(row) row.classList.toggle('expanded');
+}
+
+function toggleMore(id, el){
+  var more = document.getElementById(id);
+  if(!more) return;
+  var isOpen = more.style.display!=='none';
+  more.style.display = isOpen?'none':'block';
+  el.textContent = isOpen ? '+ '+(more.querySelectorAll('.batter-row').length)+' more' : 'Show less';
+}
+
+// Wind helpers
+function labelToAlign(label){
+  var l=(label||'').toLowerCase();
+  if(l.includes('out to cf'))return 1.0;if(l.includes('out to lf'))return 0.8;
+  if(l.includes('out to rf'))return 0.8;if(l.includes('blowing out'))return 0.6;
+  if(l.includes('toward lf'))return 0.3;if(l.includes('toward rf'))return 0.3;
+  if(l.includes('calm'))return 0.0;if(l.includes('cross'))return 0.0;
+  if(l.includes('slightly in'))return -0.4;if(l.includes('blowing in'))return -1.0;
+  return 0;
+}
+function windArrow(align){
+  if(align>=0.7)return'↑';if(align>=0.3)return'↗';
+  if(align<=-0.7)return'↓';if(align<=-0.3)return'↙';
+  return'→';
+}
+
+// ── Init ──
 loadDashboard();
 </script>
 </body>
