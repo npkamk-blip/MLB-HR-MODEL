@@ -56,7 +56,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 89.0
+    "xgb_prob": 89.0,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -115,7 +117,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 87.2
+    "xgb_prob": 87.2,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -174,7 +178,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 85.1
+    "xgb_prob": 85.1,
+    "actual_pa": 6,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -233,7 +239,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 83.7
+    "xgb_prob": 83.7,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -292,7 +300,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 83.3
+    "xgb_prob": 83.3,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -351,7 +361,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 81.9
+    "xgb_prob": 81.9,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -410,7 +422,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 80.2
+    "xgb_prob": 80.2,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -469,7 +483,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 79.3
+    "xgb_prob": 79.3,
+    "actual_pa": 1,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -528,7 +544,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 78.3
+    "xgb_prob": 78.3,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -587,7 +605,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 76.9
+    "xgb_prob": 76.9,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -646,7 +666,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 74.9
+    "xgb_prob": 74.9,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -705,7 +727,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 70.5
+    "xgb_prob": 70.5,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -764,7 +788,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 68.5
+    "xgb_prob": 68.5,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -823,7 +849,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 66.2
+    "xgb_prob": 66.2,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -882,7 +910,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 64.8
+    "xgb_prob": 64.8,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -941,7 +971,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 59.6
+    "xgb_prob": 59.6,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1000,7 +1032,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 58.8
+    "xgb_prob": 58.8,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1059,7 +1093,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 58.6
+    "xgb_prob": 58.6,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1118,7 +1154,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 58.1
+    "xgb_prob": 58.1,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1177,7 +1215,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 57.5
+    "xgb_prob": 57.5,
+    "actual_pa": 2,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1236,7 +1276,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 55.5
+    "xgb_prob": 55.5,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1295,7 +1337,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 55.5
+    "xgb_prob": 55.5,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1354,7 +1398,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 55.3
+    "xgb_prob": 55.3,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1413,7 +1459,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 53.1
+    "xgb_prob": 53.1,
+    "actual_pa": 3,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1472,66 +1520,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 52.8
-  },
-  {
-    "date": "2026-05-12",
-    "name": "Curtis Mead",
-    "team": "Washington Nationals",
-    "mlb_id": 678554,
-    "opp_pitcher": "Brady Singer",
-    "opp_pitcher_hand": "R",
-    "bat_hand": "R",
-    "home_team": "Cincinnati Reds",
-    "lineup_source": "projected",
-    "model_hr_pct": 52.1,
-    "hit_hr": 0,
-    "rf_prob": 6.5,
-    "barrel_pct_season": 10.0,
-    "la_season": 13.6,
-    "ev_season": 89.5,
-    "iso_season": 0.223,
-    "hard_hit_season": 47.1,
-    "k_pct_season": 15.2,
-    "hr_season": 4,
-    "pa_season": 99.0,
-    "barrel_pct_l8d": 4.0,
-    "la_l8d": 30.1,
-    "ev_l8d": 85.5,
-    "iso_l8d": 0.25,
-    "hard_hit_l8d": 32.0,
-    "k_pct_l8d": 11.4,
-    "pa_l8d": 35,
-    "l8d_hr": 1,
-    "slg_l8d": 0.571,
-    "xslg_l8d": 0.778,
-    "xslg_gap_l8d": 0.207,
-    "xwoba_l8d": 0.54,
-    "bat_speed_l8d": 73.2,
-    "iso_vs_hand": 0.225,
-    "slg_vs_hand": 0.425,
-    "hr_vs_hand": 2,
-    "pa_vs_hand": 50,
-    "pit_hr9_season": 1.88,
-    "pit_era_season": 5.63,
-    "pit_hard_hit_season": 43.9,
-    "pit_k9_season": 6.1,
-    "pit_hr9_vs_hand": 2.0,
-    "pit_slg_vs_hand": 0.507,
-    "park_factor": 1.25,
-    "weather_mult": 1.036,
-    "bullpen_vuln": 0.941,
-    "bat_platoon_mult": 1.005,
-    "pit_platoon_mult": 0.935,
-    "pitch_matchup_score": -1.44,
-    "combined_pitch_delta": 0.65,
-    "pit_era_diff": 1.43,
-    "pull_pct_season": 52.9,
-    "games_played": 31,
-    "rotation_round": 1,
-    "rotation_day": 29,
-    "day_of_season": 53,
-    "xgb_prob": 52.1
+    "xgb_prob": 52.8,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1590,7 +1581,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 51.9
+    "xgb_prob": 51.9,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1649,7 +1642,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 51.6
+    "xgb_prob": 51.6,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1708,7 +1703,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 51.2
+    "xgb_prob": 51.2,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1767,7 +1764,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 51.0
+    "xgb_prob": 51.0,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1826,7 +1825,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 50.2
+    "xgb_prob": 50.2,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1885,7 +1886,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 49.3
+    "xgb_prob": 49.3,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -1944,7 +1947,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 47.2
+    "xgb_prob": 47.2,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -2003,7 +2008,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 45.1
+    "xgb_prob": 45.1,
+    "actual_pa": 2,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -2062,7 +2069,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 43.0
+    "xgb_prob": 43.0,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -2121,7 +2130,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 41.9
+    "xgb_prob": 41.9,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -2180,7 +2191,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 41.7
+    "xgb_prob": 41.7,
+    "actual_pa": 3,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -2239,7 +2252,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 41.6
+    "xgb_prob": 41.6,
+    "actual_pa": 3,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -2298,7 +2313,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 41.3
+    "xgb_prob": 41.3,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -2357,7 +2374,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 40.9
+    "xgb_prob": 40.9,
+    "actual_pa": 3,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -2416,66 +2435,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 40.9
-  },
-  {
-    "date": "2026-05-12",
-    "name": "Tyler Black",
-    "team": "Milwaukee Brewers",
-    "mlb_id": 672012,
-    "opp_pitcher": "Bradgley Rodriguez",
-    "opp_pitcher_hand": "R",
-    "bat_hand": "L",
-    "home_team": "Milwaukee Brewers",
-    "lineup_source": "projected",
-    "model_hr_pct": 40.8,
-    "hit_hr": null,
-    "rf_prob": 1.0,
-    "barrel_pct_season": 0.0,
-    "la_season": 12.6,
-    "ev_season": 83.6,
-    "iso_season": 0.148,
-    "hard_hit_season": 15.0,
-    "k_pct_season": 25.0,
-    "hr_season": 0,
-    "pa_season": 28.0,
-    "barrel_pct_l8d": 0.0,
-    "la_l8d": 12.0,
-    "ev_l8d": 83.2,
-    "iso_l8d": 0.0,
-    "hard_hit_l8d": 30.0,
-    "k_pct_l8d": 40.0,
-    "pa_l8d": 5,
-    "l8d_hr": 0,
-    "slg_l8d": 0.464,
-    "xslg_l8d": 0.464,
-    "xslg_gap_l8d": 0.0,
-    "xwoba_l8d": 0.377,
-    "bat_speed_l8d": 69.8,
-    "iso_vs_hand": 0.154,
-    "slg_vs_hand": 0.5,
-    "hr_vs_hand": 0,
-    "pa_vs_hand": 27,
-    "pit_hr9_season": 0.0,
-    "pit_era_season": 1.83,
-    "pit_hard_hit_season": 28.8,
-    "pit_k9_season": 6.4,
-    "pit_hr9_vs_hand": 0.0,
-    "pit_slg_vs_hand": 0.194,
-    "park_factor": 1.08,
-    "weather_mult": 1.0,
-    "bullpen_vuln": 0.5,
-    "bat_platoon_mult": 1.0,
-    "pit_platoon_mult": 0.626,
-    "pitch_matchup_score": -1.44,
-    "combined_pitch_delta": -1.36,
-    "pit_era_diff": -2.37,
-    "pull_pct_season": 30.0,
-    "games_played": 9,
-    "rotation_round": 1,
-    "rotation_day": 29,
-    "day_of_season": 53,
-    "xgb_prob": 40.8
+    "xgb_prob": 40.9,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -2534,125 +2496,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 40.7
-  },
-  {
-    "date": "2026-05-12",
-    "name": "Jared Triolo",
-    "team": "Pittsburgh Pirates",
-    "mlb_id": 669707,
-    "opp_pitcher": "Michael Lorenzen",
-    "opp_pitcher_hand": "R",
-    "bat_hand": "R",
-    "home_team": "Pittsburgh Pirates",
-    "lineup_source": "projected",
-    "model_hr_pct": 40.4,
-    "hit_hr": 0,
-    "rf_prob": 0.6,
-    "barrel_pct_season": 3.6,
-    "la_season": 8.3,
-    "ev_season": 88.2,
-    "iso_season": 0.056,
-    "hard_hit_season": 34.5,
-    "k_pct_season": 17.9,
-    "hr_season": 0,
-    "pa_season": 39.0,
-    "barrel_pct_l8d": 8.3,
-    "la_l8d": 13.7,
-    "ev_l8d": 87.7,
-    "iso_l8d": 0.044,
-    "hard_hit_l8d": 33.3,
-    "k_pct_l8d": 25.0,
-    "pa_l8d": 24,
-    "l8d_hr": 0,
-    "slg_l8d": 0.261,
-    "xslg_l8d": 0.445,
-    "xslg_gap_l8d": 0.184,
-    "xwoba_l8d": 0.313,
-    "bat_speed_l8d": 68.8,
-    "iso_vs_hand": 0.043,
-    "slg_vs_hand": 0.217,
-    "hr_vs_hand": 0,
-    "pa_vs_hand": 25,
-    "pit_hr9_season": 1.62,
-    "pit_era_season": 6.92,
-    "pit_hard_hit_season": 50.3,
-    "pit_k9_season": 6.0,
-    "pit_hr9_vs_hand": 0.4,
-    "pit_slg_vs_hand": 0.37,
-    "park_factor": 0.98,
-    "weather_mult": 1.013,
-    "bullpen_vuln": 0.5,
-    "bat_platoon_mult": 1.0,
-    "pit_platoon_mult": 0.608,
-    "pitch_matchup_score": -2.66,
-    "combined_pitch_delta": 1.43,
-    "pit_era_diff": 2.72,
-    "pull_pct_season": 27.6,
-    "games_played": 13,
-    "rotation_round": 1,
-    "rotation_day": 29,
-    "day_of_season": 53,
-    "xgb_prob": 40.4
-  },
-  {
-    "date": "2026-05-12",
-    "name": "Victor Caratini",
-    "team": "Minnesota Twins",
-    "mlb_id": 605170,
-    "opp_pitcher": "Eury P\u00e9rez",
-    "opp_pitcher_hand": "R",
-    "bat_hand": "L",
-    "home_team": "Minnesota Twins",
-    "lineup_source": "projected",
-    "model_hr_pct": 39.6,
-    "hit_hr": 0,
-    "rf_prob": 0.3,
-    "barrel_pct_season": 5.2,
-    "la_season": 9.2,
-    "ev_season": 88.8,
-    "iso_season": 0.042,
-    "hard_hit_season": 39.0,
-    "k_pct_season": 20.2,
-    "hr_season": 1,
-    "pa_season": 114.0,
-    "barrel_pct_l8d": 4.8,
-    "la_l8d": 14.0,
-    "ev_l8d": 85.0,
-    "iso_l8d": 0.0,
-    "hard_hit_l8d": 28.6,
-    "k_pct_l8d": 40.0,
-    "pa_l8d": 30,
-    "l8d_hr": 0,
-    "slg_l8d": 0.107,
-    "xslg_l8d": 0.679,
-    "xslg_gap_l8d": 0.572,
-    "xwoba_l8d": 0.438,
-    "bat_speed_l8d": 70.6,
-    "iso_vs_hand": 0.0,
-    "slg_vs_hand": 0.193,
-    "hr_vs_hand": 0,
-    "pa_vs_hand": 64,
-    "pit_hr9_season": 1.52,
-    "pit_era_season": 5.01,
-    "pit_hard_hit_season": 42.5,
-    "pit_k9_season": 9.8,
-    "pit_hr9_vs_hand": 0.81,
-    "pit_slg_vs_hand": 0.427,
-    "park_factor": 1.02,
-    "weather_mult": 1.07,
-    "bullpen_vuln": 0.694,
-    "bat_platoon_mult": 1.0,
-    "pit_platoon_mult": 0.898,
-    "pitch_matchup_score": -1.57,
-    "combined_pitch_delta": 0.03,
-    "pit_era_diff": 0.81,
-    "pull_pct_season": 41.6,
-    "games_played": 30,
-    "rotation_round": 1,
-    "rotation_day": 29,
-    "day_of_season": 53,
-    "xgb_prob": 39.6
+    "xgb_prob": 40.7,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -2711,7 +2557,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 38.5
+    "xgb_prob": 38.5,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -2770,7 +2618,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 38.4
+    "xgb_prob": 38.4,
+    "actual_pa": 3,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -2829,7 +2679,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 38.2
+    "xgb_prob": 38.2,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -2888,7 +2740,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 37.4
+    "xgb_prob": 37.4,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -2947,7 +2801,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 37.4
+    "xgb_prob": 37.4,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3006,7 +2862,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 37.3
+    "xgb_prob": 37.3,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3065,7 +2923,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 37.1
+    "xgb_prob": 37.1,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3124,125 +2984,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 37.0
-  },
-  {
-    "date": "2026-05-12",
-    "name": "Joey Wiemer",
-    "team": "Washington Nationals",
-    "mlb_id": 686894,
-    "opp_pitcher": "Brady Singer",
-    "opp_pitcher_hand": "R",
-    "bat_hand": "R",
-    "home_team": "Cincinnati Reds",
-    "lineup_source": "projected",
-    "model_hr_pct": 36.9,
-    "hit_hr": 0,
-    "rf_prob": 7.9,
-    "barrel_pct_season": 12.1,
-    "la_season": 1.6,
-    "ev_season": 89.6,
-    "iso_season": 0.23,
-    "hard_hit_season": 41.2,
-    "k_pct_season": 38.6,
-    "hr_season": 3,
-    "pa_season": 70.0,
-    "barrel_pct_l8d": 0.0,
-    "la_l8d": -7.0,
-    "ev_l8d": 100.5,
-    "iso_l8d": 0.236,
-    "hard_hit_l8d": 100.0,
-    "k_pct_l8d": 45.0,
-    "pa_l8d": 20,
-    "l8d_hr": 1,
-    "slg_l8d": 0.412,
-    "xslg_l8d": 0.316,
-    "xslg_gap_l8d": -0.096,
-    "xwoba_l8d": 0.271,
-    "bat_speed_l8d": 60.5,
-    "iso_vs_hand": 0.0,
-    "slg_vs_hand": 0.222,
-    "hr_vs_hand": 0,
-    "pa_vs_hand": 31,
-    "pit_hr9_season": 1.88,
-    "pit_era_season": 5.63,
-    "pit_hard_hit_season": 43.9,
-    "pit_k9_season": 6.1,
-    "pit_hr9_vs_hand": 2.0,
-    "pit_slg_vs_hand": 0.507,
-    "park_factor": 1.25,
-    "weather_mult": 1.036,
-    "bullpen_vuln": 0.941,
-    "bat_platoon_mult": 1.0,
-    "pit_platoon_mult": 0.935,
-    "pitch_matchup_score": -0.91,
-    "combined_pitch_delta": 0.65,
-    "pit_era_diff": 1.43,
-    "pull_pct_season": 38.2,
-    "games_played": 27,
-    "rotation_round": 1,
-    "rotation_day": 29,
-    "day_of_season": 53,
-    "xgb_prob": 36.9
-  },
-  {
-    "date": "2026-05-12",
-    "name": "Felix Reyes",
-    "team": "Philadelphia Phillies",
-    "mlb_id": 694025,
-    "opp_pitcher": "TBD",
-    "opp_pitcher_hand": "R",
-    "bat_hand": "R",
-    "home_team": "Boston Red Sox",
-    "lineup_source": "projected",
-    "model_hr_pct": 36.8,
-    "hit_hr": 0,
-    "rf_prob": 2.4,
-    "barrel_pct_season": 7.4,
-    "la_season": 8.3,
-    "ev_season": 89.2,
-    "iso_season": 0.111,
-    "hard_hit_season": 25.9,
-    "k_pct_season": 25.0,
-    "hr_season": 1,
-    "pa_season": 36.0,
-    "barrel_pct_l8d": 14.3,
-    "la_l8d": 0.1,
-    "ev_l8d": 86.9,
-    "iso_l8d": 0.031,
-    "hard_hit_l8d": 28.6,
-    "k_pct_l8d": 24.2,
-    "pa_l8d": 33,
-    "l8d_hr": 0,
-    "slg_l8d": 0.152,
-    "xslg_l8d": 0.51,
-    "xslg_gap_l8d": 0.358,
-    "xwoba_l8d": 0.393,
-    "bat_speed_l8d": 77.8,
-    "iso_vs_hand": 0.058,
-    "slg_vs_hand": 0.176,
-    "hr_vs_hand": 0,
-    "pa_vs_hand": 17,
-    "pit_hr9_season": 0,
-    "pit_era_season": 0,
-    "pit_hard_hit_season": 0,
-    "pit_k9_season": 0,
-    "pit_hr9_vs_hand": 0,
-    "pit_slg_vs_hand": 0,
-    "park_factor": 1.18,
-    "weather_mult": 0.997,
-    "bullpen_vuln": 1.0,
-    "bat_platoon_mult": 1.0,
-    "pit_platoon_mult": 1.0,
-    "pitch_matchup_score": 0.0,
-    "combined_pitch_delta": 0,
-    "pit_era_diff": 0,
-    "pull_pct_season": 48.1,
-    "games_played": 11,
-    "rotation_round": 1,
-    "rotation_day": 29,
-    "day_of_season": 53,
-    "xgb_prob": 36.8
+    "xgb_prob": 37.0,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3301,7 +3045,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 35.7
+    "xgb_prob": 35.7,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3360,7 +3106,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 35.7
+    "xgb_prob": 35.7,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3419,7 +3167,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 35.5
+    "xgb_prob": 35.5,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3478,7 +3228,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 35.0
+    "xgb_prob": 35.0,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3537,7 +3289,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 34.7
+    "xgb_prob": 34.7,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3596,7 +3350,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 34.1
+    "xgb_prob": 34.1,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3655,7 +3411,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 33.9
+    "xgb_prob": 33.9,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3714,7 +3472,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 33.4
+    "xgb_prob": 33.4,
+    "actual_pa": 2,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3773,7 +3533,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 33.2
+    "xgb_prob": 33.2,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3832,7 +3594,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 32.9
+    "xgb_prob": 32.9,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3891,7 +3655,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 32.5
+    "xgb_prob": 32.5,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -3950,7 +3716,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 32.2
+    "xgb_prob": 32.2,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -4009,7 +3777,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 32.0
+    "xgb_prob": 32.0,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -4068,66 +3838,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 31.8
-  },
-  {
-    "date": "2026-05-12",
-    "name": "Nick Yorke",
-    "team": "Pittsburgh Pirates",
-    "mlb_id": 694377,
-    "opp_pitcher": "Michael Lorenzen",
-    "opp_pitcher_hand": "R",
-    "bat_hand": "R",
-    "home_team": "Pittsburgh Pirates",
-    "lineup_source": "projected",
-    "model_hr_pct": 31.4,
-    "hit_hr": 0,
-    "rf_prob": 0.3,
-    "barrel_pct_season": 5.2,
-    "la_season": 7.7,
-    "ev_season": 89.5,
-    "iso_season": 0.083,
-    "hard_hit_season": 48.3,
-    "k_pct_season": 19.3,
-    "hr_season": 1,
-    "pa_season": 83.0,
-    "barrel_pct_l8d": 0.0,
-    "la_l8d": 20.1,
-    "ev_l8d": 74.7,
-    "iso_l8d": 0.15,
-    "hard_hit_l8d": 14.3,
-    "k_pct_l8d": 20.0,
-    "pa_l8d": 20,
-    "l8d_hr": 1,
-    "slg_l8d": 0.25,
-    "xslg_l8d": 0.19,
-    "xslg_gap_l8d": -0.06,
-    "xwoba_l8d": 0.158,
-    "bat_speed_l8d": 70.0,
-    "iso_vs_hand": 0.066,
-    "slg_vs_hand": 0.283,
-    "hr_vs_hand": 0,
-    "pa_vs_hand": 51,
-    "pit_hr9_season": 1.62,
-    "pit_era_season": 6.92,
-    "pit_hard_hit_season": 50.3,
-    "pit_k9_season": 6.0,
-    "pit_hr9_vs_hand": 0.4,
-    "pit_slg_vs_hand": 0.37,
-    "park_factor": 0.98,
-    "weather_mult": 1.013,
-    "bullpen_vuln": 0.5,
-    "bat_platoon_mult": 0.882,
-    "pit_platoon_mult": 0.608,
-    "pitch_matchup_score": -1.21,
-    "combined_pitch_delta": 1.43,
-    "pit_era_diff": 2.72,
-    "pull_pct_season": 24.1,
-    "games_played": 26,
-    "rotation_round": 1,
-    "rotation_day": 29,
-    "day_of_season": 53,
-    "xgb_prob": 31.4
+    "xgb_prob": 31.8,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -4186,7 +3899,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 30.7
+    "xgb_prob": 30.7,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -4245,7 +3960,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 30.3
+    "xgb_prob": 30.3,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -4304,7 +4021,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 30.2
+    "xgb_prob": 30.2,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -4363,7 +4082,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 30.2
+    "xgb_prob": 30.2,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -4422,7 +4143,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 30.0
+    "xgb_prob": 30.0,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -4481,7 +4204,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 29.8
+    "xgb_prob": 29.8,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -4540,7 +4265,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 29.6
+    "xgb_prob": 29.6,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -4599,66 +4326,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 29.5
-  },
-  {
-    "date": "2026-05-12",
-    "name": "Blake Perkins",
-    "team": "Milwaukee Brewers",
-    "mlb_id": 663368,
-    "opp_pitcher": "Bradgley Rodriguez",
-    "opp_pitcher_hand": "R",
-    "bat_hand": "L",
-    "home_team": "Milwaukee Brewers",
-    "lineup_source": "projected",
-    "model_hr_pct": 29.1,
-    "hit_hr": 0,
-    "rf_prob": 0.5,
-    "barrel_pct_season": 2.7,
-    "la_season": 16.1,
-    "ev_season": 84.8,
-    "iso_season": 0.062,
-    "hard_hit_season": 32.4,
-    "k_pct_season": 23.2,
-    "hr_season": 0,
-    "pa_season": 56.0,
-    "barrel_pct_l8d": 0.0,
-    "la_l8d": 4.2,
-    "ev_l8d": 89.6,
-    "iso_l8d": 0.053,
-    "hard_hit_l8d": 25.0,
-    "k_pct_l8d": 19.0,
-    "pa_l8d": 21,
-    "l8d_hr": 0,
-    "slg_l8d": 0.158,
-    "xslg_l8d": 0.372,
-    "xslg_gap_l8d": 0.214,
-    "xwoba_l8d": 0.305,
-    "bat_speed_l8d": 69.0,
-    "iso_vs_hand": 0.0,
-    "slg_vs_hand": 0.0,
-    "hr_vs_hand": 0,
-    "pa_vs_hand": 32,
-    "pit_hr9_season": 0.0,
-    "pit_era_season": 1.83,
-    "pit_hard_hit_season": 28.8,
-    "pit_k9_season": 6.4,
-    "pit_hr9_vs_hand": 0.0,
-    "pit_slg_vs_hand": 0.194,
-    "park_factor": 1.08,
-    "weather_mult": 1.0,
-    "bullpen_vuln": 0.5,
-    "bat_platoon_mult": 1.0,
-    "pit_platoon_mult": 0.626,
-    "pitch_matchup_score": 0.78,
-    "combined_pitch_delta": -1.36,
-    "pit_era_diff": -2.37,
-    "pull_pct_season": 40.5,
-    "games_played": 21,
-    "rotation_round": 1,
-    "rotation_day": 29,
-    "day_of_season": 53,
-    "xgb_prob": 29.1
+    "xgb_prob": 29.5,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -4717,66 +4387,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 29.0
-  },
-  {
-    "date": "2026-05-12",
-    "name": "Dane Myers",
-    "team": "Cincinnati Reds",
-    "mlb_id": 667472,
-    "opp_pitcher": "Miles Mikolas",
-    "opp_pitcher_hand": "R",
-    "bat_hand": "R",
-    "home_team": "Cincinnati Reds",
-    "lineup_source": "projected",
-    "model_hr_pct": 28.5,
-    "hit_hr": 0,
-    "rf_prob": 4.3,
-    "barrel_pct_season": 11.8,
-    "la_season": 21.8,
-    "ev_season": 89.2,
-    "iso_season": 0.059,
-    "hard_hit_season": 30.6,
-    "k_pct_season": 24.2,
-    "hr_season": 1,
-    "pa_season": 62.0,
-    "barrel_pct_l8d": 0.0,
-    "la_l8d": 50.2,
-    "ev_l8d": 80.4,
-    "iso_l8d": 0.0,
-    "hard_hit_l8d": 12.5,
-    "k_pct_l8d": 36.8,
-    "pa_l8d": 19,
-    "l8d_hr": 0,
-    "slg_l8d": 0.176,
-    "xslg_l8d": 0.056,
-    "xslg_gap_l8d": -0.12,
-    "xwoba_l8d": 0.042,
-    "bat_speed_l8d": 72.3,
-    "iso_vs_hand": 0.0,
-    "slg_vs_hand": 0.421,
-    "hr_vs_hand": 0,
-    "pa_vs_hand": 24,
-    "pit_hr9_season": 2.48,
-    "pit_era_season": 7.44,
-    "pit_hard_hit_season": 44.2,
-    "pit_k9_season": 6.1,
-    "pit_hr9_vs_hand": 2.3,
-    "pit_slg_vs_hand": 0.541,
-    "park_factor": 1.25,
-    "weather_mult": 1.036,
-    "bullpen_vuln": 0.941,
-    "bat_platoon_mult": 1.0,
-    "pit_platoon_mult": 1.007,
-    "pitch_matchup_score": 0.12,
-    "combined_pitch_delta": 1.07,
-    "pit_era_diff": 3.24,
-    "pull_pct_season": 16.7,
-    "games_played": 33,
-    "rotation_round": 1,
-    "rotation_day": 29,
-    "day_of_season": 53,
-    "xgb_prob": 28.5
+    "xgb_prob": 29.0,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -4835,7 +4448,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 27.8
+    "xgb_prob": 27.8,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -4894,7 +4509,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 27.7
+    "xgb_prob": 27.7,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -4953,7 +4570,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 27.7
+    "xgb_prob": 27.7,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -5012,7 +4631,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 27.7
+    "xgb_prob": 27.7,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -5071,7 +4692,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 27.4
+    "xgb_prob": 27.4,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -5130,66 +4753,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 26.7
-  },
-  {
-    "date": "2026-05-12",
-    "name": "Miguel Amaya",
-    "team": "Chicago Cubs",
-    "mlb_id": 665804,
-    "opp_pitcher": "Grant Holmes",
-    "opp_pitcher_hand": "R",
-    "bat_hand": "R",
-    "home_team": "Atlanta Braves",
-    "lineup_source": "projected",
-    "model_hr_pct": 26.7,
-    "hit_hr": 0,
-    "rf_prob": 2.0,
-    "barrel_pct_season": 7.1,
-    "la_season": 18.6,
-    "ev_season": 86.0,
-    "iso_season": 0.123,
-    "hard_hit_season": 26.2,
-    "k_pct_season": 22.5,
-    "hr_season": 2,
-    "pa_season": 71.0,
-    "barrel_pct_l8d": 0.0,
-    "la_l8d": 15.5,
-    "ev_l8d": 77.3,
-    "iso_l8d": 0.111,
-    "hard_hit_l8d": 27.3,
-    "k_pct_l8d": 20.6,
-    "pa_l8d": 34,
-    "l8d_hr": 1,
-    "slg_l8d": 0.296,
-    "xslg_l8d": 0.386,
-    "xslg_gap_l8d": 0.09,
-    "xwoba_l8d": 0.264,
-    "bat_speed_l8d": 66.5,
-    "iso_vs_hand": 0.154,
-    "slg_vs_hand": 0.359,
-    "hr_vs_hand": 2,
-    "pa_vs_hand": 47,
-    "pit_hr9_season": 1.45,
-    "pit_era_season": 4.34,
-    "pit_hard_hit_season": 43.0,
-    "pit_k9_season": 7.0,
-    "pit_hr9_vs_hand": 1.06,
-    "pit_slg_vs_hand": 0.364,
-    "park_factor": 1.12,
-    "weather_mult": 1.014,
-    "bullpen_vuln": 0.732,
-    "bat_platoon_mult": 1.132,
-    "pit_platoon_mult": 0.955,
-    "pitch_matchup_score": 4.38,
-    "combined_pitch_delta": -0.83,
-    "pit_era_diff": 0.14,
-    "pull_pct_season": 35.7,
-    "games_played": 23,
-    "rotation_round": 1,
-    "rotation_day": 29,
-    "day_of_season": 53,
-    "xgb_prob": 26.7
+    "xgb_prob": 26.7,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -5248,7 +4814,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 26.5
+    "xgb_prob": 26.5,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -5307,7 +4875,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 26.3
+    "xgb_prob": 26.3,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -5366,7 +4936,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 26.1
+    "xgb_prob": 26.1,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -5425,7 +4997,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 25.8
+    "xgb_prob": 25.8,
+    "actual_pa": 5,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -5484,7 +5058,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 25.3
+    "xgb_prob": 25.3,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -5543,7 +5119,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 25.2
+    "xgb_prob": 25.2,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -5602,125 +5180,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 25.2
-  },
-  {
-    "date": "2026-05-12",
-    "name": "Adam Frazier",
-    "team": "Los Angeles Angels",
-    "mlb_id": 624428,
-    "opp_pitcher": "Slade Cecconi",
-    "opp_pitcher_hand": "R",
-    "bat_hand": "L",
-    "home_team": "Cleveland Guardians",
-    "lineup_source": "projected",
-    "model_hr_pct": 24.5,
-    "hit_hr": 0,
-    "rf_prob": 0.6,
-    "barrel_pct_season": 2.3,
-    "la_season": 14.2,
-    "ev_season": 84.1,
-    "iso_season": 0.164,
-    "hard_hit_season": 16.3,
-    "k_pct_season": 28.6,
-    "hr_season": 1,
-    "pa_season": 70.0,
-    "barrel_pct_l8d": 0.0,
-    "la_l8d": 22.4,
-    "ev_l8d": 86.5,
-    "iso_l8d": 0.182,
-    "hard_hit_l8d": 25.0,
-    "k_pct_l8d": 22.7,
-    "pa_l8d": 22,
-    "l8d_hr": 0,
-    "slg_l8d": 0.409,
-    "xslg_l8d": 0.404,
-    "xslg_gap_l8d": -0.005,
-    "xwoba_l8d": 0.332,
-    "bat_speed_l8d": 65.4,
-    "iso_vs_hand": 0.196,
-    "slg_vs_hand": 0.451,
-    "hr_vs_hand": 1,
-    "pa_vs_hand": 57,
-    "pit_hr9_season": 1.76,
-    "pit_era_season": 6.15,
-    "pit_hard_hit_season": 37.2,
-    "pit_k9_season": 6.8,
-    "pit_hr9_vs_hand": 1.17,
-    "pit_slg_vs_hand": 0.384,
-    "park_factor": 0.98,
-    "weather_mult": 1.0,
-    "bullpen_vuln": 1.015,
-    "bat_platoon_mult": 1.103,
-    "pit_platoon_mult": 0.754,
-    "pitch_matchup_score": 1.24,
-    "combined_pitch_delta": -0.22,
-    "pit_era_diff": 1.95,
-    "pull_pct_season": 44.2,
-    "games_played": 29,
-    "rotation_round": 1,
-    "rotation_day": 29,
-    "day_of_season": 53,
-    "xgb_prob": 24.5
-  },
-  {
-    "date": "2026-05-12",
-    "name": "Alex Call",
-    "team": "Los Angeles Dodgers",
-    "mlb_id": 669743,
-    "opp_pitcher": "Adrian Houser",
-    "opp_pitcher_hand": "R",
-    "bat_hand": "R",
-    "home_team": "Los Angeles Dodgers",
-    "lineup_source": "projected",
-    "model_hr_pct": 24.5,
-    "hit_hr": 0,
-    "rf_prob": 1.3,
-    "barrel_pct_season": 0.0,
-    "la_season": 13.7,
-    "ev_season": 85.7,
-    "iso_season": 0.102,
-    "hard_hit_season": 21.2,
-    "k_pct_season": 12.5,
-    "hr_season": 0,
-    "pa_season": 48.0,
-    "barrel_pct_l8d": 0.0,
-    "la_l8d": 34.3,
-    "ev_l8d": 77.1,
-    "iso_l8d": 0.105,
-    "hard_hit_l8d": 7.1,
-    "k_pct_l8d": 14.3,
-    "pa_l8d": 21,
-    "l8d_hr": 0,
-    "slg_l8d": 0.368,
-    "xslg_l8d": 0.205,
-    "xslg_gap_l8d": -0.163,
-    "xwoba_l8d": 0.149,
-    "bat_speed_l8d": 57.8,
-    "iso_vs_hand": 0.074,
-    "slg_vs_hand": 0.296,
-    "hr_vs_hand": 0,
-    "pa_vs_hand": 33,
-    "pit_hr9_season": 1.73,
-    "pit_era_season": 6.19,
-    "pit_hard_hit_season": 45.9,
-    "pit_k9_season": 4.7,
-    "pit_hr9_vs_hand": 0.95,
-    "pit_slg_vs_hand": 0.294,
-    "park_factor": 1.04,
-    "weather_mult": 1.0,
-    "bullpen_vuln": 0.619,
-    "bat_platoon_mult": 0.838,
-    "pit_platoon_mult": 0.6,
-    "pitch_matchup_score": -2.24,
-    "combined_pitch_delta": 1.36,
-    "pit_era_diff": 1.99,
-    "pull_pct_season": 48.5,
-    "games_played": 18,
-    "rotation_round": 1,
-    "rotation_day": 29,
-    "day_of_season": 53,
-    "xgb_prob": 24.5
+    "xgb_prob": 25.2,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -5779,7 +5241,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 24.4
+    "xgb_prob": 24.4,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -5838,7 +5302,9 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 24.2
+    "xgb_prob": 24.2,
+    "actual_pa": 4,
+    "match_method": "id"
   },
   {
     "date": "2026-05-12",
@@ -5897,6 +5363,8 @@
     "rotation_round": 1,
     "rotation_day": 29,
     "day_of_season": 53,
-    "xgb_prob": 23.4
+    "xgb_prob": 23.4,
+    "actual_pa": 5,
+    "match_method": "id"
   }
 ]
