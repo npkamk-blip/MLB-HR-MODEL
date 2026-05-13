@@ -3819,6 +3819,155 @@ async def daily_refresh_loop():
 # -- GitHub Storage --
 
 
+
+
+def get_contact_log(name):
+    """Get last 8 batted ball events for a player from the contact log cache"""
+    nl = name.lower().strip()
+    if nl in _contact_log: return _contact_log[nl]
+    last = nl.split()[-1]
+    for k, v in _contact_log.items():
+        if last in k: return v
+    return []
+
+
+
+async def fetch_dk_hr_props():
+    if not ODDS_API_KEY: return {}
+    try:
+        url = f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events?apiKey={ODDS_API_KEY}&dateFormat=iso"
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(url)
+            if not r.is_success: return {}
+            events = r.json()
+        props = {}
+        for event in events[:15]:
+            event_id = event.get("id", "")
+            try:
+                prop_url = (f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events/{event_id}/odds?"
+                            f"apiKey={ODDS_API_KEY}&regions=us&markets=batter_home_runs"
+                            f"&oddsFormat=american&bookmakers=betrivers")
+                async with httpx.AsyncClient(timeout=10) as client:
+                    pr = await client.get(prop_url)
+                    if not pr.is_success: continue
+                    pd_data = pr.json()
+                for bk in pd_data.get("bookmakers", []):
+                    if bk.get("key") != "betrivers": continue
+                    for mkt in bk.get("markets", []):
+                        for outcome in mkt.get("outcomes", []):
+                            pname = outcome.get("description") or outcome.get("name", "")
+                            price = outcome.get("price", 0)
+                            if pname and price: props[pname.lower()] = price
+            except: continue
+        return props
+    except: return {}
+
+
+
+async def fetch_pitcher_k_props():
+    """Fetch pitcher strikeout prop lines from BetRivers/DraftKings/FanDuel via Odds API"""
+    if not ODDS_API_KEY: return {}
+    try:
+        url = f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events?apiKey={ODDS_API_KEY}&dateFormat=iso"
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(url)
+            if not r.is_success: return {}
+            events = r.json()
+        k_props = {}
+        for event in events[:15]:
+            event_id = event.get("id", "")
+            try:
+                prop_url = (f"https://api.the-odds-api.com/v4/sports/baseball_mlb/events/{event_id}/odds?"
+                            f"apiKey={ODDS_API_KEY}&regions=us"
+                            f"&markets=pitcher_strikeouts,pitcher_outs"
+                            f"&oddsFormat=american&bookmakers=betrivers,draftkings,fanduel")
+                async with httpx.AsyncClient(timeout=10) as client:
+                    pr = await client.get(prop_url)
+                    if not pr.is_success: continue
+                    pd_data = pr.json()
+                for bk in pd_data.get("bookmakers", []):
+                    for mkt in bk.get("markets", []):
+                        mkt_key = mkt.get("key", "")
+                        for outcome in mkt.get("outcomes", []):
+                            pname = outcome.get("description") or outcome.get("name", "")
+                            line  = outcome.get("point", 0)
+                            side  = outcome.get("name", "")
+                            price = outcome.get("price", 0)
+                            if pname and line and side == "Over":
+                                key = pname.lower()
+                                if key not in k_props or mkt_key == "pitcher_strikeouts":
+                                    k_props[key] = {
+                                        "line": line, "price": price,
+                                        "market": mkt_key, "book": bk.get("title", ""),
+                                    }
+            except: continue
+        print(f"Pitcher K props fetched: {len(k_props)} pitchers")
+        return k_props
+    except Exception as e:
+        print(f"Pitcher K props error: {e}")
+        return {}
+
+
+
+def match_pitcher_k_prop(pitcher_name, k_props):
+    if not k_props: return None
+    nl = pitcher_name.lower()
+    if nl in k_props: return k_props[nl]
+    last = nl.split()[-1]
+    for k, v in k_props.items():
+        if last in k: return v
+    return None
+
+
+
+def match_dk_odds(player_name, props):
+    if not props: return None
+    nl = player_name.lower()
+    if nl in props: return props[nl]
+    last = nl.split()[-1]
+    for k, v in props.items():
+        if last in k: return v
+    return None
+
+
+
+def fmt_odds(o):
+    if o is None: return None
+    return f"+{int(o)}" if o > 0 else str(int(o))
+
+
+
+async def save_model_log(weights_dict):
+    """Save daily model log snapshot to GitHub"""
+    import json
+    today = et_today().isoformat()
+    path = f"data/model_log/{today}.json"
+    log = {
+        "date": today,
+        "rotation_round": get_rotation_round(),
+        "rotation_day": get_rotation_day(),
+        "weights": {k: v for k, v in weights_dict.items() if k.endswith("_w")},
+        "active_stats": weights_dict.get("active_stats", DEFAULT_WEIGHTS["active_stats"]),
+        "last_calibrated": weights_dict.get("last_calibrated"),
+        "records_used": weights_dict.get("records_used", 0),
+        "promoted_stats": weights_dict.get("promoted_stats", []),
+        "dropped_stats": weights_dict.get("dropped_stats", []),
+        "recent_changes": weights_dict.get("recent_changes", []),
+    }
+    existing, sha = await github_get_file(path)
+    await github_put_file(path, json.dumps(log, indent=2), f"model log: {today}", sha)
+
+def run_async(coro):
+    """Run a coroutine in a new event loop (for threading)."""
+    import asyncio as _asyncio
+    loop = _asyncio.new_event_loop()
+    _asyncio.set_event_loop(loop)
+    try:
+        loop.run_until_complete(coro)
+    finally:
+        loop.close()
+
+
 @app.on_event("startup")
 async def startup_event():
     threading.Thread(target=run_async, args=(load_all_savant_data(),), daemon=True).start()
