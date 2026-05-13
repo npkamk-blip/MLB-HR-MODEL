@@ -3818,6 +3818,7 @@ async def daily_refresh_loop():
 # -- GitHub Storage --
 
 
+@app.on_event("startup")
 async def startup_event():
     threading.Thread(target=run_async, args=(load_all_savant_data(),), daemon=True).start()
     asyncio.create_task(daily_refresh_loop())
