@@ -1452,29 +1452,14 @@ async def daily_refresh_loop():
             try:
                 print(f"7am XGBoost retrain starting")
                 await train_xgboost()
-                xgb_auc   = round(_xgb_oob, 3)
-                records   = _model_weights.get("records_used", 0)
-                top_feats = _model_weights.get("top_features", [])[:3]
-                depth     = _model_weights.get("xgb_depth", 4)
-                trees     = _model_weights.get("xgb_trees", 100)
-                spw       = round(_model_weights.get("scale_pos_weight", 0), 1)
+                xgb_auc    = round(_xgb_oob, 3)
+                records    = _model_weights.get("records_used", 0)
                 clean_start = "2026-05-11"
                 days_clean  = (et_today() - date.fromisoformat(clean_start)).days
                 days_to_go  = max(0, 29 - days_clean)
-                signal    = ("random" if xgb_auc<0.52 else "weak" if xgb_auc<0.55
-                             else "learning" if xgb_auc<0.60 else "good" if xgb_auc<0.65 else "strong")
-                trained_ok = _xgb_trained and xgb_auc > 0
-                feat_str  = ", ".join(top_feats) if top_feats else "unknown"
-                title = "✅ Model Retrained" if trained_ok else "⚠️ Retrain Issue"
                 await notify(
-                    f"{'SUCCESS' if trained_ok else 'CHECK NEEDED'}\n"
-                    f"{'─'*20}\n"
-                    f"AUC: {xgb_auc} ({signal})\n"
-                    f"Records: {records} | Depth: {depth} | Trees: {trees}\n"
-                    f"Top: {feat_str}\n"
-                    f"{'─'*20}\n"
-                    f"{days_clean} clean days | {days_to_go} to June 9",
-                    title
+                    f"XGBoost retrained\nAUC: {xgb_auc} | Records: {records}\n{days_clean} clean days | {days_to_go} to go",
+                    "Model Retrained"
                 )
             except Exception as e:
                 await notify(f"7am retrain FAILED: {e}\nManual fix: /recalibrate", "⚠️ Retrain ERROR", 1)
@@ -2526,9 +2511,13 @@ async def startup_catchup():
     except Exception as e:
         print(f"Startup catchup (projected) error: {e}")
 
-    # Lineup confirmations run hourly via scheduler - not on startup
-    # Running on startup caused deploy loops
-    print("Startup catchup: complete (lineup confirmations run hourly)")
+    # Always run lineup confirmations to overwrite projected with confirmed
+    try:
+        print("Startup catchup: running lineup confirmations")
+        await check_lineup_confirmations()
+        print("Startup catchup: lineup confirmations complete")
+    except Exception as e:
+        print(f"Startup catchup (lineups) error: {e}")
 
 
 async def save_projected_top100(target_date: str = None):
@@ -5479,6 +5468,73 @@ async def debug_boxscore(target_date: str = None):
         return {"date": d, "games": games}
     except Exception as e:
         return {"error": str(e)}
+
+@app.get("/recover-predictions")
+async def recover_predictions(date: str = None):
+    """
+    One-time recovery tool:
+    1. Reads data/full/{date}.json (270 players)
+    2. Takes top 100 by model_hr_pct
+    3. Runs outcome matching against boxscores
+    4. Saves to data/predictions/{date}.json
+    Use when predictions file is corrupt/incomplete.
+    """
+    import json as _j
+    target = date or (et_today() - timedelta(days=1)).isoformat()
+
+    # Step 1: Load full file
+    full_raw, _ = await github_get_file(f"data/full/{target}.json")
+    if not full_raw:
+        return {"error": f"No full file found for {target}"}
+
+    full_recs = _j.loads(full_raw)
+    print(f"Recovery: loaded {len(full_recs)} players from full file")
+
+    # Step 2: Sort and take top 100
+    ranked = sorted(full_recs, key=lambda x: x.get("model_hr_pct", 0) or 0, reverse=True)
+    top100 = ranked[:100]
+    print(f"Recovery: top 100 selected, top player: {top100[0].get('name')} ({top100[0].get('model_hr_pct')}%)")
+
+    # Step 3: Run outcome matching
+    try:
+        hr_by_id, hr_by_name, pa_by_id, pa_by_name, games_final, games_pending =             await build_boxscore_outcomes(target)
+        print(f"Recovery: {len(hr_by_name)} HR hitters found, {games_final} final games")
+    except Exception as _e:
+        return {"error": f"Boxscore fetch failed: {_e}"}
+
+    # Step 4: Patch outcomes
+    matched_hr = 0
+    matched_pa = 0
+    for rec in top100:
+        name     = rec.get("name", "")
+        mlb_id   = rec.get("mlb_id")
+        outcome, pa, method = resolve_outcome(name, mlb_id, hr_by_id, hr_by_name, pa_by_id, pa_by_name)
+        rec["hit_hr"] = outcome
+        if outcome == 1: matched_hr += 1
+        if pa is not None: matched_pa += 1
+
+    # Step 5: Save
+    pred_path = f"data/predictions/{target}.json"
+    existing_raw, sha = await github_get_file(pred_path)
+    await github_put_file(
+        pred_path,
+        _j.dumps(top100, indent=2),
+        f"recovered: {target} ({len(top100)} players, {matched_hr} HRs)",
+        sha
+    )
+
+    hr_names = [r.get("name") for r in top100 if r.get("hit_hr") == 1]
+    return {
+        "status":       "recovered",
+        "date":         target,
+        "players":      len(top100),
+        "hr_hitters":   matched_hr,
+        "pa_matched":   matched_pa,
+        "hr_names":     hr_names,
+        "total_mlb_hrs": len(hr_by_name),
+        "coverage_pct": round(matched_hr / max(len(hr_by_name), 1) * 100, 1),
+    }
+
 
 @app.get("/test-notify")
 async def test_notify():
