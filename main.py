@@ -3140,6 +3140,7 @@ async def check_lineup_confirmations():
         except: pass
 
     records_dict = {r.get("name",""): r for r in existing_records}
+    existing_source = {r.get("name",""): r.get("lineup_source","projected") for r in existing_records}
     by_team = {}
     for r in existing_records:
         by_team.setdefault(r.get("team",""), {})[r.get("name","")] = r
@@ -3301,12 +3302,18 @@ async def check_lineup_confirmations():
         has_new_players = new_names_set != existing_names
         has_scratches   = len(top100) != len(existing_records)
 
-        # Only write to GitHub when player LIST changes, not just source flags
-        if has_new_players or has_scratches:
+        # Check if any source flags changed projected→confirmed
+        source_changed = any(
+            r.get("lineup_source","projected") != existing_source.get(r.get("name",""), "projected")
+            for r in top100
+        )
+        if has_new_players or has_scratches or source_changed:
             await github_put_file(path, json.dumps(top100, indent=2),
                                   f"lineups confirmed: {today} ({len(top100)} records)", sha)
+            reason = "player list changed" if (has_new_players or has_scratches) else "lineups confirmed"
+            print(f"Lineup check: {len(top100)} records saved ({reason})")
         else:
-            print(f"Lineup check: only source flags updated, skipping GitHub write")
+            print(f"Lineup check: no changes")
 
         # Notify only when top 8 names change
         top8     = top100[:8]
