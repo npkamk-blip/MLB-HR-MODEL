@@ -2791,13 +2791,11 @@ def status():
         "model_round": get_rotation_round(),
         "model_day": get_rotation_day(),
         # Model state
-        "tree_trained": _rf_trained,
-        "model_type": "random_forest" if _rf_trained else "multiplicative",
-        "model_version": f"round-{get_rotation_round()}-day-{get_rotation_day()}",
+        "xgb_trained":  _xgb_trained,
+        "xgb_auc":      round(_xgb_oob, 4),
+        "model_type":   "xgboost",
         "records_used": _model_weights.get("records_used", 0),
-        "rf_threshold": 50,
-        "oob_score": _model_weights.get("oob_score"),
-        "rf_params": _model_weights.get("rf_params"),
+        "model_version": f"round-{get_rotation_round()}-day-{get_rotation_day()}",
         "is_retraining": False,
     }
 
