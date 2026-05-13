@@ -5497,18 +5497,16 @@ async def recover_predictions(date: str = None):
 
     # Step 3: Run outcome matching
     try:
-        hr_by_id, hr_by_name, pa_by_id, pa_by_name, games_final, games_pending =             await build_boxscore_outcomes(target)
+        hr_by_id, pa_by_id, hr_by_name, pa_by_name, games_final, games_pending =             await build_boxscore_outcomes(target)
         print(f"Recovery: {len(hr_by_name)} HR hitters found, {games_final} final games")
     except Exception as _e:
         return {"error": f"Boxscore fetch failed: {_e}"}
 
-    # Step 4: Patch outcomes
+    # Step 4: Patch outcomes using resolve_outcome(rec, hr_by_id, pa_by_id, hr_by_name, pa_by_name)
     matched_hr = 0
     matched_pa = 0
     for rec in top100:
-        name     = rec.get("name", "")
-        mlb_id   = rec.get("mlb_id")
-        outcome, pa, method = resolve_outcome(name, mlb_id, hr_by_id, hr_by_name, pa_by_id, pa_by_name)
+        outcome, pa, method = resolve_outcome(rec, hr_by_id, pa_by_id, hr_by_name, pa_by_name)
         rec["hit_hr"] = outcome
         if outcome == 1: matched_hr += 1
         if pa is not None: matched_pa += 1
