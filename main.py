@@ -3769,29 +3769,83 @@ async def daily_refresh_loop():
             except Exception as e:
                 print(f"7am Savant refresh error: {e}")
 
-        # ── 8am — Save projected lineups + morning notification ───────────
+        # ── 8am — Save projected lineups ─────────────────────────────────
         if now.hour == 8 and _ran_today.get("morning") != today_s:
             _ran_today["morning"] = today_s
             try:
                 print("8am: saving projected top100")
                 await save_projected_top100(today_s)
                 asyncio.create_task(get_games(today_s, False))
+            except Exception as e:
+                await notify(f"8am save FAILED: {e}\nFix: /update-today", "⚠️ Morning Save ERROR", 1)
+                print(f"8am error: {e}")
+
+        # ── 9am — Daily checklist ─────────────────────────────────────────
+        if now.hour == 9 and _ran_today.get("checklist") != today_s:
+            _ran_today["checklist"] = today_s
+            try:
+                yesterday_s = (et_today() - timedelta(days=1)).isoformat()
+
+                # Check 1: Yesterday's outcomes recorded
+                eod_ok, eod_count = False, 0
+                try:
+                    raw, _ = await github_get_file(f"data/predictions/{yesterday_s}.json")
+                    if raw:
+                        recs = json.loads(raw)
+                        eod_count = len([r for r in recs if r.get("hit_hr") in [0,1]])
+                        eod_ok = eod_count >= 50
+                except: pass
+
+                # Check 2: Today's picks saved
+                pred_ok, pred_count = False, 0
+                try:
+                    raw2, _ = await github_get_file(f"data/predictions/{today_s}.json")
+                    if raw2:
+                        pred_count = len(json.loads(raw2))
+                        pred_ok = pred_count >= 50
+                except: pass
+
+                # Check 3: XGBoost retrained today
+                xgb_ok = _xgb_trained and _model_weights.get("last_calibrated") == today_s
+                xgb_auc = round(_xgb_oob, 4)
+                records = _model_weights.get("records_used", 0)
+
+                # Check 4: Data loaded
+                data_ok = _cache.get("ready", False) and len(_cache.get("bat_2026", pd.DataFrame())) > 100
+
+                # Check 5: Games file exists
+                games_ok = False
+                try:
+                    gr, _ = await github_get_file(f"data/games/{today_s}.json")
+                    games_ok = gr is not None
+                except: pass
+
+                # Game count
+                game_count = 0
                 try:
                     async with httpx.AsyncClient(timeout=10) as _gc:
                         _gr = await _gc.get(f"{MLB_API}/schedule?sportId=1&date={today_s}&hydrate=team")
-                        _gd = _gr.json()
-                    game_count = sum(len(d.get("games",[])) for d in _gd.get("dates",[]))
-                except:
-                    game_count = 0
-                await notify(
-                    f"Good morning! {today_s}\n"
-                    f"{game_count} games today\n"
-                    f"Projected top 8 ready",
-                    "Good Morning ⚾"
+                        game_count = sum(len(d.get("games",[])) for d in _gr.json().get("dates",[]))
+                except: pass
+
+                def chk(ok): return "✅" if ok else "❌"
+                all_ok = eod_ok and pred_ok and xgb_ok and data_ok and games_ok
+                title = "✅ All Systems Go" if all_ok else "⚠️ Action Needed"
+                msg = (
+                    f"{today_s} — {game_count} games\n"
+                    f"{'─'*22}\n"
+                    f"{chk(eod_ok)} EOD {yesterday_s}: {eod_count} outcomes\n"
+                    f"{chk(pred_ok)} Today's picks: {pred_count} players\n"
+                    f"{chk(games_ok)} Games file ready\n"
+                    f"{chk(xgb_ok)} XGBoost: {xgb_auc} AUC / {records} records\n"
+                    f"{chk(data_ok)} Savant data loaded"
                 )
+                if not all_ok:
+                    msg += "\n\n❌ Fix: /update-today"
+                await notify(msg, title, priority=1 if not all_ok else 0)
+                print(f"9am checklist: all_ok={all_ok}")
             except Exception as e:
-                await notify(f"8am save FAILED: {e}\nManual fix: /resave-today", "⚠️ Morning Save ERROR", 1)
-                print(f"8am error: {e}")
+                print(f"9am checklist error: {e}")
 
         # ── 10am-8pm — Hourly lineup confirmations ────────────────────────
         if 10 <= now.hour <= 20:
