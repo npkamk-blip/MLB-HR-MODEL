@@ -3715,88 +3715,95 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
 
 async def daily_refresh_loop():
     """
-    Background scheduler - runs every hour ET.
-    Philosophy: run silently, only notify on errors or success of key jobs.
-    You should never need to touch this manually.
+    Self-healing scheduler. Checks GitHub files to know what actually ran,
+    not in-memory flags. Survives restarts perfectly.
     """
     from datetime import timezone, timedelta as _td
-
-    # Track what ran today to prevent double-firing after restarts
-    _ran_today = {}
 
     while True:
         et_now  = datetime.now(timezone.utc) + _td(hours=-4)
         now     = et_now
         today_s = et_today().isoformat()
+        yest_s  = (et_today() - timedelta(days=1)).isoformat()
 
         # ── 4am — End of day save ─────────────────────────────────────────
-        if now.hour == 4 and _ran_today.get("eod") != today_s:
-            _ran_today["eod"] = today_s
+        # Runs if: it's 4am-6am AND yesterday's predictions have null outcomes
+        if 4 <= now.hour <= 6:
             try:
-                yesterday = (et_today() - timedelta(days=1)).isoformat()
-                print(f"4am end_of_day_save starting for {yesterday}")
-                result = await end_of_day_save(yesterday, notify_result=True)
-                await save_model_log(_model_weights)
-                print(f"4am complete: {result}")
-                # Cleanup yesterday's temp files (games + full)
-                for cleanup_path in [f"data/games/{yesterday}.json", f"data/full/{yesterday}.json"]:
-                    deleted = await github_delete_file(cleanup_path)
-                    if deleted: print(f"4am cleanup: deleted {cleanup_path}")
+                raw, _ = await github_get_file(f"data/predictions/{yest_s}.json")
+                if raw:
+                    recs = json.loads(raw)
+                    nulls = [r for r in recs if r.get("hit_hr") is None]
+                    if nulls and len(recs) > 10:
+                        print(f"EOD: running for {yest_s} ({len(nulls)} unresolved records)")
+                        result = await end_of_day_save(yest_s, notify_result=True)
+                        await save_model_log(_model_weights)
+                        # Cleanup yesterday's temp files
+                        for p in [f"data/games/{yest_s}.json", f"data/full/{yest_s}.json"]:
+                            await github_delete_file(p)
+                    else:
+                        pass  # Already done
             except Exception as e:
-                await notify(f"4am FAILED: {e}\nManual fix: /end-of-day?target_date={yesterday}", "⚠️ End of Day ERROR", 1)
+                await notify(f"4am FAILED: {e}\nFix: /end-of-day?target_date={yest_s}", "⚠️ EOD ERROR", 1)
                 print(f"4am error: {e}")
 
-        # ── 7am — XGBoost retrain + Savant refresh ───────────────────────
-        if now.hour == 7 and _ran_today.get("retrain") != today_s:
-            _ran_today["retrain"] = today_s
+        # ── 7am — XGBoost retrain ─────────────────────────────────────────
+        # Runs if: it's 7am-8am AND xgb_meta.json is from yesterday or older
+        if 7 <= now.hour <= 8:
             try:
-                print(f"7am XGBoost retrain starting")
-                await train_xgboost(save_to_github=True)
-                xgb_auc    = round(_xgb_oob, 3)
-                records    = _model_weights.get("records_used", 0)
-                clean_start = "2026-05-11"
-                days_clean  = (et_today() - date.fromisoformat(clean_start)).days
-                days_to_go  = max(0, 29 - days_clean)
-                await notify(
-                    f"XGBoost retrained\nAUC: {xgb_auc} | Records: {records}\n{days_clean} clean days | {days_to_go} to go",
-                    "Model Retrained"
-                )
+                meta_raw, _ = await github_get_file("data/xgb_meta.json")
+                last_trained = None
+                if meta_raw:
+                    meta = json.loads(meta_raw)
+                    last_trained = meta.get("last_trained")
+                if last_trained != today_s:
+                    print(f"7am: retraining XGBoost (last={last_trained})")
+                    await train_xgboost(save_to_github=True)
+                    xgb_auc   = round(_xgb_oob, 3)
+                    records   = _model_weights.get("records_used", 0)
+                    top_feats = _model_weights.get("top_features", [])[:3]
+                    depth     = _model_weights.get("xgb_depth", 4)
+                    signal    = "random" if xgb_auc<0.52 else "weak" if xgb_auc<0.55 else "learning" if xgb_auc<0.60 else "good"
+                    await notify(
+                        f"SUCCESS\n{'─'*20}\n"
+                        f"AUC: {xgb_auc} ({signal})\n"
+                        f"Records: {records} | Depth: {depth}\n"
+                        f"Top: {', '.join(top_feats)}",
+                        "✅ Model Retrained"
+                    )
+                    asyncio.create_task(load_all_savant_data())
             except Exception as e:
-                await notify(f"7am retrain FAILED: {e}\nManual fix: /recalibrate", "⚠️ Retrain ERROR", 1)
-                print(f"7am retrain error: {e}")
-            try:
-                asyncio.create_task(load_all_savant_data())
-            except Exception as e:
-                print(f"7am Savant refresh error: {e}")
+                await notify(f"7am retrain FAILED: {e}\nFix: /recalibrate", "⚠️ Retrain ERROR", 1)
+                print(f"7am error: {e}")
 
-        # ── 8am — Save projected lineups ─────────────────────────────────
-        if now.hour == 8 and _ran_today.get("morning") != today_s:
-            _ran_today["morning"] = today_s
+        # ── 8am — Save today's projected lineups ──────────────────────────
+        # Runs if: it's 8am-10am AND today's predictions file missing or < 50 players
+        if 8 <= now.hour <= 10:
             try:
-                print("8am: saving projected top100")
-                await save_projected_top100(today_s)
-                asyncio.create_task(get_games(today_s, False))
+                raw, _ = await github_get_file(f"data/predictions/{today_s}.json")
+                player_count = len(json.loads(raw)) if raw else 0
+                if player_count < 50:
+                    print(f"8am: saving projected lineups (currently {player_count} players)")
+                    await save_projected_top100(today_s)
+                    asyncio.create_task(get_games(today_s, False))
             except Exception as e:
                 await notify(f"8am save FAILED: {e}\nFix: /update-today", "⚠️ Morning Save ERROR", 1)
                 print(f"8am error: {e}")
 
         # ── 9am — Daily checklist ─────────────────────────────────────────
-        if now.hour == 9 and _ran_today.get("checklist") != today_s:
-            _ran_today["checklist"] = today_s
+        if now.hour == 9:
             try:
-                yesterday_s = (et_today() - timedelta(days=1)).isoformat()
-
-                # Check 1: Yesterday's outcomes recorded
+                # Check yesterday outcomes
                 eod_ok, eod_count = False, 0
                 try:
-                    raw, _ = await github_get_file(f"data/predictions/{yesterday_s}.json")
+                    raw, _ = await github_get_file(f"data/predictions/{yest_s}.json")
                     if raw:
                         recs = json.loads(raw)
                         eod_count = len([r for r in recs if r.get("hit_hr") in [0,1]])
                         eod_ok = eod_count >= 50
                 except: pass
 
-                # Check 2: Today's picks saved
+                # Check today's picks
                 pred_ok, pred_count = False, 0
                 try:
                     raw2, _ = await github_get_file(f"data/predictions/{today_s}.json")
@@ -3805,15 +3812,20 @@ async def daily_refresh_loop():
                         pred_ok = pred_count >= 50
                 except: pass
 
-                # Check 3: XGBoost retrained today
-                xgb_ok = _xgb_trained and _model_weights.get("last_calibrated") == today_s
+                # Check XGBoost
+                xgb_ok = False
+                try:
+                    meta_raw, _ = await github_get_file("data/xgb_meta.json")
+                    if meta_raw:
+                        xgb_ok = json.loads(meta_raw).get("last_trained") == today_s
+                except: pass
                 xgb_auc = round(_xgb_oob, 4)
                 records = _model_weights.get("records_used", 0)
 
-                # Check 4: Data loaded
+                # Check data
                 data_ok = _cache.get("ready", False) and len(_cache.get("bat_2026", pd.DataFrame())) > 100
 
-                # Check 5: Games file exists
+                # Check games file
                 games_ok = False
                 try:
                     gr, _ = await github_get_file(f"data/games/{today_s}.json")
@@ -3830,18 +3842,18 @@ async def daily_refresh_loop():
 
                 def chk(ok): return "✅" if ok else "❌"
                 all_ok = eod_ok and pred_ok and xgb_ok and data_ok and games_ok
-                title = "✅ All Systems Go" if all_ok else "⚠️ Action Needed"
+                title  = "✅ All Systems Go" if all_ok else "⚠️ Action Needed"
                 msg = (
                     f"{today_s} — {game_count} games\n"
                     f"{'─'*22}\n"
-                    f"{chk(eod_ok)} EOD {yesterday_s}: {eod_count} outcomes\n"
-                    f"{chk(pred_ok)} Today's picks: {pred_count} players\n"
+                    f"{chk(eod_ok)} EOD {yest_s}: {eod_count} outcomes\n"
+                    f"{chk(pred_ok)} Today picks: {pred_count} players\n"
                     f"{chk(games_ok)} Games file ready\n"
-                    f"{chk(xgb_ok)} XGBoost: {xgb_auc} AUC / {records} records\n"
+                    f"{chk(xgb_ok)} XGBoost: {xgb_auc} / {records} records\n"
                     f"{chk(data_ok)} Savant data loaded"
                 )
                 if not all_ok:
-                    msg += "\n\n❌ Fix: /update-today"
+                    msg += "\n\nFix: /update-today"
                 await notify(msg, title, priority=1 if not all_ok else 0)
                 print(f"9am checklist: all_ok={all_ok}")
             except Exception as e:
@@ -3852,34 +3864,34 @@ async def daily_refresh_loop():
             try:
                 await check_lineup_confirmations()
             except Exception as e:
-                print(f"Lineup confirmation error (non-fatal): {e}")
+                print(f"Lineup confirmation error: {e}")
 
-        # ── 11pm — Save tomorrow's games file so site is ready overnight ──
-        if now.hour == 23 and _ran_today.get("tomorrow_games") != today_s:
-            _ran_today["tomorrow_games"] = today_s
+        # ── 11pm — Save tomorrow's projected files ────────────────────────
+        # Runs if: it's 11pm AND tomorrow's predictions file missing
+        if now.hour == 23:
             try:
-                from datetime import timedelta as _td2
-                tomorrow_s = (et_today() + _td2(days=1)).isoformat()
-                print(f"11pm: saving tomorrow's projected data for {tomorrow_s}")
-                await save_projected_top100(tomorrow_s)
-                asyncio.create_task(get_games(tomorrow_s, refresh=True))
-                print(f"11pm: triggered games file for {tomorrow_s}")
+                tomorrow_s = (et_today() + timedelta(days=1)).isoformat()
+                raw, _ = await github_get_file(f"data/predictions/{tomorrow_s}.json")
+                if not raw:
+                    print(f"11pm: saving tomorrow's projected data for {tomorrow_s}")
+                    await save_projected_top100(tomorrow_s)
+                    asyncio.create_task(get_games(tomorrow_s, refresh=True))
             except Exception as e:
-                print(f"11pm tomorrow prep error: {e}")
+                print(f"11pm error: {e}")
 
         # ── 2am — Refresh 8d contact log ─────────────────────────────────
-        if now.hour == 2 and _ran_today.get("refresh8d") != today_s:
-            _ran_today["refresh8d"] = today_s
+        if now.hour == 2:
             try:
                 asyncio.create_task(refresh_8d())
-                print("2am: 8d contact log refresh started")
+                print("2am: 8d refresh started")
             except Exception as e:
-                print(f"2am 8d refresh error: {e}")
+                print(f"2am error: {e}")
 
-        # Sleep until near next hour - check hour AFTER sleeping
+        # Sleep until near next hour
         _now_min   = (datetime.now(timezone.utc) + _td(hours=-4)).minute
         _sleep_sec = max(60, (60 - _now_min) * 60)
         await asyncio.sleep(_sleep_sec)
+
 
 # -- GitHub Storage --
 
