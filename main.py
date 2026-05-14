@@ -3738,6 +3738,10 @@ async def daily_refresh_loop():
                 result = await end_of_day_save(yesterday, notify_result=True)
                 await save_model_log(_model_weights)
                 print(f"4am complete: {result}")
+                # Cleanup yesterday's temp files (games + full)
+                for cleanup_path in [f"data/games/{yesterday}.json", f"data/full/{yesterday}.json"]:
+                    deleted = await github_delete_file(cleanup_path)
+                    if deleted: print(f"4am cleanup: deleted {cleanup_path}")
             except Exception as e:
                 await notify(f"4am FAILED: {e}\nManual fix: /end-of-day?target_date={yesterday}", "⚠️ End of Day ERROR", 1)
                 print(f"4am error: {e}")
@@ -4017,17 +4021,20 @@ async def startup_catchup():
         if not content:
             print(f"Startup catchup: no data for {today} - saving projected lineup now")
             await save_projected_top100(today)
+            asyncio.create_task(get_games(today, refresh=True))
         else:
             print(f"Startup catchup: {today} already has data")
+            # Still trigger games file if missing
+            games_raw, _ = await github_get_file(f"data/games/{today}.json")
+            if not games_raw:
+                asyncio.create_task(get_games(today, refresh=True))
+                print(f"Startup catchup: triggered games file for {today}")
     except Exception as e:
         print(f"Startup catchup (projected) error: {e}")
 
     # Lineup confirmations run hourly via scheduler - not on startup
     print("Startup catchup: complete")
 
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
 
 
 async def train_xgboost(save_to_github: bool = True):
@@ -4222,3 +4229,7 @@ async def startup_train_xgb():
             print(f"Startup XGBoost result: {result}")
     except Exception as e:
         print(f"Startup XGBoost error: {e}")
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
