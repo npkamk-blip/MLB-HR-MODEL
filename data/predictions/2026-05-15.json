@@ -4040,7 +4040,7 @@
     "opp_pitcher_hand": "R",
     "bat_hand": "L",
     "home_team": "Washington Nationals",
-    "lineup_source": "projected",
+    "lineup_source": "confirmed",
     "model_hr_pct": 9.5,
     "hit_hr": null,
     "rf_prob": 9.5,
