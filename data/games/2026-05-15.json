@@ -20707,7 +20707,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Calm",
-        "temp": 67,
+        "temp": 64,
         "wind_speed": 2,
         "wind_dir": 45,
         "mult": 1.0,
@@ -62002,7 +62002,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Out to LF",
-        "temp": 78,
+        "temp": 76,
         "wind_speed": 9,
         "wind_dir": 132,
         "mult": 1.047,
@@ -67212,7 +67212,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Blowing Out",
-        "temp": 62,
+        "temp": 63,
         "wind_speed": 5,
         "wind_dir": 210,
         "mult": 1.005,
