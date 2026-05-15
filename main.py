@@ -2323,16 +2323,21 @@ async def get_games(date: str = None, refresh: bool = False):
 
     # Save full games file to GitHub so frontend can read directly
     # This makes Batters tab instant - no backend call needed
+    # Only save games file if it doesn't exist yet - prevents deploy loop
+    # Once saved, lineup confirmations update predictions file directly
     try:
         games_path = f"data/games/{today}.json"
         existing_games, games_sha = await github_get_file(games_path)
-        await github_put_file(
-            games_path,
-            json.dumps(result, indent=2),
-            f"games: {today} ({len(games_out)} games)",
-            games_sha
-        )
-        print(f"Saved data/games/{today}.json ({len(games_out)} games)")
+        if not existing_games:
+            await github_put_file(
+                games_path,
+                json.dumps(result, indent=2),
+                f"games: {today} ({len(games_out)} games)",
+                games_sha
+            )
+            print(f"Saved data/games/{today}.json ({len(games_out)} games)")
+        else:
+            print(f"Games file already exists for {today} - skipping save")
     except Exception as _ge:
         print(f"Games file save error (non-fatal): {_ge}")
 
