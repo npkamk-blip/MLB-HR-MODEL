@@ -2928,15 +2928,17 @@ async def save_projected_top100(target_date: str = None):
     path = f"data/predictions/{today}.json"
     import json
 
-    # Don't overwrite if confirmed records already exist
+    # Only skip if file already has 80+ players (fully populated)
     existing, sha = await github_get_file(path)
     if existing:
         try:
             records = json.loads(existing)
-            confirmed = [r for r in records if r.get("lineup_source") == "confirmed"]
-            if confirmed:
-                print(f"save_projected_top100: {today} already has {len(confirmed)} confirmed - skipping")
+            if len(records) >= 80:
+                confirmed = [r for r in records if r.get("lineup_source") == "confirmed"]
+                print(f"save_projected_top100: {today} already has {len(records)} players ({len(confirmed)} confirmed) - skipping")
                 return
+            else:
+                print(f"save_projected_top100: {today} only has {len(records)} players - re-saving")
         except: pass
 
     try:
@@ -3104,13 +3106,12 @@ async def save_projected_top100(target_date: str = None):
         else:
             print(f"save_projected_top100: top8 file already exists for {today} - skipping")
 
-        # Trigger games computation so data/games/{today}.json gets saved
-        # Makes Batters tab instant from 8am onwards
+        # Save games file directly (not background task - too important to lose)
         try:
-            asyncio.create_task(get_games(today, refresh=True))
-            print(f"save_projected_top100: triggered games file save for {today}")
+            await get_games(today, refresh=True)
+            print(f"save_projected_top100: games file saved for {today}")
         except Exception as _ge:
-            print(f"save_projected_top100: games trigger error: {_ge}")
+            print(f"save_projected_top100: games save error: {_ge}")
 
     except Exception as e:
         print(f"save_projected_top100 error: {e}")
@@ -3776,16 +3777,31 @@ async def daily_refresh_loop():
                 await notify(f"7am retrain FAILED: {e}\nFix: /recalibrate", "⚠️ Retrain ERROR", 1)
                 print(f"7am error: {e}")
 
-        # ── 8am — Save today's projected lineups ──────────────────────────
-        # Runs if: it's 8am-10am AND today's predictions file missing or < 50 players
+        # ── 8am — Save all three files for today ─────────────────────────
+        # Self-healing: checks each file individually, saves if missing/incomplete
         if 8 <= now.hour <= 10:
             try:
-                raw, _ = await github_get_file(f"data/predictions/{today_s}.json")
-                player_count = len(json.loads(raw)) if raw else 0
-                if player_count < 50:
-                    print(f"8am: saving projected lineups (currently {player_count} players)")
+                # 1. Predictions file (top 100 players)
+                pred_raw, _ = await github_get_file(f"data/predictions/{today_s}.json")
+                pred_count  = len(json.loads(pred_raw)) if pred_raw else 0
+                if pred_count < 50:
+                    print(f"8am: saving predictions ({pred_count} currently)")
                     await save_projected_top100(today_s)
-                    asyncio.create_task(get_games(today_s, False))
+
+                # 2. Full file (all ~270 players)
+                full_raw, _ = await github_get_file(f"data/full/{today_s}.json")
+                full_count  = len(json.loads(full_raw)) if full_raw else 0
+                if full_count < 100:
+                    print(f"8am: full file missing/incomplete ({full_count} players)")
+                    await save_projected_top100(today_s)  # saves both pred + full
+
+                # 3. Games file (Batters tab)
+                games_raw, _ = await github_get_file(f"data/games/{today_s}.json")
+                if not games_raw:
+                    print(f"8am: games file missing - computing now")
+                    await get_games(today_s, refresh=True)  # await directly, not background
+
+                print(f"8am: all files verified for {today_s}")
             except Exception as e:
                 await notify(f"8am save FAILED: {e}\nFix: /update-today", "⚠️ Morning Save ERROR", 1)
                 print(f"8am error: {e}")
