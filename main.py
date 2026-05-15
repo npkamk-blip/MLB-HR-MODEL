@@ -2947,6 +2947,8 @@ async def save_projected_top100(target_date: str = None):
             data = r.json()
 
         all_candidates = []
+        games_found = sum(len(d.get("games",[])) for d in data.get("dates",[]))
+        print(f"save_projected_top100: {games_found} games found for {today}")
         for game_date in data.get("dates", []):
             for game in game_date.get("games", []):
                 if game.get("status", {}).get("abstractGameState") == "Final": continue
@@ -2996,9 +2998,9 @@ async def save_projected_top100(target_date: str = None):
                         hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(
                             name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult, home_team)
 
-                        bc2 = get_batter_stats(name, 2026)
-                        b8d2 = get_batter_8d(name)
-                        b_split2 = get_batter_split(name, opp_p_hand)
+                        bc2 = get_batter_stats(name, 2026, mlb_id=pid)
+                        b8d2 = get_batter_8d(name, mlb_id=pid)
+                        b_split2 = get_batter_split(name, opp_p_hand, mlb_id=pid)
                         pc2 = get_pitcher_stats(opp_p_name, 2026)
                         p_split2 = get_pitcher_split(opp_p_name, bat_hand)
                         pitch_score, _ = compute_pitch_matchup(opp_p_name, name)
