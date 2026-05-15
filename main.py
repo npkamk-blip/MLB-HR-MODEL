@@ -38,6 +38,40 @@ GITHUB_REPO    = "npkamk-blip/MLB-HR-MODEL"
 GITHUB_API     = "https://api.github.com"
 SAVANT_BASE    = "https://baseballsavant.mlb.com"
 TRACKING_START = "2026-05-11"
+ODDS_API_KEY   = os.environ.get("ODDS_API_KEY", "")
+
+PARK_HR_FACTORS = {
+    "Colorado Rockies":      {"L":1.40,"R":1.40},
+    "Cincinnati Reds":       {"L":1.30,"R":1.25},
+    "Baltimore Orioles":     {"L":1.22,"R":1.18},
+    "New York Yankees":      {"L":1.25,"R":1.12},
+    "Philadelphia Phillies": {"L":1.18,"R":1.12},
+    "Boston Red Sox":        {"L":1.08,"R":1.18},
+    "Chicago Cubs":          {"L":1.12,"R":1.10},
+    "Atlanta Braves":        {"L":1.10,"R":1.12},
+    "Texas Rangers":         {"L":1.10,"R":1.08},
+    "Milwaukee Brewers":     {"L":1.08,"R":1.08},
+    "Arizona Diamondbacks":  {"L":1.08,"R":1.08},
+    "Toronto Blue Jays":     {"L":1.05,"R":1.07},
+    "Houston Astros":        {"L":1.04,"R":1.02},
+    "Los Angeles Dodgers":   {"L":1.02,"R":1.04},
+    "Minnesota Twins":       {"L":1.02,"R":1.02},
+    "Kansas City Royals":    {"L":1.05,"R":1.05},
+    "Chicago White Sox":     {"L":1.02,"R":1.02},
+    "Cleveland Guardians":   {"L":0.98,"R":0.97},
+    "Detroit Tigers":        {"L":0.97,"R":0.95},
+    "St. Louis Cardinals":   {"L":0.97,"R":0.98},
+    "Washington Nationals":  {"L":0.97,"R":0.96},
+    "Pittsburgh Pirates":    {"L":0.96,"R":0.98},
+    "New York Mets":         {"L":0.94,"R":0.96},
+    "Los Angeles Angels":    {"L":0.96,"R":0.93},
+    "Tampa Bay Rays":        {"L":0.94,"R":0.94},
+    "Seattle Mariners":      {"L":0.91,"R":0.93},
+    "Miami Marlins":         {"L":0.90,"R":0.92},
+    "San Francisco Giants":  {"L":0.88,"R":0.86},
+    "San Diego Padres":      {"L":0.87,"R":0.89},
+    "Athletics":             {"L":0.88,"R":0.88},
+}
 
 LEAGUE_CONSTANTS = {
     "lg_barrel_pct":  8.0,
