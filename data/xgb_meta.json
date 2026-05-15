@@ -1,6 +1,6 @@
 {
   "model_type": "xgboost",
-  "last_trained": "2026-05-14",
+  "last_trained": "2026-05-15",
   "records_used": 343,
   "cv_auc": 0.4425,
   "scale_pos_weight": 8.27,
