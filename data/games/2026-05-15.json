@@ -44,7 +44,7 @@
         "k_edge": null,
         "opp_team": "Pittsburgh Pirates",
         "opp_lineup_k": 20.2,
-        "bullpen_hr9": 0.98
+        "bullpen_hr9": 1.0
       },
       "home_pitcher": {
         "name": "Braxton Ashcraft",
@@ -5165,14 +5165,14 @@
         "away_exp_hr": 0.677,
         "home_exp_hr": 1.114,
         "total_exp_hr": 1.79,
-        "away_exp_runs": 4.3,
+        "away_exp_runs": 4.35,
         "home_exp_runs": 4.26,
-        "total_exp_runs": 8.56,
+        "total_exp_runs": 8.61,
         "away_runs_pg": 3.91,
-        "home_runs_pg": 4.93,
+        "home_runs_pg": 4.98,
         "away_hr_pg": 1.16,
-        "home_hr_pg": 1.02,
-        "away_era": 4.38,
+        "home_hr_pg": 1.04,
+        "away_era": 4.42,
         "home_era": 3.68,
         "away_k_pg": 9.6,
         "home_k_pg": 8.72
@@ -5238,7 +5238,7 @@
         "k_edge": null,
         "opp_team": "Washington Nationals",
         "opp_lineup_k": 20.9,
-        "bullpen_hr9": 1.2
+        "bullpen_hr9": 1.19
       },
       "home_pitcher": {
         "name": "Zack Littell",
@@ -10370,9 +10370,9 @@
         "home_runs_pg": 5.24,
         "away_hr_pg": 0.98,
         "home_hr_pg": 1.16,
-        "away_era": 4.57,
+        "away_era": 4.56,
         "home_era": 4.97,
-        "away_k_pg": 8.41,
+        "away_k_pg": 8.4,
         "home_k_pg": 7.62
       },
       "strikeouts": {
@@ -20734,14 +20734,14 @@
         "home_exp_hr": 1.105,
         "total_exp_hr": 1.74,
         "away_exp_runs": 4.04,
-        "home_exp_runs": 4.27,
-        "total_exp_runs": 8.31,
-        "away_runs_pg": 4.22,
+        "home_exp_runs": 4.29,
+        "total_exp_runs": 8.33,
+        "away_runs_pg": 4.24,
         "home_runs_pg": 4.07,
         "away_hr_pg": 1.29,
         "home_hr_pg": 0.91,
         "away_era": 4.6,
-        "home_era": 3.8,
+        "home_era": 3.82,
         "away_k_pg": 7.81,
         "home_k_pg": 9.49
       },
