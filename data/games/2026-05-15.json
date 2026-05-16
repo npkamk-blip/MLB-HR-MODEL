@@ -10360,16 +10360,16 @@
         "home_exp_hr": 1.24,
         "total_exp_hr": 2.03,
         "away_exp_runs": 6.06,
-        "home_exp_runs": 4.64,
-        "total_exp_runs": 10.7,
-        "away_runs_pg": 4.29,
+        "home_exp_runs": 4.66,
+        "total_exp_runs": 10.72,
+        "away_runs_pg": 4.31,
         "home_runs_pg": 5.31,
         "away_hr_pg": 0.98,
         "home_hr_pg": 1.18,
         "away_era": 4.58,
-        "home_era": 4.91,
+        "home_era": 4.93,
         "away_k_pg": 8.38,
-        "home_k_pg": 7.66
+        "home_k_pg": 7.67
       },
       "strikeouts": {
         "away_exp_k": 4.4,
@@ -15523,7 +15523,7 @@
         "away_era": 4.09,
         "home_era": 4.03,
         "away_k_pg": 9.08,
-        "home_k_pg": 8.53
+        "home_k_pg": 8.54
       },
       "strikeouts": {
         "away_exp_k": 5.2,
@@ -20721,7 +20721,7 @@
         "away_era": 4.56,
         "home_era": 3.81,
         "away_k_pg": 7.78,
-        "home_k_pg": 9.4
+        "home_k_pg": 9.39
       },
       "strikeouts": {
         "away_exp_k": 3.1,
@@ -25937,9 +25937,9 @@
         "away_hr_pg": 0.78,
         "home_hr_pg": 0.84,
         "away_era": 4.25,
-        "home_era": 3.5,
+        "home_era": 3.49,
         "away_k_pg": 8.55,
-        "home_k_pg": 7.77
+        "home_k_pg": 7.75
       },
       "strikeouts": {
         "away_exp_k": 3.8,
@@ -41493,7 +41493,7 @@
         "away_era": 3.18,
         "home_era": 3.79,
         "away_k_pg": 8.95,
-        "home_k_pg": 9.54
+        "home_k_pg": 9.55
       },
       "strikeouts": {
         "away_exp_k": 6.5,
@@ -46707,16 +46707,16 @@
         "away_exp_hr": 0.289,
         "home_exp_hr": 1.833,
         "total_exp_hr": 2.12,
-        "away_exp_runs": 4.54,
+        "away_exp_runs": 4.58,
         "home_exp_runs": 5.1,
-        "total_exp_runs": 9.64,
+        "total_exp_runs": 9.68,
         "away_runs_pg": 4.98,
-        "home_runs_pg": 4.32,
+        "home_runs_pg": 4.36,
         "away_hr_pg": 1.18,
         "home_hr_pg": 1.3,
-        "away_era": 3.76,
+        "away_era": 3.8,
         "home_era": 4.26,
-        "away_k_pg": 8.29,
+        "away_k_pg": 8.28,
         "home_k_pg": 8.1
       },
       "strikeouts": {
@@ -51902,7 +51902,7 @@
         "home_hr_pg": 1.2,
         "away_era": 3.62,
         "home_era": 5.54,
-        "away_k_pg": 8.66,
+        "away_k_pg": 8.65,
         "home_k_pg": 8.95
       },
       "strikeouts": {
@@ -52007,7 +52007,7 @@
         "k_edge": null,
         "opp_team": "Kansas City Royals",
         "opp_lineup_k": 23.0,
-        "bullpen_hr9": 1.09
+        "bullpen_hr9": 1.08
       },
       "top_hr_candidates": [
         {
@@ -52143,8 +52143,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.151,
             "pull_s": 28.0,
             "pit_modifier": 1.019,
@@ -52156,7 +52156,7 @@
           "team": "St. Louis Cardinals",
           "hr_prob": 20.2,
           "xgb_prob": 20.2,
-          "rf_prob": 7.8,
+          "rf_prob": 7.7,
           "archetype": "Contact",
           "trend": "Steady",
           "confidence": "High",
@@ -52285,8 +52285,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.258,
             "pull_s": 37.8,
             "pit_modifier": 0.866,
@@ -52427,8 +52427,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.162,
             "pull_s": 39.5,
             "pit_modifier": 1.019,
@@ -52566,8 +52566,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.217,
             "pull_s": 45.3,
             "pit_modifier": 0.842,
@@ -52707,8 +52707,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.106,
             "pull_s": 35.5,
             "pit_modifier": 0.83,
@@ -52848,8 +52848,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.132,
             "pull_s": 43.2,
             "pit_modifier": 1.019,
@@ -52861,7 +52861,7 @@
           "team": "Kansas City Royals",
           "hr_prob": 5.9,
           "xgb_prob": 5.9,
-          "rf_prob": 5.0,
+          "rf_prob": 4.9,
           "archetype": "Boom/Bust",
           "trend": "Cooling Off",
           "confidence": "High",
@@ -52990,8 +52990,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.221,
             "pull_s": 44.4,
             "pit_modifier": 1.019,
@@ -53132,8 +53132,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.242,
             "pull_s": 41.7,
             "pit_modifier": 1.019,
@@ -53274,8 +53274,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.181,
             "pull_s": 26.1,
             "pit_modifier": 0.83,
@@ -53413,8 +53413,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.155,
             "pull_s": 36.7,
             "pit_modifier": 0.866,
@@ -53552,8 +53552,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.194,
             "pull_s": 35.6,
             "pit_modifier": 0.842,
@@ -53691,8 +53691,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.069,
             "pull_s": 32.9,
             "pit_modifier": 0.842,
@@ -53830,8 +53830,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.202,
             "pull_s": 45.0,
             "pit_modifier": 0.842,
@@ -53971,8 +53971,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.191,
             "pull_s": 47.6,
             "pit_modifier": 1.019,
@@ -54110,8 +54110,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.169,
             "pull_s": 43.5,
             "pit_modifier": 0.866,
@@ -54251,8 +54251,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.121,
             "pull_s": 37.5,
             "pit_modifier": 0.83,
@@ -54390,8 +54390,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.093,
             "pull_s": 33.0,
             "pit_modifier": 0.866,
@@ -54529,8 +54529,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.152,
             "pull_s": 46.5,
             "pit_modifier": 0.842,
@@ -54672,8 +54672,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.106,
             "pull_s": 35.5,
             "pit_modifier": 0.83,
@@ -54814,8 +54814,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.181,
             "pull_s": 26.1,
             "pit_modifier": 0.83,
@@ -54955,8 +54955,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.191,
             "pull_s": 47.6,
             "pit_modifier": 1.019,
@@ -55096,8 +55096,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.121,
             "pull_s": 37.5,
             "pit_modifier": 0.83,
@@ -55109,7 +55109,7 @@
           "team": "Kansas City Royals",
           "hr_prob": 5.9,
           "xgb_prob": 5.9,
-          "rf_prob": 5.0,
+          "rf_prob": 4.9,
           "archetype": "Boom/Bust",
           "trend": "Cooling Off",
           "confidence": "High",
@@ -55238,8 +55238,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.221,
             "pull_s": 44.4,
             "pit_modifier": 1.019,
@@ -55380,8 +55380,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.162,
             "pull_s": 39.5,
             "pit_modifier": 1.019,
@@ -55521,8 +55521,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.132,
             "pull_s": 43.2,
             "pit_modifier": 1.019,
@@ -55663,8 +55663,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.242,
             "pull_s": 41.7,
             "pit_modifier": 1.019,
@@ -55804,8 +55804,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.151,
             "pull_s": 28.0,
             "pit_modifier": 1.019,
@@ -55945,8 +55945,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.202,
             "pull_s": 45.0,
             "pit_modifier": 0.842,
@@ -56084,8 +56084,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.155,
             "pull_s": 36.7,
             "pit_modifier": 0.866,
@@ -56223,8 +56223,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.217,
             "pull_s": 45.3,
             "pit_modifier": 0.842,
@@ -56236,7 +56236,7 @@
           "team": "St. Louis Cardinals",
           "hr_prob": 20.2,
           "xgb_prob": 20.2,
-          "rf_prob": 7.8,
+          "rf_prob": 7.7,
           "archetype": "Contact",
           "trend": "Steady",
           "confidence": "High",
@@ -56365,8 +56365,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.258,
             "pull_s": 37.8,
             "pit_modifier": 0.866,
@@ -56504,8 +56504,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.152,
             "pull_s": 46.5,
             "pit_modifier": 0.842,
@@ -56643,8 +56643,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.093,
             "pull_s": 33.0,
             "pit_modifier": 0.866,
@@ -56782,8 +56782,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.194,
             "pull_s": 35.6,
             "pit_modifier": 0.842,
@@ -56921,8 +56921,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.169,
             "pull_s": 43.5,
             "pit_modifier": 0.866,
@@ -57060,8 +57060,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.09,
-            "bullpen_vuln": 0.841,
+            "bullpen_hr9": 1.08,
+            "bullpen_vuln": 0.827,
             "iso_use": 0.069,
             "pull_s": 32.9,
             "pit_modifier": 0.842,
@@ -57084,16 +57084,16 @@
         "home_exp_hr": 0.481,
         "total_exp_hr": 1.3,
         "away_exp_runs": 4.84,
-        "home_exp_runs": 3.66,
-        "total_exp_runs": 8.5,
-        "away_runs_pg": 4.04,
+        "home_exp_runs": 3.69,
+        "total_exp_runs": 8.53,
+        "away_runs_pg": 4.07,
         "home_runs_pg": 4.52,
         "away_hr_pg": 0.98,
         "home_hr_pg": 1.11,
         "away_era": 4.39,
-        "home_era": 4.27,
+        "home_era": 4.29,
         "away_k_pg": 8.62,
-        "home_k_pg": 7.28
+        "home_k_pg": 7.27
       },
       "strikeouts": {
         "away_exp_k": 4.8,
@@ -57156,7 +57156,7 @@
         "k_edge": null,
         "opp_team": "Colorado Rockies",
         "opp_lineup_k": 25.6,
-        "bullpen_hr9": 1.22
+        "bullpen_hr9": 1.21
       },
       "home_pitcher": {
         "name": "Kyle Freeland",
@@ -62378,7 +62378,7 @@
         "home_hr_pg": 0.98,
         "away_era": 4.44,
         "home_era": 4.96,
-        "away_k_pg": 7.65,
+        "away_k_pg": 7.64,
         "home_k_pg": 7.65
       },
       "strikeouts": {
