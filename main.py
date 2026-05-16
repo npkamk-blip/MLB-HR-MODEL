@@ -3543,18 +3543,31 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
             await notify(msg, "End of Day - No Final Games", priority=0)
         return
 
-    # Step 2: Load predictions file
+    # Step 2: Load predictions file (top 100 projected players)
+    # Falls back to full file if predictions missing
     pred_path = f"data/predictions/{target_date}.json"
     raw, sha  = await github_get_file(pred_path)
     if not raw:
-        print(f"end_of_day_save: no predictions file for {target_date}")
+        # Try full file as fallback
+        full_raw, _ = await github_get_file(f"data/full/{target_date}.json")
+        if full_raw:
+            try:
+                full_recs = json.loads(full_raw)
+                sorted_recs = sorted(full_recs,
+                    key=lambda x: x.get("model_hr_pct", 0) or 0, reverse=True)
+                raw = json.dumps(sorted_recs[:100])
+                sha = None
+                print(f"  Using full file fallback for {target_date}")
+            except: pass
+    if not raw:
+        print(f"end_of_day_save: no data for {target_date}")
         return
     try:
         all_preds = json.loads(raw)
     except Exception as e:
         print(f"end_of_day_save JSON error: {e}")
         return
-    print(f"  Loaded {len(all_preds)} raw prediction records")
+    print(f"  Loaded {len(all_preds)} prediction records")
 
     # Step 3: Match each player to boxscore outcome
     matched  = []
@@ -4169,7 +4182,7 @@ async def train_xgboost(save_to_github: bool = True):
     global _xgb_model, _xgb_features, _xgb_medians, _xgb_trained, _xgb_oob
     import json
 
-    # -- Load records (same as RF) --
+    # -- Load training records from predictions files --
     all_records = []
     try:
         if not GITHUB_TOKEN: return {"error": "No GitHub token"}
@@ -4181,9 +4194,9 @@ async def train_xgboost(save_to_github: bool = True):
             files = r.json() if r.is_success else []
         for f in files:
             if not f.get("name", "").endswith(".json"): continue
-            content, _ = await github_get_file(f"data/predictions/{f['name']}")
-            if content:
-                try: all_records.extend(json.loads(content))
+            raw, _ = await github_get_file(f"data/predictions/{f['name']}")
+            if raw:
+                try: all_records.extend(json.loads(raw))
                 except: pass
     except Exception as e:
         return {"error": str(e)}
