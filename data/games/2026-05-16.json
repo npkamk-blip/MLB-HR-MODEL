@@ -46859,7 +46859,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Out to LF",
-        "temp": 74,
+        "temp": 71,
         "wind_speed": 13,
         "wind_dir": 155,
         "mult": 1.049,
@@ -72765,7 +72765,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Out to LF",
-        "temp": 61,
+        "temp": 62,
         "wind_speed": 7,
         "wind_dir": 173,
         "mult": 1.014,
