@@ -44,7 +44,7 @@
         "k_edge": null,
         "opp_team": "Pittsburgh Pirates",
         "opp_lineup_k": 20.2,
-        "bullpen_hr9": 1.02
+        "bullpen_hr9": 1.05
       },
       "home_pitcher": {
         "name": "Braxton Ashcraft",
@@ -5165,14 +5165,14 @@
         "away_exp_hr": 0.705,
         "home_exp_hr": 1.031,
         "total_exp_hr": 1.74,
-        "away_exp_runs": 4.51,
+        "away_exp_runs": 4.53,
         "home_exp_runs": 4.39,
-        "total_exp_runs": 8.9,
+        "total_exp_runs": 8.92,
         "away_runs_pg": 3.98,
-        "home_runs_pg": 5.02,
+        "home_runs_pg": 5.04,
         "away_hr_pg": 1.18,
-        "home_hr_pg": 1.07,
-        "away_era": 4.45,
+        "home_hr_pg": 1.09,
+        "away_era": 4.47,
         "home_era": 3.73,
         "away_k_pg": 9.58,
         "home_k_pg": 8.72
@@ -20725,7 +20725,7 @@
         "away_era": 4.58,
         "home_era": 3.82,
         "away_k_pg": 7.79,
-        "home_k_pg": 9.49
+        "home_k_pg": 9.48
       },
       "strikeouts": {
         "away_exp_k": 2.8,
@@ -25935,16 +25935,16 @@
         "away_exp_hr": 0.29,
         "home_exp_hr": 0.691,
         "total_exp_hr": 0.98,
-        "away_exp_runs": 4.9,
+        "away_exp_runs": 4.94,
         "home_exp_runs": 4.04,
-        "total_exp_runs": 8.94,
+        "total_exp_runs": 8.98,
         "away_runs_pg": 4.16,
-        "home_runs_pg": 4.49,
+        "home_runs_pg": 4.53,
         "away_hr_pg": 0.76,
         "home_hr_pg": 0.81,
-        "away_era": 4.22,
+        "away_era": 4.27,
         "home_era": 3.5,
-        "away_k_pg": 8.52,
+        "away_k_pg": 8.51,
         "home_k_pg": 7.76
       },
       "strikeouts": {
@@ -36282,7 +36282,7 @@
         "home_hr_pg": 1.38,
         "away_era": 3.78,
         "home_era": 2.99,
-        "away_k_pg": 8.32,
+        "away_k_pg": 8.33,
         "home_k_pg": 8.91
       },
       "strikeouts": {
@@ -46708,9 +46708,9 @@
         "home_runs_pg": 4.32,
         "away_hr_pg": 1.18,
         "home_hr_pg": 1.3,
-        "away_era": 3.79,
+        "away_era": 3.78,
         "home_era": 4.22,
-        "away_k_pg": 8.33,
+        "away_k_pg": 8.32,
         "home_k_pg": 8.09
       },
       "strikeouts": {
