@@ -72766,10 +72766,10 @@
       "weather": {
         "label": "Out to LF",
         "temp": 62,
-        "wind_speed": 7,
-        "wind_dir": 162,
+        "wind_speed": 9,
+        "wind_dir": 165,
         "mult": 1.016,
-        "wind_angle_cf": -63
+        "wind_angle_cf": -60
       },
       "totals": {
         "away_exp_hr": 0.671,
