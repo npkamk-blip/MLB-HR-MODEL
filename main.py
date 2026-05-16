@@ -38,7 +38,6 @@ GITHUB_REPO    = "npkamk-blip/MLB-HR-MODEL"
 GITHUB_API     = "https://api.github.com"
 SAVANT_BASE    = "https://baseballsavant.mlb.com"
 TRACKING_START = "2026-05-11"
-ODDS_API_KEY   = os.environ.get("ODDS_API_KEY", "")
 
 PARK_HR_FACTORS = {
     "Colorado Rockies":      {"L":1.40,"R":1.40},
@@ -2323,8 +2322,7 @@ async def get_games(date: str = None, refresh: bool = False):
 
     # Save full games file to GitHub so frontend can read directly
     # This makes Batters tab instant - no backend call needed
-    # Only save games file if it doesn't exist yet - prevents deploy loop
-    # Once saved, lineup confirmations update predictions file directly
+    # Only save games file once per day - prevents deploy loops
     try:
         games_path = f"data/games/{today}.json"
         existing_games, games_sha = await github_get_file(games_path)
@@ -2967,14 +2965,14 @@ async def save_projected_top100(target_date: str = None):
     path = f"data/predictions/{today}.json"
     import json
 
-    # Only skip if file already has 80+ players (fully populated)
+    # Only skip if file already fully populated (80+ players)
     existing, sha = await github_get_file(path)
     if existing:
         try:
             records = json.loads(existing)
             if len(records) >= 80:
-                confirmed = [r for r in records if r.get("lineup_source") == "confirmed"]
-                print(f"save_projected_top100: {today} already has {len(records)} players ({len(confirmed)} confirmed) - skipping")
+                confirmed = sum(1 for r in records if r.get("lineup_source") == "confirmed")
+                print(f"save_projected_top100: {today} has {len(records)} players ({confirmed} confirmed) - skipping")
                 return
             else:
                 print(f"save_projected_top100: {today} only has {len(records)} players - re-saving")
@@ -2986,8 +2984,6 @@ async def save_projected_top100(target_date: str = None):
             data = r.json()
 
         all_candidates = []
-        games_found = sum(len(d.get("games",[])) for d in data.get("dates",[]))
-        print(f"save_projected_top100: {games_found} games found for {today}")
         for game_date in data.get("dates", []):
             for game in game_date.get("games", []):
                 if game.get("status", {}).get("abstractGameState") == "Final": continue
@@ -3037,9 +3033,9 @@ async def save_projected_top100(target_date: str = None):
                         hr_prob, breakdown, _, _, _, _, _ = compute_hr_probability(
                             name, bat_hand, opp_p_name, opp_p_hand, park_factor, wx_mult, home_team)
 
-                        bc2 = get_batter_stats(name, 2026, mlb_id=pid)
-                        b8d2 = get_batter_8d(name, mlb_id=pid)
-                        b_split2 = get_batter_split(name, opp_p_hand, mlb_id=pid)
+                        bc2 = get_batter_stats(name, 2026)
+                        b8d2 = get_batter_8d(name)
+                        b_split2 = get_batter_split(name, opp_p_hand)
                         pc2 = get_pitcher_stats(opp_p_name, 2026)
                         p_split2 = get_pitcher_split(opp_p_name, bat_hand)
                         pitch_score, _ = compute_pitch_matchup(opp_p_name, name)
@@ -3147,10 +3143,14 @@ async def save_projected_top100(target_date: str = None):
         else:
             print(f"save_projected_top100: top8 file already exists for {today} - skipping")
 
-        # Save games file directly (not background task - too important to lose)
+        # Save games file directly (await not background - too important)
         try:
-            await get_games(today, refresh=True)
-            print(f"save_projected_top100: games file saved for {today}")
+            games_raw, _ = await github_get_file(f"data/games/{today}.json")
+            if not games_raw:
+                await get_games(today, refresh=True)
+                print(f"save_projected_top100: games file saved for {today}")
+            else:
+                print(f"save_projected_top100: games file already exists for {today}")
         except Exception as _ge:
             print(f"save_projected_top100: games save error: {_ge}")
 
@@ -3543,12 +3543,11 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
             await notify(msg, "End of Day - No Final Games", priority=0)
         return
 
-    # Step 2: Load predictions file (top 100 projected players)
-    # Falls back to full file if predictions missing
+    # Step 2: Load predictions file - fall back to full file if missing/incomplete
     pred_path = f"data/predictions/{target_date}.json"
     raw, sha  = await github_get_file(pred_path)
-    if not raw:
-        # Try full file as fallback
+
+    if not raw or len(json.loads(raw) if raw else []) < 50:
         full_raw, _ = await github_get_file(f"data/full/{target_date}.json")
         if full_raw:
             try:
@@ -3559,6 +3558,7 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
                 sha = None
                 print(f"  Using full file fallback for {target_date}")
             except: pass
+
     if not raw:
         print(f"end_of_day_save: no data for {target_date}")
         return
@@ -3832,28 +3832,25 @@ async def daily_refresh_loop():
                 print(f"7am error: {e}")
 
         # ── 8am — Save all three files for today ─────────────────────────
-        # Self-healing: checks each file individually, saves if missing/incomplete
         if 8 <= now.hour <= 10:
             try:
-                # 1. Predictions file (top 100 players)
+                # Check predictions file
                 pred_raw, _ = await github_get_file(f"data/predictions/{today_s}.json")
                 pred_count  = len(json.loads(pred_raw)) if pred_raw else 0
                 if pred_count < 50:
-                    print(f"8am: saving predictions ({pred_count} currently)")
+                    print(f"8am: saving projected lineups ({pred_count} currently)")
                     await save_projected_top100(today_s)
 
-                # 2. Full file (all ~270 players)
+                # Check full file
                 full_raw, _ = await github_get_file(f"data/full/{today_s}.json")
-                full_count  = len(json.loads(full_raw)) if full_raw else 0
-                if full_count < 100:
-                    print(f"8am: full file missing/incomplete ({full_count} players)")
-                    await save_projected_top100(today_s)  # saves both pred + full
+                if not full_raw:
+                    print(f"8am: full file missing - will be saved by save_projected_top100")
 
-                # 3. Games file (Batters tab)
+                # Check games file
                 games_raw, _ = await github_get_file(f"data/games/{today_s}.json")
                 if not games_raw:
                     print(f"8am: games file missing - computing now")
-                    await get_games(today_s, refresh=True)  # await directly, not background
+                    await get_games(today_s, refresh=True)
 
                 print(f"8am: all files verified for {today_s}")
             except Exception as e:
@@ -4182,7 +4179,7 @@ async def train_xgboost(save_to_github: bool = True):
     global _xgb_model, _xgb_features, _xgb_medians, _xgb_trained, _xgb_oob
     import json
 
-    # -- Load training records from predictions files --
+    # -- Load records (same as RF) --
     all_records = []
     try:
         if not GITHUB_TOKEN: return {"error": "No GitHub token"}
@@ -4194,9 +4191,9 @@ async def train_xgboost(save_to_github: bool = True):
             files = r.json() if r.is_success else []
         for f in files:
             if not f.get("name", "").endswith(".json"): continue
-            raw, _ = await github_get_file(f"data/predictions/{f['name']}")
-            if raw:
-                try: all_records.extend(json.loads(raw))
+            content, _ = await github_get_file(f"data/predictions/{f['name']}")
+            if content:
+                try: all_records.extend(json.loads(content))
                 except: pass
     except Exception as e:
         return {"error": str(e)}
