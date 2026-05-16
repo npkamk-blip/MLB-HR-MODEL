@@ -2638,9 +2638,9 @@ async def patch_record(date: str, player: str, hit_hr: int):
 
 @app.get("/recalibrate")
 async def manual_recalibrate_get():
-    """GET - retrains XGBoost only"""
-    asyncio.create_task(train_xgboost())
-    return {"status": "XGBoost retrain started - check /version in 3-5 minutes"}
+    """GET - retrains XGBoost in memory only (no GitHub write = no deploy)"""
+    asyncio.create_task(train_xgboost(save_to_github=False))
+    return {"status": "XGBoost retrain started (in memory) - check /version in 3 minutes"}
 
 @app.get("/hr-audit")
 async def hr_audit(date: str = None):
