@@ -5172,7 +5172,7 @@
         "home_hr_pg": 1.09,
         "away_era": 4.42,
         "home_era": 3.78,
-        "away_k_pg": 9.61,
+        "away_k_pg": 9.62,
         "home_k_pg": 8.68
       },
       "strikeouts": {
@@ -15557,7 +15557,7 @@
         "away_era": 3.33,
         "home_era": 4.46,
         "away_k_pg": 9.81,
-        "home_k_pg": 7.72
+        "home_k_pg": 7.71
       },
       "strikeouts": {
         "away_exp_k": 3.3,
@@ -20752,9 +20752,9 @@
         "home_runs_pg": 5.31,
         "away_hr_pg": 0.73,
         "home_hr_pg": 1.4,
-        "away_era": 3.76,
+        "away_era": 3.75,
         "home_era": 3.0,
-        "away_k_pg": 8.33,
+        "away_k_pg": 8.34,
         "home_k_pg": 8.89
       },
       "strikeouts": {
@@ -31244,7 +31244,7 @@
         "k_edge": null,
         "opp_team": "Houston Astros",
         "opp_lineup_k": 24.2,
-        "bullpen_hr9": 1.09
+        "bullpen_hr9": 1.08
       },
       "home_pitcher": {
         "name": "Spencer Arrighetti",
@@ -36364,9 +36364,9 @@
         "home_runs_pg": 4.5,
         "away_hr_pg": 0.91,
         "home_hr_pg": 1.2,
-        "away_era": 3.61,
+        "away_era": 3.6,
         "home_era": 5.51,
-        "away_k_pg": 8.65,
+        "away_k_pg": 8.64,
         "home_k_pg": 8.9
       },
       "strikeouts": {
@@ -41555,7 +41555,7 @@
         "away_hr_pg": 0.98,
         "home_hr_pg": 1.16,
         "away_era": 4.44,
-        "home_era": 4.28,
+        "home_era": 4.27,
         "away_k_pg": 8.58,
         "home_k_pg": 7.24
       },
@@ -46842,7 +46842,7 @@
         "home_hr_pg": 0.98,
         "away_era": 4.42,
         "home_era": 4.93,
-        "away_k_pg": 7.64,
+        "away_k_pg": 7.65,
         "home_k_pg": 7.65
       },
       "strikeouts": {
