@@ -44,7 +44,7 @@
         "k_edge": null,
         "opp_team": "Pittsburgh Pirates",
         "opp_lineup_k": 20.2,
-        "bullpen_hr9": 1.05
+        "bullpen_hr9": 1.04
       },
       "home_pitcher": {
         "name": "Braxton Ashcraft",
@@ -5172,7 +5172,7 @@
         "home_runs_pg": 5.04,
         "away_hr_pg": 1.18,
         "home_hr_pg": 1.09,
-        "away_era": 4.47,
+        "away_era": 4.46,
         "home_era": 3.73,
         "away_k_pg": 9.58,
         "home_k_pg": 8.72
@@ -10371,9 +10371,9 @@
         "away_hr_pg": 0.98,
         "home_hr_pg": 1.16,
         "away_era": 4.56,
-        "home_era": 4.95,
+        "home_era": 4.94,
         "away_k_pg": 8.4,
-        "home_k_pg": 7.61
+        "home_k_pg": 7.59
       },
       "strikeouts": {
         "away_exp_k": 4.2,
@@ -15527,7 +15527,7 @@
         "away_era": 4.11,
         "home_era": 4.07,
         "away_k_pg": 9.15,
-        "home_k_pg": 8.59
+        "home_k_pg": 8.61
       },
       "strikeouts": {
         "away_exp_k": 5.1,
@@ -20723,9 +20723,9 @@
         "away_hr_pg": 1.29,
         "home_hr_pg": 0.91,
         "away_era": 4.58,
-        "home_era": 3.82,
+        "home_era": 3.81,
         "away_k_pg": 7.79,
-        "home_k_pg": 9.48
+        "home_k_pg": 9.46
       },
       "strikeouts": {
         "away_exp_k": 2.8,
@@ -25942,9 +25942,9 @@
         "home_runs_pg": 4.53,
         "away_hr_pg": 0.76,
         "home_hr_pg": 0.81,
-        "away_era": 4.27,
+        "away_era": 4.26,
         "home_era": 3.5,
-        "away_k_pg": 8.51,
+        "away_k_pg": 8.52,
         "home_k_pg": 7.76
       },
       "strikeouts": {
@@ -31130,10 +31130,10 @@
         "home_runs_pg": 4.69,
         "away_hr_pg": 0.64,
         "home_hr_pg": 1.09,
-        "away_era": 3.32,
-        "home_era": 4.47,
-        "away_k_pg": 9.88,
-        "home_k_pg": 7.76
+        "away_era": 3.31,
+        "home_era": 4.46,
+        "away_k_pg": 9.87,
+        "home_k_pg": 7.75
       },
       "strikeouts": {
         "away_exp_k": 3.4,
@@ -41484,7 +41484,7 @@
         "home_hr_pg": 0.82,
         "away_era": 3.2,
         "home_era": 3.79,
-        "away_k_pg": 8.93,
+        "away_k_pg": 8.92,
         "home_k_pg": 9.51
       },
       "strikeouts": {
@@ -46710,7 +46710,7 @@
         "home_hr_pg": 1.3,
         "away_era": 3.78,
         "home_era": 4.22,
-        "away_k_pg": 8.32,
+        "away_k_pg": 8.34,
         "home_k_pg": 8.09
       },
       "strikeouts": {
@@ -51887,17 +51887,17 @@
         "away_exp_hr": 0.17,
         "home_exp_hr": 1.062,
         "total_exp_hr": 1.23,
-        "away_exp_runs": 3.82,
-        "home_exp_runs": 3.95,
-        "total_exp_runs": 7.77,
-        "away_runs_pg": 3.77,
-        "home_runs_pg": 4.58,
-        "away_hr_pg": 0.93,
-        "home_hr_pg": 1.2,
+        "away_exp_runs": 3.74,
+        "home_exp_runs": 3.85,
+        "total_exp_runs": 7.59,
+        "away_runs_pg": 3.68,
+        "home_runs_pg": 4.48,
+        "away_hr_pg": 0.91,
+        "home_hr_pg": 1.17,
         "away_era": 3.63,
-        "home_era": 5.59,
+        "home_era": 5.58,
         "away_k_pg": 8.7,
-        "home_k_pg": 8.92
+        "home_k_pg": 8.95
       },
       "strikeouts": {
         "away_exp_k": 6.5,
