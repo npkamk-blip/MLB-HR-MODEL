@@ -2590,7 +2590,6 @@ async def patch_record(date: str, player: str, hit_hr: int):
     results = {}
     for file_type, path in [
         ("predictions", f"data/predictions/{date}.json"),
-        ("top8",        f"data/top8/{date}.json"),
     ]:
         raw, sha = await github_get_file(path)
         if not raw:
@@ -3123,20 +3122,7 @@ async def save_projected_top100(target_date: str = None):
 
         # Save projected top 8 so dashboard shows picks early before lineups confirm.
         # Only write if no top8 file exists yet - confirmed lineups will overwrite later.
-        top8_path = f"data/top8/{today}.json"
-        existing_top8, existing_top8_sha = await github_get_file(top8_path)
-        if not existing_top8:
-            top8 = ranked[:8]
-            await github_put_file(
-                top8_path,
-                json.dumps(top8, indent=2),
-                f"projected top8: {today}",
-                None
-            )
-            top8_names = ", ".join(r.get("name","?").split()[-1] for r in top8[:4])
-            print(f"save_projected_top100: saved projected top8 ({top8_names}...)")
-        else:
-            print(f"save_projected_top100: top8 file already exists for {today} - skipping")
+
 
         # Save games file directly (await not background - too important)
         try:
@@ -3616,35 +3602,7 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
     # Step 6: Update top8 file outcomes for dashboard hit rate tracking
     top8_hrs   = "?"
     top8_total = "?"
-    top8_path  = f"data/top8/{target_date}.json"
-    top8_raw, top8_sha = await github_get_file(top8_path)
-    if top8_raw:
-        try:
-            top8_recs = json.loads(top8_raw)
-            # Build fast lookup from our verified top100
-            out_by_id   = {r["mlb_id"]: r["hit_hr"] for r in top100 if r.get("mlb_id")}
-            out_by_name = {r["name"].lower(): r["hit_hr"] for r in top100}
-            patched = 0
-            for r in top8_recs:
-                mid = r.get("mlb_id")
-                nl  = r.get("name", "").lower()
-                if mid and mid in out_by_id:
-                    r["hit_hr"] = out_by_id[mid]
-                    patched += 1
-                elif nl in out_by_name:
-                    r["hit_hr"] = out_by_name[nl]
-                    patched += 1
-            await github_put_file(
-                top8_path,
-                json.dumps(top8_recs, indent=2),
-                f"top8 outcomes: {target_date}",
-                top8_sha
-            )
-            top8_hrs   = sum(1 for r in top8_recs if r.get("hit_hr") == 1)
-            top8_total = len(top8_recs)
-            print(f"  Top8 updated: {patched}/{top8_total} outcomes patched, {top8_hrs} HRs")
-        except Exception as e:
-            print(f"  Top8 update error: {e}")
+
 
     # Step 7: Parlay results
     try:
