@@ -3326,19 +3326,36 @@ async def check_lineup_confirmations():
         # Only write to GitHub if player list or scores changed - prevents deploy spam
         existing_names = {r.get("name") for r in existing_records}
         new_names_set  = {r.get("name") for r in top100}
-        has_new_players = new_names_set != existing_names
-        has_scratches   = len(top100) != len(existing_records)
-
-        # Check if any source flags changed projected→confirmed
-        source_changed = any(
-            r.get("lineup_source","projected") != existing_source.get(r.get("name",""), "projected")
-            for r in top100
-        )
-        if has_new_players or has_scratches or source_changed:
+        # Write if ANYTHING changed - new players, scratches, source flags
+        if any_changes:
+            # Save predictions file (top 100)
+            _, fresh_sha = await github_get_file(path)
             await github_put_file(path, json.dumps(top100, indent=2),
-                                  f"lineups confirmed: {today} ({len(top100)} records)", sha)
-            reason = "player list changed" if (has_new_players or has_scratches) else "lineups confirmed"
-            print(f"Lineup check: {len(top100)} records saved ({reason})")
+                                  f"lineups confirmed: {today} ({len(top100)} records)", fresh_sha)
+            print(f"Lineup check: {len(top100)} records saved to predictions")
+
+            # Also update full file with any new confirmed players
+            full_path = f"data/full/{today}.json"
+            full_raw, full_sha = await github_get_file(full_path)
+            if full_raw:
+                try:
+                    full_recs  = json.loads(full_raw)
+                    full_dict  = {r.get("name",""): r for r in full_recs}
+                    # Add any new players not in full file
+                    added_to_full = 0
+                    for name, rec in records_dict.items():
+                        if name not in full_dict:
+                            full_dict[name] = rec
+                            added_to_full += 1
+                    if added_to_full > 0:
+                        full_ranked = sorted(full_dict.values(),
+                            key=lambda x: x.get("model_hr_pct",0) or 0, reverse=True)
+                        _, full_sha2 = await github_get_file(full_path)
+                        await github_put_file(full_path, json.dumps(full_ranked, indent=2),
+                                              f"full confirmed: {today} ({len(full_ranked)} players)", full_sha2)
+                        print(f"Lineup check: added {added_to_full} new players to full file")
+                except Exception as _fe:
+                    print(f"Lineup check: full file update error: {_fe}")
         else:
             print(f"Lineup check: no changes")
 
@@ -3759,9 +3776,19 @@ async def daily_refresh_loop():
                         print(f"EOD: running for {yest_s} ({len(nulls)} unresolved records)")
                         result = await end_of_day_save(yest_s, notify_result=True)
                         await save_model_log(_model_weights)
-                        # Cleanup yesterday's temp files
-                        for p in [f"data/games/{yest_s}.json", f"data/full/{yest_s}.json"]:
-                            await github_delete_file(p)
+                        # Only delete full file AFTER verifying predictions file saved correctly
+                        pred_verify, _ = await github_get_file(f"data/predictions/{yest_s}.json")
+                        if pred_verify:
+                            pred_recs = json.loads(pred_verify)
+                            if len(pred_recs) >= 80:
+                                # Predictions saved OK - safe to delete temp files
+                                for p in [f"data/games/{yest_s}.json", f"data/full/{yest_s}.json"]:
+                                    await github_delete_file(p)
+                                print(f"EOD cleanup: deleted temp files for {yest_s}")
+                            else:
+                                print(f"EOD WARNING: predictions only has {len(pred_recs)} records - keeping full file as backup")
+                        else:
+                            print(f"EOD WARNING: predictions file not found - keeping full file as backup")
                     else:
                         pass  # Already done
             except Exception as e:
