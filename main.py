@@ -3334,6 +3334,28 @@ async def check_lineup_confirmations():
                                   f"lineups confirmed: {today} ({len(top100)} records)", fresh_sha)
             print(f"Lineup check: {len(top100)} records saved to predictions")
 
+            # Build notification
+            existing_names = {r.get("name","") for r in existing_records}
+            current_names  = {r.get("name","") for r in top100}
+            added_names    = current_names - existing_names
+            removed_names  = existing_names - current_names
+            newly_confirmed = [r.get("name","") for r in top100
+                               if r.get("lineup_source") == "confirmed"
+                               and r.get("name") in existing_names
+                               and next((x for x in existing_records if x.get("name") == r.get("name")), {}).get("lineup_source") != "confirmed"]
+            confirmed_teams = sorted({r.get("team","") for r in top100 if r.get("lineup_source") == "confirmed"})
+
+            msg  = f"{today} Lineup Update\n{'─'*22}\n"
+            msg += f"✅ Confirmed: {len(confirmed_teams)} teams\n"
+            if newly_confirmed:
+                msg += f"📋 Newly confirmed: {', '.join(newly_confirmed[:5])}{'...' if len(newly_confirmed)>5 else ''}\n"
+            if added_names:
+                msg += f"➕ Added ({len(added_names)}): {', '.join(list(added_names)[:5])}{'...' if len(added_names)>5 else ''}\n"
+            if removed_names:
+                msg += f"➖ Removed ({len(removed_names)}): {', '.join(list(removed_names)[:5])}{'...' if len(removed_names)>5 else ''}\n"
+            msg += f"📊 Total: {len(top100)} players"
+            await notify(msg, "⚾ Lineups Updated", priority=0)
+
             # Also update full file with any new confirmed players
             full_path = f"data/full/{today}.json"
             full_raw, full_sha = await github_get_file(full_path)
