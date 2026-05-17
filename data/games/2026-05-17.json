@@ -10415,16 +10415,16 @@
         "away_exp_hr": 0.114,
         "home_exp_hr": 0.365,
         "total_exp_hr": 0.48,
-        "away_exp_runs": 5.11,
+        "away_exp_runs": 5.13,
         "home_exp_runs": 4.54,
-        "total_exp_runs": 9.65,
+        "total_exp_runs": 9.67,
         "away_runs_pg": 4.34,
-        "home_runs_pg": 5.38,
+        "home_runs_pg": 5.4,
         "away_hr_pg": 1.04,
         "home_hr_pg": 1.21,
-        "away_era": 4.76,
+        "away_era": 4.78,
         "home_era": 4.99,
-        "away_k_pg": 8.31,
+        "away_k_pg": 8.3,
         "home_k_pg": 7.75
       },
       "strikeouts": {
@@ -15586,7 +15586,7 @@
         "home_hr_pg": 1.04,
         "away_era": 4.27,
         "home_era": 3.84,
-        "away_k_pg": 9.71,
+        "away_k_pg": 9.7,
         "home_k_pg": 8.8
       },
       "strikeouts": {
@@ -20762,9 +20762,9 @@
         "home_runs_pg": 5.28,
         "away_hr_pg": 0.72,
         "home_hr_pg": 1.4,
-        "away_era": 3.81,
+        "away_era": 3.8,
         "home_era": 2.96,
-        "away_k_pg": 8.17,
+        "away_k_pg": 8.16,
         "home_k_pg": 8.8
       },
       "strikeouts": {
@@ -20828,7 +20828,7 @@
         "k_edge": null,
         "opp_team": "Cleveland Guardians",
         "opp_lineup_k": 18.5,
-        "bullpen_hr9": 1.28
+        "bullpen_hr9": 1.3
       },
       "home_pitcher": {
         "name": "Gavin Williams",
@@ -26025,14 +26025,14 @@
         "away_exp_hr": 0.173,
         "home_exp_hr": 0.501,
         "total_exp_hr": 0.67,
-        "away_exp_runs": 4.36,
+        "away_exp_runs": 4.38,
         "home_exp_runs": 5.21,
-        "total_exp_runs": 9.57,
+        "total_exp_runs": 9.59,
         "away_runs_pg": 4.32,
-        "home_runs_pg": 4.25,
+        "home_runs_pg": 4.27,
         "away_hr_pg": 1.3,
-        "home_hr_pg": 0.96,
-        "away_era": 4.74,
+        "home_hr_pg": 0.98,
+        "away_era": 4.75,
         "home_era": 3.88,
         "away_k_pg": 7.84,
         "home_k_pg": 9.4
@@ -31230,9 +31230,9 @@
         "home_runs_pg": 3.98,
         "away_hr_pg": 0.91,
         "home_hr_pg": 0.87,
-        "away_era": 3.99,
+        "away_era": 3.98,
         "home_era": 3.99,
-        "away_k_pg": 9.2,
+        "away_k_pg": 9.19,
         "home_k_pg": 8.46
       },
       "strikeouts": {
@@ -36359,9 +36359,9 @@
         "away_hr_pg": 1.45,
         "home_hr_pg": 0.8,
         "away_era": 3.23,
-        "home_era": 3.73,
+        "home_era": 3.72,
         "away_k_pg": 8.91,
-        "home_k_pg": 9.6
+        "home_k_pg": 9.59
       },
       "strikeouts": {
         "away_exp_k": 1.8,
@@ -51484,7 +51484,7 @@
         "away_era": 3.28,
         "home_era": 4.36,
         "away_k_pg": 9.81,
-        "home_k_pg": 7.73
+        "home_k_pg": 7.72
       },
       "strikeouts": {
         "away_exp_k": 1.0,
@@ -56684,9 +56684,9 @@
         "away_hr_pg": 0.96,
         "home_hr_pg": 1.11,
         "away_era": 4.36,
-        "home_era": 4.17,
+        "home_era": 4.16,
         "away_k_pg": 8.58,
-        "home_k_pg": 7.12
+        "home_k_pg": 7.11
       },
       "strikeouts": {
         "away_exp_k": 3.6,
