@@ -3634,7 +3634,7 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
     hr_rate  = round(hr_count / len(top100) * 100, 1) if top100 else 0
     print(f"  Top 100: {hr_count} HRs ({hr_rate}%)")
 
-    # Step 5: Save clean predictions file - always get fresh SHA before writing
+    # Step 5a: Save predictions file (top 100 with outcomes)
     _, pred_sha = await github_get_file(pred_path)
     saved = await github_put_file(
         pred_path,
@@ -3643,9 +3643,38 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
         pred_sha
     )
     if saved:
-        print(f"  Saved clean predictions: {len(top100)} records")
+        print(f"  Saved predictions: {len(top100)} records")
     else:
         print(f"  ERROR: Failed to save predictions file for {target_date}")
+
+    # Step 5b: Patch hit_hr outcomes into full file (270 players, kept forever)
+    try:
+        full_raw, full_sha = await github_get_file(full_path)
+        if full_raw:
+            full_recs = json.loads(full_raw)
+            # Build outcome lookup from matched records
+            outcome_by_id   = {r.get("mlb_id"): r.get("hit_hr") for r in matched if r.get("mlb_id")}
+            outcome_by_name = {r.get("name","").lower(): r.get("hit_hr") for r in matched}
+            patched = 0
+            for rec in full_recs:
+                mid  = rec.get("mlb_id")
+                name = rec.get("name","").lower()
+                if mid and mid in outcome_by_id:
+                    rec["hit_hr"] = outcome_by_id[mid]
+                    patched += 1
+                elif name in outcome_by_name:
+                    rec["hit_hr"] = outcome_by_name[name]
+                    patched += 1
+            _, full_sha2 = await github_get_file(full_path)
+            await github_put_file(
+                full_path,
+                json.dumps(full_recs, indent=2),
+                f"full_outcomes: {target_date} | {hr_count} HRs ({patched} patched)",
+                full_sha2
+            )
+            print(f"  Patched {patched} outcomes into full file ({len(full_recs)} players)")
+    except Exception as _fe:
+        print(f"  Full file outcome patch error: {_fe}")
 
     # Step 6: Update top8 file outcomes for dashboard hit rate tracking
     top8_hrs   = "?"
@@ -3798,19 +3827,9 @@ async def daily_refresh_loop():
                         print(f"EOD: running for {yest_s} ({len(nulls)} unresolved records)")
                         result = await end_of_day_save(yest_s, notify_result=True)
                         await save_model_log(_model_weights)
-                        # Only delete full file AFTER verifying predictions file saved correctly
-                        pred_verify, _ = await github_get_file(f"data/predictions/{yest_s}.json")
-                        if pred_verify:
-                            pred_recs = json.loads(pred_verify)
-                            if len(pred_recs) >= 80:
-                                # Predictions saved OK - safe to delete temp files
-                                for p in [f"data/games/{yest_s}.json", f"data/full/{yest_s}.json"]:
-                                    await github_delete_file(p)
-                                print(f"EOD cleanup: deleted temp files for {yest_s}")
-                            else:
-                                print(f"EOD WARNING: predictions only has {len(pred_recs)} records - keeping full file as backup")
-                        else:
-                            print(f"EOD WARNING: predictions file not found - keeping full file as backup")
+                        # Only delete games file - full file kept forever with outcomes
+                        await github_delete_file(f"data/games/{yest_s}.json")
+                        print(f"EOD cleanup: deleted games file for {yest_s}")
                     else:
                         pass  # Already done
             except Exception as e:
