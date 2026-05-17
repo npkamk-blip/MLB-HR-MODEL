@@ -38,6 +38,7 @@ GITHUB_REPO    = "npkamk-blip/MLB-HR-MODEL"
 GITHUB_API     = "https://api.github.com"
 SAVANT_BASE    = "https://baseballsavant.mlb.com"
 TRACKING_START = "2026-05-11"
+ODDS_API_KEY   = os.environ.get("ODDS_API_KEY", "")
 
 PARK_HR_FACTORS = {
     "Colorado Rockies":      {"L":1.40,"R":1.40},
@@ -277,11 +278,14 @@ async def github_delete_file(path: str):
     if not sha:
         return False
     try:
+        import json as _jd
         async with httpx.AsyncClient(timeout=10) as client:
-            r = await client.delete(
+            r = await client.request(
+                "DELETE",
                 f"{GITHUB_API}/repos/{GITHUB_REPO}/contents/{path}",
-                headers={"Authorization": f"token {GITHUB_TOKEN}"},
-                json={"message": f"cleanup: {path}", "sha": sha}
+                headers={"Authorization": f"token {GITHUB_TOKEN}",
+                         "Content-Type": "application/json"},
+                content=_jd.dumps({"message": f"cleanup: {path}", "sha": sha}).encode()
             )
         return r.status_code == 200
     except Exception as e:
@@ -3563,17 +3567,18 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
         outcome, pa, method = resolve_outcome(rec, hr_by_id, pa_by_id, hr_by_name, pa_by_name)
         match_log[method] = match_log.get(method, 0) + 1
 
-        if outcome is None or pa < 1:
-            # Not found in any final boxscore, or found but truly DNP (pa=0)
+        if pa == 0 and outcome is None:
+            # True DNP - no PA at all, skip entirely
             dropped.append(rec.get("name", "?"))
             continue
 
-        rec["hit_hr"]      = outcome
-        rec["actual_pa"]   = pa
+        # Keep player even if not found - mark as 0 (no HR) if games are final
+        rec["hit_hr"]       = outcome if outcome is not None else 0
+        rec["actual_pa"]    = pa
         rec["match_method"] = method
         matched.append(rec)
 
-    print(f"  Matched {len(matched)} played, dropped {len(dropped)} (DNP/postponed/not found)")
+    print(f"  Matched {len(matched)} players, dropped {len(dropped)} (true DNP)")
     print(f"  Match methods: {match_log}")
 
     if not matched:
@@ -3583,7 +3588,7 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
             await notify(msg, "End of Day - ERROR", priority=1)
         return
 
-    # Step 4: Rank by model score, keep top 100 who actually played
+    # Step 4: Rank by model score, take top 100
     ranked   = sorted(matched, key=lambda x: x.get("model_hr_pct") or 0, reverse=True)
     top100   = ranked[:100]
     hr_count = sum(1 for r in top100 if r.get("hit_hr") == 1)
@@ -3738,9 +3743,9 @@ async def daily_refresh_loop():
         today_s = et_today().isoformat()
         yest_s  = (et_today() - timedelta(days=1)).isoformat()
 
-        # ── 4am — End of day save ─────────────────────────────────────────
-        # Runs if: it's 4am-6am AND yesterday's predictions have null outcomes
-        if 4 <= now.hour <= 6:
+        # ── 6am — End of day save ─────────────────────────────────────────
+        # Runs at 6am - gives West Coast games (ending ~1-2am ET) time to finalize
+        if 6 <= now.hour <= 8:
             try:
                 raw, _ = await github_get_file(f"data/predictions/{yest_s}.json")
                 if raw:
