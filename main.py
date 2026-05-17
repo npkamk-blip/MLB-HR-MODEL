@@ -2358,30 +2358,30 @@ async def update_today():
     today = et_today().isoformat()
     import json as _j
 
-    # Step 1: Save projected lineups
+    # Step 1: Save full slate file (270 players)
     await save_projected_top100(today)
 
-    # Step 2: Run lineup confirmations
+    # Step 2: Run lineup confirmations (updates full file)
     await check_lineup_confirmations()
 
     # Step 3: Recompute games file
     asyncio.create_task(get_games(today, refresh=True))
 
     # Step 4: Summary
-    pred_raw, _ = await github_get_file(f"data/predictions/{today}.json")
-    pred_count  = len(_j.loads(pred_raw)) if pred_raw else 0
+    full_raw, _ = await github_get_file(f"data/full/{today}.json")
+    full_count  = len(_j.loads(full_raw)) if full_raw else 0
     confirmed   = 0
-    if pred_raw:
-        recs = _j.loads(pred_raw)
+    if full_raw:
+        recs = _j.loads(full_raw)
         confirmed = sum(1 for r in recs if r.get("lineup_source") == "confirmed")
 
     return {
         "status":      "done",
         "date":        today,
-        "predictions": pred_count,
+        "full_file":   full_count,
         "confirmed":   confirmed,
-        "projected":   pred_count - confirmed,
-        "games_file":  "saving in background - ready in ~60 seconds",
+        "projected":   full_count - confirmed,
+        "note":        "predictions file saved at 4am with outcomes",
     }
 
 
@@ -3114,17 +3114,12 @@ async def save_projected_top100(target_date: str = None):
 
         ranked = sorted(all_candidates, key=lambda x: x.get("model_hr_pct",0) or 0, reverse=True)
 
-        # Save full slate file - scratch pool, never trained on
+        # Save full file only (270 players) - predictions file saved at 4am after outcomes
         full_path = f"data/full/{today}.json"
         _, full_sha = await github_get_file(full_path)
         await github_put_file(full_path, json.dumps(ranked, indent=2),
                               f"full slate: {today} ({len(ranked)} players)", full_sha)
-        print(f"save_projected_top100: saved {len(ranked)} to full file")
-
-        top100 = ranked[:100]
-        await github_put_file(path, json.dumps(top100, indent=2),
-                              f"projected top100: {today} ({len(top100)} players)", sha)
-        print(f"save_projected_top100: saved {len(top100)} projected players for {today}")
+        print(f"save_projected_top100: saved {len(ranked)} to full file (predictions saved at 4am)")
 
         # Save projected top 8 so dashboard shows picks early before lineups confirm.
         # Only write if no top8 file exists yet - confirmed lineups will overwrite later.
@@ -3543,31 +3538,35 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
             await notify(msg, "End of Day - No Final Games", priority=0)
         return
 
-    # Step 2: Load predictions file - fall back to full file if missing/incomplete
+    # Step 2: Read full file (270 players), take top 100, save to predictions
+    # This ensures late game players are included in outcome matching
     pred_path = f"data/predictions/{target_date}.json"
-    raw, sha  = await github_get_file(pred_path)
+    full_path = f"data/full/{target_date}.json"
 
-    if not raw or len(json.loads(raw) if raw else []) < 50:
-        full_raw, _ = await github_get_file(f"data/full/{target_date}.json")
-        if full_raw:
-            try:
-                full_recs = json.loads(full_raw)
-                sorted_recs = sorted(full_recs,
-                    key=lambda x: x.get("model_hr_pct", 0) or 0, reverse=True)
-                raw = json.dumps(sorted_recs[:100])
-                sha = None
-                print(f"  Using full file fallback for {target_date}")
-            except: pass
+    full_raw, _ = await github_get_file(full_path)
+    if full_raw:
+        try:
+            full_recs = json.loads(full_raw)
+            all_preds = sorted(full_recs,
+                key=lambda x: x.get("model_hr_pct", 0) or 0, reverse=True)[:100]
+            sha = None
+            print(f"  Loaded top 100 from full file ({len(full_recs)} total players)")
+        except Exception as e:
+            full_raw = None
+            print(f"  Full file parse error: {e}")
 
-    if not raw:
-        print(f"end_of_day_save: no data for {target_date}")
-        return
-    try:
-        all_preds = json.loads(raw)
-    except Exception as e:
-        print(f"end_of_day_save JSON error: {e}")
-        return
-    print(f"  Loaded {len(all_preds)} prediction records")
+    if not full_raw:
+        # Fall back to predictions file if full file deleted
+        raw, sha = await github_get_file(pred_path)
+        if not raw:
+            print(f"end_of_day_save: no data for {target_date}")
+            return
+        try:
+            all_preds = json.loads(raw)
+            print(f"  Loaded {len(all_preds)} from predictions file (full file not found)")
+        except Exception as e:
+            print(f"end_of_day_save JSON error: {e}")
+            return
 
     # Step 3: Match each player to boxscore outcome
     matched  = []
