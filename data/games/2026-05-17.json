@@ -5187,7 +5187,7 @@
         "away_era": 4.75,
         "home_era": 4.96,
         "away_k_pg": 8.36,
-        "home_k_pg": 7.75
+        "home_k_pg": 7.77
       },
       "strikeouts": {
         "away_exp_k": 3.5,
@@ -20797,7 +20797,7 @@
         "away_era": 4.74,
         "home_era": 3.86,
         "away_k_pg": 7.83,
-        "home_k_pg": 9.41
+        "home_k_pg": 9.42
       },
       "strikeouts": {
         "away_exp_k": 2.8,
@@ -20860,7 +20860,7 @@
         "k_edge": null,
         "opp_team": "Detroit Tigers",
         "opp_lineup_k": 22.6,
-        "bullpen_hr9": 0.98
+        "bullpen_hr9": 0.97
       },
       "home_pitcher": {
         "name": "Jack Flaherty",
@@ -25994,7 +25994,7 @@
         "home_hr_pg": 0.87,
         "away_era": 3.96,
         "home_era": 3.96,
-        "away_k_pg": 9.17,
+        "away_k_pg": 9.16,
         "home_k_pg": 8.44
       },
       "strikeouts": {
@@ -31149,14 +31149,14 @@
         "away_exp_hr": 0.536,
         "home_exp_hr": 0.365,
         "total_exp_hr": 0.9,
-        "away_exp_runs": 3.72,
+        "away_exp_runs": 3.76,
         "home_exp_runs": 5.38,
-        "total_exp_runs": 9.1,
+        "total_exp_runs": 9.14,
         "away_runs_pg": 5.02,
-        "home_runs_pg": 3.7,
+        "home_runs_pg": 3.74,
         "away_hr_pg": 1.45,
         "home_hr_pg": 0.8,
-        "away_era": 3.22,
+        "away_era": 3.26,
         "home_era": 3.78,
         "away_k_pg": 8.88,
         "home_k_pg": 9.57
@@ -36340,9 +36340,9 @@
         "home_runs_pg": 4.42,
         "away_hr_pg": 0.89,
         "home_hr_pg": 1.23,
-        "away_era": 3.58,
+        "away_era": 3.57,
         "home_era": 5.34,
-        "away_k_pg": 8.67,
+        "away_k_pg": 8.68,
         "home_k_pg": 8.86
       },
       "strikeouts": {
@@ -41577,7 +41577,7 @@
         "away_era": 3.91,
         "home_era": 4.37,
         "away_k_pg": 8.24,
-        "home_k_pg": 8.07
+        "home_k_pg": 8.06
       },
       "strikeouts": {
         "away_exp_k": 6.2,
@@ -46281,7 +46281,7 @@
         "home_hr_pg": 1.06,
         "away_era": 3.28,
         "home_era": 4.36,
-        "away_k_pg": 9.8,
+        "away_k_pg": 9.78,
         "home_k_pg": 7.7
       },
       "strikeouts": {
@@ -51481,9 +51481,9 @@
         "home_runs_pg": 4.52,
         "away_hr_pg": 0.98,
         "home_hr_pg": 1.11,
-        "away_era": 4.34,
+        "away_era": 4.33,
         "home_era": 4.16,
-        "away_k_pg": 8.54,
+        "away_k_pg": 8.53,
         "home_k_pg": 7.11
       },
       "strikeouts": {
