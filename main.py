@@ -3595,14 +3595,18 @@ async def end_of_day_save(target_date: str, notify_result: bool = True):
     hr_rate  = round(hr_count / len(top100) * 100, 1) if top100 else 0
     print(f"  Top 100: {hr_count} HRs ({hr_rate}%)")
 
-    # Step 5: Save clean predictions file - no nulls, no DNPs, just real outcomes
-    await github_put_file(
+    # Step 5: Save clean predictions file - always get fresh SHA before writing
+    _, pred_sha = await github_get_file(pred_path)
+    saved = await github_put_file(
         pred_path,
         json.dumps(top100, indent=2),
         f"end_of_day: {target_date} | {hr_count}/{len(top100)} HRs ({hr_rate}%)",
-        sha
+        pred_sha
     )
-    print(f"  Saved clean predictions: {len(top100)} records")
+    if saved:
+        print(f"  Saved clean predictions: {len(top100)} records")
+    else:
+        print(f"  ERROR: Failed to save predictions file for {target_date}")
 
     # Step 6: Update top8 file outcomes for dashboard hit rate tracking
     top8_hrs   = "?"
