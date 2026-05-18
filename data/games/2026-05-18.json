@@ -5167,7 +5167,7 @@
       "lineup_home_status": "confirmed",
       "weather": {
         "label": "Slightly In",
-        "temp": 77,
+        "temp": 74,
         "wind_speed": 9,
         "wind_dir": 230,
         "mult": 1.011,
@@ -41735,7 +41735,7 @@
       "lineup_home_status": "confirmed",
       "weather": {
         "label": "Calm",
-        "temp": 56,
+        "temp": 57,
         "wind_speed": 3,
         "wind_dir": 323,
         "mult": 0.96,
@@ -52205,7 +52205,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Blowing In",
-        "temp": 41,
+        "temp": 40,
         "wind_speed": 8,
         "wind_dir": 21,
         "mult": 0.891,
