@@ -57442,7 +57442,7 @@
       "weather": {
         "label": "Out to LF",
         "temp": 62,
-        "wind_speed": 6,
+        "wind_speed": 7,
         "wind_dir": 182,
         "mult": 1.012,
         "wind_angle_cf": -43
@@ -62699,9 +62699,9 @@
         "label": "Calm",
         "temp": 61,
         "wind_speed": 2,
-        "wind_dir": 257,
+        "wind_dir": 276,
         "mult": 1.0,
-        "wind_angle_cf": 122
+        "wind_angle_cf": 141
       },
       "totals": {
         "away_exp_hr": 0.417,
