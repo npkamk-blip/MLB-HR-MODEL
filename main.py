@@ -3131,16 +3131,16 @@ async def save_projected_top100(target_date: str = None):
         # Only write if no top8 file exists yet - confirmed lineups will overwrite later.
 
 
-        # Save games file directly (await not background - too important)
+        # Trigger games file as background task (takes 60s, don't block)
         try:
             games_raw, _ = await github_get_file(f"data/games/{today}.json")
             if not games_raw:
-                await get_games(today, refresh=True)
-                print(f"save_projected_top100: games file saved for {today}")
+                asyncio.create_task(get_games(today, refresh=True))
+                print(f"save_projected_top100: games file triggered for {today}")
             else:
                 print(f"save_projected_top100: games file already exists for {today}")
         except Exception as _ge:
-            print(f"save_projected_top100: games save error: {_ge}")
+            print(f"save_projected_top100: games trigger error: {_ge}")
 
     except Exception as e:
         print(f"save_projected_top100 error: {e}")
