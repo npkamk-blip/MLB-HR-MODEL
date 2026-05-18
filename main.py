@@ -91,6 +91,9 @@ KNOWN_ID_CORRECTIONS = {
 NAME_NORMALIZATIONS = {
     "ronald acuña jr.": "ronald acuna jr.",
     "ronald acuna jr.": "ronald acuna jr.",
+    "vladimir guerrero jr.": "vladimir guerrero jr.",
+    "lourdes gurriel jr.": "lourdes gurriel jr.",
+    "vladimir guerrero": "vladimir guerrero jr.",
 }
 
 PITCH_TYPE_MAP = {
@@ -3497,40 +3500,49 @@ def resolve_outcome(rec, hr_by_id, pa_by_id, hr_by_name, pa_by_name):
       1 = HR,  0 = played no HR,  None = not found in any final boxscore
     """
     mlb_id = rec.get("mlb_id")
-    nl     = rec.get("name", "").lower()
-    last   = nl.split()[-1] if nl else ""
+    raw_name = rec.get("name", "")
+    nl       = raw_name.lower()
 
     # Apply known ID corrections
     if mlb_id and mlb_id in KNOWN_ID_CORRECTIONS:
         mlb_id = KNOWN_ID_CORRECTIONS[mlb_id]
 
-    # Normalize name for accent/special char issues
-    nl = NAME_NORMALIZATIONS.get(nl, nl)
+    # Normalize name - strips accents, Jr., Sr., II, III
+    nl_norm = normalize_name(raw_name)
+    nl      = NAME_NORMALIZATIONS.get(nl, NAME_NORMALIZATIONS.get(nl_norm, nl_norm))
 
-    # 1. MLB player ID — immune to name formatting, Jr., accents, etc.
+    # 1. MLB player ID — most reliable
     if mlb_id and mlb_id in pa_by_id:
         pa  = pa_by_id[mlb_id]
         hit = mlb_id in hr_by_id
         return (1 if hit else 0), pa, "id"
 
-    # 2. Exact lowercase name match
+    # 2. Exact normalized name match
     if nl in pa_by_name:
         pa  = pa_by_name[nl]
         hit = nl in hr_by_name
         return (1 if hit else 0), pa, "name_exact"
 
-    # 3. Last name — only when exactly 1 player has this last name AND
-    #    first name also matches (prevents Greg Jones -> Jahmai Jones)
+    # 3. Last name + first initial (e.g. "v.guerrero")
+    li = name_last_initial(raw_name)
+    li_matches = [k for k in pa_by_name if name_last_initial(k) == li]
+    if len(li_matches) == 1:
+        matched = li_matches[0]
+        pa  = pa_by_name[matched]
+        hit = matched in hr_by_name
+        return (1 if hit else 0), pa, "name_last_initial"
+
+    # 4. Last name only — ONLY if exactly 1 match and first letter matches
+    last  = name_last(raw_name)
     first = nl.split()[0] if nl else ""
-    last_matches = [k for k in pa_by_name if k.split()[-1] == last]
+    last_matches = [k for k in pa_by_name if name_last(k) == last]
     if len(last_matches) == 1:
-        matched = last_matches[0]
+        matched       = last_matches[0]
         matched_first = matched.split()[0] if matched else ""
-        # Require first name to start with same letter at minimum
         if first and matched_first and first[0] == matched_first[0]:
             pa  = pa_by_name[matched]
             hit = matched in hr_by_name
-            print(f"  Last-name match: '{rec.get('name')}' -> '{matched}'")
+            print(f"  Last-name match: '{raw_name}' -> '{matched}'")
             return (1 if hit else 0), pa, "name_last"
 
     return None, 0, "not_found"
