@@ -31,7 +31,7 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 # ─────────────────────────────────────────────
 
 PUSHOVER_TOKEN = "ah1dns17qdi5q5soafnjs8ksy29fcb"
-PUSHOVER_USER  = "utvy26j5q66kae27ncwxsftfcuhi92"
+PUSHOVER_USER  = "tvy26j5q66kae27ncwxsftfcuhi92"
 MLB_API        = "https://statsapi.mlb.com/api/v1"
 GITHUB_TOKEN   = os.environ.get("GITHUB_TOKEN", "")
 GITHUB_REPO    = "npkamk-blip/MLB-HR-MODEL"
