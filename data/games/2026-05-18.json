@@ -5185,9 +5185,9 @@
         "away_hr_pg": 1.02,
         "home_hr_pg": 0.85,
         "away_era": 3.83,
-        "home_era": 4.04,
+        "home_era": 4.03,
         "away_k_pg": 9.35,
-        "home_k_pg": 8.36
+        "home_k_pg": 8.34
       },
       "strikeouts": {
         "away_exp_k": 3.8,
@@ -10410,7 +10410,7 @@
         "k_edge": null,
         "opp_team": "Miami Marlins",
         "opp_lineup_k": 22.9,
-        "bullpen_hr9": 1.0
+        "bullpen_hr9": 0.99
       },
       "home_pitcher": {
         "name": "Max Meyer",
@@ -15508,7 +15508,7 @@
         "home_runs_pg": 4.44,
         "away_hr_pg": 1.38,
         "home_hr_pg": 0.79,
-        "away_era": 3.16,
+        "away_era": 3.15,
         "home_era": 4.16,
         "away_k_pg": 8.81,
         "home_k_pg": 8.51
@@ -20727,7 +20727,7 @@
         "away_hr_pg": 0.85,
         "home_hr_pg": 1.19,
         "away_era": 3.78,
-        "home_era": 4.93,
+        "home_era": 4.92,
         "away_k_pg": 9.53,
         "home_k_pg": 7.85
       },
@@ -31160,9 +31160,9 @@
         "home_runs_pg": 3.96,
         "away_hr_pg": 0.72,
         "home_hr_pg": 0.96,
-        "away_era": 3.77,
+        "away_era": 3.76,
         "home_era": 4.27,
-        "away_k_pg": 8.3,
+        "away_k_pg": 8.29,
         "home_k_pg": 8.49
       },
       "strikeouts": {
@@ -46744,9 +46744,9 @@
         "home_runs_pg": 4.19,
         "away_hr_pg": 0.89,
         "home_hr_pg": 0.92,
-        "away_era": 3.58,
+        "away_era": 3.57,
         "home_era": 4.91,
-        "away_k_pg": 8.72,
+        "away_k_pg": 8.71,
         "home_k_pg": 7.59
       },
       "strikeouts": {
