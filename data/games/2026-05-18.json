@@ -10404,7 +10404,7 @@
         "home_hr_pg": 1.19,
         "away_era": 3.79,
         "home_era": 4.89,
-        "away_k_pg": 9.53,
+        "away_k_pg": 9.54,
         "home_k_pg": 7.83
       },
       "strikeouts": {
@@ -15671,7 +15671,7 @@
         "away_era": 4.04,
         "home_era": 3.34,
         "away_k_pg": 9.08,
-        "home_k_pg": 8.88
+        "home_k_pg": 8.89
       },
       "strikeouts": {
         "away_exp_k": 3.1,
@@ -26133,9 +26133,9 @@
         "away_hr_pg": 0.71,
         "home_hr_pg": 1.21,
         "away_era": 3.31,
-        "home_era": 4.12,
+        "home_era": 4.11,
         "away_k_pg": 9.79,
-        "home_k_pg": 8.16
+        "home_k_pg": 8.14
       },
       "strikeouts": {
         "away_exp_k": 5.3,
@@ -31253,9 +31253,9 @@
         "away_hr_pg": 0.89,
         "home_hr_pg": 0.92,
         "away_era": 3.56,
-        "home_era": 4.89,
+        "home_era": 4.88,
         "away_k_pg": 8.72,
-        "home_k_pg": 7.58
+        "home_k_pg": 7.57
       },
       "strikeouts": {
         "away_exp_k": 5.0,
@@ -41787,7 +41787,7 @@
         "k_edge": null,
         "opp_team": "San Francisco Giants",
         "opp_lineup_k": 22.9,
-        "bullpen_hr9": 1.14
+        "bullpen_hr9": 1.13
       },
       "top_hr_candidates": [
         {
@@ -41795,7 +41795,7 @@
           "team": "Arizona Diamondbacks",
           "hr_prob": 21.6,
           "xgb_prob": 21.6,
-          "rf_prob": 3.0,
+          "rf_prob": 2.9,
           "archetype": "Contact",
           "trend": "Cooling Off",
           "confidence": "High",
@@ -41923,8 +41923,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.077,
             "pull_s": 52.2,
             "pit_modifier": 1.592,
@@ -42064,8 +42064,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.054,
             "pull_s": 43.3,
             "pit_modifier": 1.592,
@@ -42207,8 +42207,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.241,
             "pull_s": 46.8,
             "pit_modifier": 1.138,
@@ -42350,8 +42350,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.5,
             "pull_s": 47.1,
             "pit_modifier": 1.349,
@@ -42492,8 +42492,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.1,
             "pull_s": 38.1,
             "pit_modifier": 1.592,
@@ -42633,8 +42633,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.117,
             "pull_s": 35.1,
             "pit_modifier": 1.592,
@@ -42774,8 +42774,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.17,
             "pull_s": 27.9,
             "pit_modifier": 0.978,
@@ -42915,8 +42915,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.156,
             "pull_s": 52.0,
             "pit_modifier": 1.349,
@@ -43056,8 +43056,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.136,
             "pull_s": 60.0,
             "pit_modifier": 0.978,
@@ -43069,7 +43069,7 @@
           "team": "Arizona Diamondbacks",
           "hr_prob": 1.7,
           "xgb_prob": 1.7,
-          "rf_prob": 4.7,
+          "rf_prob": 4.6,
           "archetype": "Contact",
           "trend": "Steady",
           "confidence": "High",
@@ -43197,8 +43197,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.143,
             "pull_s": 44.2,
             "pit_modifier": 1.592,
@@ -43338,8 +43338,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.136,
             "pull_s": 39.1,
             "pit_modifier": 1.592,
@@ -43480,8 +43480,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.347,
             "pull_s": 42.8,
             "pit_modifier": 1.592,
@@ -43623,8 +43623,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.283,
             "pull_s": 46.0,
             "pit_modifier": 1.349,
@@ -43764,8 +43764,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.167,
             "pull_s": 43.3,
             "pit_modifier": 1.592,
@@ -43905,8 +43905,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.152,
             "pull_s": 47.0,
             "pit_modifier": 1.349,
@@ -44046,8 +44046,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.078,
             "pull_s": 42.1,
             "pit_modifier": 1.349,
@@ -44187,8 +44187,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.135,
             "pull_s": 34.4,
             "pit_modifier": 0.978,
@@ -44328,8 +44328,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.09,
             "pull_s": 32.0,
             "pit_modifier": 0.978,
@@ -44471,8 +44471,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.135,
             "pull_s": 34.4,
             "pit_modifier": 0.978,
@@ -44612,8 +44612,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.09,
             "pull_s": 32.0,
             "pit_modifier": 0.978,
@@ -44755,8 +44755,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.283,
             "pull_s": 46.0,
             "pit_modifier": 1.349,
@@ -44896,8 +44896,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.17,
             "pull_s": 27.9,
             "pit_modifier": 0.978,
@@ -45037,8 +45037,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.152,
             "pull_s": 47.0,
             "pit_modifier": 1.349,
@@ -45178,8 +45178,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.078,
             "pull_s": 42.1,
             "pit_modifier": 1.349,
@@ -45319,8 +45319,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.136,
             "pull_s": 60.0,
             "pit_modifier": 0.978,
@@ -45460,8 +45460,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.156,
             "pull_s": 52.0,
             "pit_modifier": 1.349,
@@ -45603,8 +45603,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.5,
             "pull_s": 47.1,
             "pit_modifier": 1.349,
@@ -45618,7 +45618,7 @@
           "team": "Arizona Diamondbacks",
           "hr_prob": 21.6,
           "xgb_prob": 21.6,
-          "rf_prob": 3.0,
+          "rf_prob": 2.9,
           "archetype": "Contact",
           "trend": "Cooling Off",
           "confidence": "High",
@@ -45746,8 +45746,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.077,
             "pull_s": 52.2,
             "pit_modifier": 1.592,
@@ -45889,8 +45889,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.241,
             "pull_s": 46.8,
             "pit_modifier": 1.138,
@@ -46030,8 +46030,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.167,
             "pull_s": 43.3,
             "pit_modifier": 1.592,
@@ -46043,7 +46043,7 @@
           "team": "Arizona Diamondbacks",
           "hr_prob": 1.7,
           "xgb_prob": 1.7,
-          "rf_prob": 4.7,
+          "rf_prob": 4.6,
           "archetype": "Contact",
           "trend": "Steady",
           "confidence": "High",
@@ -46171,8 +46171,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.143,
             "pull_s": 44.2,
             "pit_modifier": 1.592,
@@ -46313,8 +46313,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.347,
             "pull_s": 42.8,
             "pit_modifier": 1.592,
@@ -46454,8 +46454,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.136,
             "pull_s": 39.1,
             "pit_modifier": 1.592,
@@ -46595,8 +46595,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.054,
             "pull_s": 43.3,
             "pit_modifier": 1.592,
@@ -46736,8 +46736,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.117,
             "pull_s": 35.1,
             "pit_modifier": 1.592,
@@ -46878,8 +46878,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.14,
-            "bullpen_vuln": 0.912,
+            "bullpen_hr9": 1.13,
+            "bullpen_vuln": 0.897,
             "iso_use": 0.1,
             "pull_s": 38.1,
             "pit_modifier": 1.592,
@@ -46911,7 +46911,7 @@
         "away_era": 3.97,
         "home_era": 4.38,
         "away_k_pg": 8.02,
-        "home_k_pg": 7.56
+        "home_k_pg": 7.57
       },
       "strikeouts": {
         "away_exp_k": 4.7,
