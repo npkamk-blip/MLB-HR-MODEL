@@ -10335,7 +10335,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Slightly In",
-        "temp": 85,
+        "temp": 86,
         "wind_speed": 15,
         "wind_dir": 230,
         "mult": 1.039,
@@ -25895,7 +25895,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Slightly In",
-        "temp": 93,
+        "temp": 95,
         "wind_speed": 13,
         "wind_dir": 276,
         "mult": 1.038,
@@ -41525,7 +41525,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Blowing In",
-        "temp": 47,
+        "temp": 48,
         "wind_speed": 9,
         "wind_dir": 311,
         "mult": 0.892,
@@ -51871,7 +51871,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Blowing In",
-        "temp": 74,
+        "temp": 71,
         "wind_speed": 6,
         "wind_dir": 332,
         "mult": 1.008,
