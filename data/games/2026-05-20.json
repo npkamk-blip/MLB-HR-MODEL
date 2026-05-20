@@ -5217,9 +5217,9 @@
         "away_hr_pg": 1.24,
         "home_hr_pg": 1.2,
         "away_era": 4.69,
-        "home_era": 4.26,
+        "home_era": 4.25,
         "away_k_pg": 7.85,
-        "home_k_pg": 9.55
+        "home_k_pg": 9.56
       },
       "strikeouts": {
         "away_exp_k": 3.4,
@@ -10386,9 +10386,9 @@
         "home_runs_pg": 4.75,
         "away_hr_pg": 1.08,
         "home_hr_pg": 0.85,
-        "away_era": 4.92,
+        "away_era": 4.91,
         "home_era": 3.59,
-        "away_k_pg": 8.37,
+        "away_k_pg": 8.38,
         "home_k_pg": 7.84
       },
       "strikeouts": {
@@ -10452,7 +10452,7 @@
         "k_edge": null,
         "opp_team": "Minnesota Twins",
         "opp_lineup_k": 24.5,
-        "bullpen_hr9": 1.35
+        "bullpen_hr9": 1.34
       },
       "home_pitcher": {
         "name": "Joe Ryan",
@@ -15618,9 +15618,9 @@
         "home_runs_pg": 4.54,
         "away_hr_pg": 1.18,
         "home_hr_pg": 1.08,
-        "away_era": 5.34,
+        "away_era": 5.33,
         "home_era": 4.25,
-        "away_k_pg": 8.73,
+        "away_k_pg": 8.74,
         "home_k_pg": 7.74
       },
       "strikeouts": {
@@ -46424,7 +46424,7 @@
       "lineup_home_status": "confirmed",
       "weather": {
         "label": "Blowing In",
-        "temp": 82,
+        "temp": 96,
         "wind_speed": 22,
         "wind_dir": 292,
         "mult": 1.015,
@@ -51650,7 +51650,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Blowing In",
-        "temp": 87,
+        "temp": 90,
         "wind_speed": 13,
         "wind_dir": 309,
         "mult": 1.026,
@@ -61906,7 +61906,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Blowing In",
-        "temp": 53,
+        "temp": 52,
         "wind_speed": 13,
         "wind_dir": 7,
         "mult": 0.91,
@@ -77574,7 +77574,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Calm",
-        "temp": 72,
+        "temp": 71,
         "wind_speed": 4,
         "wind_dir": 186,
         "mult": 1.02,
