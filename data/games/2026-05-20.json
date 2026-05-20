@@ -5266,7 +5266,7 @@
         "k_edge": null,
         "opp_team": "Tampa Bay Rays",
         "opp_lineup_k": 20.1,
-        "bullpen_hr9": 1.25
+        "bullpen_hr9": 1.24
       },
       "home_pitcher": {
         "name": "Steven Matz",
@@ -10390,7 +10390,7 @@
         "home_hr_pg": 0.85,
         "away_era": 4.94,
         "home_era": 3.57,
-        "away_k_pg": 8.34,
+        "away_k_pg": 8.36,
         "home_k_pg": 7.83
       },
       "strikeouts": {
@@ -15620,9 +15620,9 @@
         "home_runs_pg": 4.52,
         "away_hr_pg": 1.18,
         "home_hr_pg": 1.06,
-        "away_era": 5.35,
+        "away_era": 5.34,
         "home_era": 4.27,
-        "away_k_pg": 8.77,
+        "away_k_pg": 8.76,
         "home_k_pg": 7.69
       },
       "strikeouts": {
