@@ -66649,7 +66649,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Calm",
-        "temp": 67,
+        "temp": 64,
         "wind_speed": 3,
         "wind_dir": 355,
         "mult": 1.0,
@@ -77139,7 +77139,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Out to LF",
-        "temp": 66,
+        "temp": 69,
         "wind_speed": 8,
         "wind_dir": 186,
         "mult": 1.011,
