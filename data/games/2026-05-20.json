@@ -44,7 +44,7 @@
         "k_edge": null,
         "opp_team": "Philadelphia Phillies",
         "opp_lineup_k": 22.3,
-        "bullpen_hr9": 1.37
+        "bullpen_hr9": 1.36
       },
       "home_pitcher": {
         "name": "Aaron Nola",
@@ -5216,9 +5216,9 @@
         "home_runs_pg": 4.14,
         "away_hr_pg": 1.24,
         "home_hr_pg": 1.22,
-        "away_era": 4.71,
+        "away_era": 4.7,
         "home_era": 4.25,
-        "away_k_pg": 7.85,
+        "away_k_pg": 7.84,
         "home_k_pg": 9.56
       },
       "strikeouts": {
@@ -10389,7 +10389,7 @@
         "away_era": 4.91,
         "home_era": 3.59,
         "away_k_pg": 8.37,
-        "home_k_pg": 7.83
+        "home_k_pg": 7.82
       },
       "strikeouts": {
         "away_exp_k": 4.3,
@@ -10452,7 +10452,7 @@
         "k_edge": null,
         "opp_team": "Minnesota Twins",
         "opp_lineup_k": 24.5,
-        "bullpen_hr9": 1.34
+        "bullpen_hr9": 1.36
       },
       "home_pitcher": {
         "name": "Joe Ryan",
@@ -15611,14 +15611,14 @@
         "away_exp_hr": 0.305,
         "home_exp_hr": 0.636,
         "total_exp_hr": 0.94,
-        "away_exp_runs": 3.98,
+        "away_exp_runs": 4.04,
         "home_exp_runs": 4.43,
-        "total_exp_runs": 8.41,
+        "total_exp_runs": 8.47,
         "away_runs_pg": 4.27,
-        "home_runs_pg": 4.54,
+        "home_runs_pg": 4.6,
         "away_hr_pg": 1.18,
-        "home_hr_pg": 1.08,
-        "away_era": 5.33,
+        "home_hr_pg": 1.1,
+        "away_era": 5.4,
         "home_era": 4.25,
         "away_k_pg": 8.74,
         "home_k_pg": 7.74
