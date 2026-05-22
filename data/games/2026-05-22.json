@@ -404,7 +404,7 @@
             "hr": 15
           },
           "l8d": {
-            "pa": 40,
+            "pa": 41,
             "barrel": 9.1,
             "ev": 85.9,
             "la": 34.0,
@@ -413,7 +413,7 @@
             "slg": 0.469,
             "avg": 0.25,
             "pull": 25.0,
-            "k_pct": 20.0,
+            "k_pct": 19.5,
             "xslg": 0.568,
             "xwoba": 0.339,
             "bat_speed": 77.0
@@ -466,7 +466,7 @@
             "barrel_8d_raw": 9.1,
             "hr_season": 15,
             "pa_season": 221,
-            "pa_8d": 40,
+            "pa_8d": 41,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 16.3,
@@ -512,7 +512,7 @@
             "iso_use": 0.291,
             "pull_s": 46.0,
             "pit_modifier": 1.775,
-            "hr_rate_8d": 30.0
+            "hr_rate_8d": 29.3
           }
         },
         {
@@ -1109,16 +1109,16 @@
             "hr": 0
           },
           "l8d": {
-            "pa": 43,
+            "pa": 44,
             "barrel": 0.0,
             "ev": 77.7,
             "la": 28.0,
             "hh": 10.5,
-            "iso": 0.077,
-            "slg": 0.359,
-            "avg": 0.282,
+            "iso": 0.075,
+            "slg": 0.35,
+            "avg": 0.275,
             "pull": 33.3,
-            "k_pct": 14.0,
+            "k_pct": 13.6,
             "xslg": 0.305,
             "xwoba": 0.227,
             "bat_speed": 70.7
@@ -1171,7 +1171,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 0,
             "pa_season": 59,
-            "pa_8d": 43,
+            "pa_8d": 44,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.3,
@@ -1392,7 +1392,7 @@
             "hr": 5
           },
           "l8d": {
-            "pa": 42,
+            "pa": 43,
             "barrel": 4.8,
             "ev": 84.4,
             "la": 32.8,
@@ -1401,7 +1401,7 @@
             "slg": 0.359,
             "avg": 0.205,
             "pull": 46.2,
-            "k_pct": 21.4,
+            "k_pct": 20.9,
             "xslg": 0.411,
             "xwoba": 0.271,
             "bat_speed": 66.0
@@ -1454,7 +1454,7 @@
             "barrel_8d_raw": 4.8,
             "hr_season": 5,
             "pa_season": 186,
-            "pa_8d": 42,
+            "pa_8d": 43,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.7,
@@ -1500,7 +1500,7 @@
             "iso_use": 0.141,
             "pull_s": 55.0,
             "pit_modifier": 1.724,
-            "hr_rate_8d": 28.6
+            "hr_rate_8d": 27.9
           }
         },
         {
@@ -2653,16 +2653,16 @@
             "hr": 0
           },
           "l8d": {
-            "pa": 43,
+            "pa": 44,
             "barrel": 0.0,
             "ev": 77.7,
             "la": 28.0,
             "hh": 10.5,
-            "iso": 0.077,
-            "slg": 0.359,
-            "avg": 0.282,
+            "iso": 0.075,
+            "slg": 0.35,
+            "avg": 0.275,
             "pull": 33.3,
-            "k_pct": 14.0,
+            "k_pct": 13.6,
             "xslg": 0.305,
             "xwoba": 0.227,
             "bat_speed": 70.7
@@ -2715,7 +2715,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 0,
             "pa_season": 59,
-            "pa_8d": 43,
+            "pa_8d": 44,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.3,
@@ -2794,7 +2794,7 @@
             "hr": 5
           },
           "l8d": {
-            "pa": 42,
+            "pa": 43,
             "barrel": 4.8,
             "ev": 84.4,
             "la": 32.8,
@@ -2803,7 +2803,7 @@
             "slg": 0.359,
             "avg": 0.205,
             "pull": 46.2,
-            "k_pct": 21.4,
+            "k_pct": 20.9,
             "xslg": 0.411,
             "xwoba": 0.271,
             "bat_speed": 66.0
@@ -2856,7 +2856,7 @@
             "barrel_8d_raw": 4.8,
             "hr_season": 5,
             "pa_season": 186,
-            "pa_8d": 42,
+            "pa_8d": 43,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.7,
@@ -2902,7 +2902,7 @@
             "iso_use": 0.141,
             "pull_s": 55.0,
             "pit_modifier": 1.724,
-            "hr_rate_8d": 28.6
+            "hr_rate_8d": 27.9
           }
         },
         {
@@ -2937,7 +2937,7 @@
             "hr": 15
           },
           "l8d": {
-            "pa": 40,
+            "pa": 41,
             "barrel": 9.1,
             "ev": 85.9,
             "la": 34.0,
@@ -2946,7 +2946,7 @@
             "slg": 0.469,
             "avg": 0.25,
             "pull": 25.0,
-            "k_pct": 20.0,
+            "k_pct": 19.5,
             "xslg": 0.568,
             "xwoba": 0.339,
             "bat_speed": 77.0
@@ -2999,7 +2999,7 @@
             "barrel_8d_raw": 9.1,
             "hr_season": 15,
             "pa_season": 221,
-            "pa_8d": 40,
+            "pa_8d": 41,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 16.3,
@@ -3045,7 +3045,7 @@
             "iso_use": 0.291,
             "pull_s": 46.0,
             "pit_modifier": 1.775,
-            "hr_rate_8d": 30.0
+            "hr_rate_8d": 29.3
           }
         },
         {
