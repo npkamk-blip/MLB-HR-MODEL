@@ -46576,11 +46576,11 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Calm",
-        "temp": 79,
-        "wind_speed": 4,
-        "wind_dir": 180,
+        "temp": 70,
+        "wind_speed": 0,
+        "wind_dir": 0,
         "mult": 1.02,
-        "wind_angle_cf": -135
+        "wind_angle_cf": 45
       },
       "totals": {
         "away_exp_hr": 0.585,
