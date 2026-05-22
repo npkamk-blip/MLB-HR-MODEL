@@ -49,11 +49,11 @@
       "home_pitcher": {
         "name": "Jameson Taillon",
         "hand": "R",
-        "era": 4.78,
-        "hr9": 2.73,
+        "era": 4.86,
+        "hr9": 2.85,
         "hard_hit_pct": 36.2,
         "barrel_pct": 14.8,
-        "ip_2026": 52.2,
+        "ip_2026": 53.2,
         "blend_note": "100% 2026",
         "vs_L_hr9": 3.7,
         "vs_R_hr9": 2.08,
@@ -78,9 +78,9 @@
           }
         ],
         "k9": 7.7,
-        "avg_ip": 5.2,
+        "avg_ip": 5.3,
         "gs": 10,
-        "exp_k": 4.3,
+        "exp_k": 4.4,
         "k_prop": null,
         "k_edge": null,
         "opp_team": "Houston Astros",
@@ -93,14 +93,14 @@
           "team": "Houston Astros",
           "hr_prob": 44.2,
           "xgb_prob": 44.2,
-          "rf_prob": 16.1,
+          "rf_prob": 16.2,
           "archetype": "Boom/Bust",
           "trend": "Steady",
           "confidence": "Medium",
           "reasons": [
             "Barrel 20.0%",
             "ISO vs hand .263",
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "L",
@@ -149,7 +149,7 @@
             "base_rate": 5.81,
             "barrel_mult": 2.258,
             "la_mult": 0.626,
-            "pit_vuln_mult": 1.769,
+            "pit_vuln_mult": 1.787,
             "bat_platoon_mult": 1.069,
             "pit_platoon_mult": 1.163,
             "park_factor": 1.12,
@@ -170,7 +170,7 @@
             "split_iso": 0.263,
             "split_ip": 24.1,
             "hr9_split": 3.7,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -227,7 +227,7 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.263,
             "pull_s": 52.0,
-            "pit_modifier": 1.769,
+            "pit_modifier": 1.787,
             "hr_rate_8d": 20.0
           }
         },
@@ -242,7 +242,7 @@
           "confidence": "High",
           "reasons": [
             "ISO vs hand .239",
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "L",
@@ -291,7 +291,7 @@
             "base_rate": 4.72,
             "barrel_mult": 0.582,
             "la_mult": 0.626,
-            "pit_vuln_mult": 1.769,
+            "pit_vuln_mult": 1.787,
             "bat_platoon_mult": 1.103,
             "pit_platoon_mult": 1.163,
             "park_factor": 1.12,
@@ -312,7 +312,7 @@
             "split_iso": 0.239,
             "split_ip": 24.1,
             "hr9_split": 3.7,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -369,7 +369,7 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.239,
             "pull_s": 28.9,
-            "pit_modifier": 1.769,
+            "pit_modifier": 1.787,
             "hr_rate_8d": 0.0
           }
         },
@@ -378,13 +378,13 @@
           "team": "Houston Astros",
           "hr_prob": 15.2,
           "xgb_prob": 15.2,
-          "rf_prob": 4.4,
+          "rf_prob": 4.5,
           "archetype": "Boom/Bust",
           "trend": "Cooling Off",
           "confidence": "High",
           "reasons": [
             "Barrel 13.8%",
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "R",
@@ -433,7 +433,7 @@
             "base_rate": 2.16,
             "barrel_mult": 1.915,
             "la_mult": 0.728,
-            "pit_vuln_mult": 1.659,
+            "pit_vuln_mult": 1.677,
             "bat_platoon_mult": 1.024,
             "pit_platoon_mult": 0.84,
             "park_factor": 1.1,
@@ -454,7 +454,7 @@
             "split_iso": 0.118,
             "split_ip": 26.0,
             "hr9_split": 2.08,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -511,23 +511,23 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.118,
             "pull_s": 30.0,
-            "pit_modifier": 1.659,
+            "pit_modifier": 1.677,
             "hr_rate_8d": 0.0
           }
         },
         {
           "name": "Yordan Alvarez",
           "team": "Houston Astros",
-          "hr_prob": 11.8,
-          "xgb_prob": 11.8,
-          "rf_prob": 23.0,
+          "hr_prob": 12.8,
+          "xgb_prob": 12.8,
+          "rf_prob": 23.2,
           "archetype": "Pure Power",
           "trend": "Steady",
           "confidence": "High",
           "reasons": [
             "Barrel 17.4%",
             "ISO vs hand .291",
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "L",
@@ -547,26 +547,26 @@
             "hr": 15
           },
           "l8d": {
-            "pa": 37,
+            "pa": 38,
             "barrel": 9.1,
             "ev": 85.9,
             "la": 34.0,
             "hh": 31.8,
-            "iso": 0.234,
-            "slg": 0.467,
-            "avg": 0.233,
+            "iso": 0.226,
+            "slg": 0.452,
+            "avg": 0.226,
             "pull": 25.0,
-            "k_pct": 21.6,
+            "k_pct": 21.1,
             "xslg": 0.568,
             "xwoba": 0.339,
             "bat_speed": 77.0
           },
           "l5g": {
-            "ab": 30,
+            "ab": 31,
             "hr": 2,
-            "slg": 0.467,
-            "avg": 0.233,
-            "iso": 0.234
+            "slg": 0.452,
+            "avg": 0.226,
+            "iso": 0.226
           },
           "dk_odds": null,
           "projected": false,
@@ -576,7 +576,7 @@
             "base_rate": 6.79,
             "barrel_mult": 1.954,
             "la_mult": 0.844,
-            "pit_vuln_mult": 1.769,
+            "pit_vuln_mult": 1.787,
             "bat_platoon_mult": 0.98,
             "pit_platoon_mult": 1.163,
             "park_factor": 1.12,
@@ -597,7 +597,7 @@
             "split_iso": 0.291,
             "split_ip": 24.1,
             "hr9_split": 3.7,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -609,7 +609,7 @@
             "barrel_8d_raw": 9.1,
             "hr_season": 15,
             "pa_season": 221,
-            "pa_8d": 37,
+            "pa_8d": 38,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 16.3,
@@ -654,8 +654,8 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.291,
             "pull_s": 46.0,
-            "pit_modifier": 1.769,
-            "hr_rate_8d": 32.4
+            "pit_modifier": 1.787,
+            "hr_rate_8d": 31.6
           }
         },
         {
@@ -668,7 +668,7 @@
           "trend": "Steady",
           "confidence": "High",
           "reasons": [
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "R",
@@ -717,7 +717,7 @@
             "base_rate": 2.2,
             "barrel_mult": 1.742,
             "la_mult": 0.728,
-            "pit_vuln_mult": 1.659,
+            "pit_vuln_mult": 1.677,
             "bat_platoon_mult": 1.154,
             "pit_platoon_mult": 0.84,
             "park_factor": 1.1,
@@ -738,7 +738,7 @@
             "split_iso": 0.148,
             "split_ip": 26.0,
             "hr9_split": 2.08,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -795,8 +795,149 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.148,
             "pull_s": 35.3,
-            "pit_modifier": 1.659,
+            "pit_modifier": 1.677,
             "hr_rate_8d": 17.6
+          }
+        },
+        {
+          "name": "Christian V\u00e1zquez",
+          "team": "Houston Astros",
+          "hr_prob": 1.5,
+          "xgb_prob": 1.5,
+          "rf_prob": 1.5,
+          "archetype": "Contact",
+          "trend": "Steady",
+          "confidence": "High",
+          "reasons": [
+            "SP 2.9 HR/9"
+          ],
+          "opp_pitcher": "Jameson Taillon",
+          "bat_hand": "R",
+          "opp_p_hand": "R",
+          "park_factor": 1.1,
+          "l8d_hr_count": 0,
+          "season": {
+            "barrel": 2.7,
+            "ev": 87.5,
+            "la": 11.1,
+            "hh": 28.0,
+            "iso": 0.146,
+            "slg": 0.393,
+            "avg": 0.247,
+            "k": 16.0,
+            "pull": 38.7,
+            "hr": 3
+          },
+          "l8d": {
+            "pa": 27,
+            "barrel": 0.0,
+            "ev": 88.0,
+            "la": 9.4,
+            "hh": 21.4,
+            "iso": 0.13,
+            "slg": 0.304,
+            "avg": 0.174,
+            "pull": 9.1,
+            "k_pct": 7.4,
+            "xslg": 0.421,
+            "xwoba": 0.312,
+            "bat_speed": 63.4
+          },
+          "l5g": {
+            "ab": 0,
+            "hr": 0,
+            "slg": 0,
+            "avg": 0,
+            "iso": 0
+          },
+          "dk_odds": null,
+          "projected": false,
+          "platoon_tag": null,
+          "contact_log": [],
+          "breakdown": {
+            "base_rate": 3.0,
+            "barrel_mult": 0.58,
+            "la_mult": 0.626,
+            "pit_vuln_mult": 1.677,
+            "bat_platoon_mult": 0.938,
+            "pit_platoon_mult": 0.84,
+            "park_factor": 1.1,
+            "weather_mult": 0.993,
+            "hot_cold_mult": 0.85,
+            "k_mult": 1.0,
+            "iso_vs_hand": 0.13,
+            "iso_overall": 0.146,
+            "split_pa": 79.0,
+            "split_ip_vs_bat": 26.0,
+            "slg_vs_bat": 0.442,
+            "pit_slg_overall": 0.518,
+            "split_hr": 2,
+            "split_slg": 0.362,
+            "split_woba": 0.321,
+            "split_k_pct": 16.5,
+            "split_brl": 0.0,
+            "split_iso": 0.13,
+            "split_ip": 26.0,
+            "hr9_split": 2.08,
+            "hr9_season": 2.85,
+            "pit_hard": 36.2,
+            "n_pit_components": 3,
+            "pit_blend_note": "100% 2026",
+            "barrel_use": 2.7,
+            "barrel_season": 2.7,
+            "la_use": 11.1,
+            "la_season": 11.1,
+            "la_8d_raw": 9.4,
+            "barrel_8d_raw": 0.0,
+            "hr_season": 3,
+            "pa_season": 100,
+            "pa_8d": 27,
+            "has_8d": true,
+            "blend_note": "100% 2026 + 8d",
+            "k_season": 16.0,
+            "pitch_bonus": -1.37,
+            "pitch_breakdown": [
+              {
+                "name": "4-Seam Fastball",
+                "usage": 42.6,
+                "pit_rv": -0.9,
+                "bat_rv": 0.4,
+                "combined": -0.12,
+                "bonus": -0.08
+              },
+              {
+                "name": "Cutter",
+                "usage": 33.8,
+                "pit_rv": -1.5,
+                "bat_rv": -2.6,
+                "combined": -2.16,
+                "bonus": -1.1
+              },
+              {
+                "name": "Changeup",
+                "usage": 23.6,
+                "pit_rv": -3.8,
+                "bat_rv": 1.6,
+                "combined": -0.56,
+                "bonus": -0.2
+              }
+            ],
+            "data_conf": {
+              "barrel": 1,
+              "la": 1,
+              "pit_hr9": 1,
+              "pit_hr9_hand": 1,
+              "iso_vs_hand": 1,
+              "park": 1,
+              "pitch_delta": 1,
+              "bat_platoon": 1
+            },
+            "bullpen_hr9": 1.37,
+            "bullpen_vuln": 1.27,
+            "iso_use": 0.13,
+            "pull_s": 38.7,
+            "pit_modifier": 1.677,
+            "hr_rate_8d": 22.2
           }
         },
         {
@@ -809,7 +950,7 @@
           "trend": "Steady",
           "confidence": "High",
           "reasons": [
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "R",
@@ -829,16 +970,16 @@
             "hr": 0
           },
           "l8d": {
-            "pa": 40,
+            "pa": 41,
             "barrel": 0.0,
             "ev": 77.7,
             "la": 28.0,
             "hh": 10.5,
-            "iso": 0.083,
-            "slg": 0.389,
-            "avg": 0.306,
+            "iso": 0.081,
+            "slg": 0.378,
+            "avg": 0.297,
             "pull": 33.3,
-            "k_pct": 12.5,
+            "k_pct": 14.6,
             "xslg": 0.305,
             "xwoba": 0.227,
             "bat_speed": 70.7
@@ -858,7 +999,7 @@
             "base_rate": 2.8,
             "barrel_mult": 0.58,
             "la_mult": 0.92,
-            "pit_vuln_mult": 1.659,
+            "pit_vuln_mult": 1.677,
             "bat_platoon_mult": 0.97,
             "pit_platoon_mult": 0.84,
             "park_factor": 1.1,
@@ -879,7 +1020,7 @@
             "split_iso": 0.07,
             "split_ip": 26.0,
             "hr9_split": 2.08,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -891,7 +1032,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 0,
             "pa_season": 59,
-            "pa_8d": 40,
+            "pa_8d": 41,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.3,
@@ -936,7 +1077,7 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.07,
             "pull_s": 43.5,
-            "pit_modifier": 1.659,
+            "pit_modifier": 1.677,
             "hr_rate_8d": 0.0
           }
         },
@@ -950,7 +1091,7 @@
           "trend": "Heating Up",
           "confidence": "High",
           "reasons": [
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "R",
@@ -970,26 +1111,26 @@
             "hr": 5
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 4.8,
             "ev": 84.4,
             "la": 32.8,
             "hh": 19.0,
-            "iso": 0.167,
-            "slg": 0.361,
-            "avg": 0.194,
+            "iso": 0.162,
+            "slg": 0.351,
+            "avg": 0.189,
             "pull": 46.2,
-            "k_pct": 23.1,
+            "k_pct": 22.5,
             "xslg": 0.411,
             "xwoba": 0.271,
             "bat_speed": 66.0
           },
           "l5g": {
-            "ab": 36,
+            "ab": 37,
             "hr": 2,
-            "slg": 0.361,
-            "avg": 0.194,
-            "iso": 0.167
+            "slg": 0.351,
+            "avg": 0.189,
+            "iso": 0.162
           },
           "dk_odds": null,
           "projected": false,
@@ -999,7 +1140,7 @@
             "base_rate": 2.69,
             "barrel_mult": 0.434,
             "la_mult": 1.0,
-            "pit_vuln_mult": 1.659,
+            "pit_vuln_mult": 1.677,
             "bat_platoon_mult": 1.028,
             "pit_platoon_mult": 0.84,
             "park_factor": 1.1,
@@ -1020,7 +1161,7 @@
             "split_iso": 0.141,
             "split_ip": 26.0,
             "hr9_split": 2.08,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -1032,7 +1173,7 @@
             "barrel_8d_raw": 4.8,
             "hr_season": 5,
             "pa_season": 186,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.7,
@@ -1077,8 +1218,8 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.141,
             "pull_s": 55.0,
-            "pit_modifier": 1.659,
-            "hr_rate_8d": 30.8
+            "pit_modifier": 1.677,
+            "hr_rate_8d": 30.0
           }
         },
         {
@@ -1086,13 +1227,13 @@
           "team": "Houston Astros",
           "hr_prob": 0.9,
           "xgb_prob": 0.9,
-          "rf_prob": 9.7,
+          "rf_prob": 9.8,
           "archetype": "Pure Power",
           "trend": "Steady",
           "confidence": "High",
           "reasons": [
             "ISO vs hand .240",
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "R",
@@ -1141,7 +1282,7 @@
             "base_rate": 5.34,
             "barrel_mult": 1.502,
             "la_mult": 0.807,
-            "pit_vuln_mult": 1.659,
+            "pit_vuln_mult": 1.677,
             "bat_platoon_mult": 1.014,
             "pit_platoon_mult": 0.84,
             "park_factor": 1.1,
@@ -1162,7 +1303,7 @@
             "split_iso": 0.24,
             "split_ip": 26.0,
             "hr9_split": 2.08,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -1219,149 +1360,8 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.24,
             "pull_s": 41.4,
-            "pit_modifier": 1.659,
+            "pit_modifier": 1.677,
             "hr_rate_8d": 33.3
-          }
-        },
-        {
-          "name": "Christian V\u00e1zquez",
-          "team": "Houston Astros",
-          "hr_prob": 0.9,
-          "xgb_prob": 0.9,
-          "rf_prob": 1.5,
-          "archetype": "Contact",
-          "trend": "Steady",
-          "confidence": "High",
-          "reasons": [
-            "SP 2.7 HR/9"
-          ],
-          "opp_pitcher": "Jameson Taillon",
-          "bat_hand": "R",
-          "opp_p_hand": "R",
-          "park_factor": 1.1,
-          "l8d_hr_count": 0,
-          "season": {
-            "barrel": 2.7,
-            "ev": 87.5,
-            "la": 11.1,
-            "hh": 28.0,
-            "iso": 0.146,
-            "slg": 0.393,
-            "avg": 0.247,
-            "k": 16.0,
-            "pull": 38.7,
-            "hr": 3
-          },
-          "l8d": {
-            "pa": 26,
-            "barrel": 0.0,
-            "ev": 88.0,
-            "la": 9.4,
-            "hh": 21.4,
-            "iso": 0.0,
-            "slg": 0.136,
-            "avg": 0.136,
-            "pull": 9.1,
-            "k_pct": 7.7,
-            "xslg": 0.421,
-            "xwoba": 0.312,
-            "bat_speed": 63.4
-          },
-          "l5g": {
-            "ab": 0,
-            "hr": 0,
-            "slg": 0,
-            "avg": 0,
-            "iso": 0
-          },
-          "dk_odds": null,
-          "projected": false,
-          "platoon_tag": null,
-          "contact_log": [],
-          "breakdown": {
-            "base_rate": 3.0,
-            "barrel_mult": 0.58,
-            "la_mult": 0.626,
-            "pit_vuln_mult": 1.659,
-            "bat_platoon_mult": 0.938,
-            "pit_platoon_mult": 0.84,
-            "park_factor": 1.1,
-            "weather_mult": 0.993,
-            "hot_cold_mult": 0.85,
-            "k_mult": 1.0,
-            "iso_vs_hand": 0.13,
-            "iso_overall": 0.146,
-            "split_pa": 79.0,
-            "split_ip_vs_bat": 26.0,
-            "slg_vs_bat": 0.442,
-            "pit_slg_overall": 0.518,
-            "split_hr": 2,
-            "split_slg": 0.362,
-            "split_woba": 0.321,
-            "split_k_pct": 16.5,
-            "split_brl": 0.0,
-            "split_iso": 0.13,
-            "split_ip": 26.0,
-            "hr9_split": 2.08,
-            "hr9_season": 2.73,
-            "pit_hard": 36.2,
-            "n_pit_components": 3,
-            "pit_blend_note": "100% 2026",
-            "barrel_use": 2.7,
-            "barrel_season": 2.7,
-            "la_use": 11.1,
-            "la_season": 11.1,
-            "la_8d_raw": 9.4,
-            "barrel_8d_raw": 0.0,
-            "hr_season": 3,
-            "pa_season": 100,
-            "pa_8d": 26,
-            "has_8d": true,
-            "blend_note": "100% 2026 + 8d",
-            "k_season": 16.0,
-            "pitch_bonus": -1.37,
-            "pitch_breakdown": [
-              {
-                "name": "4-Seam Fastball",
-                "usage": 42.6,
-                "pit_rv": -0.9,
-                "bat_rv": 0.4,
-                "combined": -0.12,
-                "bonus": -0.08
-              },
-              {
-                "name": "Cutter",
-                "usage": 33.8,
-                "pit_rv": -1.5,
-                "bat_rv": -2.6,
-                "combined": -2.16,
-                "bonus": -1.1
-              },
-              {
-                "name": "Changeup",
-                "usage": 23.6,
-                "pit_rv": -3.8,
-                "bat_rv": 1.6,
-                "combined": -0.56,
-                "bonus": -0.2
-              }
-            ],
-            "data_conf": {
-              "barrel": 1,
-              "la": 1,
-              "pit_hr9": 1,
-              "pit_hr9_hand": 1,
-              "iso_vs_hand": 1,
-              "park": 1,
-              "pitch_delta": 1,
-              "bat_platoon": 1
-            },
-            "bullpen_hr9": 1.37,
-            "bullpen_vuln": 1.27,
-            "iso_use": 0.13,
-            "pull_s": 38.7,
-            "pit_modifier": 1.659,
-            "hr_rate_8d": 0.0
           }
         },
         {
@@ -2633,7 +2633,7 @@
           "trend": "Steady",
           "confidence": "High",
           "reasons": [
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "R",
@@ -2653,16 +2653,16 @@
             "hr": 0
           },
           "l8d": {
-            "pa": 40,
+            "pa": 41,
             "barrel": 0.0,
             "ev": 77.7,
             "la": 28.0,
             "hh": 10.5,
-            "iso": 0.083,
-            "slg": 0.389,
-            "avg": 0.306,
+            "iso": 0.081,
+            "slg": 0.378,
+            "avg": 0.297,
             "pull": 33.3,
-            "k_pct": 12.5,
+            "k_pct": 14.6,
             "xslg": 0.305,
             "xwoba": 0.227,
             "bat_speed": 70.7
@@ -2682,7 +2682,7 @@
             "base_rate": 2.8,
             "barrel_mult": 0.58,
             "la_mult": 0.92,
-            "pit_vuln_mult": 1.659,
+            "pit_vuln_mult": 1.677,
             "bat_platoon_mult": 0.97,
             "pit_platoon_mult": 0.84,
             "park_factor": 1.1,
@@ -2703,7 +2703,7 @@
             "split_iso": 0.07,
             "split_ip": 26.0,
             "hr9_split": 2.08,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -2715,7 +2715,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 0,
             "pa_season": 59,
-            "pa_8d": 40,
+            "pa_8d": 41,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.3,
@@ -2760,7 +2760,7 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.07,
             "pull_s": 43.5,
-            "pit_modifier": 1.659,
+            "pit_modifier": 1.677,
             "hr_rate_8d": 0.0
           }
         },
@@ -2774,7 +2774,7 @@
           "trend": "Heating Up",
           "confidence": "High",
           "reasons": [
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "R",
@@ -2794,26 +2794,26 @@
             "hr": 5
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 4.8,
             "ev": 84.4,
             "la": 32.8,
             "hh": 19.0,
-            "iso": 0.167,
-            "slg": 0.361,
-            "avg": 0.194,
+            "iso": 0.162,
+            "slg": 0.351,
+            "avg": 0.189,
             "pull": 46.2,
-            "k_pct": 23.1,
+            "k_pct": 22.5,
             "xslg": 0.411,
             "xwoba": 0.271,
             "bat_speed": 66.0
           },
           "l5g": {
-            "ab": 36,
+            "ab": 37,
             "hr": 2,
-            "slg": 0.361,
-            "avg": 0.194,
-            "iso": 0.167
+            "slg": 0.351,
+            "avg": 0.189,
+            "iso": 0.162
           },
           "dk_odds": null,
           "projected": false,
@@ -2823,7 +2823,7 @@
             "base_rate": 2.69,
             "barrel_mult": 0.434,
             "la_mult": 1.0,
-            "pit_vuln_mult": 1.659,
+            "pit_vuln_mult": 1.677,
             "bat_platoon_mult": 1.028,
             "pit_platoon_mult": 0.84,
             "park_factor": 1.1,
@@ -2844,7 +2844,7 @@
             "split_iso": 0.141,
             "split_ip": 26.0,
             "hr9_split": 2.08,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -2856,7 +2856,7 @@
             "barrel_8d_raw": 4.8,
             "hr_season": 5,
             "pa_season": 186,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.7,
@@ -2901,23 +2901,23 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.141,
             "pull_s": 55.0,
-            "pit_modifier": 1.659,
-            "hr_rate_8d": 30.8
+            "pit_modifier": 1.677,
+            "hr_rate_8d": 30.0
           }
         },
         {
           "name": "Yordan Alvarez",
           "team": "Houston Astros",
-          "hr_prob": 11.8,
-          "xgb_prob": 11.8,
-          "rf_prob": 23.0,
+          "hr_prob": 12.8,
+          "xgb_prob": 12.8,
+          "rf_prob": 23.2,
           "archetype": "Pure Power",
           "trend": "Steady",
           "confidence": "High",
           "reasons": [
             "Barrel 17.4%",
             "ISO vs hand .291",
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "L",
@@ -2937,26 +2937,26 @@
             "hr": 15
           },
           "l8d": {
-            "pa": 37,
+            "pa": 38,
             "barrel": 9.1,
             "ev": 85.9,
             "la": 34.0,
             "hh": 31.8,
-            "iso": 0.234,
-            "slg": 0.467,
-            "avg": 0.233,
+            "iso": 0.226,
+            "slg": 0.452,
+            "avg": 0.226,
             "pull": 25.0,
-            "k_pct": 21.6,
+            "k_pct": 21.1,
             "xslg": 0.568,
             "xwoba": 0.339,
             "bat_speed": 77.0
           },
           "l5g": {
-            "ab": 30,
+            "ab": 31,
             "hr": 2,
-            "slg": 0.467,
-            "avg": 0.233,
-            "iso": 0.234
+            "slg": 0.452,
+            "avg": 0.226,
+            "iso": 0.226
           },
           "dk_odds": null,
           "projected": false,
@@ -2966,7 +2966,7 @@
             "base_rate": 6.79,
             "barrel_mult": 1.954,
             "la_mult": 0.844,
-            "pit_vuln_mult": 1.769,
+            "pit_vuln_mult": 1.787,
             "bat_platoon_mult": 0.98,
             "pit_platoon_mult": 1.163,
             "park_factor": 1.12,
@@ -2987,7 +2987,7 @@
             "split_iso": 0.291,
             "split_ip": 24.1,
             "hr9_split": 3.7,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -2999,7 +2999,7 @@
             "barrel_8d_raw": 9.1,
             "hr_season": 15,
             "pa_season": 221,
-            "pa_8d": 37,
+            "pa_8d": 38,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 16.3,
@@ -3044,8 +3044,8 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.291,
             "pull_s": 46.0,
-            "pit_modifier": 1.769,
-            "hr_rate_8d": 32.4
+            "pit_modifier": 1.787,
+            "hr_rate_8d": 31.6
           }
         },
         {
@@ -3053,13 +3053,13 @@
           "team": "Houston Astros",
           "hr_prob": 0.9,
           "xgb_prob": 0.9,
-          "rf_prob": 9.7,
+          "rf_prob": 9.8,
           "archetype": "Pure Power",
           "trend": "Steady",
           "confidence": "High",
           "reasons": [
             "ISO vs hand .240",
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "R",
@@ -3108,7 +3108,7 @@
             "base_rate": 5.34,
             "barrel_mult": 1.502,
             "la_mult": 0.807,
-            "pit_vuln_mult": 1.659,
+            "pit_vuln_mult": 1.677,
             "bat_platoon_mult": 1.014,
             "pit_platoon_mult": 0.84,
             "park_factor": 1.1,
@@ -3129,7 +3129,7 @@
             "split_iso": 0.24,
             "split_ip": 26.0,
             "hr9_split": 2.08,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -3186,7 +3186,7 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.24,
             "pull_s": 41.4,
-            "pit_modifier": 1.659,
+            "pit_modifier": 1.677,
             "hr_rate_8d": 33.3
           }
         },
@@ -3200,7 +3200,7 @@
           "trend": "Steady",
           "confidence": "High",
           "reasons": [
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "R",
@@ -3249,7 +3249,7 @@
             "base_rate": 2.2,
             "barrel_mult": 1.742,
             "la_mult": 0.728,
-            "pit_vuln_mult": 1.659,
+            "pit_vuln_mult": 1.677,
             "bat_platoon_mult": 1.154,
             "pit_platoon_mult": 0.84,
             "park_factor": 1.1,
@@ -3270,7 +3270,7 @@
             "split_iso": 0.148,
             "split_ip": 26.0,
             "hr9_split": 2.08,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -3327,7 +3327,7 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.148,
             "pull_s": 35.3,
-            "pit_modifier": 1.659,
+            "pit_modifier": 1.677,
             "hr_rate_8d": 17.6
           }
         },
@@ -3342,7 +3342,7 @@
           "confidence": "High",
           "reasons": [
             "ISO vs hand .239",
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "L",
@@ -3391,7 +3391,7 @@
             "base_rate": 4.72,
             "barrel_mult": 0.582,
             "la_mult": 0.626,
-            "pit_vuln_mult": 1.769,
+            "pit_vuln_mult": 1.787,
             "bat_platoon_mult": 1.103,
             "pit_platoon_mult": 1.163,
             "park_factor": 1.12,
@@ -3412,7 +3412,7 @@
             "split_iso": 0.239,
             "split_ip": 24.1,
             "hr9_split": 3.7,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -3469,7 +3469,7 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.239,
             "pull_s": 28.9,
-            "pit_modifier": 1.769,
+            "pit_modifier": 1.787,
             "hr_rate_8d": 0.0
           }
         },
@@ -3478,13 +3478,13 @@
           "team": "Houston Astros",
           "hr_prob": 15.2,
           "xgb_prob": 15.2,
-          "rf_prob": 4.4,
+          "rf_prob": 4.5,
           "archetype": "Boom/Bust",
           "trend": "Cooling Off",
           "confidence": "High",
           "reasons": [
             "Barrel 13.8%",
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "R",
@@ -3533,7 +3533,7 @@
             "base_rate": 2.16,
             "barrel_mult": 1.915,
             "la_mult": 0.728,
-            "pit_vuln_mult": 1.659,
+            "pit_vuln_mult": 1.677,
             "bat_platoon_mult": 1.024,
             "pit_platoon_mult": 0.84,
             "park_factor": 1.1,
@@ -3554,7 +3554,7 @@
             "split_iso": 0.118,
             "split_ip": 26.0,
             "hr9_split": 2.08,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -3611,7 +3611,7 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.118,
             "pull_s": 30.0,
-            "pit_modifier": 1.659,
+            "pit_modifier": 1.677,
             "hr_rate_8d": 0.0
           }
         },
@@ -3620,14 +3620,14 @@
           "team": "Houston Astros",
           "hr_prob": 44.2,
           "xgb_prob": 44.2,
-          "rf_prob": 16.1,
+          "rf_prob": 16.2,
           "archetype": "Boom/Bust",
           "trend": "Steady",
           "confidence": "Medium",
           "reasons": [
             "Barrel 20.0%",
             "ISO vs hand .263",
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "L",
@@ -3676,7 +3676,7 @@
             "base_rate": 5.81,
             "barrel_mult": 2.258,
             "la_mult": 0.626,
-            "pit_vuln_mult": 1.769,
+            "pit_vuln_mult": 1.787,
             "bat_platoon_mult": 1.069,
             "pit_platoon_mult": 1.163,
             "park_factor": 1.12,
@@ -3697,7 +3697,7 @@
             "split_iso": 0.263,
             "split_ip": 24.1,
             "hr9_split": 3.7,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -3754,21 +3754,21 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.263,
             "pull_s": 52.0,
-            "pit_modifier": 1.769,
+            "pit_modifier": 1.787,
             "hr_rate_8d": 20.0
           }
         },
         {
           "name": "Christian V\u00e1zquez",
           "team": "Houston Astros",
-          "hr_prob": 0.9,
-          "xgb_prob": 0.9,
+          "hr_prob": 1.5,
+          "xgb_prob": 1.5,
           "rf_prob": 1.5,
           "archetype": "Contact",
           "trend": "Steady",
           "confidence": "High",
           "reasons": [
-            "SP 2.7 HR/9"
+            "SP 2.9 HR/9"
           ],
           "opp_pitcher": "Jameson Taillon",
           "bat_hand": "R",
@@ -3788,16 +3788,16 @@
             "hr": 3
           },
           "l8d": {
-            "pa": 26,
+            "pa": 27,
             "barrel": 0.0,
             "ev": 88.0,
             "la": 9.4,
             "hh": 21.4,
-            "iso": 0.0,
-            "slg": 0.136,
-            "avg": 0.136,
+            "iso": 0.13,
+            "slg": 0.304,
+            "avg": 0.174,
             "pull": 9.1,
-            "k_pct": 7.7,
+            "k_pct": 7.4,
             "xslg": 0.421,
             "xwoba": 0.312,
             "bat_speed": 63.4
@@ -3817,7 +3817,7 @@
             "base_rate": 3.0,
             "barrel_mult": 0.58,
             "la_mult": 0.626,
-            "pit_vuln_mult": 1.659,
+            "pit_vuln_mult": 1.677,
             "bat_platoon_mult": 0.938,
             "pit_platoon_mult": 0.84,
             "park_factor": 1.1,
@@ -3838,7 +3838,7 @@
             "split_iso": 0.13,
             "split_ip": 26.0,
             "hr9_split": 2.08,
-            "hr9_season": 2.73,
+            "hr9_season": 2.85,
             "pit_hard": 36.2,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -3850,7 +3850,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 3,
             "pa_season": 100,
-            "pa_8d": 26,
+            "pa_8d": 27,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 16.0,
@@ -3895,8 +3895,8 @@
             "bullpen_vuln": 1.27,
             "iso_use": 0.13,
             "pull_s": 38.7,
-            "pit_modifier": 1.659,
-            "hr_rate_8d": 0.0
+            "pit_modifier": 1.677,
+            "hr_rate_8d": 22.2
           }
         }
       ],
@@ -5170,24 +5170,24 @@
         "wind_angle_cf": 175
       },
       "totals": {
-        "away_exp_hr": 0.939,
+        "away_exp_hr": 0.955,
         "home_exp_hr": 0.027,
-        "total_exp_hr": 0.97,
-        "away_exp_runs": 4.98,
+        "total_exp_hr": 0.98,
+        "away_exp_runs": 5.01,
         "home_exp_runs": 3.35,
-        "total_exp_runs": 8.33,
+        "total_exp_runs": 8.36,
         "away_runs_pg": 4.21,
         "home_runs_pg": 4.82,
         "away_hr_pg": 1.17,
         "home_hr_pg": 1.14,
         "away_era": 5.32,
-        "home_era": 4.07,
+        "home_era": 4.06,
         "away_k_pg": 8.71,
-        "home_k_pg": 8.18
+        "home_k_pg": 8.17
       },
       "strikeouts": {
         "away_exp_k": 5.2,
-        "home_exp_k": 4.3,
+        "home_exp_k": 4.4,
         "away_lineup_k": 21.7,
         "home_lineup_k": 21.8,
         "away_pit_name": "Spencer Arrighetti",
@@ -5195,7 +5195,7 @@
         "away_pit_k9": 9.0,
         "home_pit_k9": 7.7,
         "away_avg_ip": 5.4,
-        "home_avg_ip": 5.2,
+        "home_avg_ip": 5.3,
         "away_k_prop": null,
         "home_k_prop": null,
         "away_k_edge": null,
