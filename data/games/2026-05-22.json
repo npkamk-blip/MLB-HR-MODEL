@@ -49,11 +49,11 @@
       "home_pitcher": {
         "name": "Cristopher S\u00e1nchez",
         "hand": "L",
-        "era": 1.79,
+        "era": 1.76,
         "hr9": 0.41,
         "hard_hit_pct": 42.8,
         "barrel_pct": 8.7,
-        "ip_2026": 65.1,
+        "ip_2026": 66.1,
         "blend_note": "100% 2026",
         "vs_L_hr9": 0.5,
         "vs_R_hr9": 0.39,
@@ -78,7 +78,7 @@
           }
         ],
         "k9": 11.3,
-        "avg_ip": 5.9,
+        "avg_ip": 6.0,
         "gs": 11,
         "exp_k": 6.3,
         "k_prop": null,
@@ -974,26 +974,26 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 36,
+            "pa": 33,
             "barrel": 2.8,
             "ev": 81.3,
             "la": 26.8,
             "hh": 25.0,
-            "iso": 0.241,
-            "slg": 0.586,
-            "avg": 0.345,
+            "iso": 0.269,
+            "slg": 0.615,
+            "avg": 0.346,
             "pull": 25.0,
-            "k_pct": 16.7,
+            "k_pct": 21.2,
             "xslg": 0.617,
             "xwoba": 0.441,
             "bat_speed": 70.0
           },
           "l5g": {
-            "ab": 29,
+            "ab": 26,
             "hr": 1,
-            "slg": 0.586,
-            "avg": 0.345,
-            "iso": 0.241
+            "slg": 0.615,
+            "avg": 0.346,
+            "iso": 0.269
           },
           "dk_odds": null,
           "projected": false,
@@ -1036,7 +1036,7 @@
             "barrel_8d_raw": 2.8,
             "hr_season": 4,
             "pa_season": 188,
-            "pa_8d": 36,
+            "pa_8d": 33,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 10.6,
@@ -1082,7 +1082,7 @@
             "iso_use": 0.225,
             "pull_s": 42.1,
             "pit_modifier": 0.646,
-            "hr_rate_8d": 16.7
+            "hr_rate_8d": 18.2
           }
         },
         {
@@ -1965,26 +1965,26 @@
             "hr": 1
           },
           "l8d": {
-            "pa": 44,
+            "pa": 40,
             "barrel": 0.0,
             "ev": 79.8,
             "la": 25.2,
             "hh": 4.5,
-            "iso": 0.036,
-            "slg": 0.179,
-            "avg": 0.143,
+            "iso": 0.04,
+            "slg": 0.2,
+            "avg": 0.16,
             "pull": 20.0,
-            "k_pct": 13.6,
+            "k_pct": 10.0,
             "xslg": 0.349,
             "xwoba": 0.246,
             "bat_speed": 60.8
           },
           "l5g": {
-            "ab": 28,
+            "ab": 25,
             "hr": 0,
-            "slg": 0.179,
-            "avg": 0.143,
-            "iso": 0.036
+            "slg": 0.2,
+            "avg": 0.16,
+            "iso": 0.04
           },
           "dk_odds": null,
           "projected": false,
@@ -2027,7 +2027,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 1,
             "pa_season": 212,
-            "pa_8d": 44,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 11.3,
@@ -3380,26 +3380,26 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 36,
+            "pa": 33,
             "barrel": 2.8,
             "ev": 81.3,
             "la": 26.8,
             "hh": 25.0,
-            "iso": 0.241,
-            "slg": 0.586,
-            "avg": 0.345,
+            "iso": 0.269,
+            "slg": 0.615,
+            "avg": 0.346,
             "pull": 25.0,
-            "k_pct": 16.7,
+            "k_pct": 21.2,
             "xslg": 0.617,
             "xwoba": 0.441,
             "bat_speed": 70.0
           },
           "l5g": {
-            "ab": 29,
+            "ab": 26,
             "hr": 1,
-            "slg": 0.586,
-            "avg": 0.345,
-            "iso": 0.241
+            "slg": 0.615,
+            "avg": 0.346,
+            "iso": 0.269
           },
           "dk_odds": null,
           "projected": false,
@@ -3442,7 +3442,7 @@
             "barrel_8d_raw": 2.8,
             "hr_season": 4,
             "pa_season": 188,
-            "pa_8d": 36,
+            "pa_8d": 33,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 10.6,
@@ -3488,7 +3488,7 @@
             "iso_use": 0.225,
             "pull_s": 42.1,
             "pit_modifier": 0.646,
-            "hr_rate_8d": 16.7
+            "hr_rate_8d": 18.2
           }
         },
         {
@@ -3522,26 +3522,26 @@
             "hr": 1
           },
           "l8d": {
-            "pa": 44,
+            "pa": 40,
             "barrel": 0.0,
             "ev": 79.8,
             "la": 25.2,
             "hh": 4.5,
-            "iso": 0.036,
-            "slg": 0.179,
-            "avg": 0.143,
+            "iso": 0.04,
+            "slg": 0.2,
+            "avg": 0.16,
             "pull": 20.0,
-            "k_pct": 13.6,
+            "k_pct": 10.0,
             "xslg": 0.349,
             "xwoba": 0.246,
             "bat_speed": 60.8
           },
           "l5g": {
-            "ab": 28,
+            "ab": 25,
             "hr": 0,
-            "slg": 0.179,
-            "avg": 0.143,
-            "iso": 0.036
+            "slg": 0.2,
+            "avg": 0.16,
+            "iso": 0.04
           },
           "dk_odds": null,
           "projected": false,
@@ -3584,7 +3584,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 1,
             "pa_season": 212,
-            "pa_8d": 44,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 11.3,
@@ -5211,9 +5211,9 @@
         "away_exp_hr": 0.036,
         "home_exp_hr": 0.063,
         "total_exp_hr": 0.1,
-        "away_exp_runs": 3.28,
+        "away_exp_runs": 3.27,
         "home_exp_runs": 3.97,
-        "total_exp_runs": 7.25,
+        "total_exp_runs": 7.24,
         "away_runs_pg": 4.3,
         "home_runs_pg": 4.1,
         "away_hr_pg": 1.0,
@@ -5221,7 +5221,7 @@
         "away_era": 3.66,
         "home_era": 4.29,
         "away_k_pg": 9.46,
-        "home_k_pg": 9.6
+        "home_k_pg": 9.59
       },
       "strikeouts": {
         "away_exp_k": 6.3,
@@ -5233,7 +5233,7 @@
         "away_pit_k9": 10.8,
         "home_pit_k9": 11.3,
         "away_avg_ip": 5.6,
-        "home_avg_ip": 5.9,
+        "home_avg_ip": 6.0,
         "away_k_prop": null,
         "home_k_prop": null,
         "away_k_edge": null,
