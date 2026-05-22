@@ -802,8 +802,8 @@
         {
           "name": "Jake Meyers",
           "team": "Houston Astros",
-          "hr_prob": 2.7,
-          "xgb_prob": 2.7,
+          "hr_prob": 2.4,
+          "xgb_prob": 2.4,
           "rf_prob": 5.2,
           "archetype": "Contact",
           "trend": "Steady",
@@ -829,26 +829,26 @@
             "hr": 1
           },
           "l8d": {
-            "pa": 36,
+            "pa": 37,
             "barrel": 0.0,
             "ev": 79.9,
             "la": 20.9,
             "hh": 7.1,
-            "iso": 0.129,
-            "slg": 0.355,
-            "avg": 0.226,
+            "iso": 0.125,
+            "slg": 0.344,
+            "avg": 0.219,
             "pull": 0.0,
-            "k_pct": 22.2,
+            "k_pct": 21.6,
             "xslg": 0.464,
             "xwoba": 0.364,
             "bat_speed": 67.3
           },
           "l5g": {
-            "ab": 31,
+            "ab": 32,
             "hr": 1,
-            "slg": 0.355,
-            "avg": 0.226,
-            "iso": 0.129
+            "slg": 0.344,
+            "avg": 0.219,
+            "iso": 0.125
           },
           "dk_odds": null,
           "projected": false,
@@ -891,7 +891,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 1,
             "pa_season": 50,
-            "pa_8d": 36,
+            "pa_8d": 37,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 22.0,
@@ -937,7 +937,7 @@
             "iso_use": 0.148,
             "pull_s": 35.3,
             "pit_modifier": 1.724,
-            "hr_rate_8d": 16.7
+            "hr_rate_8d": 16.2
           }
         },
         {
@@ -1223,8 +1223,8 @@
         {
           "name": "Christian Walker",
           "team": "Houston Astros",
-          "hr_prob": 1.0,
-          "xgb_prob": 1.0,
+          "hr_prob": 1.1,
+          "xgb_prob": 1.1,
           "rf_prob": 10.6,
           "archetype": "Pure Power",
           "trend": "Steady",
@@ -1251,26 +1251,26 @@
             "hr": 11
           },
           "l8d": {
-            "pa": 38,
+            "pa": 39,
             "barrel": 3.6,
             "ev": 83.6,
             "la": 25.3,
             "hh": 32.1,
-            "iso": 0.2,
-            "slg": 0.371,
-            "avg": 0.171,
+            "iso": 0.194,
+            "slg": 0.361,
+            "avg": 0.167,
             "pull": 26.7,
-            "k_pct": 23.7,
+            "k_pct": 25.6,
             "xslg": 0.644,
             "xwoba": 0.415,
             "bat_speed": 72.5
           },
           "l5g": {
-            "ab": 35,
+            "ab": 36,
             "hr": 2,
-            "slg": 0.371,
-            "avg": 0.171,
-            "iso": 0.2
+            "slg": 0.361,
+            "avg": 0.167,
+            "iso": 0.194
           },
           "dk_odds": null,
           "projected": false,
@@ -1285,7 +1285,7 @@
             "pit_platoon_mult": 0.903,
             "park_factor": 1.1,
             "weather_mult": 0.993,
-            "hot_cold_mult": 0.986,
+            "hot_cold_mult": 0.96,
             "k_mult": 1.0,
             "iso_vs_hand": 0.24,
             "iso_overall": 0.234,
@@ -1313,7 +1313,7 @@
             "barrel_8d_raw": 3.6,
             "hr_season": 11,
             "pa_season": 206,
-            "pa_8d": 38,
+            "pa_8d": 39,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.4,
@@ -1359,7 +1359,7 @@
             "iso_use": 0.24,
             "pull_s": 41.4,
             "pit_modifier": 1.724,
-            "hr_rate_8d": 31.6
+            "hr_rate_8d": 30.8
           }
         },
         {
@@ -2371,26 +2371,26 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 42,
+            "pa": 43,
             "barrel": 21.1,
             "ev": 89.2,
             "la": 14.9,
             "hh": 47.4,
-            "iso": 0.2,
-            "slg": 0.4,
-            "avg": 0.2,
+            "iso": 0.193,
+            "slg": 0.387,
+            "avg": 0.194,
             "pull": 15.4,
-            "k_pct": 23.8,
+            "k_pct": 23.3,
             "xslg": 1.052,
             "xwoba": 0.625,
             "bat_speed": 66.3
           },
           "l5g": {
-            "ab": 30,
+            "ab": 31,
             "hr": 1,
-            "slg": 0.4,
-            "avg": 0.2,
-            "iso": 0.2
+            "slg": 0.387,
+            "avg": 0.194,
+            "iso": 0.193
           },
           "dk_odds": null,
           "projected": false,
@@ -2433,7 +2433,7 @@
             "barrel_8d_raw": 21.1,
             "hr_season": 4,
             "pa_season": 214,
-            "pa_8d": 42,
+            "pa_8d": 43,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 22.4,
@@ -2479,7 +2479,7 @@
             "iso_use": 0.164,
             "pull_s": 40.8,
             "pit_modifier": 0.582,
-            "hr_rate_8d": 14.3
+            "hr_rate_8d": 14.0
           }
         },
         {
@@ -3051,8 +3051,8 @@
         {
           "name": "Christian Walker",
           "team": "Houston Astros",
-          "hr_prob": 1.0,
-          "xgb_prob": 1.0,
+          "hr_prob": 1.1,
+          "xgb_prob": 1.1,
           "rf_prob": 10.6,
           "archetype": "Pure Power",
           "trend": "Steady",
@@ -3079,26 +3079,26 @@
             "hr": 11
           },
           "l8d": {
-            "pa": 38,
+            "pa": 39,
             "barrel": 3.6,
             "ev": 83.6,
             "la": 25.3,
             "hh": 32.1,
-            "iso": 0.2,
-            "slg": 0.371,
-            "avg": 0.171,
+            "iso": 0.194,
+            "slg": 0.361,
+            "avg": 0.167,
             "pull": 26.7,
-            "k_pct": 23.7,
+            "k_pct": 25.6,
             "xslg": 0.644,
             "xwoba": 0.415,
             "bat_speed": 72.5
           },
           "l5g": {
-            "ab": 35,
+            "ab": 36,
             "hr": 2,
-            "slg": 0.371,
-            "avg": 0.171,
-            "iso": 0.2
+            "slg": 0.361,
+            "avg": 0.167,
+            "iso": 0.194
           },
           "dk_odds": null,
           "projected": false,
@@ -3113,7 +3113,7 @@
             "pit_platoon_mult": 0.903,
             "park_factor": 1.1,
             "weather_mult": 0.993,
-            "hot_cold_mult": 0.986,
+            "hot_cold_mult": 0.96,
             "k_mult": 1.0,
             "iso_vs_hand": 0.24,
             "iso_overall": 0.234,
@@ -3141,7 +3141,7 @@
             "barrel_8d_raw": 3.6,
             "hr_season": 11,
             "pa_season": 206,
-            "pa_8d": 38,
+            "pa_8d": 39,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.4,
@@ -3187,14 +3187,14 @@
             "iso_use": 0.24,
             "pull_s": 41.4,
             "pit_modifier": 1.724,
-            "hr_rate_8d": 31.6
+            "hr_rate_8d": 30.8
           }
         },
         {
           "name": "Jake Meyers",
           "team": "Houston Astros",
-          "hr_prob": 2.7,
-          "xgb_prob": 2.7,
+          "hr_prob": 2.4,
+          "xgb_prob": 2.4,
           "rf_prob": 5.2,
           "archetype": "Contact",
           "trend": "Steady",
@@ -3220,26 +3220,26 @@
             "hr": 1
           },
           "l8d": {
-            "pa": 36,
+            "pa": 37,
             "barrel": 0.0,
             "ev": 79.9,
             "la": 20.9,
             "hh": 7.1,
-            "iso": 0.129,
-            "slg": 0.355,
-            "avg": 0.226,
+            "iso": 0.125,
+            "slg": 0.344,
+            "avg": 0.219,
             "pull": 0.0,
-            "k_pct": 22.2,
+            "k_pct": 21.6,
             "xslg": 0.464,
             "xwoba": 0.364,
             "bat_speed": 67.3
           },
           "l5g": {
-            "ab": 31,
+            "ab": 32,
             "hr": 1,
-            "slg": 0.355,
-            "avg": 0.226,
-            "iso": 0.129
+            "slg": 0.344,
+            "avg": 0.219,
+            "iso": 0.125
           },
           "dk_odds": null,
           "projected": false,
@@ -3282,7 +3282,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 1,
             "pa_season": 50,
-            "pa_8d": 36,
+            "pa_8d": 37,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 22.0,
@@ -3328,7 +3328,7 @@
             "iso_use": 0.148,
             "pull_s": 35.3,
             "pit_modifier": 1.724,
-            "hr_rate_8d": 16.7
+            "hr_rate_8d": 16.2
           }
         },
         {
@@ -4068,26 +4068,26 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 42,
+            "pa": 43,
             "barrel": 21.1,
             "ev": 89.2,
             "la": 14.9,
             "hh": 47.4,
-            "iso": 0.2,
-            "slg": 0.4,
-            "avg": 0.2,
+            "iso": 0.193,
+            "slg": 0.387,
+            "avg": 0.194,
             "pull": 15.4,
-            "k_pct": 23.8,
+            "k_pct": 23.3,
             "xslg": 1.052,
             "xwoba": 0.625,
             "bat_speed": 66.3
           },
           "l5g": {
-            "ab": 30,
+            "ab": 31,
             "hr": 1,
-            "slg": 0.4,
-            "avg": 0.2,
-            "iso": 0.2
+            "slg": 0.387,
+            "avg": 0.194,
+            "iso": 0.193
           },
           "dk_odds": null,
           "projected": false,
@@ -4130,7 +4130,7 @@
             "barrel_8d_raw": 21.1,
             "hr_season": 4,
             "pa_season": 214,
-            "pa_8d": 42,
+            "pa_8d": 43,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 22.4,
@@ -4176,7 +4176,7 @@
             "iso_use": 0.164,
             "pull_s": 40.8,
             "pit_modifier": 0.582,
-            "hr_rate_8d": 14.3
+            "hr_rate_8d": 14.0
           }
         },
         {
@@ -5170,7 +5170,7 @@
         "wind_angle_cf": 175
       },
       "totals": {
-        "away_exp_hr": 1.054,
+        "away_exp_hr": 1.052,
         "home_exp_hr": 0.038,
         "total_exp_hr": 1.09,
         "away_exp_runs": 5.17,
