@@ -5174,16 +5174,16 @@
         "home_exp_hr": 0.032,
         "total_exp_hr": 1.12,
         "away_exp_runs": 5.07,
-        "home_exp_runs": 3.36,
-        "total_exp_runs": 8.43,
-        "away_runs_pg": 4.25,
+        "home_exp_runs": 3.38,
+        "total_exp_runs": 8.45,
+        "away_runs_pg": 4.27,
         "home_runs_pg": 4.82,
         "away_hr_pg": 1.17,
         "home_hr_pg": 1.14,
         "away_era": 5.3,
-        "home_era": 4.09,
+        "home_era": 4.11,
         "away_k_pg": 8.69,
-        "home_k_pg": 8.16
+        "home_k_pg": 8.15
       },
       "strikeouts": {
         "away_exp_k": 5.4,
