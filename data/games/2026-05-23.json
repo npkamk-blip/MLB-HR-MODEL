@@ -1830,26 +1830,26 @@
             "hr": 1
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 0.0,
             "ev": 87.3,
             "la": 12.4,
             "hh": 33.3,
-            "iso": 0.062,
-            "slg": 0.25,
-            "avg": 0.188,
+            "iso": 0.061,
+            "slg": 0.273,
+            "avg": 0.212,
             "pull": 33.3,
-            "k_pct": 20.5,
+            "k_pct": 20.0,
             "xslg": 0.381,
             "xwoba": 0.28,
             "bat_speed": 69.6
           },
           "l5g": {
-            "ab": 32,
+            "ab": 33,
             "hr": 0,
-            "slg": 0.25,
-            "avg": 0.188,
-            "iso": 0.062
+            "slg": 0.273,
+            "avg": 0.212,
+            "iso": 0.061
           },
           "dk_odds": null,
           "projected": false,
@@ -1892,7 +1892,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 1,
             "pa_season": 183,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.7,
@@ -3400,26 +3400,26 @@
             "hr": 1
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 0.0,
             "ev": 87.3,
             "la": 12.4,
             "hh": 33.3,
-            "iso": 0.062,
-            "slg": 0.25,
-            "avg": 0.188,
+            "iso": 0.061,
+            "slg": 0.273,
+            "avg": 0.212,
             "pull": 33.3,
-            "k_pct": 20.5,
+            "k_pct": 20.0,
             "xslg": 0.381,
             "xwoba": 0.28,
             "bat_speed": 69.6
           },
           "l5g": {
-            "ab": 32,
+            "ab": 33,
             "hr": 0,
-            "slg": 0.25,
-            "avg": 0.188,
-            "iso": 0.062
+            "slg": 0.273,
+            "avg": 0.212,
+            "iso": 0.061
           },
           "dk_odds": null,
           "projected": false,
@@ -3462,7 +3462,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 1,
             "pa_season": 183,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.7,
@@ -5235,9 +5235,9 @@
         "away_hr_pg": 1.12,
         "home_hr_pg": 1.25,
         "away_era": 4.23,
-        "home_era": 4.72,
+        "home_era": 4.71,
         "away_k_pg": 7.24,
-        "home_k_pg": 7.89
+        "home_k_pg": 7.9
       },
       "strikeouts": {
         "away_exp_k": 4.3,
@@ -5633,8 +5633,8 @@
         {
           "name": "Masyn Winn",
           "team": "St. Louis Cardinals",
-          "hr_prob": 4.6,
-          "xgb_prob": 4.6,
+          "hr_prob": 4.7,
+          "xgb_prob": 4.7,
           "rf_prob": 0.2,
           "archetype": "Contact",
           "trend": "Steady",
@@ -5661,26 +5661,26 @@
             "hr": 1
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 0.0,
             "ev": 87.3,
             "la": 12.4,
             "hh": 33.3,
-            "iso": 0.062,
-            "slg": 0.25,
-            "avg": 0.188,
+            "iso": 0.061,
+            "slg": 0.273,
+            "avg": 0.212,
             "pull": 33.3,
-            "k_pct": 20.5,
+            "k_pct": 20.0,
             "xslg": 0.381,
             "xwoba": 0.28,
             "bat_speed": 69.6
           },
           "l5g": {
-            "ab": 32,
+            "ab": 33,
             "hr": 0,
-            "slg": 0.25,
-            "avg": 0.188,
-            "iso": 0.062
+            "slg": 0.273,
+            "avg": 0.212,
+            "iso": 0.061
           },
           "dk_odds": null,
           "projected": true,
@@ -5723,7 +5723,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 1,
             "pa_season": 183,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.7,
@@ -8630,8 +8630,8 @@
         {
           "name": "Masyn Winn",
           "team": "St. Louis Cardinals",
-          "hr_prob": 4.6,
-          "xgb_prob": 4.6,
+          "hr_prob": 4.7,
+          "xgb_prob": 4.7,
           "rf_prob": 0.2,
           "archetype": "Contact",
           "trend": "Steady",
@@ -8658,26 +8658,26 @@
             "hr": 1
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 0.0,
             "ev": 87.3,
             "la": 12.4,
             "hh": 33.3,
-            "iso": 0.062,
-            "slg": 0.25,
-            "avg": 0.188,
+            "iso": 0.061,
+            "slg": 0.273,
+            "avg": 0.212,
             "pull": 33.3,
-            "k_pct": 20.5,
+            "k_pct": 20.0,
             "xslg": 0.381,
             "xwoba": 0.28,
             "bat_speed": 69.6
           },
           "l5g": {
-            "ab": 32,
+            "ab": 33,
             "hr": 0,
-            "slg": 0.25,
-            "avg": 0.188,
-            "iso": 0.062
+            "slg": 0.273,
+            "avg": 0.212,
+            "iso": 0.061
           },
           "dk_odds": null,
           "projected": true,
@@ -8720,7 +8720,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 1,
             "pa_season": 183,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.7,
@@ -10496,7 +10496,7 @@
         "wind_angle_cf": 10
       },
       "totals": {
-        "away_exp_hr": 0.299,
+        "away_exp_hr": 0.3,
         "home_exp_hr": 0.05,
         "total_exp_hr": 0.35,
         "away_exp_runs": 4.6,
@@ -10507,9 +10507,9 @@
         "away_hr_pg": 1.12,
         "home_hr_pg": 1.25,
         "away_era": 4.23,
-        "home_era": 4.72,
+        "home_era": 4.71,
         "away_k_pg": 7.24,
-        "home_k_pg": 7.89
+        "home_k_pg": 7.9
       },
       "strikeouts": {
         "away_exp_k": 3.8,
