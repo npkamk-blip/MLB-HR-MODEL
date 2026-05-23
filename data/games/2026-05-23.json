@@ -10465,7 +10465,7 @@
         "away_era": 3.58,
         "home_era": 4.22,
         "away_k_pg": 9.49,
-        "home_k_pg": 9.54
+        "home_k_pg": 9.53
       },
       "strikeouts": {
         "away_exp_k": 3.8,
@@ -15731,7 +15731,7 @@
         "away_era": 4.45,
         "home_era": 4.22,
         "away_k_pg": 8.25,
-        "home_k_pg": 8.06
+        "home_k_pg": 8.05
       },
       "strikeouts": {
         "away_exp_k": 8.1,
@@ -15794,7 +15794,7 @@
         "k_edge": null,
         "opp_team": "Boston Red Sox",
         "opp_lineup_k": 21.2,
-        "bullpen_hr9": 0.87
+        "bullpen_hr9": 0.86
       },
       "home_pitcher": {
         "name": "Jovani Mor\u00e1n",
@@ -20960,7 +20960,7 @@
         "home_hr_pg": 0.71,
         "away_era": 4.17,
         "home_era": 3.72,
-        "away_k_pg": 7.85,
+        "away_k_pg": 7.84,
         "home_k_pg": 8.39
       },
       "strikeouts": {
