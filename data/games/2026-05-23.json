@@ -44,7 +44,7 @@
         "k_edge": null,
         "opp_team": "Cincinnati Reds",
         "opp_lineup_k": 23.4,
-        "bullpen_hr9": 1.06
+        "bullpen_hr9": 1.05
       },
       "home_pitcher": {
         "name": "Chris Paddack",
@@ -5234,9 +5234,9 @@
         "home_runs_pg": 4.33,
         "away_hr_pg": 1.12,
         "home_hr_pg": 1.24,
-        "away_era": 4.24,
+        "away_era": 4.23,
         "home_era": 4.7,
-        "away_k_pg": 7.26,
+        "away_k_pg": 7.27,
         "home_k_pg": 7.86
       },
       "strikeouts": {
@@ -5300,7 +5300,7 @@
         "k_edge": null,
         "opp_team": "Cincinnati Reds",
         "opp_lineup_k": 23.0,
-        "bullpen_hr9": 1.06
+        "bullpen_hr9": 1.05
       },
       "home_pitcher": {
         "name": "Chase Petty",
@@ -10506,9 +10506,9 @@
         "home_runs_pg": 4.33,
         "away_hr_pg": 1.12,
         "home_hr_pg": 1.24,
-        "away_era": 4.24,
+        "away_era": 4.23,
         "home_era": 4.7,
-        "away_k_pg": 7.26,
+        "away_k_pg": 7.27,
         "home_k_pg": 7.86
       },
       "strikeouts": {
