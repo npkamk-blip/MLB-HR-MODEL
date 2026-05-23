@@ -5217,7 +5217,7 @@
       "lineup_home_status": "confirmed",
       "weather": {
         "label": "Blowing Out",
-        "temp": 70,
+        "temp": 72,
         "wind_speed": 9,
         "wind_dir": 237,
         "mult": 1.024,
@@ -5236,7 +5236,7 @@
         "home_hr_pg": 1.25,
         "away_era": 4.22,
         "home_era": 4.72,
-        "away_k_pg": 7.23,
+        "away_k_pg": 7.25,
         "home_k_pg": 7.87
       },
       "strikeouts": {
@@ -10508,7 +10508,7 @@
         "home_hr_pg": 1.25,
         "away_era": 4.22,
         "home_era": 4.72,
-        "away_k_pg": 7.23,
+        "away_k_pg": 7.25,
         "home_k_pg": 7.87
       },
       "strikeouts": {
@@ -15711,7 +15711,7 @@
       "lineup_home_status": "confirmed",
       "weather": {
         "label": "Crosswind",
-        "temp": 65,
+        "temp": 63,
         "wind_speed": 6,
         "wind_dir": 41,
         "mult": 0.997,
@@ -15731,7 +15731,7 @@
         "away_era": 5.27,
         "home_era": 4.1,
         "away_k_pg": 8.66,
-        "home_k_pg": 8.16
+        "home_k_pg": 8.18
       },
       "strikeouts": {
         "away_exp_k": 7.3,
@@ -31367,7 +31367,7 @@
       "lineup_home_status": "confirmed",
       "weather": {
         "label": "Blowing Out",
-        "temp": 61,
+        "temp": 62,
         "wind_speed": 15,
         "wind_dir": 253,
         "mult": 1.022,
@@ -41823,7 +41823,7 @@
       "lineup_home_status": "confirmed",
       "weather": {
         "label": "Slightly In",
-        "temp": 61,
+        "temp": 60,
         "wind_speed": 9,
         "wind_dir": 82,
         "mult": 0.994,
@@ -47089,7 +47089,7 @@
       "lineup_home_status": "confirmed",
       "weather": {
         "label": "Blowing In",
-        "temp": 71,
+        "temp": 73,
         "wind_speed": 8,
         "wind_dir": 66,
         "mult": 1.003,
@@ -62775,7 +62775,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Calm",
-        "temp": 63,
+        "temp": 62,
         "wind_speed": 4,
         "wind_dir": 303,
         "mult": 1.0,
