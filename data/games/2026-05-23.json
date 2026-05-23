@@ -5298,7 +5298,7 @@
         "k_edge": null,
         "opp_team": "Toronto Blue Jays",
         "opp_lineup_k": 17.3,
-        "bullpen_hr9": 0.86
+        "bullpen_hr9": 0.88
       },
       "home_pitcher": {
         "name": "Patrick Corbin",
@@ -10387,14 +10387,14 @@
         "away_exp_hr": 0.065,
         "home_exp_hr": 0.036,
         "total_exp_hr": 0.1,
-        "away_exp_runs": 3.98,
+        "away_exp_runs": 4.0,
         "home_exp_runs": 4.42,
-        "total_exp_runs": 8.4,
+        "total_exp_runs": 8.42,
         "away_runs_pg": 4.83,
-        "home_runs_pg": 4.08,
+        "home_runs_pg": 4.1,
         "away_hr_pg": 1.0,
-        "home_hr_pg": 0.88,
-        "away_era": 3.89,
+        "home_hr_pg": 0.9,
+        "away_era": 3.91,
         "home_era": 3.84,
         "away_k_pg": 8.87,
         "home_k_pg": 9.37
@@ -20883,14 +20883,14 @@
         "away_exp_hr": 0.127,
         "home_exp_hr": 0.09,
         "total_exp_hr": 0.22,
-        "away_exp_runs": 3.63,
+        "away_exp_runs": 3.65,
         "home_exp_runs": 3.66,
-        "total_exp_runs": 7.29,
+        "total_exp_runs": 7.31,
         "away_runs_pg": 4.45,
-        "home_runs_pg": 3.4,
+        "home_runs_pg": 3.42,
         "away_hr_pg": 1.33,
         "home_hr_pg": 0.79,
-        "away_era": 4.31,
+        "away_era": 4.33,
         "home_era": 4.19,
         "away_k_pg": 8.26,
         "home_k_pg": 7.97
@@ -26100,7 +26100,7 @@
         "home_hr_pg": 0.92,
         "away_era": 3.6,
         "home_era": 4.2,
-        "away_k_pg": 8.77,
+        "away_k_pg": 8.76,
         "home_k_pg": 8.43
       },
       "strikeouts": {
@@ -41803,7 +41803,7 @@
         "away_era": 3.86,
         "home_era": 4.29,
         "away_k_pg": 9.25,
-        "home_k_pg": 8.56
+        "home_k_pg": 8.58
       },
       "strikeouts": {
         "away_exp_k": 5.5,
