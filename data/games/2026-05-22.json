@@ -15601,7 +15601,7 @@
         "away_hr_pg": 0.87,
         "home_hr_pg": 1.1,
         "away_era": 3.98,
-        "home_era": 4.97,
+        "home_era": 4.96,
         "away_k_pg": 8.34,
         "home_k_pg": 8.39
       },
@@ -20753,9 +20753,9 @@
         "away_hr_pg": 1.21,
         "home_hr_pg": 1.38,
         "away_era": 4.96,
-        "home_era": 3.09,
+        "home_era": 3.08,
         "away_k_pg": 7.87,
-        "home_k_pg": 8.87
+        "home_k_pg": 8.86
       },
       "strikeouts": {
         "away_exp_k": 6.1,
@@ -25976,7 +25976,7 @@
         "home_hr_pg": 0.94,
         "away_era": 3.59,
         "home_era": 4.25,
-        "away_k_pg": 8.82,
+        "away_k_pg": 8.83,
         "home_k_pg": 8.52
       },
       "strikeouts": {
@@ -31242,7 +31242,7 @@
         "k_edge": null,
         "opp_team": "Los Angeles Angels",
         "opp_lineup_k": 19.5,
-        "bullpen_hr9": 1.07
+        "bullpen_hr9": 1.09
       },
       "home_pitcher": {
         "name": "Grayson Rodriguez",
@@ -36273,16 +36273,16 @@
         "away_exp_hr": 0.094,
         "home_exp_hr": 0.125,
         "total_exp_hr": 0.22,
-        "away_exp_runs": 6.44,
+        "away_exp_runs": 6.54,
         "home_exp_runs": 3.55,
-        "total_exp_runs": 9.99,
+        "total_exp_runs": 10.09,
         "away_runs_pg": 3.84,
-        "home_runs_pg": 3.88,
+        "home_runs_pg": 3.94,
         "away_hr_pg": 0.92,
-        "home_hr_pg": 1.13,
-        "away_era": 3.53,
+        "home_hr_pg": 1.15,
+        "away_era": 3.59,
         "home_era": 4.91,
-        "away_k_pg": 8.71,
+        "away_k_pg": 8.7,
         "home_k_pg": 8.67
       },
       "strikeouts": {
@@ -41520,7 +41520,7 @@
         "k_edge": null,
         "opp_team": "San Diego Padres",
         "opp_lineup_k": 25.0,
-        "bullpen_hr9": 1.29
+        "bullpen_hr9": 1.31
       },
       "home_pitcher": {
         "name": "Walker Buehler",
@@ -46711,16 +46711,16 @@
         "away_exp_hr": 0.425,
         "home_exp_hr": 0.237,
         "total_exp_hr": 0.66,
-        "away_exp_runs": 4.32,
+        "away_exp_runs": 4.36,
         "home_exp_runs": 4.34,
-        "total_exp_runs": 8.66,
+        "total_exp_runs": 8.7,
         "away_runs_pg": 4.43,
-        "home_runs_pg": 4.0,
+        "home_runs_pg": 4.04,
         "away_hr_pg": 1.06,
-        "home_hr_pg": 0.98,
-        "away_era": 4.26,
+        "home_hr_pg": 1.0,
+        "away_era": 4.29,
         "home_era": 3.97,
-        "away_k_pg": 7.95,
+        "away_k_pg": 7.96,
         "home_k_pg": 8.75
       },
       "strikeouts": {
