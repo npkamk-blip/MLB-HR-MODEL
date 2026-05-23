@@ -5265,7 +5265,7 @@
         "away_era": 3.97,
         "home_era": 4.96,
         "away_k_pg": 8.34,
-        "home_k_pg": 8.39
+        "home_k_pg": 8.4
       },
       "strikeouts": {
         "away_exp_k": 5.5,
@@ -10416,7 +10416,7 @@
         "home_hr_pg": 1.38,
         "away_era": 4.97,
         "home_era": 3.08,
-        "away_k_pg": 7.86,
+        "away_k_pg": 7.85,
         "home_k_pg": 8.86
       },
       "strikeouts": {
@@ -15639,7 +15639,7 @@
         "away_era": 3.58,
         "home_era": 4.24,
         "away_k_pg": 8.82,
-        "home_k_pg": 8.51
+        "home_k_pg": 8.5
       },
       "strikeouts": {
         "away_exp_k": 5.7,
@@ -20840,7 +20840,7 @@
         "home_hr_pg": 0.71,
         "away_era": 3.17,
         "home_era": 3.12,
-        "away_k_pg": 9.01,
+        "away_k_pg": 9.0,
         "home_k_pg": 9.94
       },
       "strikeouts": {
@@ -26008,7 +26008,7 @@
         "k_edge": null,
         "opp_team": "Arizona Diamondbacks",
         "opp_lineup_k": 20.0,
-        "bullpen_hr9": 1.36
+        "bullpen_hr9": 1.35
       },
       "home_pitcher": {
         "name": "Michael Soroka",
@@ -36380,7 +36380,7 @@
         "home_runs_pg": 4.04,
         "away_hr_pg": 1.06,
         "home_hr_pg": 1.0,
-        "away_era": 4.29,
+        "away_era": 4.28,
         "home_era": 3.96,
         "away_k_pg": 7.95,
         "home_k_pg": 8.75
