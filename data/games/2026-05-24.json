@@ -5424,8 +5424,8 @@
         {
           "name": "Willson Contreras",
           "team": "Boston Red Sox",
-          "hr_prob": 1.4,
-          "xgb_prob": 1.4,
+          "hr_prob": 1.5,
+          "xgb_prob": 1.5,
           "rf_prob": 3.6,
           "archetype": "Contact",
           "trend": "Steady",
@@ -5453,26 +5453,26 @@
             "hr": 10
           },
           "l8d": {
-            "pa": 38,
+            "pa": 39,
             "barrel": 5.9,
             "ev": 82.2,
             "la": 11.9,
             "hh": 32.4,
-            "iso": 0.406,
-            "slg": 0.784,
-            "avg": 0.378,
+            "iso": 0.394,
+            "slg": 0.789,
+            "avg": 0.395,
             "pull": 50.0,
-            "k_pct": 13.2,
+            "k_pct": 12.8,
             "xslg": 0.676,
             "xwoba": 0.461,
             "bat_speed": 75.9
           },
           "l5g": {
-            "ab": 37,
+            "ab": 38,
             "hr": 3,
-            "slg": 0.784,
-            "avg": 0.378,
-            "iso": 0.406
+            "slg": 0.789,
+            "avg": 0.395,
+            "iso": 0.394
           },
           "dk_odds": null,
           "projected": false,
@@ -5515,7 +5515,7 @@
             "barrel_8d_raw": 5.9,
             "hr_season": 10,
             "pa_season": 206,
-            "pa_8d": 38,
+            "pa_8d": 39,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.7,
@@ -5561,7 +5561,7 @@
             "iso_use": 0.187,
             "pull_s": 50.0,
             "pit_modifier": 0.744,
-            "hr_rate_8d": 47.4
+            "hr_rate_8d": 46.2
           }
         },
         {
@@ -6712,26 +6712,26 @@
             "hr": 2
           },
           "l8d": {
-            "pa": 34,
+            "pa": 35,
             "barrel": 0.0,
             "ev": 82.4,
             "la": 3.6,
             "hh": 31.6,
-            "iso": 0.138,
-            "slg": 0.448,
-            "avg": 0.31,
+            "iso": 0.133,
+            "slg": 0.433,
+            "avg": 0.3,
             "pull": 21.4,
-            "k_pct": 14.7,
+            "k_pct": 17.1,
             "xslg": 0.509,
             "xwoba": 0.39,
             "bat_speed": 70.9
           },
           "l5g": {
-            "ab": 29,
+            "ab": 30,
             "hr": 1,
-            "slg": 0.448,
-            "avg": 0.31,
-            "iso": 0.138
+            "slg": 0.433,
+            "avg": 0.3,
+            "iso": 0.133
           },
           "dk_odds": null,
           "projected": false,
@@ -6774,7 +6774,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 2,
             "pa_season": 141,
-            "pa_8d": 34,
+            "pa_8d": 35,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.0,
@@ -6820,7 +6820,7 @@
             "iso_use": 0.119,
             "pull_s": 41.5,
             "pit_modifier": 0.784,
-            "hr_rate_8d": 17.6
+            "hr_rate_8d": 17.1
           }
         },
         {
@@ -7700,26 +7700,26 @@
             "hr": 2
           },
           "l8d": {
-            "pa": 34,
+            "pa": 35,
             "barrel": 0.0,
             "ev": 82.4,
             "la": 3.6,
             "hh": 31.6,
-            "iso": 0.138,
-            "slg": 0.448,
-            "avg": 0.31,
+            "iso": 0.133,
+            "slg": 0.433,
+            "avg": 0.3,
             "pull": 21.4,
-            "k_pct": 14.7,
+            "k_pct": 17.1,
             "xslg": 0.509,
             "xwoba": 0.39,
             "bat_speed": 70.9
           },
           "l5g": {
-            "ab": 29,
+            "ab": 30,
             "hr": 1,
-            "slg": 0.448,
-            "avg": 0.31,
-            "iso": 0.138
+            "slg": 0.433,
+            "avg": 0.3,
+            "iso": 0.133
           },
           "dk_odds": null,
           "projected": false,
@@ -7762,7 +7762,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 2,
             "pa_season": 141,
-            "pa_8d": 34,
+            "pa_8d": 35,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.0,
@@ -7808,7 +7808,7 @@
             "iso_use": 0.119,
             "pull_s": 41.5,
             "pit_modifier": 0.784,
-            "hr_rate_8d": 17.6
+            "hr_rate_8d": 17.1
           }
         },
         {
@@ -9082,8 +9082,8 @@
         {
           "name": "Willson Contreras",
           "team": "Boston Red Sox",
-          "hr_prob": 1.4,
-          "xgb_prob": 1.4,
+          "hr_prob": 1.5,
+          "xgb_prob": 1.5,
           "rf_prob": 3.6,
           "archetype": "Contact",
           "trend": "Steady",
@@ -9111,26 +9111,26 @@
             "hr": 10
           },
           "l8d": {
-            "pa": 38,
+            "pa": 39,
             "barrel": 5.9,
             "ev": 82.2,
             "la": 11.9,
             "hh": 32.4,
-            "iso": 0.406,
-            "slg": 0.784,
-            "avg": 0.378,
+            "iso": 0.394,
+            "slg": 0.789,
+            "avg": 0.395,
             "pull": 50.0,
-            "k_pct": 13.2,
+            "k_pct": 12.8,
             "xslg": 0.676,
             "xwoba": 0.461,
             "bat_speed": 75.9
           },
           "l5g": {
-            "ab": 37,
+            "ab": 38,
             "hr": 3,
-            "slg": 0.784,
-            "avg": 0.378,
-            "iso": 0.406
+            "slg": 0.789,
+            "avg": 0.395,
+            "iso": 0.394
           },
           "dk_odds": null,
           "projected": false,
@@ -9173,7 +9173,7 @@
             "barrel_8d_raw": 5.9,
             "hr_season": 10,
             "pa_season": 206,
-            "pa_8d": 38,
+            "pa_8d": 39,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.7,
@@ -9219,7 +9219,7 @@
             "iso_use": 0.187,
             "pull_s": 50.0,
             "pit_modifier": 0.744,
-            "hr_rate_8d": 47.4
+            "hr_rate_8d": 46.2
           }
         },
         {
@@ -9942,7 +9942,7 @@
       },
       "totals": {
         "away_exp_hr": 0.143,
-        "home_exp_hr": 0.081,
+        "home_exp_hr": 0.082,
         "total_exp_hr": 0.22,
         "away_exp_runs": 3.25,
         "home_exp_runs": 4.3,
@@ -9951,9 +9951,9 @@
         "home_runs_pg": 3.71,
         "away_hr_pg": 1.08,
         "home_hr_pg": 0.73,
-        "away_era": 4.21,
+        "away_era": 4.2,
         "home_era": 3.78,
-        "away_k_pg": 7.82,
+        "away_k_pg": 7.81,
         "home_k_pg": 8.44
       },
       "strikeouts": {
@@ -10017,7 +10017,7 @@
         "k_edge": null,
         "opp_team": "Philadelphia Phillies",
         "opp_lineup_k": 21.4,
-        "bullpen_hr9": 1.1
+        "bullpen_hr9": 1.09
       },
       "home_pitcher": {
         "name": "Andrew Painter",
@@ -10372,7 +10372,7 @@
             "hr": 12
           },
           "l8d": {
-            "pa": 42,
+            "pa": 43,
             "barrel": 2.9,
             "ev": 85.3,
             "la": 18.7,
@@ -10381,7 +10381,7 @@
             "slg": 0.5,
             "avg": 0.306,
             "pull": 5.9,
-            "k_pct": 21.4,
+            "k_pct": 20.9,
             "xslg": 0.618,
             "xwoba": 0.407,
             "bat_speed": 72.9
@@ -10406,7 +10406,7 @@
             "pit_platoon_mult": 0.797,
             "park_factor": 1.18,
             "weather_mult": 0.967,
-            "hot_cold_mult": 0.861,
+            "hot_cold_mult": 0.85,
             "k_mult": 1.0,
             "iso_vs_hand": 0.176,
             "iso_overall": 0.255,
@@ -10434,7 +10434,7 @@
             "barrel_8d_raw": 2.9,
             "hr_season": 12,
             "pa_season": 217,
-            "pa_8d": 42,
+            "pa_8d": 43,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.5,
@@ -10480,7 +10480,7 @@
             "iso_use": 0.176,
             "pull_s": 36.2,
             "pit_modifier": 0.739,
-            "hr_rate_8d": 28.6
+            "hr_rate_8d": 27.9
           }
         },
         {
@@ -11500,26 +11500,26 @@
             "hr": 20
           },
           "l8d": {
-            "pa": 44,
+            "pa": 45,
             "barrel": 0.0,
             "ev": 73.4,
             "la": 32.4,
             "hh": 0.0,
-            "iso": 0.513,
-            "slg": 0.795,
-            "avg": 0.282,
+            "iso": 0.5,
+            "slg": 0.775,
+            "avg": 0.275,
             "pull": 0.0,
-            "k_pct": 40.9,
+            "k_pct": 42.2,
             "xslg": 0.014,
             "xwoba": 0.008,
             "bat_speed": 76.3
           },
           "l5g": {
-            "ab": 39,
+            "ab": 40,
             "hr": 6,
-            "slg": 0.795,
-            "avg": 0.282,
-            "iso": 0.513
+            "slg": 0.775,
+            "avg": 0.275,
+            "iso": 0.5
           },
           "dk_odds": null,
           "projected": false,
@@ -11562,7 +11562,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 20,
             "pa_season": 221,
-            "pa_8d": 44,
+            "pa_8d": 45,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 34.8,
@@ -11608,7 +11608,7 @@
             "iso_use": 0.358,
             "pull_s": 54.1,
             "pit_modifier": 0.739,
-            "hr_rate_8d": 81.8
+            "hr_rate_8d": 80.0
           }
         },
         {
@@ -14030,26 +14030,26 @@
             "hr": 20
           },
           "l8d": {
-            "pa": 44,
+            "pa": 45,
             "barrel": 0.0,
             "ev": 73.4,
             "la": 32.4,
             "hh": 0.0,
-            "iso": 0.513,
-            "slg": 0.795,
-            "avg": 0.282,
+            "iso": 0.5,
+            "slg": 0.775,
+            "avg": 0.275,
             "pull": 0.0,
-            "k_pct": 40.9,
+            "k_pct": 42.2,
             "xslg": 0.014,
             "xwoba": 0.008,
             "bat_speed": 76.3
           },
           "l5g": {
-            "ab": 39,
+            "ab": 40,
             "hr": 6,
-            "slg": 0.795,
-            "avg": 0.282,
-            "iso": 0.513
+            "slg": 0.775,
+            "avg": 0.275,
+            "iso": 0.5
           },
           "dk_odds": null,
           "projected": false,
@@ -14092,7 +14092,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 20,
             "pa_season": 221,
-            "pa_8d": 44,
+            "pa_8d": 45,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 34.8,
@@ -14138,7 +14138,7 @@
             "iso_use": 0.358,
             "pull_s": 54.1,
             "pit_modifier": 0.739,
-            "hr_rate_8d": 81.8
+            "hr_rate_8d": 80.0
           }
         },
         {
@@ -14172,7 +14172,7 @@
             "hr": 12
           },
           "l8d": {
-            "pa": 42,
+            "pa": 43,
             "barrel": 2.9,
             "ev": 85.3,
             "la": 18.7,
@@ -14181,7 +14181,7 @@
             "slg": 0.5,
             "avg": 0.306,
             "pull": 5.9,
-            "k_pct": 21.4,
+            "k_pct": 20.9,
             "xslg": 0.618,
             "xwoba": 0.407,
             "bat_speed": 72.9
@@ -14206,7 +14206,7 @@
             "pit_platoon_mult": 0.797,
             "park_factor": 1.18,
             "weather_mult": 0.967,
-            "hot_cold_mult": 0.861,
+            "hot_cold_mult": 0.85,
             "k_mult": 1.0,
             "iso_vs_hand": 0.176,
             "iso_overall": 0.255,
@@ -14234,7 +14234,7 @@
             "barrel_8d_raw": 2.9,
             "hr_season": 12,
             "pa_season": 217,
-            "pa_8d": 42,
+            "pa_8d": 43,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.5,
@@ -14280,7 +14280,7 @@
             "iso_use": 0.176,
             "pull_s": 36.2,
             "pit_modifier": 0.739,
-            "hr_rate_8d": 28.6
+            "hr_rate_8d": 27.9
           }
         },
         {
@@ -15138,16 +15138,16 @@
         "away_exp_hr": 0.083,
         "home_exp_hr": 0.091,
         "total_exp_hr": 0.17,
-        "away_exp_runs": 4.14,
+        "away_exp_runs": 4.16,
         "home_exp_runs": 3.44,
-        "total_exp_runs": 7.58,
+        "total_exp_runs": 7.6,
         "away_runs_pg": 4.2,
-        "home_runs_pg": 4.0,
+        "home_runs_pg": 4.02,
         "away_hr_pg": 0.98,
         "home_hr_pg": 1.17,
-        "away_era": 3.55,
+        "away_era": 3.56,
         "home_era": 4.13,
-        "away_k_pg": 9.5,
+        "away_k_pg": 9.49,
         "home_k_pg": 9.45
       },
       "strikeouts": {
@@ -15823,6 +15823,145 @@
           }
         },
         {
+          "name": "Jos\u00e9 Caballero",
+          "team": "New York Yankees",
+          "hr_prob": 1.6,
+          "xgb_prob": 1.6,
+          "rf_prob": 0.5,
+          "archetype": "Contact",
+          "trend": "Steady",
+          "confidence": "High",
+          "reasons": [],
+          "opp_pitcher": "Drew Rasmussen",
+          "bat_hand": "R",
+          "opp_p_hand": "R",
+          "park_factor": 1.12,
+          "l8d_hr_count": 0,
+          "season": {
+            "barrel": 3.6,
+            "ev": 83.5,
+            "la": 9.1,
+            "hh": 30.0,
+            "iso": 0.137,
+            "slg": 0.403,
+            "avg": 0.266,
+            "k": 19.2,
+            "pull": 40.9,
+            "hr": 4
+          },
+          "l8d": {
+            "pa": 30,
+            "barrel": 0.0,
+            "ev": 86.0,
+            "la": 12.8,
+            "hh": 33.3,
+            "iso": 0.077,
+            "slg": 0.346,
+            "avg": 0.269,
+            "pull": 0.0,
+            "k_pct": 6.7,
+            "xslg": 0.516,
+            "xwoba": 0.422,
+            "bat_speed": 57.7
+          },
+          "l5g": {
+            "ab": 26,
+            "hr": 0,
+            "slg": 0.346,
+            "avg": 0.269,
+            "iso": 0.077
+          },
+          "dk_odds": null,
+          "projected": false,
+          "platoon_tag": null,
+          "contact_log": [],
+          "breakdown": {
+            "base_rate": 2.65,
+            "barrel_mult": 0.58,
+            "la_mult": 0.626,
+            "pit_vuln_mult": 0.896,
+            "bat_platoon_mult": 0.818,
+            "pit_platoon_mult": 0.709,
+            "park_factor": 1.12,
+            "weather_mult": 0.945,
+            "hot_cold_mult": 0.85,
+            "k_mult": 1.0,
+            "iso_vs_hand": 0.095,
+            "iso_overall": 0.137,
+            "split_pa": 105.0,
+            "split_ip_vs_bat": 19.2,
+            "slg_vs_bat": 0.239,
+            "pit_slg_overall": 0.327,
+            "split_hr": 1,
+            "split_slg": 0.372,
+            "split_woba": 0.352,
+            "split_k_pct": 15.2,
+            "split_brl": 0.0,
+            "split_iso": 0.095,
+            "split_ip": 19.2,
+            "hr9_split": 0.92,
+            "hr9_season": 1.15,
+            "pit_hard": 32.4,
+            "n_pit_components": 3,
+            "pit_blend_note": "100% 2026",
+            "barrel_use": 3.6,
+            "barrel_season": 3.6,
+            "la_use": 9.1,
+            "la_season": 9.1,
+            "la_8d_raw": 12.8,
+            "barrel_8d_raw": 0.0,
+            "hr_season": 4,
+            "pa_season": 151,
+            "pa_8d": 30,
+            "has_8d": true,
+            "blend_note": "100% 2026 + 8d",
+            "k_season": 19.2,
+            "pitch_bonus": -1.83,
+            "pitch_breakdown": [
+              {
+                "name": "Cutter",
+                "usage": 42.2,
+                "pit_rv": 1.4,
+                "bat_rv": -5.5,
+                "combined": -2.74,
+                "bonus": -1.73
+              },
+              {
+                "name": "4-Seam Fastball",
+                "usage": 33.6,
+                "pit_rv": -1.6,
+                "bat_rv": -0.7,
+                "combined": -1.06,
+                "bonus": -0.53
+              },
+              {
+                "name": "Sinker",
+                "usage": 24.2,
+                "pit_rv": 3.5,
+                "bat_rv": -0.3,
+                "combined": 1.22,
+                "bonus": 0.44
+              }
+            ],
+            "data_conf": {
+              "barrel": 1,
+              "la": 1,
+              "pit_hr9": 1,
+              "pit_hr9_hand": 1,
+              "iso_vs_hand": 1,
+              "park": 1,
+              "pitch_delta": 1,
+              "bat_platoon": 1
+            },
+            "bullpen_hr9": 0.77,
+            "bullpen_vuln": 0.5,
+            "iso_use": 0.095,
+            "pull_s": 40.9,
+            "pit_modifier": 0.896,
+            "hr_rate_8d": 0.0
+          }
+        },
+        {
           "name": "Ben Rice",
           "team": "New York Yankees",
           "hr_prob": 1.5,
@@ -15963,145 +16102,6 @@
             "pull_s": 50.4,
             "pit_modifier": 1.157,
             "hr_rate_8d": 41.9
-          }
-        },
-        {
-          "name": "Jos\u00e9 Caballero",
-          "team": "New York Yankees",
-          "hr_prob": 1.5,
-          "xgb_prob": 1.5,
-          "rf_prob": 0.5,
-          "archetype": "Contact",
-          "trend": "Steady",
-          "confidence": "High",
-          "reasons": [],
-          "opp_pitcher": "Drew Rasmussen",
-          "bat_hand": "R",
-          "opp_p_hand": "R",
-          "park_factor": 1.12,
-          "l8d_hr_count": 0,
-          "season": {
-            "barrel": 3.6,
-            "ev": 83.5,
-            "la": 9.1,
-            "hh": 30.0,
-            "iso": 0.137,
-            "slg": 0.403,
-            "avg": 0.266,
-            "k": 19.2,
-            "pull": 40.9,
-            "hr": 4
-          },
-          "l8d": {
-            "pa": 29,
-            "barrel": 0.0,
-            "ev": 86.0,
-            "la": 12.8,
-            "hh": 33.3,
-            "iso": 0.08,
-            "slg": 0.36,
-            "avg": 0.28,
-            "pull": 0.0,
-            "k_pct": 6.9,
-            "xslg": 0.516,
-            "xwoba": 0.422,
-            "bat_speed": 57.7
-          },
-          "l5g": {
-            "ab": 25,
-            "hr": 0,
-            "slg": 0.36,
-            "avg": 0.28,
-            "iso": 0.08
-          },
-          "dk_odds": null,
-          "projected": false,
-          "platoon_tag": null,
-          "contact_log": [],
-          "breakdown": {
-            "base_rate": 2.65,
-            "barrel_mult": 0.58,
-            "la_mult": 0.626,
-            "pit_vuln_mult": 0.896,
-            "bat_platoon_mult": 0.818,
-            "pit_platoon_mult": 0.709,
-            "park_factor": 1.12,
-            "weather_mult": 0.945,
-            "hot_cold_mult": 0.85,
-            "k_mult": 1.0,
-            "iso_vs_hand": 0.095,
-            "iso_overall": 0.137,
-            "split_pa": 105.0,
-            "split_ip_vs_bat": 19.2,
-            "slg_vs_bat": 0.239,
-            "pit_slg_overall": 0.327,
-            "split_hr": 1,
-            "split_slg": 0.372,
-            "split_woba": 0.352,
-            "split_k_pct": 15.2,
-            "split_brl": 0.0,
-            "split_iso": 0.095,
-            "split_ip": 19.2,
-            "hr9_split": 0.92,
-            "hr9_season": 1.15,
-            "pit_hard": 32.4,
-            "n_pit_components": 3,
-            "pit_blend_note": "100% 2026",
-            "barrel_use": 3.6,
-            "barrel_season": 3.6,
-            "la_use": 9.1,
-            "la_season": 9.1,
-            "la_8d_raw": 12.8,
-            "barrel_8d_raw": 0.0,
-            "hr_season": 4,
-            "pa_season": 151,
-            "pa_8d": 29,
-            "has_8d": true,
-            "blend_note": "100% 2026 + 8d",
-            "k_season": 19.2,
-            "pitch_bonus": -1.83,
-            "pitch_breakdown": [
-              {
-                "name": "Cutter",
-                "usage": 42.2,
-                "pit_rv": 1.4,
-                "bat_rv": -5.5,
-                "combined": -2.74,
-                "bonus": -1.73
-              },
-              {
-                "name": "4-Seam Fastball",
-                "usage": 33.6,
-                "pit_rv": -1.6,
-                "bat_rv": -0.7,
-                "combined": -1.06,
-                "bonus": -0.53
-              },
-              {
-                "name": "Sinker",
-                "usage": 24.2,
-                "pit_rv": 3.5,
-                "bat_rv": -0.3,
-                "combined": 1.22,
-                "bonus": 0.44
-              }
-            ],
-            "data_conf": {
-              "barrel": 1,
-              "la": 1,
-              "pit_hr9": 1,
-              "pit_hr9_hand": 1,
-              "iso_vs_hand": 1,
-              "park": 1,
-              "pitch_delta": 1,
-              "bat_platoon": 1
-            },
-            "bullpen_hr9": 0.77,
-            "bullpen_vuln": 0.5,
-            "iso_use": 0.095,
-            "pull_s": 40.9,
-            "pit_modifier": 0.896,
-            "hr_rate_8d": 0.0
           }
         },
         {
@@ -16559,26 +16559,26 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 33,
+            "pa": 34,
             "barrel": 7.1,
             "ev": 79.2,
             "la": 15.7,
             "hh": 14.3,
-            "iso": 0.097,
-            "slg": 0.194,
-            "avg": 0.097,
+            "iso": 0.094,
+            "slg": 0.188,
+            "avg": 0.094,
             "pull": 40.0,
-            "k_pct": 39.4,
+            "k_pct": 38.2,
             "xslg": 0.877,
             "xwoba": 0.529,
             "bat_speed": 68.7
           },
           "l5g": {
-            "ab": 31,
+            "ab": 32,
             "hr": 1,
-            "slg": 0.194,
-            "avg": 0.097,
-            "iso": 0.097
+            "slg": 0.188,
+            "avg": 0.094,
+            "iso": 0.094
           },
           "dk_odds": null,
           "projected": false,
@@ -16593,7 +16593,7 @@
             "pit_platoon_mult": 1.299,
             "park_factor": 1.25,
             "weather_mult": 0.975,
-            "hot_cold_mult": 1.061,
+            "hot_cold_mult": 1.029,
             "k_mult": 0.969,
             "iso_vs_hand": 0.135,
             "iso_overall": 0.111,
@@ -16621,7 +16621,7 @@
             "barrel_8d_raw": 7.1,
             "hr_season": 4,
             "pa_season": 140,
-            "pa_8d": 33,
+            "pa_8d": 34,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.7,
@@ -16667,7 +16667,7 @@
             "iso_use": 0.135,
             "pull_s": 48.2,
             "pit_modifier": 1.157,
-            "hr_rate_8d": 18.2
+            "hr_rate_8d": 17.6
           }
         },
         {
@@ -16812,6 +16812,147 @@
           }
         },
         {
+          "name": "Ryan McMahon",
+          "team": "New York Yankees",
+          "hr_prob": 0.8,
+          "xgb_prob": 0.8,
+          "rf_prob": 3.5,
+          "archetype": "High K",
+          "trend": "Heating Up",
+          "confidence": "High",
+          "reasons": [
+            "HR-friendly park"
+          ],
+          "opp_pitcher": "Drew Rasmussen",
+          "bat_hand": "L",
+          "opp_p_hand": "R",
+          "park_factor": 1.25,
+          "l8d_hr_count": 1,
+          "season": {
+            "barrel": 9.0,
+            "ev": 90.7,
+            "la": 13.9,
+            "hh": 47.8,
+            "iso": 0.119,
+            "slg": 0.306,
+            "avg": 0.187,
+            "k": 30.6,
+            "pull": 34.4,
+            "hr": 4
+          },
+          "l8d": {
+            "pa": 33,
+            "barrel": 11.8,
+            "ev": 84.6,
+            "la": 3.9,
+            "hh": 35.3,
+            "iso": 0.125,
+            "slg": 0.25,
+            "avg": 0.125,
+            "pull": 7.7,
+            "k_pct": 36.4,
+            "xslg": 0.778,
+            "xwoba": 0.479,
+            "bat_speed": 73.3
+          },
+          "l5g": {
+            "ab": 32,
+            "hr": 1,
+            "slg": 0.25,
+            "avg": 0.125,
+            "iso": 0.125
+          },
+          "dk_odds": null,
+          "projected": false,
+          "platoon_tag": "SP weak vs LHB",
+          "contact_log": [],
+          "breakdown": {
+            "base_rate": 2.72,
+            "barrel_mult": 1.351,
+            "la_mult": 0.626,
+            "pit_vuln_mult": 1.157,
+            "bat_platoon_mult": 1.076,
+            "pit_platoon_mult": 1.299,
+            "park_factor": 1.25,
+            "weather_mult": 0.975,
+            "hot_cold_mult": 1.114,
+            "k_mult": 0.937,
+            "iso_vs_hand": 0.136,
+            "iso_overall": 0.119,
+            "split_pa": 112.0,
+            "split_ip_vs_bat": 28.0,
+            "slg_vs_bat": 0.414,
+            "pit_slg_overall": 0.327,
+            "split_hr": 4,
+            "split_slg": 0.311,
+            "split_woba": 0.241,
+            "split_k_pct": 31.2,
+            "split_brl": 0.0,
+            "split_iso": 0.136,
+            "split_ip": 28.0,
+            "hr9_split": 1.61,
+            "hr9_season": 1.15,
+            "pit_hard": 32.4,
+            "n_pit_components": 3,
+            "pit_blend_note": "100% 2026",
+            "barrel_use": 9.0,
+            "barrel_season": 9.0,
+            "la_use": 13.9,
+            "la_season": 13.9,
+            "la_8d_raw": 3.9,
+            "barrel_8d_raw": 11.8,
+            "hr_season": 4,
+            "pa_season": 147,
+            "pa_8d": 33,
+            "has_8d": true,
+            "blend_note": "100% 2026 + 8d",
+            "k_season": 30.6,
+            "pitch_bonus": 0.06,
+            "pitch_breakdown": [
+              {
+                "name": "Cutter",
+                "usage": 42.2,
+                "pit_rv": 1.4,
+                "bat_rv": 1.1,
+                "combined": 1.22,
+                "bonus": 0.77
+              },
+              {
+                "name": "4-Seam Fastball",
+                "usage": 33.6,
+                "pit_rv": -1.6,
+                "bat_rv": -0.8,
+                "combined": -1.12,
+                "bonus": -0.56
+              },
+              {
+                "name": "Sinker",
+                "usage": 24.2,
+                "pit_rv": 3.5,
+                "bat_rv": -3.0,
+                "combined": -0.4,
+                "bonus": -0.15
+              }
+            ],
+            "data_conf": {
+              "barrel": 1,
+              "la": 1,
+              "pit_hr9": 1,
+              "pit_hr9_hand": 1,
+              "iso_vs_hand": 1,
+              "park": 1,
+              "pitch_delta": 1,
+              "bat_platoon": 1
+            },
+            "bullpen_hr9": 0.77,
+            "bullpen_vuln": 0.5,
+            "iso_use": 0.136,
+            "pull_s": 34.4,
+            "pit_modifier": 1.157,
+            "hr_rate_8d": 18.2
+          }
+        },
+        {
           "name": "Jazz Chisholm Jr.",
           "team": "New York Yankees",
           "hr_prob": 0.7,
@@ -16950,147 +17091,6 @@
             "pull_s": 50.4,
             "pit_modifier": 1.157,
             "hr_rate_8d": 14.6
-          }
-        },
-        {
-          "name": "Ryan McMahon",
-          "team": "New York Yankees",
-          "hr_prob": 0.7,
-          "xgb_prob": 0.7,
-          "rf_prob": 3.5,
-          "archetype": "High K",
-          "trend": "Heating Up",
-          "confidence": "High",
-          "reasons": [
-            "HR-friendly park"
-          ],
-          "opp_pitcher": "Drew Rasmussen",
-          "bat_hand": "L",
-          "opp_p_hand": "R",
-          "park_factor": 1.25,
-          "l8d_hr_count": 1,
-          "season": {
-            "barrel": 9.0,
-            "ev": 90.7,
-            "la": 13.9,
-            "hh": 47.8,
-            "iso": 0.119,
-            "slg": 0.306,
-            "avg": 0.187,
-            "k": 30.6,
-            "pull": 34.4,
-            "hr": 4
-          },
-          "l8d": {
-            "pa": 32,
-            "barrel": 11.8,
-            "ev": 84.6,
-            "la": 3.9,
-            "hh": 35.3,
-            "iso": 0.129,
-            "slg": 0.226,
-            "avg": 0.097,
-            "pull": 7.7,
-            "k_pct": 37.5,
-            "xslg": 0.778,
-            "xwoba": 0.479,
-            "bat_speed": 73.3
-          },
-          "l5g": {
-            "ab": 31,
-            "hr": 1,
-            "slg": 0.226,
-            "avg": 0.097,
-            "iso": 0.129
-          },
-          "dk_odds": null,
-          "projected": false,
-          "platoon_tag": "SP weak vs LHB",
-          "contact_log": [],
-          "breakdown": {
-            "base_rate": 2.72,
-            "barrel_mult": 1.351,
-            "la_mult": 0.626,
-            "pit_vuln_mult": 1.157,
-            "bat_platoon_mult": 1.076,
-            "pit_platoon_mult": 1.299,
-            "park_factor": 1.25,
-            "weather_mult": 0.975,
-            "hot_cold_mult": 1.148,
-            "k_mult": 0.937,
-            "iso_vs_hand": 0.136,
-            "iso_overall": 0.119,
-            "split_pa": 112.0,
-            "split_ip_vs_bat": 28.0,
-            "slg_vs_bat": 0.414,
-            "pit_slg_overall": 0.327,
-            "split_hr": 4,
-            "split_slg": 0.311,
-            "split_woba": 0.241,
-            "split_k_pct": 31.2,
-            "split_brl": 0.0,
-            "split_iso": 0.136,
-            "split_ip": 28.0,
-            "hr9_split": 1.61,
-            "hr9_season": 1.15,
-            "pit_hard": 32.4,
-            "n_pit_components": 3,
-            "pit_blend_note": "100% 2026",
-            "barrel_use": 9.0,
-            "barrel_season": 9.0,
-            "la_use": 13.9,
-            "la_season": 13.9,
-            "la_8d_raw": 3.9,
-            "barrel_8d_raw": 11.8,
-            "hr_season": 4,
-            "pa_season": 147,
-            "pa_8d": 32,
-            "has_8d": true,
-            "blend_note": "100% 2026 + 8d",
-            "k_season": 30.6,
-            "pitch_bonus": 0.06,
-            "pitch_breakdown": [
-              {
-                "name": "Cutter",
-                "usage": 42.2,
-                "pit_rv": 1.4,
-                "bat_rv": 1.1,
-                "combined": 1.22,
-                "bonus": 0.77
-              },
-              {
-                "name": "4-Seam Fastball",
-                "usage": 33.6,
-                "pit_rv": -1.6,
-                "bat_rv": -0.8,
-                "combined": -1.12,
-                "bonus": -0.56
-              },
-              {
-                "name": "Sinker",
-                "usage": 24.2,
-                "pit_rv": 3.5,
-                "bat_rv": -3.0,
-                "combined": -0.4,
-                "bonus": -0.15
-              }
-            ],
-            "data_conf": {
-              "barrel": 1,
-              "la": 1,
-              "pit_hr9": 1,
-              "pit_hr9_hand": 1,
-              "iso_vs_hand": 1,
-              "park": 1,
-              "pitch_delta": 1,
-              "bat_platoon": 1
-            },
-            "bullpen_hr9": 0.77,
-            "bullpen_vuln": 0.5,
-            "iso_use": 0.136,
-            "pull_s": 34.4,
-            "pit_modifier": 1.157,
-            "hr_rate_8d": 18.8
           }
         },
         {
@@ -19931,8 +19931,8 @@
         {
           "name": "Jos\u00e9 Caballero",
           "team": "New York Yankees",
-          "hr_prob": 1.5,
-          "xgb_prob": 1.5,
+          "hr_prob": 1.6,
+          "xgb_prob": 1.6,
           "rf_prob": 0.5,
           "archetype": "Contact",
           "trend": "Steady",
@@ -19956,26 +19956,26 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 29,
+            "pa": 30,
             "barrel": 0.0,
             "ev": 86.0,
             "la": 12.8,
             "hh": 33.3,
-            "iso": 0.08,
-            "slg": 0.36,
-            "avg": 0.28,
+            "iso": 0.077,
+            "slg": 0.346,
+            "avg": 0.269,
             "pull": 0.0,
-            "k_pct": 6.9,
+            "k_pct": 6.7,
             "xslg": 0.516,
             "xwoba": 0.422,
             "bat_speed": 57.7
           },
           "l5g": {
-            "ab": 25,
+            "ab": 26,
             "hr": 0,
-            "slg": 0.36,
-            "avg": 0.28,
-            "iso": 0.08
+            "slg": 0.346,
+            "avg": 0.269,
+            "iso": 0.077
           },
           "dk_odds": null,
           "projected": false,
@@ -20018,7 +20018,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 4,
             "pa_season": 151,
-            "pa_8d": 29,
+            "pa_8d": 30,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.2,
@@ -20070,8 +20070,8 @@
         {
           "name": "Ryan McMahon",
           "team": "New York Yankees",
-          "hr_prob": 0.7,
-          "xgb_prob": 0.7,
+          "hr_prob": 0.8,
+          "xgb_prob": 0.8,
           "rf_prob": 3.5,
           "archetype": "High K",
           "trend": "Heating Up",
@@ -20097,26 +20097,26 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 32,
+            "pa": 33,
             "barrel": 11.8,
             "ev": 84.6,
             "la": 3.9,
             "hh": 35.3,
-            "iso": 0.129,
-            "slg": 0.226,
-            "avg": 0.097,
+            "iso": 0.125,
+            "slg": 0.25,
+            "avg": 0.125,
             "pull": 7.7,
-            "k_pct": 37.5,
+            "k_pct": 36.4,
             "xslg": 0.778,
             "xwoba": 0.479,
             "bat_speed": 73.3
           },
           "l5g": {
-            "ab": 31,
+            "ab": 32,
             "hr": 1,
-            "slg": 0.226,
-            "avg": 0.097,
-            "iso": 0.129
+            "slg": 0.25,
+            "avg": 0.125,
+            "iso": 0.125
           },
           "dk_odds": null,
           "projected": false,
@@ -20131,7 +20131,7 @@
             "pit_platoon_mult": 1.299,
             "park_factor": 1.25,
             "weather_mult": 0.975,
-            "hot_cold_mult": 1.148,
+            "hot_cold_mult": 1.114,
             "k_mult": 0.937,
             "iso_vs_hand": 0.136,
             "iso_overall": 0.119,
@@ -20159,7 +20159,7 @@
             "barrel_8d_raw": 11.8,
             "hr_season": 4,
             "pa_season": 147,
-            "pa_8d": 32,
+            "pa_8d": 33,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 30.6,
@@ -20205,7 +20205,7 @@
             "iso_use": 0.136,
             "pull_s": 34.4,
             "pit_modifier": 1.157,
-            "hr_rate_8d": 18.8
+            "hr_rate_8d": 18.2
           }
         },
         {
@@ -20238,26 +20238,26 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 33,
+            "pa": 34,
             "barrel": 7.1,
             "ev": 79.2,
             "la": 15.7,
             "hh": 14.3,
-            "iso": 0.097,
-            "slg": 0.194,
-            "avg": 0.097,
+            "iso": 0.094,
+            "slg": 0.188,
+            "avg": 0.094,
             "pull": 40.0,
-            "k_pct": 39.4,
+            "k_pct": 38.2,
             "xslg": 0.877,
             "xwoba": 0.529,
             "bat_speed": 68.7
           },
           "l5g": {
-            "ab": 31,
+            "ab": 32,
             "hr": 1,
-            "slg": 0.194,
-            "avg": 0.097,
-            "iso": 0.097
+            "slg": 0.188,
+            "avg": 0.094,
+            "iso": 0.094
           },
           "dk_odds": null,
           "projected": false,
@@ -20272,7 +20272,7 @@
             "pit_platoon_mult": 1.299,
             "park_factor": 1.25,
             "weather_mult": 0.975,
-            "hot_cold_mult": 1.061,
+            "hot_cold_mult": 1.029,
             "k_mult": 0.969,
             "iso_vs_hand": 0.135,
             "iso_overall": 0.111,
@@ -20300,7 +20300,7 @@
             "barrel_8d_raw": 7.1,
             "hr_season": 4,
             "pa_season": 140,
-            "pa_8d": 33,
+            "pa_8d": 34,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.7,
@@ -20346,7 +20346,7 @@
             "iso_use": 0.135,
             "pull_s": 48.2,
             "pit_modifier": 1.157,
-            "hr_rate_8d": 18.2
+            "hr_rate_8d": 17.6
           }
         }
       ],
@@ -20362,8 +20362,8 @@
       },
       "totals": {
         "away_exp_hr": 0.217,
-        "home_exp_hr": 0.097,
-        "total_exp_hr": 0.31,
+        "home_exp_hr": 0.099,
+        "total_exp_hr": 0.32,
         "away_exp_runs": 4.15,
         "home_exp_runs": 4.01,
         "total_exp_runs": 8.16,
@@ -20371,10 +20371,10 @@
         "home_runs_pg": 4.75,
         "away_hr_pg": 0.82,
         "home_hr_pg": 1.4,
-        "away_era": 3.48,
+        "away_era": 3.47,
         "home_era": 3.25,
-        "away_k_pg": 7.75,
-        "home_k_pg": 8.84
+        "away_k_pg": 7.73,
+        "home_k_pg": 8.85
       },
       "strikeouts": {
         "away_exp_k": 5.3,
@@ -22058,7 +22058,7 @@
             "hr": 3
           },
           "l8d": {
-            "pa": 46,
+            "pa": 47,
             "barrel": 11.4,
             "ev": 85.2,
             "la": 9.7,
@@ -22067,7 +22067,7 @@
             "slg": 0.326,
             "avg": 0.279,
             "pull": 4.5,
-            "k_pct": 19.6,
+            "k_pct": 19.1,
             "xslg": 0.789,
             "xwoba": 0.52,
             "bat_speed": 68.1
@@ -22120,7 +22120,7 @@
             "barrel_8d_raw": 11.4,
             "hr_season": 3,
             "pa_season": 185,
-            "pa_8d": 46,
+            "pa_8d": 47,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 20.5,
@@ -22479,26 +22479,26 @@
             "hr": 5
           },
           "l8d": {
-            "pa": 43,
+            "pa": 44,
             "barrel": 9.8,
             "ev": 86.1,
             "la": 24.5,
             "hh": 25.5,
-            "iso": 0.243,
-            "slg": 0.463,
-            "avg": 0.22,
+            "iso": 0.238,
+            "slg": 0.452,
+            "avg": 0.214,
             "pull": 21.7,
-            "k_pct": 16.3,
+            "k_pct": 15.9,
             "xslg": 0.62,
             "xwoba": 0.394,
             "bat_speed": 69.0
           },
           "l5g": {
-            "ab": 41,
+            "ab": 42,
             "hr": 3,
-            "slg": 0.463,
-            "avg": 0.22,
-            "iso": 0.243
+            "slg": 0.452,
+            "avg": 0.214,
+            "iso": 0.238
           },
           "dk_odds": null,
           "projected": false,
@@ -22541,7 +22541,7 @@
             "barrel_8d_raw": 9.8,
             "hr_season": 5,
             "pa_season": 229,
-            "pa_8d": 43,
+            "pa_8d": 44,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.0,
@@ -22587,7 +22587,7 @@
             "iso_use": 0.038,
             "pull_s": 21.1,
             "pit_modifier": 0.603,
-            "hr_rate_8d": 41.9
+            "hr_rate_8d": 40.9
           }
         },
         {
@@ -23039,7 +23039,7 @@
             "hr": 3
           },
           "l8d": {
-            "pa": 46,
+            "pa": 47,
             "barrel": 11.4,
             "ev": 85.2,
             "la": 9.7,
@@ -23048,7 +23048,7 @@
             "slg": 0.326,
             "avg": 0.279,
             "pull": 4.5,
-            "k_pct": 19.6,
+            "k_pct": 19.1,
             "xslg": 0.789,
             "xwoba": 0.52,
             "bat_speed": 68.1
@@ -23101,7 +23101,7 @@
             "barrel_8d_raw": 11.4,
             "hr_season": 3,
             "pa_season": 185,
-            "pa_8d": 46,
+            "pa_8d": 47,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 20.5,
@@ -23178,26 +23178,26 @@
             "hr": 5
           },
           "l8d": {
-            "pa": 43,
+            "pa": 44,
             "barrel": 9.8,
             "ev": 86.1,
             "la": 24.5,
             "hh": 25.5,
-            "iso": 0.243,
-            "slg": 0.463,
-            "avg": 0.22,
+            "iso": 0.238,
+            "slg": 0.452,
+            "avg": 0.214,
             "pull": 21.7,
-            "k_pct": 16.3,
+            "k_pct": 15.9,
             "xslg": 0.62,
             "xwoba": 0.394,
             "bat_speed": 69.0
           },
           "l5g": {
-            "ab": 41,
+            "ab": 42,
             "hr": 3,
-            "slg": 0.463,
-            "avg": 0.22,
-            "iso": 0.243
+            "slg": 0.452,
+            "avg": 0.214,
+            "iso": 0.238
           },
           "dk_odds": null,
           "projected": false,
@@ -23240,7 +23240,7 @@
             "barrel_8d_raw": 9.8,
             "hr_season": 5,
             "pa_season": 229,
-            "pa_8d": 43,
+            "pa_8d": 44,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.0,
@@ -23286,7 +23286,7 @@
             "iso_use": 0.038,
             "pull_s": 21.1,
             "pit_modifier": 0.603,
-            "hr_rate_8d": 41.9
+            "hr_rate_8d": 40.9
           }
         },
         {
@@ -25560,9 +25560,9 @@
         "away_hr_pg": 0.87,
         "home_hr_pg": 0.81,
         "away_era": 3.79,
-        "home_era": 4.21,
+        "home_era": 4.2,
         "away_k_pg": 9.25,
-        "home_k_pg": 8.58
+        "home_k_pg": 8.59
       },
       "strikeouts": {
         "away_exp_k": 5.3,
@@ -26663,8 +26663,8 @@
         {
           "name": "Jac Caglianone",
           "team": "Kansas City Royals",
-          "hr_prob": 1.8,
-          "xgb_prob": 1.8,
+          "hr_prob": 2.2,
+          "xgb_prob": 2.2,
           "rf_prob": 3.7,
           "archetype": "Boom/Bust",
           "trend": "Steady",
@@ -26691,26 +26691,26 @@
             "hr": 5
           },
           "l8d": {
-            "pa": 31,
+            "pa": 32,
             "barrel": 4.8,
             "ev": 87.0,
             "la": -0.8,
             "hh": 47.6,
-            "iso": 0.166,
-            "slg": 0.433,
-            "avg": 0.267,
+            "iso": 0.161,
+            "slg": 0.419,
+            "avg": 0.258,
             "pull": 16.7,
-            "k_pct": 32.3,
+            "k_pct": 31.2,
             "xslg": 0.596,
             "xwoba": 0.462,
             "bat_speed": 75.4
           },
           "l5g": {
-            "ab": 30,
+            "ab": 31,
             "hr": 1,
-            "slg": 0.433,
-            "avg": 0.267,
-            "iso": 0.166
+            "slg": 0.419,
+            "avg": 0.258,
+            "iso": 0.161
           },
           "dk_odds": null,
           "projected": false,
@@ -26725,7 +26725,7 @@
             "pit_platoon_mult": 1.018,
             "park_factor": 1.05,
             "weather_mult": 1.06,
-            "hot_cold_mult": 1.084,
+            "hot_cold_mult": 1.05,
             "k_mult": 0.937,
             "iso_vs_hand": 0.182,
             "iso_overall": 0.169,
@@ -26753,7 +26753,7 @@
             "barrel_8d_raw": 4.8,
             "hr_season": 5,
             "pa_season": 168,
-            "pa_8d": 31,
+            "pa_8d": 32,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 30.4,
@@ -26799,7 +26799,7 @@
             "iso_use": 0.182,
             "pull_s": 42.7,
             "pit_modifier": 1.006,
-            "hr_rate_8d": 19.4
+            "hr_rate_8d": 18.8
           }
         },
         {
@@ -30199,8 +30199,8 @@
         {
           "name": "Jac Caglianone",
           "team": "Kansas City Royals",
-          "hr_prob": 1.8,
-          "xgb_prob": 1.8,
+          "hr_prob": 2.2,
+          "xgb_prob": 2.2,
           "rf_prob": 3.7,
           "archetype": "Boom/Bust",
           "trend": "Steady",
@@ -30227,26 +30227,26 @@
             "hr": 5
           },
           "l8d": {
-            "pa": 31,
+            "pa": 32,
             "barrel": 4.8,
             "ev": 87.0,
             "la": -0.8,
             "hh": 47.6,
-            "iso": 0.166,
-            "slg": 0.433,
-            "avg": 0.267,
+            "iso": 0.161,
+            "slg": 0.419,
+            "avg": 0.258,
             "pull": 16.7,
-            "k_pct": 32.3,
+            "k_pct": 31.2,
             "xslg": 0.596,
             "xwoba": 0.462,
             "bat_speed": 75.4
           },
           "l5g": {
-            "ab": 30,
+            "ab": 31,
             "hr": 1,
-            "slg": 0.433,
-            "avg": 0.267,
-            "iso": 0.166
+            "slg": 0.419,
+            "avg": 0.258,
+            "iso": 0.161
           },
           "dk_odds": null,
           "projected": false,
@@ -30261,7 +30261,7 @@
             "pit_platoon_mult": 1.018,
             "park_factor": 1.05,
             "weather_mult": 1.06,
-            "hot_cold_mult": 1.084,
+            "hot_cold_mult": 1.05,
             "k_mult": 0.937,
             "iso_vs_hand": 0.182,
             "iso_overall": 0.169,
@@ -30289,7 +30289,7 @@
             "barrel_8d_raw": 4.8,
             "hr_season": 5,
             "pa_season": 168,
-            "pa_8d": 31,
+            "pa_8d": 32,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 30.4,
@@ -30335,7 +30335,7 @@
             "iso_use": 0.182,
             "pull_s": 42.7,
             "pit_modifier": 1.006,
-            "hr_rate_8d": 19.4
+            "hr_rate_8d": 18.8
           }
         },
         {
@@ -30774,8 +30774,8 @@
       },
       "totals": {
         "away_exp_hr": 0.44,
-        "home_exp_hr": 0.123,
-        "total_exp_hr": 0.56,
+        "home_exp_hr": 0.127,
+        "total_exp_hr": 0.57,
         "away_exp_runs": 3.87,
         "home_exp_runs": 4.06,
         "total_exp_runs": 7.93,
@@ -30890,7 +30890,7 @@
         "k_edge": null,
         "opp_team": "Los Angeles Dodgers",
         "opp_lineup_k": 19.5,
-        "bullpen_hr9": 0.74
+        "bullpen_hr9": 0.76
       },
       "top_hr_candidates": [
         {
@@ -31027,7 +31027,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.123,
             "pull_s": 45.8,
@@ -31169,7 +31169,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.205,
             "pull_s": 34.9,
@@ -31312,7 +31312,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.13,
             "pull_s": 28.6,
@@ -31454,7 +31454,7 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.08,
             "pull_s": 32.4,
@@ -31596,7 +31596,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.178,
             "pull_s": 34.2,
@@ -31739,7 +31739,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.262,
             "pull_s": 25.0,
@@ -31881,7 +31881,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.074,
             "pull_s": 33.0,
@@ -32024,7 +32024,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.196,
             "pull_s": 41.5,
@@ -32167,7 +32167,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.14,
             "pull_s": 32.4,
@@ -32309,7 +32309,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.046,
             "pull_s": 34.4,
@@ -32451,7 +32451,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.084,
             "pull_s": 30.0,
@@ -32594,12 +32594,154 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.194,
             "pull_s": 52.3,
             "pit_modifier": 1.545,
             "hr_rate_8d": 25.0
+          }
+        },
+        {
+          "name": "Freddie Freeman",
+          "team": "Los Angeles Dodgers",
+          "hr_prob": 0.8,
+          "xgb_prob": 0.8,
+          "rf_prob": 5.7,
+          "archetype": "Pure Power",
+          "trend": "Heating Up",
+          "confidence": "High",
+          "reasons": [
+            "SP 1.8 HR/9",
+            "SP 40.4% HH"
+          ],
+          "opp_pitcher": "Brandon Sproat",
+          "bat_hand": "L",
+          "opp_p_hand": "R",
+          "park_factor": 1.08,
+          "l8d_hr_count": 2,
+          "season": {
+            "barrel": 11.8,
+            "ev": 91.9,
+            "la": 11.0,
+            "hh": 47.4,
+            "iso": 0.184,
+            "slg": 0.449,
+            "avg": 0.265,
+            "k": 15.5,
+            "pull": 33.6,
+            "hr": 6
+          },
+          "l8d": {
+            "pa": 43,
+            "barrel": 8.0,
+            "ev": 81.4,
+            "la": 25.6,
+            "hh": 24.0,
+            "iso": 0.29,
+            "slg": 0.484,
+            "avg": 0.194,
+            "pull": 28.6,
+            "k_pct": 30.2,
+            "xslg": 0.99,
+            "xwoba": 0.615,
+            "bat_speed": 68.7
+          },
+          "l5g": {
+            "ab": 31,
+            "hr": 2,
+            "slg": 0.484,
+            "avg": 0.194,
+            "iso": 0.29
+          },
+          "dk_odds": null,
+          "projected": false,
+          "platoon_tag": null,
+          "contact_log": [],
+          "breakdown": {
+            "base_rate": 2.82,
+            "barrel_mult": 1.742,
+            "la_mult": 0.807,
+            "pit_vuln_mult": 1.545,
+            "bat_platoon_mult": 1.024,
+            "pit_platoon_mult": 1.028,
+            "park_factor": 1.08,
+            "weather_mult": 1.0,
+            "hot_cold_mult": 1.2,
+            "k_mult": 1.0,
+            "iso_vs_hand": 0.192,
+            "iso_overall": 0.184,
+            "split_pa": 154.0,
+            "split_ip_vs_bat": 17.1,
+            "slg_vs_bat": 0.493,
+            "pit_slg_overall": 0.481,
+            "split_hr": 4,
+            "split_slg": 0.471,
+            "split_woba": 0.364,
+            "split_k_pct": 13.6,
+            "split_brl": 0.0,
+            "split_iso": 0.192,
+            "split_ip": 17.1,
+            "hr9_split": 2.08,
+            "hr9_season": 1.81,
+            "pit_hard": 40.4,
+            "n_pit_components": 3,
+            "pit_blend_note": "100% 2026",
+            "barrel_use": 11.8,
+            "barrel_season": 11.8,
+            "la_use": 11.0,
+            "la_season": 11.0,
+            "la_8d_raw": 25.6,
+            "barrel_8d_raw": 8.0,
+            "hr_season": 6,
+            "pa_season": 213,
+            "pa_8d": 43,
+            "has_8d": true,
+            "blend_note": "100% 2026 + 8d",
+            "k_season": 15.5,
+            "pitch_bonus": 0.7,
+            "pitch_breakdown": [
+              {
+                "name": "Cutter",
+                "usage": 39.2,
+                "pit_rv": 0.5,
+                "bat_rv": 3.0,
+                "combined": 2.0,
+                "bonus": 1.18
+              },
+              {
+                "name": "Sinker",
+                "usage": 38.7,
+                "pit_rv": -1.2,
+                "bat_rv": -0.8,
+                "combined": -0.96,
+                "bonus": -0.56
+              },
+              {
+                "name": "4-Seam Fastball",
+                "usage": 22.1,
+                "pit_rv": -0.6,
+                "bat_rv": 0.8,
+                "combined": 0.24,
+                "bonus": 0.08
+              }
+            ],
+            "data_conf": {
+              "barrel": 1,
+              "la": 1,
+              "pit_hr9": 1,
+              "pit_hr9_hand": 1,
+              "iso_vs_hand": 1,
+              "park": 1,
+              "pitch_delta": 1,
+              "bat_platoon": 1
+            },
+            "bullpen_hr9": 0.76,
+            "bullpen_vuln": 0.5,
+            "iso_use": 0.192,
+            "pull_s": 33.6,
+            "pit_modifier": 1.545,
+            "hr_rate_8d": 27.9
           }
         },
         {
@@ -32736,7 +32878,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.104,
             "pull_s": 38.9,
@@ -32878,154 +33020,12 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.083,
             "pull_s": 42.6,
             "pit_modifier": 1.157,
             "hr_rate_8d": 0.0
-          }
-        },
-        {
-          "name": "Freddie Freeman",
-          "team": "Los Angeles Dodgers",
-          "hr_prob": 0.7,
-          "xgb_prob": 0.7,
-          "rf_prob": 5.7,
-          "archetype": "Pure Power",
-          "trend": "Heating Up",
-          "confidence": "High",
-          "reasons": [
-            "SP 1.8 HR/9",
-            "SP 40.4% HH"
-          ],
-          "opp_pitcher": "Brandon Sproat",
-          "bat_hand": "L",
-          "opp_p_hand": "R",
-          "park_factor": 1.08,
-          "l8d_hr_count": 2,
-          "season": {
-            "barrel": 11.8,
-            "ev": 91.9,
-            "la": 11.0,
-            "hh": 47.4,
-            "iso": 0.184,
-            "slg": 0.449,
-            "avg": 0.265,
-            "k": 15.5,
-            "pull": 33.6,
-            "hr": 6
-          },
-          "l8d": {
-            "pa": 42,
-            "barrel": 8.0,
-            "ev": 81.4,
-            "la": 25.6,
-            "hh": 24.0,
-            "iso": 0.29,
-            "slg": 0.484,
-            "avg": 0.194,
-            "pull": 28.6,
-            "k_pct": 31.0,
-            "xslg": 0.99,
-            "xwoba": 0.615,
-            "bat_speed": 68.7
-          },
-          "l5g": {
-            "ab": 31,
-            "hr": 2,
-            "slg": 0.484,
-            "avg": 0.194,
-            "iso": 0.29
-          },
-          "dk_odds": null,
-          "projected": false,
-          "platoon_tag": null,
-          "contact_log": [],
-          "breakdown": {
-            "base_rate": 2.82,
-            "barrel_mult": 1.742,
-            "la_mult": 0.807,
-            "pit_vuln_mult": 1.545,
-            "bat_platoon_mult": 1.024,
-            "pit_platoon_mult": 1.028,
-            "park_factor": 1.08,
-            "weather_mult": 1.0,
-            "hot_cold_mult": 1.2,
-            "k_mult": 1.0,
-            "iso_vs_hand": 0.192,
-            "iso_overall": 0.184,
-            "split_pa": 154.0,
-            "split_ip_vs_bat": 17.1,
-            "slg_vs_bat": 0.493,
-            "pit_slg_overall": 0.481,
-            "split_hr": 4,
-            "split_slg": 0.471,
-            "split_woba": 0.364,
-            "split_k_pct": 13.6,
-            "split_brl": 0.0,
-            "split_iso": 0.192,
-            "split_ip": 17.1,
-            "hr9_split": 2.08,
-            "hr9_season": 1.81,
-            "pit_hard": 40.4,
-            "n_pit_components": 3,
-            "pit_blend_note": "100% 2026",
-            "barrel_use": 11.8,
-            "barrel_season": 11.8,
-            "la_use": 11.0,
-            "la_season": 11.0,
-            "la_8d_raw": 25.6,
-            "barrel_8d_raw": 8.0,
-            "hr_season": 6,
-            "pa_season": 213,
-            "pa_8d": 42,
-            "has_8d": true,
-            "blend_note": "100% 2026 + 8d",
-            "k_season": 15.5,
-            "pitch_bonus": 0.7,
-            "pitch_breakdown": [
-              {
-                "name": "Cutter",
-                "usage": 39.2,
-                "pit_rv": 0.5,
-                "bat_rv": 3.0,
-                "combined": 2.0,
-                "bonus": 1.18
-              },
-              {
-                "name": "Sinker",
-                "usage": 38.7,
-                "pit_rv": -1.2,
-                "bat_rv": -0.8,
-                "combined": -0.96,
-                "bonus": -0.56
-              },
-              {
-                "name": "4-Seam Fastball",
-                "usage": 22.1,
-                "pit_rv": -0.6,
-                "bat_rv": 0.8,
-                "combined": 0.24,
-                "bonus": 0.08
-              }
-            ],
-            "data_conf": {
-              "barrel": 1,
-              "la": 1,
-              "pit_hr9": 1,
-              "pit_hr9_hand": 1,
-              "iso_vs_hand": 1,
-              "park": 1,
-              "pitch_delta": 1,
-              "bat_platoon": 1
-            },
-            "bullpen_hr9": 0.74,
-            "bullpen_vuln": 0.5,
-            "iso_use": 0.192,
-            "pull_s": 33.6,
-            "pit_modifier": 1.545,
-            "hr_rate_8d": 28.6
           }
         },
         {
@@ -33163,7 +33163,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.317,
             "pull_s": 41.5,
@@ -33305,7 +33305,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.193,
             "pull_s": 41.9,
@@ -33447,7 +33447,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.142,
             "pull_s": 41.0,
@@ -33592,7 +33592,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.194,
             "pull_s": 52.3,
@@ -33734,7 +33734,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.193,
             "pull_s": 41.9,
@@ -33745,8 +33745,8 @@
         {
           "name": "Freddie Freeman",
           "team": "Los Angeles Dodgers",
-          "hr_prob": 0.7,
-          "xgb_prob": 0.7,
+          "hr_prob": 0.8,
+          "xgb_prob": 0.8,
           "rf_prob": 5.7,
           "archetype": "Pure Power",
           "trend": "Heating Up",
@@ -33773,7 +33773,7 @@
             "hr": 6
           },
           "l8d": {
-            "pa": 42,
+            "pa": 43,
             "barrel": 8.0,
             "ev": 81.4,
             "la": 25.6,
@@ -33782,7 +33782,7 @@
             "slg": 0.484,
             "avg": 0.194,
             "pull": 28.6,
-            "k_pct": 31.0,
+            "k_pct": 30.2,
             "xslg": 0.99,
             "xwoba": 0.615,
             "bat_speed": 68.7
@@ -33835,7 +33835,7 @@
             "barrel_8d_raw": 8.0,
             "hr_season": 6,
             "pa_season": 213,
-            "pa_8d": 42,
+            "pa_8d": 43,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.5,
@@ -33876,12 +33876,12 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.192,
             "pull_s": 33.6,
             "pit_modifier": 1.545,
-            "hr_rate_8d": 28.6
+            "hr_rate_8d": 27.9
           }
         },
         {
@@ -34018,7 +34018,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.123,
             "pull_s": 45.8,
@@ -34160,7 +34160,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.205,
             "pull_s": 34.9,
@@ -34302,7 +34302,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.178,
             "pull_s": 34.2,
@@ -34445,7 +34445,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.317,
             "pull_s": 41.5,
@@ -34587,7 +34587,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.084,
             "pull_s": 30.0,
@@ -34729,7 +34729,7 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.08,
             "pull_s": 32.4,
@@ -34874,7 +34874,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.13,
             "pull_s": 28.6,
@@ -35017,7 +35017,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.262,
             "pull_s": 25.0,
@@ -35159,7 +35159,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.104,
             "pull_s": 38.9,
@@ -35302,7 +35302,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.196,
             "pull_s": 41.5,
@@ -35444,7 +35444,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.142,
             "pull_s": 41.0,
@@ -35587,7 +35587,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.14,
             "pull_s": 32.4,
@@ -35729,7 +35729,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.083,
             "pull_s": 42.6,
@@ -35871,7 +35871,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.074,
             "pull_s": 33.0,
@@ -36013,7 +36013,7 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 0.74,
+            "bullpen_hr9": 0.76,
             "bullpen_vuln": 0.5,
             "iso_use": 0.046,
             "pull_s": 34.4,
@@ -36033,20 +36033,20 @@
         "wind_angle_cf": 113
       },
       "totals": {
-        "away_exp_hr": 0.523,
+        "away_exp_hr": 0.524,
         "home_exp_hr": 0.165,
         "total_exp_hr": 0.69,
         "away_exp_runs": 5.36,
-        "home_exp_runs": 4.74,
-        "total_exp_runs": 10.1,
-        "away_runs_pg": 5.09,
+        "home_exp_runs": 4.82,
+        "total_exp_runs": 10.18,
+        "away_runs_pg": 5.17,
         "home_runs_pg": 4.92,
-        "away_hr_pg": 1.26,
+        "away_hr_pg": 1.28,
         "home_hr_pg": 0.68,
         "away_era": 3.14,
-        "home_era": 3.27,
+        "home_era": 3.35,
         "away_k_pg": 9.0,
-        "home_k_pg": 9.87
+        "home_k_pg": 9.88
       },
       "strikeouts": {
         "away_exp_k": 5.1,
@@ -36719,6 +36719,141 @@
           }
         },
         {
+          "name": "Zach Dezenzo",
+          "team": "Houston Astros",
+          "hr_prob": 1.1,
+          "xgb_prob": 1.1,
+          "rf_prob": 3.2,
+          "archetype": "Boom/Bust",
+          "trend": "Cooling Off",
+          "confidence": "Medium",
+          "reasons": [
+            "Barrel 16.7%",
+            "ISO vs hand .428",
+            "SP 41.1% HH"
+          ],
+          "opp_pitcher": "Shota Imanaga",
+          "bat_hand": "R",
+          "opp_p_hand": "L",
+          "park_factor": 1.1,
+          "l8d_hr_count": 0,
+          "season": {
+            "barrel": 16.7,
+            "ev": 84.9,
+            "la": 12.7,
+            "hh": 33.3,
+            "iso": 0.167,
+            "slg": 0.389,
+            "avg": 0.222,
+            "k": 31.6,
+            "pull": 45.8,
+            "hr": 1
+          },
+          "l8d": {
+            "pa": 31,
+            "barrel": 12.5,
+            "ev": 82.7,
+            "la": 14.9,
+            "hh": 25.0,
+            "iso": 0.107,
+            "slg": 0.357,
+            "avg": 0.25,
+            "pull": 25.0,
+            "k_pct": 35.5,
+            "xslg": 0.546,
+            "xwoba": 0.366,
+            "bat_speed": 74.0
+          },
+          "l5g": {
+            "ab": 28,
+            "hr": 0,
+            "slg": 0.357,
+            "avg": 0.25,
+            "iso": 0.107
+          },
+          "dk_odds": null,
+          "projected": false,
+          "platoon_tag": null,
+          "contact_log": [],
+          "breakdown": {
+            "base_rate": 2.67,
+            "barrel_mult": 2.119,
+            "la_mult": 0.626,
+            "pit_vuln_mult": 0.908,
+            "bat_platoon_mult": 1.0,
+            "pit_platoon_mult": 0.77,
+            "park_factor": 1.1,
+            "weather_mult": 1.034,
+            "hot_cold_mult": 0.85,
+            "k_mult": 0.937,
+            "iso_vs_hand": 0.428,
+            "iso_overall": 0.167,
+            "split_pa": 7.0,
+            "split_ip_vs_bat": 41.2,
+            "slg_vs_bat": 0.311,
+            "pit_slg_overall": 0.394,
+            "split_hr": 1,
+            "split_slg": 0.571,
+            "split_woba": 0.143,
+            "split_k_pct": 14.3,
+            "split_brl": 0.0,
+            "split_iso": 0.428,
+            "split_ip": 41.2,
+            "hr9_split": 0.65,
+            "hr9_season": 1.29,
+            "pit_hard": 41.1,
+            "n_pit_components": 3,
+            "pit_blend_note": "100% 2026",
+            "barrel_use": 16.7,
+            "barrel_season": 16.7,
+            "la_use": 12.7,
+            "la_season": 12.7,
+            "la_8d_raw": 14.9,
+            "barrel_8d_raw": 12.5,
+            "hr_season": 1,
+            "pa_season": 38,
+            "pa_8d": 31,
+            "has_8d": true,
+            "blend_note": "100% 2026 + 8d",
+            "k_season": 31.6,
+            "pitch_bonus": -0.01,
+            "pitch_breakdown": [
+              {
+                "name": "4-Seam Fastball",
+                "usage": 46.7,
+                "pit_rv": 0.5,
+                "bat_rv": 1.5,
+                "combined": 1.1,
+                "bonus": 0.77
+              },
+              {
+                "name": "Sweeper",
+                "usage": 15.5,
+                "pit_rv": -0.7,
+                "bat_rv": -5.1,
+                "combined": -3.34,
+                "bonus": -0.78
+              }
+            ],
+            "data_conf": {
+              "barrel": 1,
+              "la": 1,
+              "pit_hr9": 1,
+              "pit_hr9_hand": 1,
+              "iso_vs_hand": 0,
+              "park": 1,
+              "pitch_delta": 1,
+              "bat_platoon": 0
+            },
+            "bullpen_hr9": 1.39,
+            "bullpen_vuln": 1.304,
+            "iso_use": 0.428,
+            "pull_s": 45.8,
+            "pit_modifier": 0.908,
+            "hr_rate_8d": 0.0
+          }
+        },
+        {
           "name": "Michael Conforto",
           "team": "Chicago Cubs",
           "hr_prob": 1.1,
@@ -36859,141 +36994,6 @@
             "pull_s": 44.4,
             "pit_modifier": 0.806,
             "hr_rate_8d": 21.4
-          }
-        },
-        {
-          "name": "Zach Dezenzo",
-          "team": "Houston Astros",
-          "hr_prob": 0.9,
-          "xgb_prob": 0.9,
-          "rf_prob": 3.2,
-          "archetype": "Boom/Bust",
-          "trend": "Cooling Off",
-          "confidence": "Medium",
-          "reasons": [
-            "Barrel 16.7%",
-            "ISO vs hand .428",
-            "SP 41.1% HH"
-          ],
-          "opp_pitcher": "Shota Imanaga",
-          "bat_hand": "R",
-          "opp_p_hand": "L",
-          "park_factor": 1.1,
-          "l8d_hr_count": 0,
-          "season": {
-            "barrel": 16.7,
-            "ev": 84.9,
-            "la": 12.7,
-            "hh": 33.3,
-            "iso": 0.167,
-            "slg": 0.389,
-            "avg": 0.222,
-            "k": 31.6,
-            "pull": 45.8,
-            "hr": 1
-          },
-          "l8d": {
-            "pa": 30,
-            "barrel": 12.5,
-            "ev": 82.7,
-            "la": 14.9,
-            "hh": 25.0,
-            "iso": 0.107,
-            "slg": 0.357,
-            "avg": 0.25,
-            "pull": 25.0,
-            "k_pct": 36.7,
-            "xslg": 0.546,
-            "xwoba": 0.366,
-            "bat_speed": 74.0
-          },
-          "l5g": {
-            "ab": 28,
-            "hr": 0,
-            "slg": 0.357,
-            "avg": 0.25,
-            "iso": 0.107
-          },
-          "dk_odds": null,
-          "projected": false,
-          "platoon_tag": null,
-          "contact_log": [],
-          "breakdown": {
-            "base_rate": 2.67,
-            "barrel_mult": 2.119,
-            "la_mult": 0.626,
-            "pit_vuln_mult": 0.908,
-            "bat_platoon_mult": 1.0,
-            "pit_platoon_mult": 0.77,
-            "park_factor": 1.1,
-            "weather_mult": 1.034,
-            "hot_cold_mult": 0.85,
-            "k_mult": 0.937,
-            "iso_vs_hand": 0.428,
-            "iso_overall": 0.167,
-            "split_pa": 7.0,
-            "split_ip_vs_bat": 41.2,
-            "slg_vs_bat": 0.311,
-            "pit_slg_overall": 0.394,
-            "split_hr": 1,
-            "split_slg": 0.571,
-            "split_woba": 0.143,
-            "split_k_pct": 14.3,
-            "split_brl": 0.0,
-            "split_iso": 0.428,
-            "split_ip": 41.2,
-            "hr9_split": 0.65,
-            "hr9_season": 1.29,
-            "pit_hard": 41.1,
-            "n_pit_components": 3,
-            "pit_blend_note": "100% 2026",
-            "barrel_use": 16.7,
-            "barrel_season": 16.7,
-            "la_use": 12.7,
-            "la_season": 12.7,
-            "la_8d_raw": 14.9,
-            "barrel_8d_raw": 12.5,
-            "hr_season": 1,
-            "pa_season": 38,
-            "pa_8d": 30,
-            "has_8d": true,
-            "blend_note": "100% 2026 + 8d",
-            "k_season": 31.6,
-            "pitch_bonus": -0.01,
-            "pitch_breakdown": [
-              {
-                "name": "4-Seam Fastball",
-                "usage": 46.7,
-                "pit_rv": 0.5,
-                "bat_rv": 1.5,
-                "combined": 1.1,
-                "bonus": 0.77
-              },
-              {
-                "name": "Sweeper",
-                "usage": 15.5,
-                "pit_rv": -0.7,
-                "bat_rv": -5.1,
-                "combined": -3.34,
-                "bonus": -0.78
-              }
-            ],
-            "data_conf": {
-              "barrel": 1,
-              "la": 1,
-              "pit_hr9": 1,
-              "pit_hr9_hand": 1,
-              "iso_vs_hand": 0,
-              "park": 1,
-              "pitch_delta": 1,
-              "bat_platoon": 0
-            },
-            "bullpen_hr9": 1.39,
-            "bullpen_vuln": 1.304,
-            "iso_use": 0.428,
-            "pull_s": 45.8,
-            "pit_modifier": 0.908,
-            "hr_rate_8d": 0.0
           }
         },
         {
@@ -37584,26 +37584,26 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 27,
+            "pa": 28,
             "barrel": 11.8,
             "ev": 83.8,
             "la": 10.7,
             "hh": 29.4,
-            "iso": 0.0,
-            "slg": 0.2,
-            "avg": 0.2,
+            "iso": 0.038,
+            "slg": 0.269,
+            "avg": 0.231,
             "pull": 15.4,
-            "k_pct": 22.2,
+            "k_pct": 21.4,
             "xslg": 0.532,
             "xwoba": 0.329,
             "bat_speed": 72.5
           },
           "l5g": {
-            "ab": 25,
+            "ab": 26,
             "hr": 0,
-            "slg": 0.2,
-            "avg": 0.2,
-            "iso": 0.0
+            "slg": 0.269,
+            "avg": 0.231,
+            "iso": 0.038
           },
           "dk_odds": null,
           "projected": false,
@@ -37646,7 +37646,7 @@
             "barrel_8d_raw": 11.8,
             "hr_season": 4,
             "pa_season": 193,
-            "pa_8d": 27,
+            "pa_8d": 28,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 28.0,
@@ -39406,26 +39406,26 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 27,
+            "pa": 28,
             "barrel": 11.8,
             "ev": 83.8,
             "la": 10.7,
             "hh": 29.4,
-            "iso": 0.0,
-            "slg": 0.2,
-            "avg": 0.2,
+            "iso": 0.038,
+            "slg": 0.269,
+            "avg": 0.231,
             "pull": 15.4,
-            "k_pct": 22.2,
+            "k_pct": 21.4,
             "xslg": 0.532,
             "xwoba": 0.329,
             "bat_speed": 72.5
           },
           "l5g": {
-            "ab": 25,
+            "ab": 26,
             "hr": 0,
-            "slg": 0.2,
-            "avg": 0.2,
-            "iso": 0.0
+            "slg": 0.269,
+            "avg": 0.231,
+            "iso": 0.038
           },
           "dk_odds": null,
           "projected": false,
@@ -39468,7 +39468,7 @@
             "barrel_8d_raw": 11.8,
             "hr_season": 4,
             "pa_season": 193,
-            "pa_8d": 27,
+            "pa_8d": 28,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 28.0,
@@ -39520,8 +39520,8 @@
         {
           "name": "Zach Dezenzo",
           "team": "Houston Astros",
-          "hr_prob": 0.9,
-          "xgb_prob": 0.9,
+          "hr_prob": 1.1,
+          "xgb_prob": 1.1,
           "rf_prob": 3.2,
           "archetype": "Boom/Bust",
           "trend": "Cooling Off",
@@ -39549,7 +39549,7 @@
             "hr": 1
           },
           "l8d": {
-            "pa": 30,
+            "pa": 31,
             "barrel": 12.5,
             "ev": 82.7,
             "la": 14.9,
@@ -39558,7 +39558,7 @@
             "slg": 0.357,
             "avg": 0.25,
             "pull": 25.0,
-            "k_pct": 36.7,
+            "k_pct": 35.5,
             "xslg": 0.546,
             "xwoba": 0.366,
             "bat_speed": 74.0
@@ -39611,7 +39611,7 @@
             "barrel_8d_raw": 12.5,
             "hr_season": 1,
             "pa_season": 38,
-            "pa_8d": 30,
+            "pa_8d": 31,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 31.6,
@@ -41213,20 +41213,20 @@
         "wind_angle_cf": -108
       },
       "totals": {
-        "away_exp_hr": 0.052,
+        "away_exp_hr": 0.054,
         "home_exp_hr": 0.182,
-        "total_exp_hr": 0.23,
+        "total_exp_hr": 0.24,
         "away_exp_runs": 4.64,
-        "home_exp_runs": 4.25,
-        "total_exp_runs": 8.89,
-        "away_runs_pg": 4.2,
+        "home_exp_runs": 4.29,
+        "total_exp_runs": 8.93,
+        "away_runs_pg": 4.24,
         "home_runs_pg": 4.74,
         "away_hr_pg": 1.2,
         "home_hr_pg": 1.11,
         "away_era": 5.19,
-        "home_era": 4.05,
+        "home_era": 4.09,
         "away_k_pg": 8.63,
-        "home_k_pg": 8.13
+        "home_k_pg": 8.11
       },
       "strikeouts": {
         "away_exp_k": 4.3,
