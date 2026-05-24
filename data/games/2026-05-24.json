@@ -6,7 +6,7 @@
       "home": "Baltimore Orioles",
       "time": "2026-05-24T22:05:00Z",
       "away_pitcher": {
-        "name": "TBD",
+        "name": "Troy Melton",
         "hand": "R",
         "era": null,
         "hr9": null,
@@ -89,7 +89,7 @@
             "ISO vs hand .244",
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "R",
           "opp_p_hand": "R",
           "park_factor": 1.18,
@@ -205,7 +205,7 @@
           "reasons": [
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "R",
           "opp_p_hand": "R",
           "park_factor": 1.18,
@@ -604,7 +604,7 @@
           "reasons": [
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "L",
           "opp_p_hand": "R",
           "park_factor": 1.22,
@@ -720,7 +720,7 @@
           "reasons": [
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "R",
           "opp_p_hand": "R",
           "park_factor": 1.18,
@@ -978,7 +978,7 @@
           "reasons": [
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "R",
           "opp_p_hand": "R",
           "park_factor": 1.18,
@@ -1094,7 +1094,7 @@
           "reasons": [
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "L",
           "opp_p_hand": "R",
           "park_factor": 1.22,
@@ -1918,7 +1918,7 @@
           "reasons": [
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "R",
           "opp_p_hand": "R",
           "park_factor": 1.18,
@@ -2176,7 +2176,7 @@
             "ISO vs hand .244",
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "L",
           "opp_p_hand": "R",
           "park_factor": 1.22,
@@ -2293,7 +2293,7 @@
             "ISO vs hand .241",
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "L",
           "opp_p_hand": "R",
           "park_factor": 1.22,
@@ -3687,7 +3687,7 @@
           "reasons": [
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "R",
           "opp_p_hand": "R",
           "park_factor": 1.18,
@@ -3803,7 +3803,7 @@
           "reasons": [
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "L",
           "opp_p_hand": "R",
           "park_factor": 1.22,
@@ -3920,7 +3920,7 @@
             "ISO vs hand .241",
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "L",
           "opp_p_hand": "R",
           "park_factor": 1.22,
@@ -4038,7 +4038,7 @@
             "ISO vs hand .244",
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "R",
           "opp_p_hand": "R",
           "park_factor": 1.18,
@@ -4155,7 +4155,7 @@
             "ISO vs hand .244",
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "L",
           "opp_p_hand": "R",
           "park_factor": 1.22,
@@ -4271,7 +4271,7 @@
           "reasons": [
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "R",
           "opp_p_hand": "R",
           "park_factor": 1.18,
@@ -4387,7 +4387,7 @@
           "reasons": [
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "L",
           "opp_p_hand": "R",
           "park_factor": 1.22,
@@ -4503,7 +4503,7 @@
           "reasons": [
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "R",
           "opp_p_hand": "R",
           "park_factor": 1.18,
@@ -4619,7 +4619,7 @@
           "reasons": [
             "HR-friendly park"
           ],
-          "opp_pitcher": "TBD",
+          "opp_pitcher": "Troy Melton",
           "bat_hand": "R",
           "opp_p_hand": "R",
           "park_factor": 1.18,
@@ -4755,7 +4755,7 @@
         "home_exp_k": 4.9,
         "away_lineup_k": 26.3,
         "home_lineup_k": 22.8,
-        "away_pit_name": "TBD",
+        "away_pit_name": "Troy Melton",
         "home_pit_name": "Trevor Rogers",
         "away_pit_k9": 0,
         "home_pit_k9": 7.8,
@@ -9954,7 +9954,7 @@
         "away_era": 4.21,
         "home_era": 3.78,
         "away_k_pg": 7.82,
-        "home_k_pg": 8.43
+        "home_k_pg": 8.44
       },
       "strikeouts": {
         "away_exp_k": 3.5,
@@ -25562,7 +25562,7 @@
         "away_era": 3.79,
         "home_era": 4.21,
         "away_k_pg": 9.25,
-        "home_k_pg": 8.59
+        "home_k_pg": 8.58
       },
       "strikeouts": {
         "away_exp_k": 5.3,
@@ -30785,7 +30785,7 @@
         "home_hr_pg": 0.91,
         "away_era": 3.61,
         "home_era": 4.13,
-        "away_k_pg": 8.72,
+        "away_k_pg": 8.71,
         "home_k_pg": 8.32
       },
       "strikeouts": {
