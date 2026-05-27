@@ -5169,7 +5169,7 @@
         "away_era": 4.71,
         "home_era": 3.65,
         "away_k_pg": 7.94,
-        "home_k_pg": 9.48
+        "home_k_pg": 9.46
       },
       "strikeouts": {
         "away_exp_k": 4.7,
@@ -5232,7 +5232,7 @@
         "k_edge": null,
         "opp_team": "Baltimore Orioles",
         "opp_lineup_k": 25.7,
-        "bullpen_hr9": 1.04
+        "bullpen_hr9": 1.06
       },
       "home_pitcher": {
         "name": "Shane Baz",
@@ -10387,16 +10387,16 @@
         "away_exp_hr": 0.099,
         "home_exp_hr": 0.091,
         "total_exp_hr": 0.19,
-        "away_exp_runs": 4.58,
+        "away_exp_runs": 4.64,
         "home_exp_runs": 4.48,
-        "total_exp_runs": 9.06,
+        "total_exp_runs": 9.12,
         "away_runs_pg": 4.69,
-        "home_runs_pg": 4.36,
+        "home_runs_pg": 4.42,
         "away_hr_pg": 0.83,
-        "home_hr_pg": 1.07,
+        "home_hr_pg": 1.09,
         "away_era": 3.46,
         "home_era": 4.77,
-        "away_k_pg": 7.74,
+        "away_k_pg": 7.73,
         "home_k_pg": 8.29
       },
       "strikeouts": {
@@ -15582,7 +15582,7 @@
         "home_runs_pg": 3.85,
         "away_hr_pg": 1.16,
         "home_hr_pg": 0.84,
-        "away_era": 4.86,
+        "away_era": 4.85,
         "home_era": 3.97,
         "away_k_pg": 8.84,
         "home_k_pg": 8.34
@@ -20312,7 +20312,7 @@
         "away_hr_pg": 1.11,
         "home_hr_pg": 1.04,
         "away_era": 4.2,
-        "home_era": 3.75,
+        "home_era": 3.74,
         "away_k_pg": 8.16,
         "home_k_pg": 8.78
       },
@@ -25519,7 +25519,7 @@
         "home_runs_pg": 3.7,
         "away_hr_pg": 1.33,
         "home_hr_pg": 0.75,
-        "away_era": 3.05,
+        "away_era": 3.04,
         "home_era": 3.75,
         "away_k_pg": 8.93,
         "home_k_pg": 8.45
@@ -35975,7 +35975,7 @@
         "k_edge": null,
         "opp_team": "Chicago White Sox",
         "opp_lineup_k": 21.0,
-        "bullpen_hr9": 0.91
+        "bullpen_hr9": 0.9
       },
       "home_pitcher": {
         "name": "Sean Burke",
@@ -41075,7 +41075,7 @@
         "home_runs_pg": 4.41,
         "away_hr_pg": 1.05,
         "home_hr_pg": 1.33,
-        "away_era": 4.17,
+        "away_era": 4.16,
         "home_era": 4.46,
         "away_k_pg": 7.85,
         "home_k_pg": 8.18
@@ -46263,7 +46263,7 @@
         "home_hr_pg": 0.91,
         "away_era": 3.23,
         "home_era": 4.27,
-        "away_k_pg": 8.76,
+        "away_k_pg": 8.78,
         "home_k_pg": 8.23
       },
       "strikeouts": {
@@ -56548,7 +56548,7 @@
         "away_era": 5.06,
         "home_era": 3.68,
         "away_k_pg": 8.49,
-        "home_k_pg": 8.6
+        "home_k_pg": 8.61
       },
       "strikeouts": {
         "away_exp_k": 9.9,
