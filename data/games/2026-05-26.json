@@ -5133,9 +5133,9 @@
         "away_hr_pg": 1.26,
         "home_hr_pg": 0.87,
         "away_era": 4.68,
-        "home_era": 3.97,
+        "home_era": 3.96,
         "away_k_pg": 7.91,
-        "home_k_pg": 9.36
+        "home_k_pg": 9.37
       },
       "strikeouts": {
         "away_exp_k": 5.3,
@@ -5239,7 +5239,7 @@
         "k_edge": null,
         "opp_team": "Minnesota Twins",
         "opp_lineup_k": 21.3,
-        "bullpen_hr9": 1.12
+        "bullpen_hr9": 1.11
       },
       "top_hr_candidates": [
         {
@@ -5376,8 +5376,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.159,
             "pull_s": 40.9,
             "pit_modifier": 0.871,
@@ -5519,8 +5519,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.316,
             "pull_s": 43.8,
             "pit_modifier": 0.846,
@@ -5644,8 +5644,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.0,
             "pull_s": 0.0,
             "pit_modifier": 0.846,
@@ -5786,8 +5786,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.4,
             "pull_s": 46.7,
             "pit_modifier": 0.804,
@@ -5929,8 +5929,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.243,
             "pull_s": 52.4,
             "pit_modifier": 0.846,
@@ -6068,8 +6068,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.128,
             "pull_s": 45.5,
             "pit_modifier": 0.856,
@@ -6207,8 +6207,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.11,
             "pull_s": 44.0,
             "pit_modifier": 0.856,
@@ -6349,8 +6349,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.318,
             "pull_s": 40.5,
             "pit_modifier": 0.846,
@@ -6490,8 +6490,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.121,
             "pull_s": 26.3,
             "pit_modifier": 0.846,
@@ -6631,8 +6631,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.155,
             "pull_s": 51.8,
             "pit_modifier": 0.846,
@@ -6770,8 +6770,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.04,
             "pull_s": 36.5,
             "pit_modifier": 0.856,
@@ -6909,8 +6909,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.119,
             "pull_s": 42.9,
             "pit_modifier": 0.856,
@@ -7050,8 +7050,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.085,
             "pull_s": 42.7,
             "pit_modifier": 0.871,
@@ -7189,8 +7189,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.081,
             "pull_s": 37.3,
             "pit_modifier": 0.804,
@@ -7328,8 +7328,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.144,
             "pull_s": 40.0,
             "pit_modifier": 0.856,
@@ -7341,7 +7341,7 @@
           "team": "Minnesota Twins",
           "hr_prob": 0.2,
           "xgb_prob": 0.2,
-          "rf_prob": 2.6,
+          "rf_prob": 2.5,
           "archetype": "Contact",
           "trend": "Cooling Off",
           "confidence": "High",
@@ -7469,8 +7469,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.168,
             "pull_s": 37.5,
             "pit_modifier": 0.856,
@@ -7610,8 +7610,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.116,
             "pull_s": 48.0,
             "pit_modifier": 0.846,
@@ -7749,8 +7749,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.083,
             "pull_s": 34.0,
             "pit_modifier": 0.804,
@@ -7893,8 +7893,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.4,
             "pull_s": 46.7,
             "pit_modifier": 0.804,
@@ -8032,8 +8032,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.144,
             "pull_s": 40.0,
             "pit_modifier": 0.856,
@@ -8171,8 +8171,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.119,
             "pull_s": 42.9,
             "pit_modifier": 0.856,
@@ -8310,8 +8310,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.128,
             "pull_s": 45.5,
             "pit_modifier": 0.856,
@@ -8323,7 +8323,7 @@
           "team": "Minnesota Twins",
           "hr_prob": 0.2,
           "xgb_prob": 0.2,
-          "rf_prob": 2.6,
+          "rf_prob": 2.5,
           "archetype": "Contact",
           "trend": "Cooling Off",
           "confidence": "High",
@@ -8451,8 +8451,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.168,
             "pull_s": 37.5,
             "pit_modifier": 0.856,
@@ -8590,8 +8590,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.081,
             "pull_s": 37.3,
             "pit_modifier": 0.804,
@@ -8729,8 +8729,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.04,
             "pull_s": 36.5,
             "pit_modifier": 0.856,
@@ -8868,8 +8868,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.11,
             "pull_s": 44.0,
             "pit_modifier": 0.856,
@@ -9007,8 +9007,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.083,
             "pull_s": 34.0,
             "pit_modifier": 0.804,
@@ -9150,8 +9150,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.121,
             "pull_s": 26.3,
             "pit_modifier": 0.846,
@@ -9293,8 +9293,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.316,
             "pull_s": 43.8,
             "pit_modifier": 0.846,
@@ -9435,8 +9435,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.159,
             "pull_s": 40.9,
             "pit_modifier": 0.871,
@@ -9578,8 +9578,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.243,
             "pull_s": 52.4,
             "pit_modifier": 0.846,
@@ -9719,8 +9719,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.085,
             "pull_s": 42.7,
             "pit_modifier": 0.871,
@@ -9860,8 +9860,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.155,
             "pull_s": 51.8,
             "pit_modifier": 0.846,
@@ -10001,8 +10001,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.116,
             "pull_s": 48.0,
             "pit_modifier": 0.846,
@@ -10143,8 +10143,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.318,
             "pull_s": 40.5,
             "pit_modifier": 0.846,
@@ -10268,8 +10268,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.12,
-            "bullpen_vuln": 0.883,
+            "bullpen_hr9": 1.11,
+            "bullpen_vuln": 0.869,
             "iso_use": 0.0,
             "pull_s": 0.0,
             "pit_modifier": 0.846,
@@ -10299,7 +10299,7 @@
         "away_hr_pg": 1.05,
         "home_hr_pg": 1.35,
         "away_era": 4.15,
-        "home_era": 4.44,
+        "home_era": 4.43,
         "away_k_pg": 7.87,
         "home_k_pg": 8.25
       },
@@ -15490,7 +15490,7 @@
         "home_hr_pg": 0.93,
         "away_era": 3.21,
         "home_era": 4.33,
-        "away_k_pg": 8.78,
+        "away_k_pg": 8.77,
         "home_k_pg": 8.24
       },
       "strikeouts": {
@@ -20531,7 +20531,7 @@
         "away_era": 4.28,
         "home_era": 3.19,
         "away_k_pg": 7.59,
-        "home_k_pg": 9.84
+        "home_k_pg": 9.85
       },
       "strikeouts": {
         "away_exp_k": 3.7,
@@ -25773,9 +25773,9 @@
         "away_hr_pg": 1.23,
         "home_hr_pg": 0.96,
         "away_era": 5.16,
-        "home_era": 3.72,
+        "home_era": 3.71,
         "away_k_pg": 8.46,
-        "home_k_pg": 8.57
+        "home_k_pg": 8.55
       },
       "strikeouts": {
         "away_exp_k": 7.0,
@@ -30545,14 +30545,14 @@
         "home_exp_hr": 0.695,
         "total_exp_hr": 0.8,
         "away_exp_runs": 4.25,
-        "home_exp_runs": 3.71,
-        "total_exp_runs": 7.96,
-        "away_runs_pg": 4.05,
+        "home_exp_runs": 3.75,
+        "total_exp_runs": 8.0,
+        "away_runs_pg": 4.09,
         "home_runs_pg": 4.25,
         "away_hr_pg": 1.14,
         "home_hr_pg": 1.02,
         "away_era": 3.62,
-        "home_era": 4.33,
+        "home_era": 4.36,
         "away_k_pg": 8.7,
         "home_k_pg": 8.02
       },
@@ -35836,7 +35836,7 @@
         "away_era": 4.05,
         "home_era": 3.85,
         "away_k_pg": 9.44,
-        "home_k_pg": 8.72
+        "home_k_pg": 8.7
       },
       "strikeouts": {
         "away_exp_k": 4.6,
