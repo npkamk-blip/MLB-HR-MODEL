@@ -5242,7 +5242,7 @@
         "home_runs_pg": 4.2,
         "away_hr_pg": 1.14,
         "home_hr_pg": 1.02,
-        "away_era": 3.54,
+        "away_era": 3.53,
         "home_era": 4.32,
         "away_k_pg": 8.64,
         "home_k_pg": 8.03
@@ -15725,7 +15725,7 @@
         "away_era": 4.01,
         "home_era": 3.81,
         "away_k_pg": 9.52,
-        "home_k_pg": 8.61
+        "home_k_pg": 8.6
       },
       "strikeouts": {
         "away_exp_k": 7.8,
