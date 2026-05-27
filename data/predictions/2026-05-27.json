@@ -1129,7 +1129,7 @@
     "opp_pitcher_hand": "R",
     "bat_hand": "R",
     "home_team": "Chicago White Sox",
-    "lineup_source": "projected",
+    "lineup_source": "confirmed",
     "model_hr_pct": 13.6,
     "hit_hr": null,
     "rf_prob": 9.9,
