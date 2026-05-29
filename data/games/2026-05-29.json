@@ -5273,9 +5273,9 @@
         "away_hr_pg": 1.34,
         "home_hr_pg": 1.21,
         "away_era": 3.14,
-        "home_era": 4.71,
+        "home_era": 4.7,
         "away_k_pg": 8.86,
-        "home_k_pg": 7.83
+        "home_k_pg": 7.82
       },
       "strikeouts": {
         "away_exp_k": 4.7,
@@ -10475,9 +10475,9 @@
         "away_hr_pg": 0.98,
         "home_hr_pg": 1.26,
         "away_era": 3.86,
-        "home_era": 4.65,
+        "home_era": 4.64,
         "away_k_pg": 8.52,
-        "home_k_pg": 7.89
+        "home_k_pg": 7.88
       },
       "strikeouts": {
         "away_exp_k": 1.4,
@@ -15213,16 +15213,16 @@
         "home_exp_hr": 0.225,
         "total_exp_hr": 0.31,
         "away_exp_runs": 5.48,
-        "home_exp_runs": 4.01,
-        "total_exp_runs": 9.49,
-        "away_runs_pg": 4.47,
+        "home_exp_runs": 4.04,
+        "total_exp_runs": 9.52,
+        "away_runs_pg": 4.5,
         "home_runs_pg": 4.81,
         "away_hr_pg": 1.05,
         "home_hr_pg": 1.05,
         "away_era": 4.39,
-        "home_era": 3.82,
+        "home_era": 3.85,
         "away_k_pg": 7.95,
-        "home_k_pg": 8.93
+        "home_k_pg": 8.92
       },
       "strikeouts": {
         "away_exp_k": 6.2,
@@ -25585,7 +25585,7 @@
         "home_hr_pg": 0.95,
         "away_era": 3.86,
         "home_era": 3.63,
-        "away_k_pg": 8.51,
+        "away_k_pg": 8.53,
         "home_k_pg": 9.45
       },
       "strikeouts": {
@@ -25649,7 +25649,7 @@
         "k_edge": null,
         "opp_team": "Tampa Bay Rays",
         "opp_lineup_k": 16.7,
-        "bullpen_hr9": 0.98
+        "bullpen_hr9": 1.0
       },
       "home_pitcher": {
         "name": "Nick Martinez",
@@ -30651,9 +30651,9 @@
         "home_runs_pg": 4.57,
         "away_hr_pg": 1.14,
         "home_hr_pg": 0.81,
-        "away_era": 4.74,
+        "away_era": 4.75,
         "home_era": 3.6,
-        "away_k_pg": 8.85,
+        "away_k_pg": 8.86,
         "home_k_pg": 7.73
       },
       "strikeouts": {
@@ -35843,7 +35843,7 @@
         "home_hr_pg": 0.88,
         "away_era": 4.19,
         "home_era": 3.9,
-        "away_k_pg": 8.65,
+        "away_k_pg": 8.64,
         "home_k_pg": 9.35
       },
       "strikeouts": {
@@ -40972,9 +40972,9 @@
         "away_hr_pg": 1.1,
         "home_hr_pg": 1.09,
         "away_era": 4.19,
-        "home_era": 4.22,
+        "home_era": 4.21,
         "away_k_pg": 8.17,
-        "home_k_pg": 7.66
+        "home_k_pg": 7.65
       },
       "strikeouts": {
         "away_exp_k": 5.1,
