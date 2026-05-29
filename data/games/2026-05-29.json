@@ -332,7 +332,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.8,
-            "pitch_bonus": 1.41,
+            "pitch_bonus": 1.4,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -353,10 +353,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": -0.2,
-                "combined": -2.0,
-                "bonus": -0.49
+                "combined": -2.04,
+                "bonus": -0.5
               }
             ],
             "data_conf": {
@@ -764,7 +764,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 16.0,
-            "pitch_bonus": 0.06,
+            "pitch_bonus": 0.05,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -785,10 +785,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": -3.0,
-                "combined": -3.68,
-                "bonus": -0.91
+                "combined": -3.72,
+                "bonus": -0.92
               }
             ],
             "data_conf": {
@@ -907,7 +907,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.8,
-            "pitch_bonus": 0.89,
+            "pitch_bonus": 0.88,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -928,10 +928,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": 3.0,
-                "combined": -0.08,
-                "bonus": -0.02
+                "combined": -0.12,
+                "bonus": -0.03
               }
             ],
             "data_conf": {
@@ -1339,7 +1339,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 23.2,
-            "pitch_bonus": 0.46,
+            "pitch_bonus": 0.45,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -1360,10 +1360,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": 1.2,
-                "combined": -1.16,
-                "bonus": -0.29
+                "combined": -1.2,
+                "bonus": -0.3
               }
             ],
             "data_conf": {
@@ -1482,7 +1482,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.2,
-            "pitch_bonus": -2.36,
+            "pitch_bonus": -2.37,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -1503,10 +1503,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": -6.4,
-                "combined": -5.72,
-                "bonus": -1.41
+                "combined": -5.76,
+                "bonus": -1.42
               }
             ],
             "data_conf": {
@@ -2056,7 +2056,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 30.9,
-            "pitch_bonus": 1.98,
+            "pitch_bonus": 1.97,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -2077,10 +2077,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": -2.3,
-                "combined": -3.26,
-                "bonus": -0.8
+                "combined": -3.3,
+                "bonus": -0.81
               }
             ],
             "data_conf": {
@@ -2342,7 +2342,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 16.0,
-            "pitch_bonus": -1.87,
+            "pitch_bonus": -1.88,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -2363,10 +2363,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": 3.5,
-                "combined": 0.22,
-                "bonus": 0.05
+                "combined": 0.18,
+                "bonus": 0.04
               }
             ],
             "data_conf": {
@@ -2485,7 +2485,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 12.0,
-            "pitch_bonus": 0.86,
+            "pitch_bonus": 0.85,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -2506,10 +2506,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": 2.7,
-                "combined": -0.26,
-                "bonus": -0.06
+                "combined": -0.3,
+                "bonus": -0.07
               }
             ],
             "data_conf": {
@@ -2628,7 +2628,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 29.0,
-            "pitch_bonus": -0.62,
+            "pitch_bonus": -0.63,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -2649,10 +2649,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": 0.4,
-                "combined": -1.64,
-                "bonus": -0.4
+                "combined": -1.68,
+                "bonus": -0.41
               }
             ],
             "data_conf": {
@@ -2773,7 +2773,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.8,
-            "pitch_bonus": 0.89,
+            "pitch_bonus": 0.88,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -2794,10 +2794,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": 3.0,
-                "combined": -0.08,
-                "bonus": -0.02
+                "combined": -0.12,
+                "bonus": -0.03
               }
             ],
             "data_conf": {
@@ -2916,7 +2916,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 16.0,
-            "pitch_bonus": -1.87,
+            "pitch_bonus": -1.88,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -2937,10 +2937,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": 3.5,
-                "combined": 0.22,
-                "bonus": 0.05
+                "combined": 0.18,
+                "bonus": 0.04
               }
             ],
             "data_conf": {
@@ -3061,7 +3061,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 23.2,
-            "pitch_bonus": 0.46,
+            "pitch_bonus": 0.45,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -3082,10 +3082,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": 1.2,
-                "combined": -1.16,
-                "bonus": -0.29
+                "combined": -1.2,
+                "bonus": -0.3
               }
             ],
             "data_conf": {
@@ -3204,7 +3204,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 12.0,
-            "pitch_bonus": 0.86,
+            "pitch_bonus": 0.85,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -3225,10 +3225,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": 2.7,
-                "combined": -0.26,
-                "bonus": -0.06
+                "combined": -0.3,
+                "bonus": -0.07
               }
             ],
             "data_conf": {
@@ -3347,7 +3347,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 29.0,
-            "pitch_bonus": -0.62,
+            "pitch_bonus": -0.63,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -3368,10 +3368,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": 0.4,
-                "combined": -1.64,
-                "bonus": -0.4
+                "combined": -1.68,
+                "bonus": -0.41
               }
             ],
             "data_conf": {
@@ -3492,7 +3492,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.8,
-            "pitch_bonus": 1.41,
+            "pitch_bonus": 1.4,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -3513,10 +3513,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": -0.2,
-                "combined": -2.0,
-                "bonus": -0.49
+                "combined": -2.04,
+                "bonus": -0.5
               }
             ],
             "data_conf": {
@@ -3635,7 +3635,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 16.0,
-            "pitch_bonus": 0.06,
+            "pitch_bonus": 0.05,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -3656,10 +3656,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": -3.0,
-                "combined": -3.68,
-                "bonus": -0.91
+                "combined": -3.72,
+                "bonus": -0.92
               }
             ],
             "data_conf": {
@@ -3778,7 +3778,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.2,
-            "pitch_bonus": -2.36,
+            "pitch_bonus": -2.37,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -3799,10 +3799,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": -6.4,
-                "combined": -5.72,
-                "bonus": -1.41
+                "combined": -5.76,
+                "bonus": -1.42
               }
             ],
             "data_conf": {
@@ -3921,7 +3921,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 30.9,
-            "pitch_bonus": 1.98,
+            "pitch_bonus": 1.97,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -3942,10 +3942,10 @@
               {
                 "name": "Cutter",
                 "usage": 16.4,
-                "pit_rv": -4.7,
+                "pit_rv": -4.8,
                 "bat_rv": -2.3,
-                "combined": -3.26,
-                "bonus": -0.8
+                "combined": -3.3,
+                "bonus": -0.81
               }
             ],
             "data_conf": {
@@ -15274,15 +15274,15 @@
         "top_pitches": [
           {
             "name": "Sinker",
-            "usage": 47.0
+            "usage": 47.1
           },
           {
             "name": "Sweeper",
-            "usage": 27.3
+            "usage": 27.4
           },
           {
             "name": "4-Seam Fastball",
-            "usage": 25.6
+            "usage": 25.5
           }
         ],
         "k9": 7.4,
@@ -15393,27 +15393,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 32.0,
-            "pitch_bonus": 0.79,
+            "pitch_bonus": 0.75,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": -1.6,
-                "combined": 0.16,
-                "bonus": 0.11
+                "combined": 0.04,
+                "bonus": 0.03
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": 0.2,
-                "combined": 0.12,
-                "bonus": 0.05
+                "combined": 0.24,
+                "bonus": 0.1
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": 3.0,
                 "combined": 1.64,
@@ -15650,27 +15650,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 10.6,
-            "pitch_bonus": 0.62,
+            "pitch_bonus": 0.58,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": 0.1,
-                "combined": 1.18,
-                "bonus": 0.83
+                "combined": 1.06,
+                "bonus": 0.75
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": 0.4,
-                "combined": 0.24,
-                "bonus": 0.1
+                "combined": 0.36,
+                "bonus": 0.15
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": -1.1,
                 "combined": -0.82,
@@ -15791,27 +15791,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.1,
-            "pitch_bonus": 0.07,
+            "pitch_bonus": 0.04,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": -1.4,
-                "combined": 0.28,
-                "bonus": 0.2
+                "combined": 0.16,
+                "bonus": 0.11
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": -1.0,
-                "combined": -0.6,
-                "bonus": -0.25
+                "combined": -0.48,
+                "bonus": -0.2
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": 0.8,
                 "combined": 0.32,
@@ -16049,27 +16049,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 20.0,
-            "pitch_bonus": 1.15,
+            "pitch_bonus": 1.12,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": 1.6,
-                "combined": 2.08,
-                "bonus": 1.47
+                "combined": 1.96,
+                "bonus": 1.38
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": -0.1,
-                "combined": -0.06,
-                "bonus": -0.02
+                "combined": 0.06,
+                "bonus": 0.02
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": -1.0,
                 "combined": -0.76,
@@ -16190,27 +16190,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 16.0,
-            "pitch_bonus": -0.23,
+            "pitch_bonus": -0.27,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": -0.8,
-                "combined": 0.64,
-                "bonus": 0.45
+                "combined": 0.52,
+                "bonus": 0.37
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": -2.9,
-                "combined": -1.74,
-                "bonus": -0.71
+                "combined": -1.62,
+                "bonus": -0.67
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": 0.4,
                 "combined": 0.08,
@@ -16331,27 +16331,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 20.5,
-            "pitch_bonus": 0.42,
+            "pitch_bonus": 0.39,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": 1.3,
-                "combined": 1.9,
-                "bonus": 1.34
+                "combined": 1.78,
+                "bonus": 1.26
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": -1.9,
-                "combined": -1.14,
-                "bonus": -0.47
+                "combined": -1.02,
+                "bonus": -0.42
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": -1.7,
                 "combined": -1.18,
@@ -16820,27 +16820,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 8.2,
-            "pitch_bonus": 1.32,
+            "pitch_bonus": 1.29,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": -0.5,
-                "combined": 0.82,
-                "bonus": 0.58
+                "combined": 0.7,
+                "bonus": 0.49
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": 1.6,
-                "combined": 0.96,
-                "bonus": 0.39
+                "combined": 1.08,
+                "bonus": 0.44
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": 1.8,
                 "combined": 0.92,
@@ -17077,27 +17077,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.4,
-            "pitch_bonus": 0.16,
+            "pitch_bonus": 0.13,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": -3.1,
-                "combined": -0.74,
-                "bonus": -0.52
+                "combined": -0.86,
+                "bonus": -0.61
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": 2.1,
-                "combined": 1.26,
-                "bonus": 0.52
+                "combined": 1.38,
+                "bonus": 0.57
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": 1.0,
                 "combined": 0.44,
@@ -17218,27 +17218,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.4,
-            "pitch_bonus": -1.52,
+            "pitch_bonus": -1.55,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": -3.7,
-                "combined": -1.1,
-                "bonus": -0.78
+                "combined": -1.22,
+                "bonus": -0.86
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": -2.2,
-                "combined": -1.32,
-                "bonus": -0.54
+                "combined": -1.2,
+                "bonus": -0.49
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": -0.6,
                 "combined": -0.52,
@@ -17712,27 +17712,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.4,
-            "pitch_bonus": 0.16,
+            "pitch_bonus": 0.13,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": -3.1,
-                "combined": -0.74,
-                "bonus": -0.52
+                "combined": -0.86,
+                "bonus": -0.61
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": 2.1,
-                "combined": 1.26,
-                "bonus": 0.52
+                "combined": 1.38,
+                "bonus": 0.57
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": 1.0,
                 "combined": 0.44,
@@ -17853,27 +17853,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.4,
-            "pitch_bonus": -1.52,
+            "pitch_bonus": -1.55,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": -3.7,
-                "combined": -1.1,
-                "bonus": -0.78
+                "combined": -1.22,
+                "bonus": -0.86
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": -2.2,
-                "combined": -1.32,
-                "bonus": -0.54
+                "combined": -1.2,
+                "bonus": -0.49
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": -0.6,
                 "combined": -0.52,
@@ -17994,27 +17994,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 10.6,
-            "pitch_bonus": 0.62,
+            "pitch_bonus": 0.58,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": 0.1,
-                "combined": 1.18,
-                "bonus": 0.83
+                "combined": 1.06,
+                "bonus": 0.75
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": 0.4,
-                "combined": 0.24,
-                "bonus": 0.1
+                "combined": 0.36,
+                "bonus": 0.15
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": -1.1,
                 "combined": -0.82,
@@ -18135,27 +18135,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 20.0,
-            "pitch_bonus": 1.15,
+            "pitch_bonus": 1.12,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": 1.6,
-                "combined": 2.08,
-                "bonus": 1.47
+                "combined": 1.96,
+                "bonus": 1.38
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": -0.1,
-                "combined": -0.06,
-                "bonus": -0.02
+                "combined": 0.06,
+                "bonus": 0.02
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": -1.0,
                 "combined": -0.76,
@@ -18276,27 +18276,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.1,
-            "pitch_bonus": 0.07,
+            "pitch_bonus": 0.04,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": -1.4,
-                "combined": 0.28,
-                "bonus": 0.2
+                "combined": 0.16,
+                "bonus": 0.11
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": -1.0,
-                "combined": -0.6,
-                "bonus": -0.25
+                "combined": -0.48,
+                "bonus": -0.2
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": 0.8,
                 "combined": 0.32,
@@ -18417,27 +18417,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 20.5,
-            "pitch_bonus": 0.42,
+            "pitch_bonus": 0.39,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": 1.3,
-                "combined": 1.9,
-                "bonus": 1.34
+                "combined": 1.78,
+                "bonus": 1.26
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": -1.9,
-                "combined": -1.14,
-                "bonus": -0.47
+                "combined": -1.02,
+                "bonus": -0.42
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": -1.7,
                 "combined": -1.18,
@@ -18559,27 +18559,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 32.0,
-            "pitch_bonus": 0.79,
+            "pitch_bonus": 0.75,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": -1.6,
-                "combined": 0.16,
-                "bonus": 0.11
+                "combined": 0.04,
+                "bonus": 0.03
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": 0.2,
-                "combined": 0.12,
-                "bonus": 0.05
+                "combined": 0.24,
+                "bonus": 0.1
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": 3.0,
                 "combined": 1.64,
@@ -18700,27 +18700,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 16.0,
-            "pitch_bonus": -0.23,
+            "pitch_bonus": -0.27,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": -0.8,
-                "combined": 0.64,
-                "bonus": 0.45
+                "combined": 0.52,
+                "bonus": 0.37
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": -2.9,
-                "combined": -1.74,
-                "bonus": -0.71
+                "combined": -1.62,
+                "bonus": -0.67
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": 0.4,
                 "combined": 0.08,
@@ -18841,27 +18841,27 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 8.2,
-            "pitch_bonus": 1.32,
+            "pitch_bonus": 1.29,
             "pitch_breakdown": [
               {
                 "name": "Sinker",
-                "usage": 47.0,
-                "pit_rv": 2.8,
+                "usage": 47.1,
+                "pit_rv": 2.5,
                 "bat_rv": -0.5,
-                "combined": 0.82,
-                "bonus": 0.58
+                "combined": 0.7,
+                "bonus": 0.49
               },
               {
                 "name": "Sweeper",
-                "usage": 27.3,
-                "pit_rv": 0.0,
+                "usage": 27.4,
+                "pit_rv": 0.3,
                 "bat_rv": 1.6,
-                "combined": 0.96,
-                "bonus": 0.39
+                "combined": 1.08,
+                "bonus": 0.44
               },
               {
                 "name": "4-Seam Fastball",
-                "usage": 25.6,
+                "usage": 25.5,
                 "pit_rv": -0.4,
                 "bat_rv": 1.8,
                 "combined": 0.92,
@@ -20165,7 +20165,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.6,
-            "pitch_bonus": 2.54,
+            "pitch_bonus": 2.55,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -20186,10 +20186,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": 4.7,
-                "combined": 2.9,
-                "bonus": 0.96
+                "combined": 2.94,
+                "bonus": 0.97
               }
             ],
             "data_conf": {
@@ -20586,7 +20586,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.1,
-            "pitch_bonus": -1.12,
+            "pitch_bonus": -1.11,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -20607,10 +20607,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": 1.1,
-                "combined": 0.74,
-                "bonus": 0.25
+                "combined": 0.78,
+                "bonus": 0.26
               }
             ],
             "data_conf": {
@@ -21005,7 +21005,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 20.8,
-            "pitch_bonus": 0.15,
+            "pitch_bonus": 0.16,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -21026,10 +21026,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": 0.4,
-                "combined": 0.32,
-                "bonus": 0.11
+                "combined": 0.36,
+                "bonus": 0.12
               }
             ],
             "data_conf": {
@@ -21285,7 +21285,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.8,
-            "pitch_bonus": -0.97,
+            "pitch_bonus": -0.95,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -21306,10 +21306,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": -1.1,
-                "combined": -0.58,
-                "bonus": -0.19
+                "combined": -0.54,
+                "bonus": -0.18
               }
             ],
             "data_conf": {
@@ -21848,7 +21848,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.2,
-            "pitch_bonus": 0.55,
+            "pitch_bonus": 0.57,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -21869,10 +21869,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": -0.4,
-                "combined": -0.16,
-                "bonus": -0.05
+                "combined": -0.12,
+                "bonus": -0.04
               }
             ],
             "data_conf": {
@@ -21990,7 +21990,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 26.7,
-            "pitch_bonus": 1.08,
+            "pitch_bonus": 1.09,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -22011,10 +22011,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": 2.3,
-                "combined": 1.46,
-                "bonus": 0.48
+                "combined": 1.5,
+                "bonus": 0.5
               }
             ],
             "data_conf": {
@@ -22131,7 +22131,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 13.9,
-            "pitch_bonus": 0.75,
+            "pitch_bonus": 0.76,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -22152,10 +22152,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": 0.1,
-                "combined": 0.14,
-                "bonus": 0.05
+                "combined": 0.18,
+                "bonus": 0.06
               }
             ],
             "data_conf": {
@@ -22272,7 +22272,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.3,
-            "pitch_bonus": -1.69,
+            "pitch_bonus": -1.67,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -22293,10 +22293,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": 1.0,
-                "combined": 0.68,
-                "bonus": 0.23
+                "combined": 0.72,
+                "bonus": 0.24
               }
             ],
             "data_conf": {
@@ -22413,7 +22413,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 8.5,
-            "pitch_bonus": -1.88,
+            "pitch_bonus": -1.87,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -22434,10 +22434,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": -4.3,
-                "combined": -2.5,
-                "bonus": -0.83
+                "combined": -2.46,
+                "bonus": -0.82
               }
             ],
             "data_conf": {
@@ -22696,7 +22696,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 26.7,
-            "pitch_bonus": 1.08,
+            "pitch_bonus": 1.09,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -22717,10 +22717,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": 2.3,
-                "combined": 1.46,
-                "bonus": 0.48
+                "combined": 1.5,
+                "bonus": 0.5
               }
             ],
             "data_conf": {
@@ -22837,7 +22837,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 20.8,
-            "pitch_bonus": 0.15,
+            "pitch_bonus": 0.16,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -22858,10 +22858,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": 0.4,
-                "combined": 0.32,
-                "bonus": 0.11
+                "combined": 0.36,
+                "bonus": 0.12
               }
             ],
             "data_conf": {
@@ -22978,7 +22978,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.2,
-            "pitch_bonus": 0.55,
+            "pitch_bonus": 0.57,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -22999,10 +22999,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": -0.4,
-                "combined": -0.16,
-                "bonus": -0.05
+                "combined": -0.12,
+                "bonus": -0.04
               }
             ],
             "data_conf": {
@@ -23120,7 +23120,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.6,
-            "pitch_bonus": 2.54,
+            "pitch_bonus": 2.55,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -23141,10 +23141,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": 4.7,
-                "combined": 2.9,
-                "bonus": 0.96
+                "combined": 2.94,
+                "bonus": 0.97
               }
             ],
             "data_conf": {
@@ -23261,7 +23261,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.3,
-            "pitch_bonus": -1.69,
+            "pitch_bonus": -1.67,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -23282,10 +23282,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": 1.0,
-                "combined": 0.68,
-                "bonus": 0.23
+                "combined": 0.72,
+                "bonus": 0.24
               }
             ],
             "data_conf": {
@@ -23402,7 +23402,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 8.5,
-            "pitch_bonus": -1.88,
+            "pitch_bonus": -1.87,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -23423,10 +23423,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": -4.3,
-                "combined": -2.5,
-                "bonus": -0.83
+                "combined": -2.46,
+                "bonus": -0.82
               }
             ],
             "data_conf": {
@@ -23543,7 +23543,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 13.9,
-            "pitch_bonus": 0.75,
+            "pitch_bonus": 0.76,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -23564,10 +23564,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": 0.1,
-                "combined": 0.14,
-                "bonus": 0.05
+                "combined": 0.18,
+                "bonus": 0.06
               }
             ],
             "data_conf": {
@@ -23684,7 +23684,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.8,
-            "pitch_bonus": -0.97,
+            "pitch_bonus": -0.95,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -23705,10 +23705,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": -1.1,
-                "combined": -0.58,
-                "bonus": -0.19
+                "combined": -0.54,
+                "bonus": -0.18
               }
             ],
             "data_conf": {
@@ -23825,7 +23825,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.1,
-            "pitch_bonus": -1.12,
+            "pitch_bonus": -1.11,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -23846,10 +23846,10 @@
               {
                 "name": "Sinker",
                 "usage": 22.1,
-                "pit_rv": 0.2,
+                "pit_rv": 0.3,
                 "bat_rv": 1.1,
-                "combined": 0.74,
-                "bonus": 0.25
+                "combined": 0.78,
+                "bonus": 0.26
               }
             ],
             "data_conf": {
@@ -35817,7 +35817,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 0.0,
-            "pitch_bonus": 1.81,
+            "pitch_bonus": 1.79,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -35830,10 +35830,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": 1.0,
-                "combined": 2.32,
-                "bonus": 1.18
+                "combined": 2.28,
+                "bonus": 1.16
               },
               {
                 "name": "Slider",
@@ -35959,7 +35959,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 32.1,
-            "pitch_bonus": 1.94,
+            "pitch_bonus": 1.92,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -35972,10 +35972,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": -1.4,
-                "combined": 0.88,
-                "bonus": 0.45
+                "combined": 0.84,
+                "bonus": 0.43
               },
               {
                 "name": "Slider",
@@ -36242,7 +36242,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.6,
-            "pitch_bonus": 3.62,
+            "pitch_bonus": 3.6,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -36255,10 +36255,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": -1.8,
-                "combined": 0.64,
-                "bonus": 0.33
+                "combined": 0.6,
+                "bonus": 0.31
               },
               {
                 "name": "Slider",
@@ -36645,7 +36645,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.8,
-            "pitch_bonus": 1.29,
+            "pitch_bonus": 1.27,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -36658,10 +36658,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": -1.0,
-                "combined": 1.12,
-                "bonus": 0.57
+                "combined": 1.08,
+                "bonus": 0.55
               },
               {
                 "name": "Slider",
@@ -36784,7 +36784,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.1,
-            "pitch_bonus": 1.6,
+            "pitch_bonus": 1.58,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -36797,10 +36797,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": 1.2,
-                "combined": 2.44,
-                "bonus": 1.24
+                "combined": 2.4,
+                "bonus": 1.22
               },
               {
                 "name": "Slider",
@@ -36923,7 +36923,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 7.9,
-            "pitch_bonus": -1.05,
+            "pitch_bonus": -1.07,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -36936,10 +36936,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": -6.5,
-                "combined": -2.18,
-                "bonus": -1.11
+                "combined": -2.22,
+                "bonus": -1.13
               },
               {
                 "name": "Slider",
@@ -37062,7 +37062,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.7,
-            "pitch_bonus": 1.32,
+            "pitch_bonus": 1.3,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -37075,10 +37075,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": -0.7,
-                "combined": 1.3,
-                "bonus": 0.66
+                "combined": 1.26,
+                "bonus": 0.64
               },
               {
                 "name": "Slider",
@@ -37626,7 +37626,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.8,
-            "pitch_bonus": 1.37,
+            "pitch_bonus": 1.35,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -37639,10 +37639,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": -0.6,
-                "combined": 1.36,
-                "bonus": 0.69
+                "combined": 1.32,
+                "bonus": 0.67
               },
               {
                 "name": "Slider",
@@ -38190,7 +38190,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.7,
-            "pitch_bonus": 1.32,
+            "pitch_bonus": 1.3,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -38203,10 +38203,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": -0.7,
-                "combined": 1.3,
-                "bonus": 0.66
+                "combined": 1.26,
+                "bonus": 0.64
               },
               {
                 "name": "Slider",
@@ -38329,7 +38329,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 7.9,
-            "pitch_bonus": -1.05,
+            "pitch_bonus": -1.07,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -38342,10 +38342,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": -6.5,
-                "combined": -2.18,
-                "bonus": -1.11
+                "combined": -2.22,
+                "bonus": -1.13
               },
               {
                 "name": "Slider",
@@ -38470,7 +38470,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.8,
-            "pitch_bonus": 1.37,
+            "pitch_bonus": 1.35,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -38483,10 +38483,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": -0.6,
-                "combined": 1.36,
-                "bonus": 0.69
+                "combined": 1.32,
+                "bonus": 0.67
               },
               {
                 "name": "Slider",
@@ -38609,7 +38609,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.1,
-            "pitch_bonus": 1.6,
+            "pitch_bonus": 1.58,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -38622,10 +38622,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": 1.2,
-                "combined": 2.44,
-                "bonus": 1.24
+                "combined": 2.4,
+                "bonus": 1.22
               },
               {
                 "name": "Slider",
@@ -38751,7 +38751,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 32.1,
-            "pitch_bonus": 1.94,
+            "pitch_bonus": 1.92,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -38764,10 +38764,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": -1.4,
-                "combined": 0.88,
-                "bonus": 0.45
+                "combined": 0.84,
+                "bonus": 0.43
               },
               {
                 "name": "Slider",
@@ -39016,7 +39016,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.6,
-            "pitch_bonus": 3.62,
+            "pitch_bonus": 3.6,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -39029,10 +39029,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": -1.8,
-                "combined": 0.64,
-                "bonus": 0.33
+                "combined": 0.6,
+                "bonus": 0.31
               },
               {
                 "name": "Slider",
@@ -39155,7 +39155,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.8,
-            "pitch_bonus": 1.29,
+            "pitch_bonus": 1.27,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -39168,10 +39168,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": -1.0,
-                "combined": 1.12,
-                "bonus": 0.57
+                "combined": 1.08,
+                "bonus": 0.55
               },
               {
                 "name": "Slider",
@@ -39294,7 +39294,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 0.0,
-            "pitch_bonus": 1.81,
+            "pitch_bonus": 1.79,
             "pitch_breakdown": [
               {
                 "name": "4-Seam Fastball",
@@ -39307,10 +39307,10 @@
               {
                 "name": "Changeup",
                 "usage": 34.0,
-                "pit_rv": 4.3,
+                "pit_rv": 4.2,
                 "bat_rv": 1.0,
-                "combined": 2.32,
-                "bonus": 1.18
+                "combined": 2.28,
+                "bonus": 1.16
               },
               {
                 "name": "Slider",
@@ -40841,7 +40841,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 28.0,
-            "pitch_bonus": 1.49,
+            "pitch_bonus": 1.47,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -40854,10 +40854,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": 3.6,
-                "combined": 0.96,
-                "bonus": 0.46
+                "combined": 0.92,
+                "bonus": 0.44
               },
               {
                 "name": "Cutter",
@@ -41124,7 +41124,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 32.2,
-            "pitch_bonus": -0.82,
+            "pitch_bonus": -0.84,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -41137,10 +41137,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": 1.6,
-                "combined": -0.24,
-                "bonus": -0.11
+                "combined": -0.28,
+                "bonus": -0.13
               },
               {
                 "name": "Cutter",
@@ -41835,7 +41835,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.1,
-            "pitch_bonus": 1.66,
+            "pitch_bonus": 1.64,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -41848,10 +41848,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": -2.8,
-                "combined": -2.88,
-                "bonus": -1.37
+                "combined": -2.92,
+                "bonus": -1.38
               },
               {
                 "name": "Cutter",
@@ -41976,7 +41976,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.3,
-            "pitch_bonus": -0.15,
+            "pitch_bonus": -0.17,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -41989,10 +41989,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": -2.2,
-                "combined": -2.52,
-                "bonus": -1.19
+                "combined": -2.56,
+                "bonus": -1.21
               },
               {
                 "name": "Cutter",
@@ -42117,7 +42117,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 27.6,
-            "pitch_bonus": 0.34,
+            "pitch_bonus": 0.32,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -42130,10 +42130,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": -3.0,
-                "combined": -3.0,
-                "bonus": -1.42
+                "combined": -3.04,
+                "bonus": -1.44
               },
               {
                 "name": "Cutter",
@@ -42258,7 +42258,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 33.3,
-            "pitch_bonus": 0.2,
+            "pitch_bonus": 0.18,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -42271,10 +42271,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": 7.3,
-                "combined": 3.18,
-                "bonus": 1.51
+                "combined": 3.14,
+                "bonus": 1.49
               },
               {
                 "name": "Cutter",
@@ -42542,7 +42542,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.6,
-            "pitch_bonus": -2.54,
+            "pitch_bonus": -2.56,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -42555,10 +42555,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": 1.3,
-                "combined": -0.42,
-                "bonus": -0.2
+                "combined": -0.46,
+                "bonus": -0.22
               },
               {
                 "name": "Cutter",
@@ -42824,7 +42824,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 12.7,
-            "pitch_bonus": -0.39,
+            "pitch_bonus": -0.41,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -42837,10 +42837,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": 0.6,
-                "combined": -0.84,
-                "bonus": -0.4
+                "combined": -0.88,
+                "bonus": -0.42
               },
               {
                 "name": "Cutter",
@@ -42965,7 +42965,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.9,
-            "pitch_bonus": -2.48,
+            "pitch_bonus": -2.5,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -42978,10 +42978,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": -1.5,
-                "combined": -2.1,
-                "bonus": -1.0
+                "combined": -2.14,
+                "bonus": -1.01
               },
               {
                 "name": "Cutter",
@@ -43390,7 +43390,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 12.7,
-            "pitch_bonus": -0.39,
+            "pitch_bonus": -0.41,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -43403,10 +43403,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": 0.6,
-                "combined": -0.84,
-                "bonus": -0.4
+                "combined": -0.88,
+                "bonus": -0.42
               },
               {
                 "name": "Cutter",
@@ -43533,7 +43533,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.1,
-            "pitch_bonus": 1.66,
+            "pitch_bonus": 1.64,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -43546,10 +43546,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": -2.8,
-                "combined": -2.88,
-                "bonus": -1.37
+                "combined": -2.92,
+                "bonus": -1.38
               },
               {
                 "name": "Cutter",
@@ -43674,7 +43674,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.6,
-            "pitch_bonus": -2.54,
+            "pitch_bonus": -2.56,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -43687,10 +43687,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": 1.3,
-                "combined": -0.42,
-                "bonus": -0.2
+                "combined": -0.46,
+                "bonus": -0.22
               },
               {
                 "name": "Cutter",
@@ -43816,7 +43816,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 28.0,
-            "pitch_bonus": 1.49,
+            "pitch_bonus": 1.47,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -43829,10 +43829,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": 3.6,
-                "combined": 0.96,
-                "bonus": 0.46
+                "combined": 0.92,
+                "bonus": 0.44
               },
               {
                 "name": "Cutter",
@@ -43957,7 +43957,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.3,
-            "pitch_bonus": -0.15,
+            "pitch_bonus": -0.17,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -43970,10 +43970,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": -2.2,
-                "combined": -2.52,
-                "bonus": -1.19
+                "combined": -2.56,
+                "bonus": -1.21
               },
               {
                 "name": "Cutter",
@@ -44098,7 +44098,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 33.3,
-            "pitch_bonus": 0.2,
+            "pitch_bonus": 0.18,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -44111,10 +44111,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": 7.3,
-                "combined": 3.18,
-                "bonus": 1.51
+                "combined": 3.14,
+                "bonus": 1.49
               },
               {
                 "name": "Cutter",
@@ -44239,7 +44239,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.9,
-            "pitch_bonus": -2.48,
+            "pitch_bonus": -2.5,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -44252,10 +44252,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": -1.5,
-                "combined": -2.1,
-                "bonus": -1.0
+                "combined": -2.14,
+                "bonus": -1.01
               },
               {
                 "name": "Cutter",
@@ -44381,7 +44381,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 32.2,
-            "pitch_bonus": -0.82,
+            "pitch_bonus": -0.84,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -44394,10 +44394,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": 1.6,
-                "combined": -0.24,
-                "bonus": -0.11
+                "combined": -0.28,
+                "bonus": -0.13
               },
               {
                 "name": "Cutter",
@@ -44522,7 +44522,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 27.6,
-            "pitch_bonus": 0.34,
+            "pitch_bonus": 0.32,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -44535,10 +44535,10 @@
               {
                 "name": "Sinker",
                 "usage": 31.6,
-                "pit_rv": -3.0,
+                "pit_rv": -3.1,
                 "bat_rv": -3.0,
-                "combined": -3.0,
-                "bonus": -1.42
+                "combined": -3.04,
+                "bonus": -1.44
               },
               {
                 "name": "Cutter",
@@ -51226,7 +51226,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 30.4,
-            "pitch_bonus": 1.82,
+            "pitch_bonus": 1.8,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -51239,10 +51239,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": -0.7,
-                "combined": -0.86,
-                "bonus": -0.43
+                "combined": -0.9,
+                "bonus": -0.45
               },
               {
                 "name": "Sinker",
@@ -51365,7 +51365,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 27.5,
-            "pitch_bonus": 7.56,
+            "pitch_bonus": 7.54,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -51378,10 +51378,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": 3.8,
-                "combined": 3.16,
-                "bonus": 1.41
+                "combined": 3.12,
+                "bonus": 1.39
               },
               {
                 "name": "Sinker",
@@ -51504,7 +51504,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 31.1,
-            "pitch_bonus": 1.66,
+            "pitch_bonus": 1.64,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -51517,10 +51517,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": -2.7,
-                "combined": -0.74,
-                "bonus": -0.33
+                "combined": -0.78,
+                "bonus": -0.35
               },
               {
                 "name": "Sinker",
@@ -51646,7 +51646,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 16.8,
-            "pitch_bonus": 4.39,
+            "pitch_bonus": 4.38,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -51659,10 +51659,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": 6.4,
-                "combined": 4.72,
-                "bonus": 2.1
+                "combined": 4.68,
+                "bonus": 2.08
               },
               {
                 "name": "Sinker",
@@ -51785,7 +51785,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 26.7,
-            "pitch_bonus": 2.88,
+            "pitch_bonus": 2.86,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -51798,10 +51798,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": 3.7,
-                "combined": 1.78,
-                "bonus": 0.88
+                "combined": 1.74,
+                "bonus": 0.86
               },
               {
                 "name": "Sinker",
@@ -51926,7 +51926,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 23.8,
-            "pitch_bonus": 2.47,
+            "pitch_bonus": 2.46,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -51939,10 +51939,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": 0.2,
-                "combined": -0.32,
-                "bonus": -0.16
+                "combined": -0.36,
+                "bonus": -0.18
               },
               {
                 "name": "Sinker",
@@ -52067,7 +52067,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 22.5,
-            "pitch_bonus": 1.78,
+            "pitch_bonus": 1.76,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -52080,10 +52080,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": 1.9,
-                "combined": 0.7,
-                "bonus": 0.35
+                "combined": 0.66,
+                "bonus": 0.33
               },
               {
                 "name": "Sinker",
@@ -52208,7 +52208,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 27.6,
-            "pitch_bonus": 0.61,
+            "pitch_bonus": 0.59,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -52221,10 +52221,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": 1.1,
-                "combined": 1.54,
-                "bonus": 0.69
+                "combined": 1.5,
+                "bonus": 0.67
               },
               {
                 "name": "Sinker",
@@ -52347,7 +52347,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 12.2,
-            "pitch_bonus": 2.34,
+            "pitch_bonus": 2.32,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -52360,10 +52360,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": 0.3,
-                "combined": -0.26,
-                "bonus": -0.13
+                "combined": -0.3,
+                "bonus": -0.15
               },
               {
                 "name": "Sinker",
@@ -52486,7 +52486,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.8,
-            "pitch_bonus": 3.39,
+            "pitch_bonus": 3.37,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -52499,10 +52499,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": -1.5,
-                "combined": -0.02,
-                "bonus": -0.01
+                "combined": -0.06,
+                "bonus": -0.03
               },
               {
                 "name": "Sinker",
@@ -52628,7 +52628,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.3,
-            "pitch_bonus": 1.78,
+            "pitch_bonus": 1.76,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -52641,10 +52641,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": -3.0,
-                "combined": -0.92,
-                "bonus": -0.41
+                "combined": -0.96,
+                "bonus": -0.43
               },
               {
                 "name": "Sinker",
@@ -52767,7 +52767,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 11.7,
-            "pitch_bonus": 1.64,
+            "pitch_bonus": 1.62,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -52780,10 +52780,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": -0.6,
-                "combined": -0.8,
-                "bonus": -0.4
+                "combined": -0.84,
+                "bonus": -0.42
               },
               {
                 "name": "Sinker",
@@ -52906,7 +52906,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 22.1,
-            "pitch_bonus": 0.6,
+            "pitch_bonus": 0.59,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -52919,10 +52919,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": 2.6,
-                "combined": 2.44,
-                "bonus": 1.09
+                "combined": 2.4,
+                "bonus": 1.07
               },
               {
                 "name": "Sinker",
@@ -53045,7 +53045,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.7,
-            "pitch_bonus": 2.24,
+            "pitch_bonus": 2.22,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -53058,10 +53058,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": -6.1,
-                "combined": -2.78,
-                "bonus": -1.24
+                "combined": -2.82,
+                "bonus": -1.26
               },
               {
                 "name": "Sinker",
@@ -53184,7 +53184,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.1,
-            "pitch_bonus": -1.75,
+            "pitch_bonus": -1.77,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -53197,10 +53197,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": -4.4,
-                "combined": -1.76,
-                "bonus": -0.78
+                "combined": -1.8,
+                "bonus": -0.8
               },
               {
                 "name": "Sinker",
@@ -53325,7 +53325,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 37.1,
-            "pitch_bonus": 0.04,
+            "pitch_bonus": 0.02,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -53338,10 +53338,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": -0.8,
-                "combined": -0.92,
-                "bonus": -0.46
+                "combined": -0.96,
+                "bonus": -0.48
               },
               {
                 "name": "Sinker",
@@ -53464,7 +53464,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 11.4,
-            "pitch_bonus": 0.63,
+            "pitch_bonus": 0.61,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -53477,10 +53477,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": 0.3,
-                "combined": -0.26,
-                "bonus": -0.13
+                "combined": -0.3,
+                "bonus": -0.15
               },
               {
                 "name": "Sinker",
@@ -53603,7 +53603,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.4,
-            "pitch_bonus": 0.01,
+            "pitch_bonus": -0.01,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -53616,10 +53616,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": -2.3,
-                "combined": -1.82,
-                "bonus": -0.9
+                "combined": -1.86,
+                "bonus": -0.92
               },
               {
                 "name": "Sinker",
@@ -53746,7 +53746,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 30.4,
-            "pitch_bonus": 1.82,
+            "pitch_bonus": 1.8,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -53759,10 +53759,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": -0.7,
-                "combined": -0.86,
-                "bonus": -0.43
+                "combined": -0.9,
+                "bonus": -0.45
               },
               {
                 "name": "Sinker",
@@ -53887,7 +53887,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 23.8,
-            "pitch_bonus": 2.47,
+            "pitch_bonus": 2.46,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -53900,10 +53900,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": 0.2,
-                "combined": -0.32,
-                "bonus": -0.16
+                "combined": -0.36,
+                "bonus": -0.18
               },
               {
                 "name": "Sinker",
@@ -54026,7 +54026,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 26.7,
-            "pitch_bonus": 2.88,
+            "pitch_bonus": 2.86,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -54039,10 +54039,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": 3.7,
-                "combined": 1.78,
-                "bonus": 0.88
+                "combined": 1.74,
+                "bonus": 0.86
               },
               {
                 "name": "Sinker",
@@ -54165,7 +54165,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 12.2,
-            "pitch_bonus": 2.34,
+            "pitch_bonus": 2.32,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -54178,10 +54178,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": 0.3,
-                "combined": -0.26,
-                "bonus": -0.13
+                "combined": -0.3,
+                "bonus": -0.15
               },
               {
                 "name": "Sinker",
@@ -54304,7 +54304,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 11.7,
-            "pitch_bonus": 1.64,
+            "pitch_bonus": 1.62,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -54317,10 +54317,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": -0.6,
-                "combined": -0.8,
-                "bonus": -0.4
+                "combined": -0.84,
+                "bonus": -0.42
               },
               {
                 "name": "Sinker",
@@ -54445,7 +54445,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 22.5,
-            "pitch_bonus": 1.78,
+            "pitch_bonus": 1.76,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -54458,10 +54458,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": 1.9,
-                "combined": 0.7,
-                "bonus": 0.35
+                "combined": 0.66,
+                "bonus": 0.33
               },
               {
                 "name": "Sinker",
@@ -54584,7 +54584,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 11.4,
-            "pitch_bonus": 0.63,
+            "pitch_bonus": 0.61,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -54597,10 +54597,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": 0.3,
-                "combined": -0.26,
-                "bonus": -0.13
+                "combined": -0.3,
+                "bonus": -0.15
               },
               {
                 "name": "Sinker",
@@ -54725,7 +54725,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 37.1,
-            "pitch_bonus": 0.04,
+            "pitch_bonus": 0.02,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -54738,10 +54738,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": -0.8,
-                "combined": -0.92,
-                "bonus": -0.46
+                "combined": -0.96,
+                "bonus": -0.48
               },
               {
                 "name": "Sinker",
@@ -54864,7 +54864,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.4,
-            "pitch_bonus": 0.01,
+            "pitch_bonus": -0.01,
             "pitch_breakdown": [
               {
                 "name": "Sweeper",
@@ -54877,10 +54877,10 @@
               {
                 "name": "4-Seam Fastball",
                 "usage": 33.0,
-                "pit_rv": -1.1,
+                "pit_rv": -1.2,
                 "bat_rv": -2.3,
-                "combined": -1.82,
-                "bonus": -0.9
+                "combined": -1.86,
+                "bonus": -0.92
               },
               {
                 "name": "Sinker",
@@ -55005,7 +55005,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.1,
-            "pitch_bonus": -1.75,
+            "pitch_bonus": -1.77,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -55018,10 +55018,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": -4.4,
-                "combined": -1.76,
-                "bonus": -0.78
+                "combined": -1.8,
+                "bonus": -0.8
               },
               {
                 "name": "Sinker",
@@ -55147,7 +55147,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 16.8,
-            "pitch_bonus": 4.39,
+            "pitch_bonus": 4.38,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -55160,10 +55160,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": 6.4,
-                "combined": 4.72,
-                "bonus": 2.1
+                "combined": 4.68,
+                "bonus": 2.08
               },
               {
                 "name": "Sinker",
@@ -55286,7 +55286,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.8,
-            "pitch_bonus": 3.39,
+            "pitch_bonus": 3.37,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -55299,10 +55299,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": -1.5,
-                "combined": -0.02,
-                "bonus": -0.01
+                "combined": -0.06,
+                "bonus": -0.03
               },
               {
                 "name": "Sinker",
@@ -55428,7 +55428,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.3,
-            "pitch_bonus": 1.78,
+            "pitch_bonus": 1.76,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -55441,10 +55441,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": -3.0,
-                "combined": -0.92,
-                "bonus": -0.41
+                "combined": -0.96,
+                "bonus": -0.43
               },
               {
                 "name": "Sinker",
@@ -55567,7 +55567,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 27.5,
-            "pitch_bonus": 7.56,
+            "pitch_bonus": 7.54,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -55580,10 +55580,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": 3.8,
-                "combined": 3.16,
-                "bonus": 1.41
+                "combined": 3.12,
+                "bonus": 1.39
               },
               {
                 "name": "Sinker",
@@ -55706,7 +55706,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 22.1,
-            "pitch_bonus": 0.6,
+            "pitch_bonus": 0.59,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -55719,10 +55719,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": 2.6,
-                "combined": 2.44,
-                "bonus": 1.09
+                "combined": 2.4,
+                "bonus": 1.07
               },
               {
                 "name": "Sinker",
@@ -55847,7 +55847,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 27.6,
-            "pitch_bonus": 0.61,
+            "pitch_bonus": 0.59,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -55860,10 +55860,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": 1.1,
-                "combined": 1.54,
-                "bonus": 0.69
+                "combined": 1.5,
+                "bonus": 0.67
               },
               {
                 "name": "Sinker",
@@ -55986,7 +55986,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.7,
-            "pitch_bonus": 2.24,
+            "pitch_bonus": 2.22,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -55999,10 +55999,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": -6.1,
-                "combined": -2.78,
-                "bonus": -1.24
+                "combined": -2.82,
+                "bonus": -1.26
               },
               {
                 "name": "Sinker",
@@ -56125,7 +56125,7 @@
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 31.1,
-            "pitch_bonus": 1.66,
+            "pitch_bonus": 1.64,
             "pitch_breakdown": [
               {
                 "name": "Cutter",
@@ -56138,10 +56138,10 @@
               {
                 "name": "Curveball",
                 "usage": 29.7,
-                "pit_rv": 2.2,
+                "pit_rv": 2.1,
                 "bat_rv": -2.7,
-                "combined": -0.74,
-                "bonus": -0.33
+                "combined": -0.78,
+                "bonus": -0.35
               },
               {
                 "name": "Sinker",
