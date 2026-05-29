@@ -474,7 +474,7 @@
     "opp_pitcher_hand": "L",
     "bat_hand": "L",
     "home_team": "Baltimore Orioles",
-    "lineup_source": "projected",
+    "lineup_source": "confirmed",
     "model_hr_pct": 7.8,
     "hit_hr": null,
     "rf_prob": 3.1,
