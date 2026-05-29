@@ -2147,7 +2147,7 @@
     "opp_pitcher_hand": "R",
     "bat_hand": "R",
     "home_team": "New York Mets",
-    "lineup_source": "projected",
+    "lineup_source": "confirmed",
     "model_hr_pct": 5.8,
     "hit_hr": null,
     "rf_prob": 0.6,
