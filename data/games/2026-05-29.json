@@ -5266,16 +5266,16 @@
         "home_exp_hr": 0.96,
         "total_exp_hr": 1.12,
         "away_exp_runs": 5.59,
-        "home_exp_runs": 5.31,
-        "total_exp_runs": 10.9,
-        "away_runs_pg": 5.19,
+        "home_exp_runs": 5.33,
+        "total_exp_runs": 10.92,
+        "away_runs_pg": 5.21,
         "home_runs_pg": 4.38,
         "away_hr_pg": 1.34,
         "home_hr_pg": 1.21,
         "away_era": 3.14,
-        "home_era": 4.68,
+        "home_era": 4.69,
         "away_k_pg": 8.86,
-        "home_k_pg": 7.84
+        "home_k_pg": 7.83
       },
       "strikeouts": {
         "away_exp_k": 4.6,
@@ -5338,7 +5338,7 @@
         "k_edge": null,
         "opp_team": "Washington Nationals",
         "opp_lineup_k": 19.3,
-        "bullpen_hr9": 0.88
+        "bullpen_hr9": 0.9
       },
       "home_pitcher": {
         "name": "Paxton Schultz",
@@ -10467,14 +10467,14 @@
         "away_exp_hr": 0.042,
         "home_exp_hr": 0.138,
         "total_exp_hr": 0.18,
-        "away_exp_runs": 5.89,
+        "away_exp_runs": 5.93,
         "home_exp_runs": 3.48,
-        "total_exp_runs": 9.37,
+        "total_exp_runs": 9.41,
         "away_runs_pg": 3.84,
-        "home_runs_pg": 5.28,
+        "home_runs_pg": 5.31,
         "away_hr_pg": 0.98,
-        "home_hr_pg": 1.24,
-        "away_era": 3.83,
+        "home_hr_pg": 1.26,
+        "away_era": 3.86,
         "home_era": 4.65,
         "away_k_pg": 8.54,
         "home_k_pg": 7.89
@@ -15221,7 +15221,7 @@
         "home_hr_pg": 1.05,
         "away_era": 4.38,
         "home_era": 3.82,
-        "away_k_pg": 7.93,
+        "away_k_pg": 7.95,
         "home_k_pg": 8.92
       },
       "strikeouts": {
@@ -20382,17 +20382,17 @@
         "away_exp_hr": 0.49,
         "home_exp_hr": 0.102,
         "total_exp_hr": 0.59,
-        "away_exp_runs": 5.38,
-        "home_exp_runs": 4.02,
-        "total_exp_runs": 9.4,
-        "away_runs_pg": 4.0,
-        "home_runs_pg": 4.47,
-        "away_hr_pg": 0.93,
-        "home_hr_pg": 1.12,
+        "away_exp_runs": 5.3,
+        "home_exp_runs": 3.95,
+        "total_exp_runs": 9.25,
+        "away_runs_pg": 3.93,
+        "home_runs_pg": 4.4,
+        "away_hr_pg": 0.91,
+        "home_hr_pg": 1.1,
         "away_era": 3.73,
-        "home_era": 4.63,
+        "home_era": 4.62,
         "away_k_pg": 9.28,
-        "home_k_pg": 8.12
+        "home_k_pg": 8.11
       },
       "strikeouts": {
         "away_exp_k": 5.1,
