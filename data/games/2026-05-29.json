@@ -5274,7 +5274,7 @@
         "home_hr_pg": 1.25,
         "away_era": 3.17,
         "home_era": 4.68,
-        "away_k_pg": 8.87,
+        "away_k_pg": 8.88,
         "home_k_pg": 7.78
       },
       "strikeouts": {
@@ -15248,7 +15248,7 @@
         "away_hr_pg": 1.07,
         "home_hr_pg": 1.07,
         "away_era": 4.38,
-        "home_era": 3.87,
+        "home_era": 3.86,
         "away_k_pg": 7.99,
         "home_k_pg": 8.95
       },
@@ -20420,7 +20420,7 @@
         "away_era": 3.76,
         "home_era": 4.59,
         "away_k_pg": 9.22,
-        "home_k_pg": 8.1
+        "home_k_pg": 8.09
       },
       "strikeouts": {
         "away_exp_k": 5.5,
@@ -25605,14 +25605,14 @@
         "home_exp_hr": 0.228,
         "total_exp_hr": 0.37,
         "away_exp_runs": 4.32,
-        "home_exp_runs": 3.41,
-        "total_exp_runs": 7.73,
-        "away_runs_pg": 3.75,
+        "home_exp_runs": 3.43,
+        "total_exp_runs": 7.75,
+        "away_runs_pg": 3.77,
         "home_runs_pg": 4.14,
         "away_hr_pg": 0.75,
         "home_hr_pg": 0.95,
         "away_era": 3.9,
-        "home_era": 3.61,
+        "home_era": 3.63,
         "away_k_pg": 8.5,
         "home_k_pg": 9.43
       },
@@ -30673,14 +30673,14 @@
         "home_exp_hr": 0.215,
         "total_exp_hr": 0.49,
         "away_exp_runs": 3.7,
-        "home_exp_runs": 3.57,
-        "total_exp_runs": 7.27,
-        "away_runs_pg": 4.05,
+        "home_exp_runs": 3.59,
+        "total_exp_runs": 7.29,
+        "away_runs_pg": 4.07,
         "home_runs_pg": 4.57,
         "away_hr_pg": 1.14,
         "home_hr_pg": 0.81,
         "away_era": 4.72,
-        "home_era": 3.6,
+        "home_era": 3.61,
         "away_k_pg": 8.83,
         "home_k_pg": 7.71
       },
@@ -30745,7 +30745,7 @@
         "k_edge": null,
         "opp_team": "New York Mets",
         "opp_lineup_k": 21.0,
-        "bullpen_hr9": 0.95
+        "bullpen_hr9": 0.97
       },
       "home_pitcher": {
         "name": "Freddy Peralta",
@@ -35862,16 +35862,16 @@
         "away_exp_hr": 0.114,
         "home_exp_hr": 0.155,
         "total_exp_hr": 0.27,
-        "away_exp_runs": 3.76,
+        "away_exp_runs": 3.78,
         "home_exp_runs": 3.99,
-        "total_exp_runs": 7.75,
+        "total_exp_runs": 7.77,
         "away_runs_pg": 4.17,
-        "home_runs_pg": 3.82,
+        "home_runs_pg": 3.84,
         "away_hr_pg": 0.78,
-        "home_hr_pg": 0.88,
-        "away_era": 4.24,
+        "home_hr_pg": 0.89,
+        "away_era": 4.25,
         "home_era": 3.9,
-        "away_k_pg": 8.64,
+        "away_k_pg": 8.65,
         "home_k_pg": 9.37
       },
       "strikeouts": {
@@ -41001,7 +41001,7 @@
         "home_hr_pg": 1.11,
         "away_era": 4.22,
         "home_era": 4.26,
-        "away_k_pg": 8.16,
+        "away_k_pg": 8.15,
         "home_k_pg": 7.66
       },
       "strikeouts": {
