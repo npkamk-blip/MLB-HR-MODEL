@@ -15313,7 +15313,7 @@
         "k_edge": null,
         "opp_team": "Baltimore Orioles",
         "opp_lineup_k": 24.7,
-        "bullpen_hr9": 0.94
+        "bullpen_hr9": 0.95
       },
       "home_pitcher": {
         "name": "Trevor Rogers",
@@ -20410,14 +20410,14 @@
         "away_exp_hr": 0.367,
         "home_exp_hr": 0.113,
         "total_exp_hr": 0.48,
-        "away_exp_runs": 5.16,
+        "away_exp_runs": 5.18,
         "home_exp_runs": 3.97,
-        "total_exp_runs": 9.13,
+        "total_exp_runs": 9.15,
         "away_runs_pg": 3.93,
-        "home_runs_pg": 4.43,
+        "home_runs_pg": 4.45,
         "away_hr_pg": 0.91,
-        "home_hr_pg": 1.1,
-        "away_era": 3.74,
+        "home_hr_pg": 1.12,
+        "away_era": 3.76,
         "home_era": 4.59,
         "away_k_pg": 9.23,
         "home_k_pg": 8.11
