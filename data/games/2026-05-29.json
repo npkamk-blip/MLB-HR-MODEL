@@ -5274,7 +5274,7 @@
         "home_hr_pg": 1.25,
         "away_era": 3.17,
         "home_era": 4.74,
-        "away_k_pg": 8.88,
+        "away_k_pg": 8.87,
         "home_k_pg": 7.82
       },
       "strikeouts": {
@@ -10504,7 +10504,7 @@
         "home_hr_pg": 1.28,
         "away_era": 3.87,
         "home_era": 4.67,
-        "away_k_pg": 8.51,
+        "away_k_pg": 8.5,
         "home_k_pg": 7.85
       },
       "strikeouts": {
@@ -15250,7 +15250,7 @@
         "away_era": 4.38,
         "home_era": 3.86,
         "away_k_pg": 7.99,
-        "home_k_pg": 8.94
+        "home_k_pg": 8.95
       },
       "strikeouts": {
         "away_exp_k": 6.7,
@@ -15354,14 +15354,14 @@
         "k_edge": null,
         "opp_team": "Toronto Blue Jays",
         "opp_lineup_k": 16.5,
-        "bullpen_hr9": 1.15
+        "bullpen_hr9": 1.14
       },
       "top_hr_candidates": [
         {
           "name": "Kazuma Okamoto",
           "team": "Toronto Blue Jays",
-          "hr_prob": 16.7,
-          "xgb_prob": 16.7,
+          "hr_prob": 16.4,
+          "xgb_prob": 16.4,
           "rf_prob": 7.5,
           "archetype": "Boom/Bust",
           "trend": "Steady",
@@ -15491,8 +15491,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.152,
             "pull_s": 47.3,
             "pit_modifier": 1.073,
@@ -15607,8 +15607,8 @@
               "pitch_delta": 0,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.0,
             "pull_s": 0.0,
             "pit_modifier": 1.073,
@@ -15618,8 +15618,8 @@
         {
           "name": "Samuel Basallo",
           "team": "Baltimore Orioles",
-          "hr_prob": 9.2,
-          "xgb_prob": 9.2,
+          "hr_prob": 9.0,
+          "xgb_prob": 9.0,
           "rf_prob": 3.4,
           "archetype": "Contact",
           "trend": "Steady",
@@ -15748,8 +15748,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.091,
             "pull_s": 39.8,
             "pit_modifier": 1.0,
@@ -15889,8 +15889,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.19,
             "pull_s": 34.1,
             "pit_modifier": 1.073,
@@ -16030,8 +16030,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.12,
             "pull_s": 36.0,
             "pit_modifier": 0.874,
@@ -16171,8 +16171,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.1,
             "pull_s": 47.9,
             "pit_modifier": 1.073,
@@ -16182,8 +16182,8 @@
         {
           "name": "Pete Alonso",
           "team": "Baltimore Orioles",
-          "hr_prob": 2.6,
-          "xgb_prob": 2.6,
+          "hr_prob": 2.4,
+          "xgb_prob": 2.4,
           "rf_prob": 4.1,
           "archetype": "Contact",
           "trend": "Steady",
@@ -16313,8 +16313,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.132,
             "pull_s": 33.5,
             "pit_modifier": 1.0,
@@ -16454,8 +16454,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.091,
             "pull_s": 30.6,
             "pit_modifier": 0.874,
@@ -16595,8 +16595,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.207,
             "pull_s": 36.6,
             "pit_modifier": 1.0,
@@ -16736,8 +16736,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.108,
             "pull_s": 34.8,
             "pit_modifier": 1.0,
@@ -16878,8 +16878,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.364,
             "pull_s": 51.6,
             "pit_modifier": 1.0,
@@ -17019,8 +17019,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.176,
             "pull_s": 44.7,
             "pit_modifier": 1.073,
@@ -17161,8 +17161,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.286,
             "pull_s": 45.2,
             "pit_modifier": 1.0,
@@ -17302,8 +17302,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.023,
             "pull_s": 32.1,
             "pit_modifier": 1.0,
@@ -17443,8 +17443,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.115,
             "pull_s": 30.1,
             "pit_modifier": 1.0,
@@ -17584,8 +17584,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.189,
             "pull_s": 45.2,
             "pit_modifier": 1.073,
@@ -17725,8 +17725,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.215,
             "pull_s": 41.4,
             "pit_modifier": 1.073,
@@ -17866,8 +17866,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.131,
             "pull_s": 35.3,
             "pit_modifier": 1.0,
@@ -18009,8 +18009,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.189,
             "pull_s": 45.2,
             "pit_modifier": 1.073,
@@ -18150,8 +18150,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.176,
             "pull_s": 44.7,
             "pit_modifier": 1.073,
@@ -18291,8 +18291,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.19,
             "pull_s": 34.1,
             "pit_modifier": 1.073,
@@ -18302,8 +18302,8 @@
         {
           "name": "Kazuma Okamoto",
           "team": "Toronto Blue Jays",
-          "hr_prob": 16.7,
-          "xgb_prob": 16.7,
+          "hr_prob": 16.4,
+          "xgb_prob": 16.4,
           "rf_prob": 7.5,
           "archetype": "Boom/Bust",
           "trend": "Steady",
@@ -18433,8 +18433,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.152,
             "pull_s": 47.3,
             "pit_modifier": 1.073,
@@ -18574,8 +18574,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.12,
             "pull_s": 36.0,
             "pit_modifier": 0.874,
@@ -18690,8 +18690,8 @@
               "pitch_delta": 0,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.0,
             "pull_s": 0.0,
             "pit_modifier": 1.073,
@@ -18831,8 +18831,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.1,
             "pull_s": 47.9,
             "pit_modifier": 1.073,
@@ -18972,8 +18972,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.091,
             "pull_s": 30.6,
             "pit_modifier": 0.874,
@@ -19113,8 +19113,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.215,
             "pull_s": 41.4,
             "pit_modifier": 1.073,
@@ -19256,8 +19256,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.115,
             "pull_s": 30.1,
             "pit_modifier": 1.0,
@@ -19398,8 +19398,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.286,
             "pull_s": 45.2,
             "pit_modifier": 1.0,
@@ -19539,8 +19539,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.207,
             "pull_s": 36.6,
             "pit_modifier": 1.0,
@@ -19550,8 +19550,8 @@
         {
           "name": "Pete Alonso",
           "team": "Baltimore Orioles",
-          "hr_prob": 2.6,
-          "xgb_prob": 2.6,
+          "hr_prob": 2.4,
+          "xgb_prob": 2.4,
           "rf_prob": 4.1,
           "archetype": "Contact",
           "trend": "Steady",
@@ -19681,8 +19681,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.132,
             "pull_s": 33.5,
             "pit_modifier": 1.0,
@@ -19692,8 +19692,8 @@
         {
           "name": "Samuel Basallo",
           "team": "Baltimore Orioles",
-          "hr_prob": 9.2,
-          "xgb_prob": 9.2,
+          "hr_prob": 9.0,
+          "xgb_prob": 9.0,
           "rf_prob": 3.4,
           "archetype": "Contact",
           "trend": "Steady",
@@ -19822,8 +19822,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.091,
             "pull_s": 39.8,
             "pit_modifier": 1.0,
@@ -19963,8 +19963,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.023,
             "pull_s": 32.1,
             "pit_modifier": 1.0,
@@ -20104,8 +20104,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.108,
             "pull_s": 34.8,
             "pit_modifier": 1.0,
@@ -20246,8 +20246,8 @@
               "pitch_delta": 1,
               "bat_platoon": 1
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.364,
             "pull_s": 51.6,
             "pit_modifier": 1.0,
@@ -20387,8 +20387,8 @@
               "pitch_delta": 1,
               "bat_platoon": 0
             },
-            "bullpen_hr9": 1.15,
-            "bullpen_vuln": 0.926,
+            "bullpen_hr9": 1.14,
+            "bullpen_vuln": 0.912,
             "iso_use": 0.131,
             "pull_s": 35.3,
             "pit_modifier": 1.0,
@@ -20407,8 +20407,8 @@
         "wind_angle_cf": 29
       },
       "totals": {
-        "away_exp_hr": 0.406,
-        "home_exp_hr": 0.158,
+        "away_exp_hr": 0.403,
+        "home_exp_hr": 0.154,
         "total_exp_hr": 0.56,
         "away_exp_runs": 5.16,
         "home_exp_runs": 3.97,
@@ -20420,7 +20420,7 @@
         "away_era": 3.78,
         "home_era": 4.58,
         "away_k_pg": 9.21,
-        "home_k_pg": 8.09
+        "home_k_pg": 8.08
       },
       "strikeouts": {
         "away_exp_k": 5.5,
@@ -25612,9 +25612,9 @@
         "away_hr_pg": 0.75,
         "home_hr_pg": 0.95,
         "away_era": 3.89,
-        "home_era": 3.66,
+        "home_era": 3.65,
         "away_k_pg": 8.5,
-        "home_k_pg": 9.41
+        "home_k_pg": 9.42
       },
       "strikeouts": {
         "away_exp_k": 13.7,
@@ -46214,9 +46214,9 @@
         "away_hr_pg": 0.86,
         "home_hr_pg": 1.32,
         "away_era": 4.02,
-        "home_era": 4.37,
+        "home_era": 4.36,
         "away_k_pg": 8.41,
-        "home_k_pg": 8.17
+        "home_k_pg": 8.19
       },
       "strikeouts": {
         "away_exp_k": 1.7,
@@ -51400,9 +51400,9 @@
         "away_hr_pg": 0.89,
         "home_hr_pg": 0.96,
         "away_era": 4.46,
-        "home_era": 3.75,
+        "home_era": 3.74,
         "away_k_pg": 8.2,
-        "home_k_pg": 8.52
+        "home_k_pg": 8.54
       },
       "strikeouts": {
         "away_exp_k": 3.1,
@@ -56523,7 +56523,7 @@
         "home_hr_pg": 1.31,
         "away_era": 3.15,
         "home_era": 5.03,
-        "away_k_pg": 9.77,
+        "away_k_pg": 9.75,
         "home_k_pg": 8.47
       },
       "strikeouts": {
