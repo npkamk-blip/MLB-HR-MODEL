@@ -5150,14 +5150,14 @@
         "home_exp_hr": 0.241,
         "total_exp_hr": 0.57,
         "away_exp_runs": 5.11,
-        "home_exp_runs": 3.53,
-        "total_exp_runs": 8.64,
-        "away_runs_pg": 3.93,
+        "home_exp_runs": 3.55,
+        "total_exp_runs": 8.66,
+        "away_runs_pg": 3.95,
         "home_runs_pg": 5.39,
         "away_hr_pg": 1.05,
         "home_hr_pg": 1.27,
         "away_era": 3.89,
-        "home_era": 4.63,
+        "home_era": 4.65,
         "away_k_pg": 8.49,
         "home_k_pg": 7.86
       },
@@ -10375,9 +10375,9 @@
         "away_hr_pg": 0.88,
         "home_hr_pg": 1.02,
         "away_era": 4.45,
-        "home_era": 3.73,
+        "home_era": 3.72,
         "away_k_pg": 8.24,
-        "home_k_pg": 8.44
+        "home_k_pg": 8.43
       },
       "strikeouts": {
         "away_exp_k": 5.2,
@@ -10440,7 +10440,7 @@
         "k_edge": null,
         "opp_team": "Baltimore Orioles",
         "opp_lineup_k": 22.7,
-        "bullpen_hr9": 0.97
+        "bullpen_hr9": 0.96
       },
       "home_pitcher": {
         "name": "Brandon Young",
@@ -15586,7 +15586,7 @@
         "home_hr_pg": 1.14,
         "away_era": 3.72,
         "home_era": 4.65,
-        "away_k_pg": 9.13,
+        "away_k_pg": 9.14,
         "home_k_pg": 8.1
       },
       "strikeouts": {
@@ -20745,9 +20745,9 @@
         "away_hr_pg": 1.05,
         "home_hr_pg": 1.12,
         "away_era": 4.45,
-        "home_era": 3.91,
+        "home_era": 3.9,
         "away_k_pg": 8.0,
-        "home_k_pg": 9.0
+        "home_k_pg": 9.02
       },
       "strikeouts": {
         "away_exp_k": 3.5,
@@ -36096,9 +36096,9 @@
         "home_runs_pg": 3.91,
         "away_hr_pg": 0.78,
         "home_hr_pg": 0.91,
-        "away_era": 4.26,
+        "away_era": 4.25,
         "home_era": 3.88,
-        "away_k_pg": 8.62,
+        "away_k_pg": 8.61,
         "home_k_pg": 9.41
       },
       "strikeouts": {
@@ -41346,7 +41346,7 @@
         "home_hr_pg": 1.3,
         "away_era": 3.19,
         "home_era": 4.99,
-        "away_k_pg": 9.76,
+        "away_k_pg": 9.77,
         "home_k_pg": 8.41
       },
       "strikeouts": {
