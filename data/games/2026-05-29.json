@@ -5273,9 +5273,9 @@
         "away_hr_pg": 1.34,
         "home_hr_pg": 1.25,
         "away_era": 3.16,
-        "home_era": 4.73,
+        "home_era": 4.72,
         "away_k_pg": 8.9,
-        "home_k_pg": 7.82
+        "home_k_pg": 7.8
       },
       "strikeouts": {
         "away_exp_k": 5.1,
@@ -10505,7 +10505,7 @@
         "away_era": 3.88,
         "home_era": 4.68,
         "away_k_pg": 8.51,
-        "home_k_pg": 7.84
+        "home_k_pg": 7.83
       },
       "strikeouts": {
         "away_exp_k": 1.7,
@@ -15247,9 +15247,9 @@
         "home_runs_pg": 4.83,
         "away_hr_pg": 1.07,
         "home_hr_pg": 1.07,
-        "away_era": 4.37,
+        "away_era": 4.36,
         "home_era": 3.85,
-        "away_k_pg": 8.01,
+        "away_k_pg": 8.02,
         "home_k_pg": 8.95
       },
       "strikeouts": {
@@ -25630,7 +25630,7 @@
         "away_hr_pg": 0.75,
         "home_hr_pg": 0.95,
         "away_era": 3.89,
-        "home_era": 3.65,
+        "home_era": 3.64,
         "away_k_pg": 8.5,
         "home_k_pg": 9.4
       },
@@ -25695,7 +25695,7 @@
         "k_edge": null,
         "opp_team": "Tampa Bay Rays",
         "opp_lineup_k": 17.1,
-        "bullpen_hr9": 0.99
+        "bullpen_hr9": 1.01
       },
       "home_pitcher": {
         "name": "Nick Martinez",
@@ -30690,14 +30690,14 @@
         "away_exp_hr": 0.257,
         "home_exp_hr": 0.309,
         "total_exp_hr": 0.57,
-        "away_exp_runs": 3.73,
+        "away_exp_runs": 3.76,
         "home_exp_runs": 3.56,
-        "total_exp_runs": 7.29,
+        "total_exp_runs": 7.32,
         "away_runs_pg": 4.07,
-        "home_runs_pg": 4.57,
+        "home_runs_pg": 4.61,
         "away_hr_pg": 1.14,
-        "home_hr_pg": 0.81,
-        "away_era": 4.7,
+        "home_hr_pg": 0.83,
+        "away_era": 4.74,
         "home_era": 3.59,
         "away_k_pg": 8.84,
         "home_k_pg": 7.69
@@ -35889,7 +35889,7 @@
         "home_hr_pg": 0.89,
         "away_era": 4.24,
         "home_era": 3.9,
-        "away_k_pg": 8.66,
+        "away_k_pg": 8.65,
         "home_k_pg": 9.37
       },
       "strikeouts": {
@@ -46232,7 +46232,7 @@
         "away_hr_pg": 0.86,
         "home_hr_pg": 1.32,
         "away_era": 4.02,
-        "home_era": 4.36,
+        "home_era": 4.35,
         "away_k_pg": 8.39,
         "home_k_pg": 8.19
       },
@@ -51419,7 +51419,7 @@
         "home_hr_pg": 0.96,
         "away_era": 4.45,
         "home_era": 3.74,
-        "away_k_pg": 8.18,
+        "away_k_pg": 8.19,
         "home_k_pg": 8.52
       },
       "strikeouts": {
@@ -56539,9 +56539,9 @@
         "home_runs_pg": 4.39,
         "away_hr_pg": 0.7,
         "home_hr_pg": 1.31,
-        "away_era": 3.15,
+        "away_era": 3.14,
         "home_era": 5.03,
-        "away_k_pg": 9.76,
+        "away_k_pg": 9.75,
         "home_k_pg": 8.48
       },
       "strikeouts": {
