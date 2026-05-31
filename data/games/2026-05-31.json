@@ -10412,7 +10412,7 @@
         "home_runs_pg": 5.02,
         "away_hr_pg": 1.05,
         "home_hr_pg": 1.13,
-        "away_era": 4.56,
+        "away_era": 4.55,
         "home_era": 3.9,
         "away_k_pg": 8.03,
         "home_k_pg": 9.07
@@ -15589,7 +15589,7 @@
         "away_era": 3.84,
         "home_era": 3.66,
         "away_k_pg": 8.64,
-        "home_k_pg": 9.41
+        "home_k_pg": 9.42
       },
       "strikeouts": {
         "away_exp_k": 4.1,
@@ -20810,9 +20810,9 @@
         "home_runs_pg": 4.64,
         "away_hr_pg": 1.18,
         "home_hr_pg": 0.86,
-        "away_era": 4.74,
+        "away_era": 4.73,
         "home_era": 3.8,
-        "away_k_pg": 8.84,
+        "away_k_pg": 8.85,
         "home_k_pg": 7.66
       },
       "strikeouts": {
@@ -26148,7 +26148,7 @@
         "k_edge": null,
         "opp_team": "New York Mets",
         "opp_lineup_k": 21.3,
-        "bullpen_hr9": 1.02
+        "bullpen_hr9": 1.01
       },
       "home_pitcher": {
         "name": "Nolan McLean",
@@ -31242,9 +31242,9 @@
         "home_runs_pg": 3.97,
         "away_hr_pg": 0.77,
         "home_hr_pg": 0.95,
-        "away_era": 4.32,
+        "away_era": 4.31,
         "home_era": 3.84,
-        "away_k_pg": 8.62,
+        "away_k_pg": 8.61,
         "home_k_pg": 9.35
       },
       "strikeouts": {
@@ -36404,7 +36404,7 @@
         "home_hr_pg": 1.34,
         "away_era": 4.02,
         "home_era": 4.22,
-        "away_k_pg": 8.31,
+        "away_k_pg": 8.3,
         "home_k_pg": 8.21
       },
       "strikeouts": {
@@ -41619,7 +41619,7 @@
         "away_era": 3.2,
         "home_era": 4.95,
         "away_k_pg": 9.76,
-        "home_k_pg": 8.44
+        "home_k_pg": 8.43
       },
       "strikeouts": {
         "away_exp_k": 7.8,
