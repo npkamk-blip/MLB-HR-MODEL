@@ -5155,7 +5155,7 @@
         "away_era": 3.91,
         "home_era": 4.59,
         "away_k_pg": 9.09,
-        "home_k_pg": 8.03
+        "home_k_pg": 8.04
       },
       "strikeouts": {
         "away_exp_k": 17.8,
@@ -10468,7 +10468,7 @@
         "k_edge": null,
         "opp_team": "Pittsburgh Pirates",
         "opp_lineup_k": 21.1,
-        "bullpen_hr9": 0.99
+        "bullpen_hr9": 0.98
       },
       "home_pitcher": {
         "name": "Braxton Ashcraft",
@@ -20828,7 +20828,7 @@
         "k_edge": null,
         "opp_team": "Tampa Bay Rays",
         "opp_lineup_k": 19.9,
-        "bullpen_hr9": 1.04
+        "bullpen_hr9": 1.03
       },
       "home_pitcher": {
         "name": "Shane McClanahan",
@@ -25952,7 +25952,7 @@
         "home_runs_pg": 4.61,
         "away_hr_pg": 1.17,
         "home_hr_pg": 0.86,
-        "away_era": 4.75,
+        "away_era": 4.74,
         "home_era": 3.82,
         "away_k_pg": 8.86,
         "home_k_pg": 7.7
@@ -26018,7 +26018,7 @@
         "k_edge": null,
         "opp_team": "Cincinnati Reds",
         "opp_lineup_k": 24.9,
-        "bullpen_hr9": 1.06
+        "bullpen_hr9": 1.05
       },
       "home_pitcher": {
         "name": "Nick Lodolo",
@@ -31224,7 +31224,7 @@
         "home_runs_pg": 4.33,
         "away_hr_pg": 1.38,
         "home_hr_pg": 1.22,
-        "away_era": 3.14,
+        "away_era": 3.13,
         "home_era": 4.72,
         "away_k_pg": 8.86,
         "home_k_pg": 7.76
@@ -36387,7 +36387,7 @@
         "away_era": 4.28,
         "home_era": 3.85,
         "away_k_pg": 8.57,
-        "home_k_pg": 9.4
+        "home_k_pg": 9.39
       },
       "strikeouts": {
         "away_exp_k": 16.9,
