@@ -5185,7 +5185,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Calm",
-        "temp": 70,
+        "temp": 71,
         "wind_speed": 4,
         "wind_dir": 311,
         "mult": 1.02,
@@ -10449,7 +10449,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Blowing In",
-        "temp": 74,
+        "temp": 75,
         "wind_speed": 5,
         "wind_dir": 295,
         "mult": 1.006,
@@ -20837,7 +20837,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Slightly In",
-        "temp": 67,
+        "temp": 68,
         "wind_speed": 8,
         "wind_dir": 342,
         "mult": 0.993,
@@ -31295,7 +31295,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Calm",
-        "temp": 78,
+        "temp": 76,
         "wind_speed": 2,
         "wind_dir": 54,
         "mult": 1.02,
@@ -57311,7 +57311,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Out to LF",
-        "temp": 82,
+        "temp": 81,
         "wind_speed": 8,
         "wind_dir": 127,
         "mult": 1.086,
@@ -72981,7 +72981,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Blowing In",
-        "temp": 78,
+        "temp": 77,
         "wind_speed": 10,
         "wind_dir": 254,
         "mult": 0.986,
@@ -78189,7 +78189,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Calm",
-        "temp": 84,
+        "temp": 82,
         "wind_speed": 4,
         "wind_dir": 173,
         "mult": 1.06,
