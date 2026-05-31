@@ -5155,7 +5155,7 @@
         "away_era": 3.91,
         "home_era": 4.58,
         "away_k_pg": 9.09,
-        "home_k_pg": 8.03
+        "home_k_pg": 8.04
       },
       "strikeouts": {
         "away_exp_k": 17.8,
@@ -15589,9 +15589,9 @@
         "away_hr_pg": 1.03,
         "home_hr_pg": 1.12,
         "away_era": 4.49,
-        "home_era": 3.91,
+        "home_era": 3.9,
         "away_k_pg": 8.01,
-        "home_k_pg": 9.02
+        "home_k_pg": 9.03
       },
       "strikeouts": {
         "away_exp_k": 4.6,
@@ -20763,9 +20763,9 @@
         "away_hr_pg": 0.76,
         "home_hr_pg": 0.92,
         "away_era": 3.84,
-        "home_era": 3.66,
+        "home_era": 3.65,
         "away_k_pg": 8.57,
-        "home_k_pg": 9.45
+        "home_k_pg": 9.44
       },
       "strikeouts": {
         "away_exp_k": 3.6,
@@ -25955,7 +25955,7 @@
         "away_era": 4.74,
         "home_era": 3.82,
         "away_k_pg": 8.86,
-        "home_k_pg": 7.7
+        "home_k_pg": 7.69
       },
       "strikeouts": {
         "away_exp_k": 3.4,
@@ -31290,7 +31290,7 @@
         "k_edge": null,
         "opp_team": "New York Mets",
         "opp_lineup_k": 21.3,
-        "bullpen_hr9": 1.01
+        "bullpen_hr9": 1.02
       },
       "home_pitcher": {
         "name": "Nolan McLean",
@@ -36377,14 +36377,14 @@
         "away_exp_hr": 0.04,
         "home_exp_hr": 0.27,
         "total_exp_hr": 0.31,
-        "away_exp_runs": 3.9,
+        "away_exp_runs": 3.94,
         "home_exp_runs": 3.53,
-        "total_exp_runs": 7.43,
+        "total_exp_runs": 7.47,
         "away_runs_pg": 4.15,
-        "home_runs_pg": 3.9,
+        "home_runs_pg": 3.93,
         "away_hr_pg": 0.77,
-        "home_hr_pg": 0.93,
-        "away_era": 4.28,
+        "home_hr_pg": 0.95,
+        "away_era": 4.31,
         "home_era": 3.85,
         "away_k_pg": 8.59,
         "home_k_pg": 9.39
@@ -41547,7 +41547,7 @@
         "away_era": 4.07,
         "home_era": 4.26,
         "away_k_pg": 8.33,
-        "home_k_pg": 8.2
+        "home_k_pg": 8.21
       },
       "strikeouts": {
         "away_exp_k": 3.3,
