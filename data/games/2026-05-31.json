@@ -44,7 +44,7 @@
         "k_edge": null,
         "opp_team": "Baltimore Orioles",
         "opp_lineup_k": 23.6,
-        "bullpen_hr9": 0.96
+        "bullpen_hr9": 0.98
       },
       "home_pitcher": {
         "name": "Kyle Bradish",
@@ -5145,14 +5145,14 @@
         "away_exp_hr": 0.207,
         "home_exp_hr": 0.158,
         "total_exp_hr": 0.36,
-        "away_exp_runs": 4.4,
+        "away_exp_runs": 4.45,
         "home_exp_runs": 3.65,
-        "total_exp_runs": 8.05,
+        "total_exp_runs": 8.1,
         "away_runs_pg": 3.98,
-        "home_runs_pg": 4.48,
+        "home_runs_pg": 4.53,
         "away_hr_pg": 0.92,
-        "home_hr_pg": 1.12,
-        "away_era": 3.83,
+        "home_hr_pg": 1.13,
+        "away_era": 3.88,
         "home_era": 4.62,
         "away_k_pg": 9.13,
         "home_k_pg": 8.07
