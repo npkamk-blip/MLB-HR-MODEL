@@ -25575,13 +25575,8 @@
         "avg_ip": 5.4,
         "gs": 11,
         "exp_k": 4.8,
-        "k_prop": {
-          "line": 6.5,
-          "price": 119,
-          "market": "pitcher_strikeouts",
-          "book": "DraftKings"
-        },
-        "k_edge": -1.7,
+        "k_prop": null,
+        "k_edge": null,
         "opp_team": "St. Louis Cardinals",
         "opp_lineup_k": 17.2,
         "bullpen_hr9": 1.17
@@ -25621,13 +25616,8 @@
         "avg_ip": 5.5,
         "gs": 11,
         "exp_k": 4.0,
-        "k_prop": {
-          "line": 3.5,
-          "price": -116,
-          "market": "pitcher_strikeouts",
-          "book": "DraftKings"
-        },
-        "k_edge": 0.5,
+        "k_prop": null,
+        "k_edge": null,
         "opp_team": "Texas Rangers",
         "opp_lineup_k": 22.7,
         "bullpen_hr9": 1.07
@@ -30745,20 +30735,10 @@
         "home_pit_k9": 6.4,
         "away_avg_ip": 5.4,
         "home_avg_ip": 5.5,
-        "away_k_prop": {
-          "line": 6.5,
-          "price": 119,
-          "market": "pitcher_strikeouts",
-          "book": "DraftKings"
-        },
-        "home_k_prop": {
-          "line": 3.5,
-          "price": -116,
-          "market": "pitcher_strikeouts",
-          "book": "DraftKings"
-        },
-        "away_k_edge": -1.7,
-        "home_k_edge": 0.5
+        "away_k_prop": null,
+        "home_k_prop": null,
+        "away_k_edge": null,
+        "home_k_edge": null
       }
     },
     {
@@ -30801,8 +30781,13 @@
         "avg_ip": 4.7,
         "gs": 9,
         "exp_k": 4.3,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 4.5,
+          "price": -156,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "k_edge": -0.2,
         "opp_team": "Los Angeles Angels",
         "opp_lineup_k": 22.1,
         "bullpen_hr9": 1.39
@@ -30842,8 +30827,13 @@
         "avg_ip": 5.9,
         "gs": 12,
         "exp_k": 6.7,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 7.5,
+          "price": 111,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "k_edge": -0.8,
         "opp_team": "Colorado Rockies",
         "opp_lineup_k": 23.2,
         "bullpen_hr9": 1.02
@@ -35923,10 +35913,20 @@
         "home_pit_k9": 9.8,
         "away_avg_ip": 4.7,
         "home_avg_ip": 5.9,
-        "away_k_prop": null,
-        "home_k_prop": null,
-        "away_k_edge": null,
-        "home_k_edge": null
+        "away_k_prop": {
+          "line": 4.5,
+          "price": -156,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "home_k_prop": {
+          "line": 7.5,
+          "price": 111,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "away_k_edge": -0.2,
+        "home_k_edge": -0.8
       }
     },
     {
@@ -35969,8 +35969,13 @@
         "avg_ip": 5.1,
         "gs": 10,
         "exp_k": 5.3,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 5.5,
+          "price": -101,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "k_edge": -0.2,
         "opp_team": "Arizona Diamondbacks",
         "opp_lineup_k": 20.4,
         "bullpen_hr9": 0.92
@@ -36010,8 +36015,13 @@
         "avg_ip": 6.0,
         "gs": 11,
         "exp_k": 4.2,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 3.5,
+          "price": -152,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "k_edge": 0.7,
         "opp_team": "Los Angeles Dodgers",
         "opp_lineup_k": 21.3,
         "bullpen_hr9": 1.19
@@ -41127,10 +41137,20 @@
         "home_pit_k9": 6.7,
         "away_avg_ip": 5.1,
         "home_avg_ip": 6.0,
-        "away_k_prop": null,
-        "home_k_prop": null,
-        "away_k_edge": null,
-        "home_k_edge": null
+        "away_k_prop": {
+          "line": 5.5,
+          "price": -101,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "home_k_prop": {
+          "line": 3.5,
+          "price": -152,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "away_k_edge": -0.2,
+        "home_k_edge": 0.7
       }
     },
     {
