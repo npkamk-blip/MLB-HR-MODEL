@@ -25575,8 +25575,13 @@
         "avg_ip": 5.4,
         "gs": 11,
         "exp_k": 4.8,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 6.5,
+          "price": 120,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "k_edge": -1.7,
         "opp_team": "St. Louis Cardinals",
         "opp_lineup_k": 17.2,
         "bullpen_hr9": 1.17
@@ -25616,8 +25621,13 @@
         "avg_ip": 5.5,
         "gs": 11,
         "exp_k": 4.0,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 3.5,
+          "price": -112,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "k_edge": 0.5,
         "opp_team": "Texas Rangers",
         "opp_lineup_k": 22.7,
         "bullpen_hr9": 1.07
@@ -30735,10 +30745,20 @@
         "home_pit_k9": 6.4,
         "away_avg_ip": 5.4,
         "home_avg_ip": 5.5,
-        "away_k_prop": null,
-        "home_k_prop": null,
-        "away_k_edge": null,
-        "home_k_edge": null
+        "away_k_prop": {
+          "line": 6.5,
+          "price": 120,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "home_k_prop": {
+          "line": 3.5,
+          "price": -112,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "away_k_edge": -1.7,
+        "home_k_edge": 0.5
       }
     },
     {
@@ -30781,8 +30801,13 @@
         "avg_ip": 4.7,
         "gs": 9,
         "exp_k": 4.3,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 4.5,
+          "price": -156,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "k_edge": -0.2,
         "opp_team": "Los Angeles Angels",
         "opp_lineup_k": 22.1,
         "bullpen_hr9": 1.39
@@ -30822,8 +30847,13 @@
         "avg_ip": 5.9,
         "gs": 12,
         "exp_k": 6.7,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 7.5,
+          "price": 111,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "k_edge": -0.8,
         "opp_team": "Colorado Rockies",
         "opp_lineup_k": 23.2,
         "bullpen_hr9": 1.02
@@ -35903,10 +35933,20 @@
         "home_pit_k9": 9.8,
         "away_avg_ip": 4.7,
         "home_avg_ip": 5.9,
-        "away_k_prop": null,
-        "home_k_prop": null,
-        "away_k_edge": null,
-        "home_k_edge": null
+        "away_k_prop": {
+          "line": 4.5,
+          "price": -156,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "home_k_prop": {
+          "line": 7.5,
+          "price": 111,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "away_k_edge": -0.2,
+        "home_k_edge": -0.8
       }
     },
     {
@@ -41216,7 +41256,7 @@
         "exp_k": 4.4,
         "k_prop": {
           "line": 4.5,
-          "price": -160,
+          "price": -153,
           "market": "pitcher_strikeouts",
           "book": "DraftKings"
         },
@@ -46283,7 +46323,7 @@
         "away_k_prop": null,
         "home_k_prop": {
           "line": 4.5,
-          "price": -160,
+          "price": -153,
           "market": "pitcher_strikeouts",
           "book": "DraftKings"
         },
