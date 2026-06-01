@@ -41254,8 +41254,13 @@
         "avg_ip": 5.8,
         "gs": 11,
         "exp_k": 4.4,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 4.5,
+          "price": -160,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "k_edge": -0.1,
         "opp_team": "New York Mets",
         "opp_lineup_k": 17.5,
         "bullpen_hr9": 0.93
@@ -46316,9 +46321,14 @@
         "away_avg_ip": 5.0,
         "home_avg_ip": 5.8,
         "away_k_prop": null,
-        "home_k_prop": null,
+        "home_k_prop": {
+          "line": 4.5,
+          "price": -160,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
         "away_k_edge": null,
-        "home_k_edge": null
+        "home_k_edge": -0.1
       }
     }
   ],
