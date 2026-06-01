@@ -40,8 +40,13 @@
         "avg_ip": 5.0,
         "gs": 0,
         "exp_k": 4.3,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 3.5,
+          "price": -136,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "k_edge": 0.8,
         "opp_team": "Tampa Bay Rays",
         "opp_lineup_k": 18.3,
         "bullpen_hr9": 0.96
@@ -81,8 +86,13 @@
         "avg_ip": 5.0,
         "gs": 6,
         "exp_k": 5.2,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 4.5,
+          "price": -137,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "k_edge": 0.7,
         "opp_team": "Detroit Tigers",
         "opp_lineup_k": 26.2,
         "bullpen_hr9": 1.12
@@ -5168,10 +5178,20 @@
         "home_pit_k9": 8.1,
         "away_avg_ip": 5.0,
         "home_avg_ip": 5.0,
-        "away_k_prop": null,
-        "home_k_prop": null,
-        "away_k_edge": null,
-        "home_k_edge": null
+        "away_k_prop": {
+          "line": 3.5,
+          "price": -136,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "home_k_prop": {
+          "line": 4.5,
+          "price": -137,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "away_k_edge": 0.8,
+        "home_k_edge": 0.7
       }
     },
     {
@@ -5214,8 +5234,13 @@
         "avg_ip": 6.3,
         "gs": 12,
         "exp_k": 3.9,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 3.5,
+          "price": -162,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "k_edge": 0.4,
         "opp_team": "Washington Nationals",
         "opp_lineup_k": 20.4,
         "bullpen_hr9": 1.03
@@ -5255,8 +5280,13 @@
         "avg_ip": 4.9,
         "gs": 12,
         "exp_k": 4.6,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 5.5,
+          "price": 110,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "k_edge": -0.9,
         "opp_team": "Miami Marlins",
         "opp_lineup_k": 18.6,
         "bullpen_hr9": 1.36
@@ -10360,10 +10390,20 @@
         "home_pit_k9": 10.3,
         "away_avg_ip": 6.3,
         "home_avg_ip": 4.9,
-        "away_k_prop": null,
-        "home_k_prop": null,
-        "away_k_edge": null,
-        "home_k_edge": null
+        "away_k_prop": {
+          "line": 3.5,
+          "price": -162,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "home_k_prop": {
+          "line": 5.5,
+          "price": 110,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "away_k_edge": 0.4,
+        "home_k_edge": -0.9
       }
     },
     {
@@ -10406,8 +10446,13 @@
         "avg_ip": 21.1,
         "gs": 1,
         "exp_k": 20.7,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 3.5,
+          "price": 104,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "k_edge": 17.2,
         "opp_team": "Cincinnati Reds",
         "opp_lineup_k": 23.5,
         "bullpen_hr9": 1.19
@@ -10447,8 +10492,13 @@
         "avg_ip": 5.8,
         "gs": 11,
         "exp_k": 5.6,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 6.5,
+          "price": -122,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "k_edge": -0.9,
         "opp_team": "Kansas City Royals",
         "opp_lineup_k": 19.3,
         "bullpen_hr9": 1.44
@@ -15574,10 +15624,20 @@
         "home_pit_k9": 10.1,
         "away_avg_ip": 21.1,
         "home_avg_ip": 5.8,
-        "away_k_prop": null,
-        "home_k_prop": null,
-        "away_k_edge": null,
-        "home_k_edge": null
+        "away_k_prop": {
+          "line": 3.5,
+          "price": 104,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "home_k_prop": {
+          "line": 6.5,
+          "price": -122,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "away_k_edge": 17.2,
+        "home_k_edge": -0.9
       }
     },
     {
@@ -15648,8 +15708,13 @@
         "avg_ip": 5.3,
         "gs": 12,
         "exp_k": 6.3,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 5.5,
+          "price": -162,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
+        "k_edge": 0.8,
         "opp_team": "Chicago White Sox",
         "opp_lineup_k": 24.7,
         "bullpen_hr9": 0.99
@@ -20314,9 +20379,14 @@
         "away_avg_ip": 5.0,
         "home_avg_ip": 5.3,
         "away_k_prop": null,
-        "home_k_prop": null,
+        "home_k_prop": {
+          "line": 5.5,
+          "price": -162,
+          "market": "pitcher_strikeouts",
+          "book": "BetRivers"
+        },
         "away_k_edge": null,
-        "home_k_edge": null
+        "home_k_edge": 0.8
       }
     },
     {
@@ -20359,8 +20429,13 @@
         "avg_ip": 5.5,
         "gs": 11,
         "exp_k": 6.5,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 5.5,
+          "price": -111,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "k_edge": 1.0,
         "opp_team": "Milwaukee Brewers",
         "opp_lineup_k": 23.4,
         "bullpen_hr9": 1.05
@@ -20400,8 +20475,13 @@
         "avg_ip": 27.1,
         "gs": 1,
         "exp_k": 20.7,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 3.5,
+          "price": 136,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "k_edge": 17.2,
         "opp_team": "San Francisco Giants",
         "opp_lineup_k": 16.8,
         "bullpen_hr9": 0.72
@@ -25439,10 +25519,20 @@
         "home_pit_k9": 9.2,
         "away_avg_ip": 5.5,
         "home_avg_ip": 27.1,
-        "away_k_prop": null,
-        "home_k_prop": null,
-        "away_k_edge": null,
-        "home_k_edge": null
+        "away_k_prop": {
+          "line": 5.5,
+          "price": -111,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "home_k_prop": {
+          "line": 3.5,
+          "price": 136,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "away_k_edge": 1.0,
+        "home_k_edge": 17.2
       }
     },
     {
@@ -35859,8 +35949,13 @@
         "avg_ip": 5.1,
         "gs": 10,
         "exp_k": 5.3,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 5.5,
+          "price": -101,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "k_edge": -0.2,
         "opp_team": "Arizona Diamondbacks",
         "opp_lineup_k": 20.4,
         "bullpen_hr9": 0.92
@@ -35900,8 +35995,13 @@
         "avg_ip": 6.0,
         "gs": 11,
         "exp_k": 4.2,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 3.5,
+          "price": -152,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "k_edge": 0.7,
         "opp_team": "Los Angeles Dodgers",
         "opp_lineup_k": 21.3,
         "bullpen_hr9": 1.19
@@ -41017,10 +41117,20 @@
         "home_pit_k9": 6.7,
         "away_avg_ip": 5.1,
         "home_avg_ip": 6.0,
-        "away_k_prop": null,
-        "home_k_prop": null,
-        "away_k_edge": null,
-        "home_k_edge": null
+        "away_k_prop": {
+          "line": 5.5,
+          "price": -101,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "home_k_prop": {
+          "line": 3.5,
+          "price": -152,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "away_k_edge": -0.2,
+        "home_k_edge": 0.7
       }
     },
     {
@@ -41104,8 +41214,13 @@
         "avg_ip": 5.8,
         "gs": 11,
         "exp_k": 4.4,
-        "k_prop": null,
-        "k_edge": null,
+        "k_prop": {
+          "line": 4.5,
+          "price": -160,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
+        "k_edge": -0.1,
         "opp_team": "New York Mets",
         "opp_lineup_k": 17.5,
         "bullpen_hr9": 0.93
@@ -46166,9 +46281,14 @@
         "away_avg_ip": 5.0,
         "home_avg_ip": 5.8,
         "away_k_prop": null,
-        "home_k_prop": null,
+        "home_k_prop": {
+          "line": 4.5,
+          "price": -160,
+          "market": "pitcher_strikeouts",
+          "book": "DraftKings"
+        },
         "away_k_edge": null,
-        "home_k_edge": null
+        "home_k_edge": -0.1
       }
     }
   ],
