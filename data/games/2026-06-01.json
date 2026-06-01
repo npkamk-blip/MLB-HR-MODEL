@@ -15541,7 +15541,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Crosswind",
-        "temp": 73,
+        "temp": 70,
         "wind_speed": 5,
         "wind_dir": 61,
         "mult": 1.018,
@@ -30628,7 +30628,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Calm",
-        "temp": 77,
+        "temp": 79,
         "wind_speed": 3,
         "wind_dir": 348,
         "mult": 1.02,
