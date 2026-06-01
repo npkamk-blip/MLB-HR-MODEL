@@ -35820,7 +35820,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Crosswind",
-        "temp": 63,
+        "temp": 62,
         "wind_speed": 5,
         "wind_dir": 232,
         "mult": 0.998,
