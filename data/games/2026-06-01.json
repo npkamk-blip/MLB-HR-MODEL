@@ -1829,7 +1829,7 @@
             "avg": 0.167,
             "iso": 0.041
           },
-          "dk_odds": null,
+          "dk_odds": "+700",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -3507,7 +3507,7 @@
             "avg": 0.167,
             "iso": 0.041
           },
-          "dk_odds": null,
+          "dk_odds": "+700",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -15708,13 +15708,8 @@
         "avg_ip": 5.3,
         "gs": 12,
         "exp_k": 6.3,
-        "k_prop": {
-          "line": 5.5,
-          "price": -159,
-          "market": "pitcher_strikeouts",
-          "book": "BetRivers"
-        },
-        "k_edge": 0.8,
+        "k_prop": null,
+        "k_edge": null,
         "opp_team": "Chicago White Sox",
         "opp_lineup_k": 24.7,
         "bullpen_hr9": 0.99
@@ -15914,7 +15909,7 @@
             "avg": 0.211,
             "iso": 0.21
           },
-          "dk_odds": null,
+          "dk_odds": "+460",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -16057,7 +16052,7 @@
             "avg": 0.289,
             "iso": 0.237
           },
-          "dk_odds": null,
+          "dk_odds": "+330",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -16341,7 +16336,7 @@
             "avg": 0.214,
             "iso": 0.262
           },
-          "dk_odds": null,
+          "dk_odds": "+420",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -16455,7 +16450,7 @@
             "avg": 0.286,
             "iso": 0.343
           },
-          "dk_odds": null,
+          "dk_odds": "+700",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -16571,7 +16566,7 @@
             "avg": 0.268,
             "iso": 0.195
           },
-          "dk_odds": null,
+          "dk_odds": "+1000",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -16826,7 +16821,7 @@
             "avg": 0.194,
             "iso": 0.056
           },
-          "dk_odds": null,
+          "dk_odds": "+525",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -16940,7 +16935,7 @@
             "avg": 0.273,
             "iso": 0.151
           },
-          "dk_odds": null,
+          "dk_odds": "+700",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -17054,7 +17049,7 @@
             "avg": 0.162,
             "iso": 0.135
           },
-          "dk_odds": null,
+          "dk_odds": "+1000",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -17285,7 +17280,7 @@
             "avg": 0.256,
             "iso": 0.231
           },
-          "dk_odds": null,
+          "dk_odds": "+235",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -17401,7 +17396,7 @@
             "avg": 0.189,
             "iso": 0.135
           },
-          "dk_odds": null,
+          "dk_odds": "+500",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -17683,7 +17678,7 @@
             "avg": 0.222,
             "iso": 0.0
           },
-          "dk_odds": null,
+          "dk_odds": "+900",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -18225,7 +18220,7 @@
             "avg": 0.211,
             "iso": 0.21
           },
-          "dk_odds": null,
+          "dk_odds": "+460",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -18366,7 +18361,7 @@
             "avg": 0.268,
             "iso": 0.195
           },
-          "dk_odds": null,
+          "dk_odds": "+1000",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -18507,7 +18502,7 @@
             "avg": 0.222,
             "iso": 0.0
           },
-          "dk_odds": null,
+          "dk_odds": "+900",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -18650,7 +18645,7 @@
             "avg": 0.289,
             "iso": 0.237
           },
-          "dk_odds": null,
+          "dk_odds": "+330",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -18791,7 +18786,7 @@
             "avg": 0.189,
             "iso": 0.135
           },
-          "dk_odds": null,
+          "dk_odds": "+500",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -19359,7 +19354,7 @@
             "avg": 0.256,
             "iso": 0.231
           },
-          "dk_odds": null,
+          "dk_odds": "+235",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -19473,7 +19468,7 @@
             "avg": 0.286,
             "iso": 0.343
           },
-          "dk_odds": null,
+          "dk_odds": "+700",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -19587,7 +19582,7 @@
             "avg": 0.273,
             "iso": 0.151
           },
-          "dk_odds": null,
+          "dk_odds": "+700",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -19703,7 +19698,7 @@
             "avg": 0.214,
             "iso": 0.262
           },
-          "dk_odds": null,
+          "dk_odds": "+420",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -19817,7 +19812,7 @@
             "avg": 0.194,
             "iso": 0.056
           },
-          "dk_odds": null,
+          "dk_odds": "+525",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -19931,7 +19926,7 @@
             "avg": 0.162,
             "iso": 0.135
           },
-          "dk_odds": null,
+          "dk_odds": "+1000",
           "projected": true,
           "platoon_tag": null,
           "contact_log": [],
@@ -20379,14 +20374,9 @@
         "away_avg_ip": 5.0,
         "home_avg_ip": 5.3,
         "away_k_prop": null,
-        "home_k_prop": {
-          "line": 5.5,
-          "price": -159,
-          "market": "pitcher_strikeouts",
-          "book": "BetRivers"
-        },
+        "home_k_prop": null,
         "away_k_edge": null,
-        "home_k_edge": 0.8
+        "home_k_edge": null
       }
     },
     {
@@ -22334,7 +22324,7 @@
             "avg": 0.439,
             "iso": 0.195
           },
-          "dk_odds": null,
+          "dk_odds": "+700",
           "projected": true,
           "platoon_tag": "SP weak vs LHB",
           "contact_log": [],
@@ -23731,7 +23721,7 @@
             "avg": 0.439,
             "iso": 0.195
           },
-          "dk_odds": null,
+          "dk_odds": "+700",
           "projected": true,
           "platoon_tag": "SP weak vs LHB",
           "contact_log": [],
@@ -38491,7 +38481,7 @@
             "avg": 0.118,
             "iso": 0.029
           },
-          "dk_odds": null,
+          "dk_odds": "+460",
           "projected": true,
           "platoon_tag": "SP weak vs LHB",
           "contact_log": [],
@@ -40888,7 +40878,7 @@
             "avg": 0.118,
             "iso": 0.029
           },
-          "dk_odds": null,
+          "dk_odds": "+460",
           "projected": true,
           "platoon_tag": "SP weak vs LHB",
           "contact_log": [],
@@ -41254,13 +41244,8 @@
         "avg_ip": 5.8,
         "gs": 11,
         "exp_k": 4.4,
-        "k_prop": {
-          "line": 4.5,
-          "price": -160,
-          "market": "pitcher_strikeouts",
-          "book": "DraftKings"
-        },
-        "k_edge": -0.1,
+        "k_prop": null,
+        "k_edge": null,
         "opp_team": "New York Mets",
         "opp_lineup_k": 17.5,
         "bullpen_hr9": 0.93
@@ -46321,14 +46306,9 @@
         "away_avg_ip": 5.0,
         "home_avg_ip": 5.8,
         "away_k_prop": null,
-        "home_k_prop": {
-          "line": 4.5,
-          "price": -160,
-          "market": "pitcher_strikeouts",
-          "book": "DraftKings"
-        },
+        "home_k_prop": null,
         "away_k_edge": null,
-        "home_k_edge": -0.1
+        "home_k_edge": null
       }
     }
   ],
