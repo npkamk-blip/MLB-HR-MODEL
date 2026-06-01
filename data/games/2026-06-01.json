@@ -15541,7 +15541,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Slightly In",
-        "temp": 71,
+        "temp": 73,
         "wind_speed": 8,
         "wind_dir": 49,
         "mult": 1.013,
@@ -20280,7 +20280,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Slightly In",
-        "temp": 77,
+        "temp": 78,
         "wind_speed": 5,
         "wind_dir": 43,
         "mult": 1.011,
