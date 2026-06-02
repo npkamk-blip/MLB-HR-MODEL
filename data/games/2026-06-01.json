@@ -5188,7 +5188,7 @@
         "home_hr_pg": 0.88,
         "away_era": 4.13,
         "home_era": 3.9,
-        "away_k_pg": 8.25,
+        "away_k_pg": 8.24,
         "home_k_pg": 7.67
       },
       "strikeouts": {
@@ -10383,7 +10383,7 @@
         "away_era": 4.37,
         "home_era": 4.64,
         "away_k_pg": 8.6,
-        "home_k_pg": 7.87
+        "home_k_pg": 7.88
       },
       "strikeouts": {
         "away_exp_k": 3.9,
@@ -15600,7 +15600,7 @@
         "home_hr_pg": 1.24,
         "away_era": 4.5,
         "home_era": 4.77,
-        "away_k_pg": 8.27,
+        "away_k_pg": 8.26,
         "home_k_pg": 7.73
       },
       "strikeouts": {
@@ -20809,7 +20809,7 @@
         "away_era": 4.31,
         "home_era": 4.56,
         "away_k_pg": 8.21,
-        "home_k_pg": 8.08
+        "home_k_pg": 8.09
       },
       "strikeouts": {
         "away_exp_k": 3.9,
@@ -25988,7 +25988,7 @@
         "k_edge": null,
         "opp_team": "St. Louis Cardinals",
         "opp_lineup_k": 18.2,
-        "bullpen_hr9": 1.16
+        "bullpen_hr9": 1.17
       },
       "home_pitcher": {
         "name": "Michael McGreevy",
@@ -31121,14 +31121,14 @@
         "away_exp_hr": 0.41,
         "home_exp_hr": 0.16,
         "total_exp_hr": 0.57,
-        "away_exp_runs": 4.12,
+        "away_exp_runs": 4.14,
         "home_exp_runs": 4.0,
-        "total_exp_runs": 8.12,
+        "total_exp_runs": 8.14,
         "away_runs_pg": 3.98,
-        "home_runs_pg": 4.26,
+        "home_runs_pg": 4.28,
         "away_hr_pg": 1.0,
-        "home_hr_pg": 1.09,
-        "away_era": 3.7,
+        "home_hr_pg": 1.1,
+        "away_era": 3.71,
         "home_era": 4.14,
         "away_k_pg": 8.57,
         "home_k_pg": 7.59
