@@ -67611,7 +67611,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Crosswind",
-        "temp": 62,
+        "temp": 63,
         "wind_speed": 6,
         "wind_dir": 230,
         "mult": 0.998,
