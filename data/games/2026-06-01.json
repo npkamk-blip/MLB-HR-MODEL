@@ -10381,9 +10381,9 @@
         "away_hr_pg": 0.8,
         "home_hr_pg": 1.28,
         "away_era": 4.37,
-        "home_era": 4.64,
+        "home_era": 4.63,
         "away_k_pg": 8.6,
-        "home_k_pg": 7.88
+        "home_k_pg": 7.9
       },
       "strikeouts": {
         "away_exp_k": 3.9,
@@ -15598,9 +15598,9 @@
         "home_runs_pg": 4.36,
         "away_hr_pg": 0.93,
         "home_hr_pg": 1.24,
-        "away_era": 4.5,
+        "away_era": 4.49,
         "home_era": 4.77,
-        "away_k_pg": 8.26,
+        "away_k_pg": 8.27,
         "home_k_pg": 7.73
       },
       "strikeouts": {
@@ -31130,7 +31130,7 @@
         "home_hr_pg": 1.1,
         "away_era": 3.71,
         "home_era": 4.14,
-        "away_k_pg": 8.57,
+        "away_k_pg": 8.58,
         "home_k_pg": 7.59
       },
       "strikeouts": {
