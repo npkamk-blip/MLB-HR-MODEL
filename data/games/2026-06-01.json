@@ -5188,7 +5188,7 @@
         "home_hr_pg": 0.88,
         "away_era": 4.07,
         "home_era": 3.9,
-        "away_k_pg": 8.26,
+        "away_k_pg": 8.25,
         "home_k_pg": 7.67
       },
       "strikeouts": {
@@ -10386,7 +10386,7 @@
         "home_hr_pg": 1.28,
         "away_era": 4.37,
         "home_era": 4.59,
-        "away_k_pg": 8.59,
+        "away_k_pg": 8.6,
         "home_k_pg": 7.88
       },
       "strikeouts": {
@@ -20874,7 +20874,7 @@
         "k_edge": null,
         "opp_team": "Milwaukee Brewers",
         "opp_lineup_k": 18.9,
-        "bullpen_hr9": 1.05
+        "bullpen_hr9": 1.04
       },
       "home_pitcher": {
         "name": "Shane Drohan",
