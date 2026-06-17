@@ -419,11 +419,11 @@
             "bat_speed": 68.9
           },
           "l5g": {
-            "ab": 40,
+            "ab": 41,
             "hr": 1,
-            "slg": 0.375,
-            "avg": 0.25,
-            "iso": 0.125
+            "slg": 0.366,
+            "avg": 0.244,
+            "iso": 0.122
           },
           "dk_odds": null,
           "projected": false,
@@ -705,11 +705,11 @@
             "bat_speed": 69.2
           },
           "l5g": {
-            "ab": 32,
+            "ab": 33,
             "hr": 2,
-            "slg": 0.625,
-            "avg": 0.375,
-            "iso": 0.25
+            "slg": 0.606,
+            "avg": 0.364,
+            "iso": 0.242
           },
           "dk_odds": null,
           "projected": false,
@@ -989,11 +989,11 @@
             "bat_speed": 67.3
           },
           "l5g": {
-            "ab": 41,
+            "ab": 42,
             "hr": 3,
-            "slg": 0.707,
-            "avg": 0.39,
-            "iso": 0.317
+            "slg": 0.69,
+            "avg": 0.381,
+            "iso": 0.309
           },
           "dk_odds": null,
           "projected": false,
@@ -2691,11 +2691,11 @@
             "bat_speed": 68.9
           },
           "l5g": {
-            "ab": 40,
+            "ab": 41,
             "hr": 1,
-            "slg": 0.375,
-            "avg": 0.25,
-            "iso": 0.125
+            "slg": 0.366,
+            "avg": 0.244,
+            "iso": 0.122
           },
           "dk_odds": null,
           "projected": false,
@@ -2833,11 +2833,11 @@
             "bat_speed": 67.3
           },
           "l5g": {
-            "ab": 41,
+            "ab": 42,
             "hr": 3,
-            "slg": 0.707,
-            "avg": 0.39,
-            "iso": 0.317
+            "slg": 0.69,
+            "avg": 0.381,
+            "iso": 0.309
           },
           "dk_odds": null,
           "projected": false,
@@ -2977,11 +2977,11 @@
             "bat_speed": 69.2
           },
           "l5g": {
-            "ab": 32,
+            "ab": 33,
             "hr": 2,
-            "slg": 0.625,
-            "avg": 0.375,
-            "iso": 0.25
+            "slg": 0.606,
+            "avg": 0.364,
+            "iso": 0.242
           },
           "dk_odds": null,
           "projected": false,
@@ -5227,7 +5227,7 @@
         "away_era": 3.95,
         "home_era": 4.65,
         "away_k_pg": 9.14,
-        "home_k_pg": 7.93
+        "home_k_pg": 7.92
       },
       "strikeouts": {
         "away_exp_k": 6.3,
@@ -5295,11 +5295,11 @@
       "home_pitcher": {
         "name": "Zack Littell",
         "hand": "R",
-        "era": 5.58,
-        "hr9": 2.6,
+        "era": 5.56,
+        "hr9": 2.58,
         "hard_hit_pct": 45.6,
         "barrel_pct": 11.1,
-        "ip_2026": 69.1,
+        "ip_2026": 69.2,
         "blend_note": "100% 2026",
         "vs_L_hr9": 3.31,
         "vs_R_hr9": 0.9,
@@ -5757,8 +5757,8 @@
         {
           "name": "John Rave",
           "team": "Kansas City Royals",
-          "hr_prob": 18.3,
-          "xgb_prob": 18.3,
+          "hr_prob": 19.8,
+          "xgb_prob": 19.8,
           "rf_prob": 5.9,
           "archetype": "Contact",
           "trend": "Steady",
@@ -5835,7 +5835,7 @@
             "split_iso": 0.0,
             "split_ip": 35.1,
             "hr9_split": 3.31,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -5961,7 +5961,7 @@
             "split_iso": 0.197,
             "split_ip": 35.1,
             "hr9_split": 3.31,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -6025,8 +6025,8 @@
         {
           "name": "Jac Caglianone",
           "team": "Kansas City Royals",
-          "hr_prob": 5.3,
-          "xgb_prob": 5.3,
+          "hr_prob": 4.7,
+          "xgb_prob": 4.7,
           "rf_prob": 7.7,
           "archetype": "Boom/Bust",
           "trend": "Heating Up",
@@ -6104,7 +6104,7 @@
             "split_iso": 0.164,
             "split_ip": 35.1,
             "hr9_split": 3.31,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -6646,7 +6646,7 @@
             "base_rate": 3.15,
             "barrel_mult": 0.72,
             "la_mult": 0.658,
-            "pit_vuln_mult": 1.259,
+            "pit_vuln_mult": 1.256,
             "bat_platoon_mult": 0.913,
             "pit_platoon_mult": 0.73,
             "park_factor": 0.96,
@@ -6667,7 +6667,7 @@
             "split_iso": 0.106,
             "split_ip": 30.0,
             "hr9_split": 0.9,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -6724,7 +6724,7 @@
             "bullpen_vuln": 1.39,
             "iso_use": 0.106,
             "pull_s": 39.9,
-            "pit_modifier": 1.259,
+            "pit_modifier": 1.256,
             "hr_rate_8d": 0.0
           }
         },
@@ -6809,7 +6809,7 @@
             "split_iso": 0.197,
             "split_ip": 35.1,
             "hr9_split": 3.31,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -7229,7 +7229,7 @@
             "split_iso": 0.091,
             "split_ip": 35.1,
             "hr9_split": 3.31,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -7432,8 +7432,8 @@
         {
           "name": "Bobby Witt Jr.",
           "team": "Kansas City Royals",
-          "hr_prob": 0.7,
-          "xgb_prob": 0.7,
+          "hr_prob": 0.6,
+          "xgb_prob": 0.6,
           "rf_prob": 4.1,
           "archetype": "Pure Power",
           "trend": "Cooling Off",
@@ -7490,7 +7490,7 @@
             "base_rate": 2.73,
             "barrel_mult": 1.789,
             "la_mult": 0.807,
-            "pit_vuln_mult": 1.259,
+            "pit_vuln_mult": 1.256,
             "bat_platoon_mult": 0.969,
             "pit_platoon_mult": 0.73,
             "park_factor": 0.96,
@@ -7511,7 +7511,7 @@
             "split_iso": 0.155,
             "split_ip": 30.0,
             "hr9_split": 0.9,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -7568,7 +7568,7 @@
             "bullpen_vuln": 1.39,
             "iso_use": 0.155,
             "pull_s": 27.3,
-            "pit_modifier": 1.259,
+            "pit_modifier": 1.256,
             "hr_rate_8d": 0.0
           }
         },
@@ -7632,7 +7632,7 @@
             "base_rate": 2.3,
             "barrel_mult": 0.511,
             "la_mult": 0.92,
-            "pit_vuln_mult": 1.259,
+            "pit_vuln_mult": 1.256,
             "bat_platoon_mult": 1.112,
             "pit_platoon_mult": 0.73,
             "park_factor": 0.96,
@@ -7653,7 +7653,7 @@
             "split_iso": 0.137,
             "split_ip": 30.0,
             "hr9_split": 0.9,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -7710,7 +7710,7 @@
             "bullpen_vuln": 1.39,
             "iso_use": 0.137,
             "pull_s": 42.1,
-            "pit_modifier": 1.259,
+            "pit_modifier": 1.256,
             "hr_rate_8d": 48.6
           }
         },
@@ -7774,7 +7774,7 @@
             "base_rate": 0.81,
             "barrel_mult": 0.687,
             "la_mult": 0.626,
-            "pit_vuln_mult": 1.259,
+            "pit_vuln_mult": 1.256,
             "bat_platoon_mult": 1.011,
             "pit_platoon_mult": 0.73,
             "park_factor": 0.96,
@@ -7795,7 +7795,7 @@
             "split_iso": 0.15,
             "split_ip": 30.0,
             "hr9_split": 0.9,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -7852,7 +7852,7 @@
             "bullpen_vuln": 1.39,
             "iso_use": 0.15,
             "pull_s": 40.0,
-            "pit_modifier": 1.259,
+            "pit_modifier": 1.256,
             "hr_rate_8d": 17.6
           }
         }
@@ -7939,7 +7939,7 @@
             "split_iso": 0.197,
             "split_ip": 35.1,
             "hr9_split": 3.31,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -8003,8 +8003,8 @@
         {
           "name": "Bobby Witt Jr.",
           "team": "Kansas City Royals",
-          "hr_prob": 0.7,
-          "xgb_prob": 0.7,
+          "hr_prob": 0.6,
+          "xgb_prob": 0.6,
           "rf_prob": 4.1,
           "archetype": "Pure Power",
           "trend": "Cooling Off",
@@ -8061,7 +8061,7 @@
             "base_rate": 2.73,
             "barrel_mult": 1.789,
             "la_mult": 0.807,
-            "pit_vuln_mult": 1.259,
+            "pit_vuln_mult": 1.256,
             "bat_platoon_mult": 0.969,
             "pit_platoon_mult": 0.73,
             "park_factor": 0.96,
@@ -8082,7 +8082,7 @@
             "split_iso": 0.155,
             "split_ip": 30.0,
             "hr9_split": 0.9,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -8139,15 +8139,15 @@
             "bullpen_vuln": 1.39,
             "iso_use": 0.155,
             "pull_s": 27.3,
-            "pit_modifier": 1.259,
+            "pit_modifier": 1.256,
             "hr_rate_8d": 0.0
           }
         },
         {
           "name": "Jac Caglianone",
           "team": "Kansas City Royals",
-          "hr_prob": 5.3,
-          "xgb_prob": 5.3,
+          "hr_prob": 4.7,
+          "xgb_prob": 4.7,
           "rf_prob": 7.7,
           "archetype": "Boom/Bust",
           "trend": "Heating Up",
@@ -8225,7 +8225,7 @@
             "split_iso": 0.164,
             "split_ip": 35.1,
             "hr9_split": 3.31,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -8346,7 +8346,7 @@
             "base_rate": 2.3,
             "barrel_mult": 0.511,
             "la_mult": 0.92,
-            "pit_vuln_mult": 1.259,
+            "pit_vuln_mult": 1.256,
             "bat_platoon_mult": 1.112,
             "pit_platoon_mult": 0.73,
             "park_factor": 0.96,
@@ -8367,7 +8367,7 @@
             "split_iso": 0.137,
             "split_ip": 30.0,
             "hr9_split": 0.9,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -8424,7 +8424,7 @@
             "bullpen_vuln": 1.39,
             "iso_use": 0.137,
             "pull_s": 42.1,
-            "pit_modifier": 1.259,
+            "pit_modifier": 1.256,
             "hr_rate_8d": 48.6
           }
         },
@@ -8509,7 +8509,7 @@
             "split_iso": 0.197,
             "split_ip": 35.1,
             "hr9_split": 3.31,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -8630,7 +8630,7 @@
             "base_rate": 3.15,
             "barrel_mult": 0.72,
             "la_mult": 0.658,
-            "pit_vuln_mult": 1.259,
+            "pit_vuln_mult": 1.256,
             "bat_platoon_mult": 0.913,
             "pit_platoon_mult": 0.73,
             "park_factor": 0.96,
@@ -8651,7 +8651,7 @@
             "split_iso": 0.106,
             "split_ip": 30.0,
             "hr9_split": 0.9,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -8708,15 +8708,15 @@
             "bullpen_vuln": 1.39,
             "iso_use": 0.106,
             "pull_s": 39.9,
-            "pit_modifier": 1.259,
+            "pit_modifier": 1.256,
             "hr_rate_8d": 0.0
           }
         },
         {
           "name": "John Rave",
           "team": "Kansas City Royals",
-          "hr_prob": 18.3,
-          "xgb_prob": 18.3,
+          "hr_prob": 19.8,
+          "xgb_prob": 19.8,
           "rf_prob": 5.9,
           "archetype": "Contact",
           "trend": "Steady",
@@ -8793,7 +8793,7 @@
             "split_iso": 0.0,
             "split_ip": 35.1,
             "hr9_split": 3.31,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -8898,7 +8898,7 @@
             "base_rate": 0.81,
             "barrel_mult": 0.687,
             "la_mult": 0.626,
-            "pit_vuln_mult": 1.259,
+            "pit_vuln_mult": 1.256,
             "bat_platoon_mult": 1.011,
             "pit_platoon_mult": 0.73,
             "park_factor": 0.96,
@@ -8919,7 +8919,7 @@
             "split_iso": 0.15,
             "split_ip": 30.0,
             "hr9_split": 0.9,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -8976,7 +8976,7 @@
             "bullpen_vuln": 1.39,
             "iso_use": 0.15,
             "pull_s": 40.0,
-            "pit_modifier": 1.259,
+            "pit_modifier": 1.256,
             "hr_rate_8d": 17.6
           }
         },
@@ -9061,7 +9061,7 @@
             "split_iso": 0.091,
             "split_ip": 35.1,
             "hr9_split": 3.31,
-            "hr9_season": 2.6,
+            "hr9_season": 2.58,
             "pit_hard": 45.6,
             "n_pit_components": 3,
             "pit_blend_note": "100% 2026",
@@ -10394,12 +10394,12 @@
         "wind_angle_cf": -58
       },
       "totals": {
-        "away_exp_hr": 0.347,
+        "away_exp_hr": 0.355,
         "home_exp_hr": 0.941,
-        "total_exp_hr": 1.29,
-        "away_exp_runs": 6.38,
+        "total_exp_hr": 1.3,
+        "away_exp_runs": 6.37,
         "home_exp_runs": 4.74,
-        "total_exp_runs": 11.12,
+        "total_exp_runs": 11.11,
         "away_runs_pg": 3.99,
         "home_runs_pg": 5.4,
         "away_hr_pg": 0.92,
@@ -10407,7 +10407,7 @@
         "away_era": 4.49,
         "home_era": 4.66,
         "away_k_pg": 8.04,
-        "home_k_pg": 7.69
+        "home_k_pg": 7.7
       },
       "strikeouts": {
         "away_exp_k": 5.8,
@@ -10843,11 +10843,11 @@
             "bat_speed": 72.4
           },
           "l5g": {
-            "ab": 26,
+            "ab": 27,
             "hr": 2,
-            "slg": 0.385,
-            "avg": 0.115,
-            "iso": 0.27
+            "slg": 0.37,
+            "avg": 0.111,
+            "iso": 0.259
           },
           "dk_odds": null,
           "projected": false,
@@ -11831,11 +11831,11 @@
             "bat_speed": 72.7
           },
           "l5g": {
-            "ab": 27,
+            "ab": 28,
             "hr": 1,
-            "slg": 0.519,
-            "avg": 0.333,
-            "iso": 0.186
+            "slg": 0.536,
+            "avg": 0.357,
+            "iso": 0.179
           },
           "dk_odds": null,
           "projected": false,
@@ -12116,11 +12116,11 @@
             "bat_speed": 65.8
           },
           "l5g": {
-            "ab": 31,
+            "ab": 32,
             "hr": 0,
-            "slg": 0.29,
-            "avg": 0.226,
-            "iso": 0.064
+            "slg": 0.281,
+            "avg": 0.219,
+            "iso": 0.062
           },
           "dk_odds": null,
           "projected": false,
@@ -13820,11 +13820,11 @@
             "bat_speed": 72.4
           },
           "l5g": {
-            "ab": 26,
+            "ab": 27,
             "hr": 2,
-            "slg": 0.385,
-            "avg": 0.115,
-            "iso": 0.27
+            "slg": 0.37,
+            "avg": 0.111,
+            "iso": 0.259
           },
           "dk_odds": null,
           "projected": false,
@@ -13962,11 +13962,11 @@
             "bat_speed": 65.8
           },
           "l5g": {
-            "ab": 31,
+            "ab": 32,
             "hr": 0,
-            "slg": 0.29,
-            "avg": 0.226,
-            "iso": 0.064
+            "slg": 0.281,
+            "avg": 0.219,
+            "iso": 0.062
           },
           "dk_odds": null,
           "projected": false,
@@ -14104,11 +14104,11 @@
             "bat_speed": 72.7
           },
           "l5g": {
-            "ab": 27,
+            "ab": 28,
             "hr": 1,
-            "slg": 0.519,
-            "avg": 0.333,
-            "iso": 0.186
+            "slg": 0.536,
+            "avg": 0.357,
+            "iso": 0.179
           },
           "dk_odds": null,
           "projected": false,
@@ -15793,11 +15793,11 @@
             "bat_speed": 0.0
           },
           "l5g": {
-            "ab": 31,
+            "ab": 32,
             "hr": 5,
-            "slg": 0.871,
-            "avg": 0.355,
-            "iso": 0.516
+            "slg": 0.844,
+            "avg": 0.344,
+            "iso": 0.5
           },
           "dk_odds": null,
           "projected": false,
@@ -17789,11 +17789,11 @@
             "bat_speed": 65.4
           },
           "l5g": {
-            "ab": 37,
+            "ab": 38,
             "hr": 0,
-            "slg": 0.432,
-            "avg": 0.378,
-            "iso": 0.054
+            "slg": 0.421,
+            "avg": 0.368,
+            "iso": 0.053
           },
           "dk_odds": null,
           "projected": false,
@@ -18929,11 +18929,11 @@
             "bat_speed": 65.4
           },
           "l5g": {
-            "ab": 37,
+            "ab": 38,
             "hr": 0,
-            "slg": 0.432,
-            "avg": 0.378,
-            "iso": 0.054
+            "slg": 0.421,
+            "avg": 0.368,
+            "iso": 0.053
           },
           "dk_odds": null,
           "projected": false,
@@ -19644,11 +19644,11 @@
             "bat_speed": 0.0
           },
           "l5g": {
-            "ab": 31,
+            "ab": 32,
             "hr": 5,
-            "slg": 0.871,
-            "avg": 0.355,
-            "iso": 0.516
+            "slg": 0.844,
+            "avg": 0.344,
+            "iso": 0.5
           },
           "dk_odds": null,
           "projected": false,
@@ -26097,17 +26097,17 @@
         "away_exp_hr": 0.115,
         "home_exp_hr": 0.154,
         "total_exp_hr": 0.27,
-        "away_exp_runs": 4.29,
-        "home_exp_runs": 3.53,
-        "total_exp_runs": 7.82,
-        "away_runs_pg": 4.1,
-        "home_runs_pg": 4.53,
-        "away_hr_pg": 1.11,
-        "home_hr_pg": 1.31,
+        "away_exp_runs": 4.24,
+        "home_exp_runs": 3.48,
+        "total_exp_runs": 7.72,
+        "away_runs_pg": 4.04,
+        "home_runs_pg": 4.47,
+        "away_hr_pg": 1.09,
+        "home_hr_pg": 1.29,
         "away_era": 3.9,
         "home_era": 4.91,
         "away_k_pg": 8.26,
-        "home_k_pg": 8.66
+        "home_k_pg": 8.65
       },
       "strikeouts": {
         "away_exp_k": 4.8,
@@ -54114,11 +54114,11 @@
             "bat_speed": 65.4
           },
           "l5g": {
-            "ab": 37,
+            "ab": 38,
             "hr": 0,
-            "slg": 0.432,
-            "avg": 0.378,
-            "iso": 0.054
+            "slg": 0.421,
+            "avg": 0.368,
+            "iso": 0.053
           },
           "dk_odds": null,
           "projected": true,
@@ -55211,11 +55211,11 @@
             "bat_speed": 65.4
           },
           "l5g": {
-            "ab": 37,
+            "ab": 38,
             "hr": 0,
-            "slg": 0.432,
-            "avg": 0.378,
-            "iso": 0.054
+            "slg": 0.421,
+            "avg": 0.368,
+            "iso": 0.053
           },
           "dk_odds": null,
           "projected": true,
