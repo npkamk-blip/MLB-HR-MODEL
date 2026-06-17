@@ -10404,9 +10404,9 @@
         "home_runs_pg": 5.4,
         "away_hr_pg": 0.92,
         "home_hr_pg": 1.28,
-        "away_era": 4.48,
+        "away_era": 4.47,
         "home_era": 4.67,
-        "away_k_pg": 8.01,
+        "away_k_pg": 8.02,
         "home_k_pg": 7.68
       },
       "strikeouts": {
@@ -20902,9 +20902,9 @@
         "home_runs_pg": 5.01,
         "away_hr_pg": 1.03,
         "home_hr_pg": 1.33,
-        "away_era": 4.52,
+        "away_era": 4.51,
         "home_era": 3.34,
-        "away_k_pg": 8.08,
+        "away_k_pg": 8.09,
         "home_k_pg": 8.81
       },
       "strikeouts": {
@@ -20968,7 +20968,7 @@
         "k_edge": null,
         "opp_team": "Houston Astros",
         "opp_lineup_k": 20.2,
-        "bullpen_hr9": 0.99
+        "bullpen_hr9": 0.98
       },
       "home_pitcher": {
         "name": "Peter Lambert",
@@ -56783,9 +56783,9 @@
         "home_runs_pg": 5.01,
         "away_hr_pg": 1.03,
         "home_hr_pg": 1.33,
-        "away_era": 4.52,
+        "away_era": 4.51,
         "home_era": 3.34,
-        "away_k_pg": 8.08,
+        "away_k_pg": 8.09,
         "home_k_pg": 8.81
       },
       "strikeouts": {
