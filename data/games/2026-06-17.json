@@ -67990,26 +67990,26 @@
             "hr": 8
           },
           "l8d": {
-            "pa": 43,
+            "pa": 44,
             "barrel": 9.7,
             "ev": 89.4,
             "la": 9.2,
             "hh": 38.7,
-            "iso": 0.421,
-            "slg": 0.789,
-            "avg": 0.368,
+            "iso": 0.41,
+            "slg": 0.769,
+            "avg": 0.359,
             "pull": 11.1,
-            "k_pct": 18.6,
+            "k_pct": 18.2,
             "xslg": 0.684,
             "xwoba": 0.452,
             "bat_speed": 71.0
           },
           "l5g": {
-            "ab": 38,
+            "ab": 39,
             "hr": 4,
-            "slg": 0.789,
-            "avg": 0.368,
-            "iso": 0.421
+            "slg": 0.769,
+            "avg": 0.359,
+            "iso": 0.41
           },
           "dk_odds": null,
           "projected": true,
@@ -68052,7 +68052,7 @@
             "barrel_8d_raw": 9.7,
             "hr_season": 8,
             "pa_season": 315,
-            "pa_8d": 43,
+            "pa_8d": 44,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.3,
@@ -68098,7 +68098,7 @@
             "iso_use": 0.138,
             "pull_s": 41.2,
             "pit_modifier": 1.736,
-            "hr_rate_8d": 55.8
+            "hr_rate_8d": 54.5
           }
         },
         {
@@ -68133,26 +68133,26 @@
             "hr": 10
           },
           "l8d": {
-            "pa": 41,
+            "pa": 42,
             "barrel": 0.0,
             "ev": 82.6,
             "la": 16.8,
             "hh": 31.2,
-            "iso": 0.097,
-            "slg": 0.341,
-            "avg": 0.244,
+            "iso": 0.095,
+            "slg": 0.333,
+            "avg": 0.238,
             "pull": 17.6,
-            "k_pct": 36.6,
+            "k_pct": 35.7,
             "xslg": 0.474,
             "xwoba": 0.335,
             "bat_speed": 68.0
           },
           "l5g": {
-            "ab": 41,
+            "ab": 42,
             "hr": 1,
-            "slg": 0.341,
-            "avg": 0.244,
-            "iso": 0.097
+            "slg": 0.333,
+            "avg": 0.238,
+            "iso": 0.095
           },
           "dk_odds": null,
           "projected": true,
@@ -68195,7 +68195,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 10,
             "pa_season": 235,
-            "pa_8d": 41,
+            "pa_8d": 42,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 22.6,
@@ -68241,7 +68241,7 @@
             "iso_use": 0.183,
             "pull_s": 38.8,
             "pit_modifier": 1.736,
-            "hr_rate_8d": 14.6
+            "hr_rate_8d": 14.3
           }
         },
         {
@@ -69848,26 +69848,26 @@
             "hr": 8
           },
           "l8d": {
-            "pa": 43,
+            "pa": 44,
             "barrel": 9.7,
             "ev": 89.4,
             "la": 9.2,
             "hh": 38.7,
-            "iso": 0.421,
-            "slg": 0.789,
-            "avg": 0.368,
+            "iso": 0.41,
+            "slg": 0.769,
+            "avg": 0.359,
             "pull": 11.1,
-            "k_pct": 18.6,
+            "k_pct": 18.2,
             "xslg": 0.684,
             "xwoba": 0.452,
             "bat_speed": 71.0
           },
           "l5g": {
-            "ab": 38,
+            "ab": 39,
             "hr": 4,
-            "slg": 0.789,
-            "avg": 0.368,
-            "iso": 0.421
+            "slg": 0.769,
+            "avg": 0.359,
+            "iso": 0.41
           },
           "dk_odds": null,
           "projected": true,
@@ -69910,7 +69910,7 @@
             "barrel_8d_raw": 9.7,
             "hr_season": 8,
             "pa_season": 315,
-            "pa_8d": 43,
+            "pa_8d": 44,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.3,
@@ -69956,7 +69956,7 @@
             "iso_use": 0.138,
             "pull_s": 41.2,
             "pit_modifier": 1.736,
-            "hr_rate_8d": 55.8
+            "hr_rate_8d": 54.5
           }
         },
         {
@@ -69991,26 +69991,26 @@
             "hr": 10
           },
           "l8d": {
-            "pa": 41,
+            "pa": 42,
             "barrel": 0.0,
             "ev": 82.6,
             "la": 16.8,
             "hh": 31.2,
-            "iso": 0.097,
-            "slg": 0.341,
-            "avg": 0.244,
+            "iso": 0.095,
+            "slg": 0.333,
+            "avg": 0.238,
             "pull": 17.6,
-            "k_pct": 36.6,
+            "k_pct": 35.7,
             "xslg": 0.474,
             "xwoba": 0.335,
             "bat_speed": 68.0
           },
           "l5g": {
-            "ab": 41,
+            "ab": 42,
             "hr": 1,
-            "slg": 0.341,
-            "avg": 0.244,
-            "iso": 0.097
+            "slg": 0.333,
+            "avg": 0.238,
+            "iso": 0.095
           },
           "dk_odds": null,
           "projected": true,
@@ -70053,7 +70053,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 10,
             "pa_season": 235,
-            "pa_8d": 41,
+            "pa_8d": 42,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 22.6,
@@ -70099,7 +70099,7 @@
             "iso_use": 0.183,
             "pull_s": 38.8,
             "pit_modifier": 1.736,
-            "hr_rate_8d": 14.6
+            "hr_rate_8d": 14.3
           }
         },
         {
@@ -72119,9 +72119,9 @@
         "away_hr_pg": 1.2,
         "home_hr_pg": 1.32,
         "away_era": 4.26,
-        "home_era": 4.82,
+        "home_era": 4.81,
         "away_k_pg": 9.15,
-        "home_k_pg": 8.25
+        "home_k_pg": 8.24
       },
       "strikeouts": {
         "away_exp_k": 5.8,
