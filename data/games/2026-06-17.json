@@ -20899,7 +20899,7 @@
       "lineup_home_status": "confirmed",
       "weather": {
         "label": "Out to LF",
-        "temp": 83,
+        "temp": 82,
         "wind_speed": 7,
         "wind_dir": 224,
         "mult": 1.079,
@@ -46436,7 +46436,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Crosswind",
-        "temp": 77,
+        "temp": 78,
         "wind_speed": 8,
         "wind_dir": 88,
         "mult": 1.016,
@@ -66851,7 +66851,7 @@
       "lineup_home_status": "projected",
       "weather": {
         "label": "Slightly In",
-        "temp": 65,
+        "temp": 66,
         "wind_speed": 6,
         "wind_dir": 254,
         "mult": 0.983,
