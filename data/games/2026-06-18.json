@@ -5165,9 +5165,9 @@
         "away_hr_pg": 0.99,
         "home_hr_pg": 0.82,
         "away_era": 3.99,
-        "home_era": 3.93,
+        "home_era": 3.92,
         "away_k_pg": 9.06,
-        "home_k_pg": 8.54
+        "home_k_pg": 8.55
       },
       "strikeouts": {
         "away_exp_k": 4.9,
@@ -10278,7 +10278,7 @@
         "home_hr_pg": 0.93,
         "away_era": 3.81,
         "home_era": 3.42,
-        "away_k_pg": 9.24,
+        "away_k_pg": 9.25,
         "home_k_pg": 9.87
       },
       "strikeouts": {
@@ -15519,7 +15519,7 @@
         "away_era": 4.78,
         "home_era": 3.9,
         "away_k_pg": 8.29,
-        "home_k_pg": 8.5
+        "home_k_pg": 8.49
       },
       "strikeouts": {
         "away_exp_k": 5.4,
