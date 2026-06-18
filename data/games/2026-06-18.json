@@ -8,11 +8,11 @@
       "away_pitcher": {
         "name": "Trey Yesavage",
         "hand": "R",
-        "era": 3.7,
+        "era": 3.65,
         "hr9": 0.55,
         "hard_hit_pct": 33.6,
         "barrel_pct": 4.8,
-        "ip_2026": 48.2,
+        "ip_2026": 49.1,
         "blend_note": "100% 2026",
         "vs_L_hr9": 0.66,
         "vs_R_hr9": 0.44,
@@ -37,9 +37,9 @@
           }
         ],
         "k9": 8.9,
-        "avg_ip": 4.8,
+        "avg_ip": 4.9,
         "gs": 10,
-        "exp_k": 4.4,
+        "exp_k": 4.6,
         "k_prop": null,
         "k_edge": null,
         "opp_team": "Boston Red Sox",
@@ -120,26 +120,26 @@
             "hr": 16
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 0.0,
             "ev": 83.7,
             "la": 16.0,
             "hh": 38.5,
-            "iso": 0.353,
-            "slg": 0.618,
-            "avg": 0.265,
+            "iso": 0.343,
+            "slg": 0.6,
+            "avg": 0.257,
             "pull": 66.7,
-            "k_pct": 33.3,
+            "k_pct": 32.5,
             "xslg": 0.626,
             "xwoba": 0.444,
             "bat_speed": 74.5
           },
           "l5g": {
-            "ab": 34,
+            "ab": 35,
             "hr": 3,
-            "slg": 0.618,
-            "avg": 0.265,
-            "iso": 0.353
+            "slg": 0.6,
+            "avg": 0.257,
+            "iso": 0.343
           },
           "dk_odds": null,
           "projected": false,
@@ -182,7 +182,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 16,
             "pa_season": 288,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 26.0,
@@ -228,7 +228,7 @@
             "iso_use": 0.238,
             "pull_s": 52.6,
             "pit_modifier": 0.612,
-            "hr_rate_8d": 46.2
+            "hr_rate_8d": 45.0
           }
         },
         {
@@ -1803,26 +1803,26 @@
             "hr": 12
           },
           "l8d": {
-            "pa": 38,
+            "pa": 39,
             "barrel": 6.2,
             "ev": 81.2,
             "la": 16.0,
             "hh": 21.9,
-            "iso": 0.167,
-            "slg": 0.361,
-            "avg": 0.194,
+            "iso": 0.162,
+            "slg": 0.351,
+            "avg": 0.189,
             "pull": 6.7,
-            "k_pct": 31.6,
+            "k_pct": 33.3,
             "xslg": 0.679,
             "xwoba": 0.422,
             "bat_speed": 73.5
           },
           "l5g": {
-            "ab": 36,
+            "ab": 37,
             "hr": 2,
-            "slg": 0.361,
-            "avg": 0.194,
-            "iso": 0.167
+            "slg": 0.351,
+            "avg": 0.189,
+            "iso": 0.162
           },
           "dk_odds": null,
           "projected": false,
@@ -1865,7 +1865,7 @@
             "barrel_8d_raw": 6.2,
             "hr_season": 12,
             "pa_season": 293,
-            "pa_8d": 38,
+            "pa_8d": 39,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 29.0,
@@ -1911,7 +1911,7 @@
             "iso_use": 0.213,
             "pull_s": 43.2,
             "pit_modifier": 0.682,
-            "hr_rate_8d": 31.6
+            "hr_rate_8d": 30.8
           }
         },
         {
@@ -4328,26 +4328,26 @@
             "hr": 16
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 0.0,
             "ev": 83.7,
             "la": 16.0,
             "hh": 38.5,
-            "iso": 0.353,
-            "slg": 0.618,
-            "avg": 0.265,
+            "iso": 0.343,
+            "slg": 0.6,
+            "avg": 0.257,
             "pull": 66.7,
-            "k_pct": 33.3,
+            "k_pct": 32.5,
             "xslg": 0.626,
             "xwoba": 0.444,
             "bat_speed": 74.5
           },
           "l5g": {
-            "ab": 34,
+            "ab": 35,
             "hr": 3,
-            "slg": 0.618,
-            "avg": 0.265,
-            "iso": 0.353
+            "slg": 0.6,
+            "avg": 0.257,
+            "iso": 0.343
           },
           "dk_odds": null,
           "projected": false,
@@ -4390,7 +4390,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 16,
             "pa_season": 288,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 26.0,
@@ -4436,7 +4436,7 @@
             "iso_use": 0.238,
             "pull_s": 52.6,
             "pit_modifier": 0.612,
-            "hr_rate_8d": 46.2
+            "hr_rate_8d": 45.0
           }
         },
         {
@@ -4467,26 +4467,26 @@
             "hr": 12
           },
           "l8d": {
-            "pa": 38,
+            "pa": 39,
             "barrel": 6.2,
             "ev": 81.2,
             "la": 16.0,
             "hh": 21.9,
-            "iso": 0.167,
-            "slg": 0.361,
-            "avg": 0.194,
+            "iso": 0.162,
+            "slg": 0.351,
+            "avg": 0.189,
             "pull": 6.7,
-            "k_pct": 31.6,
+            "k_pct": 33.3,
             "xslg": 0.679,
             "xwoba": 0.422,
             "bat_speed": 73.5
           },
           "l5g": {
-            "ab": 36,
+            "ab": 37,
             "hr": 2,
-            "slg": 0.361,
-            "avg": 0.194,
-            "iso": 0.167
+            "slg": 0.351,
+            "avg": 0.189,
+            "iso": 0.162
           },
           "dk_odds": null,
           "projected": false,
@@ -4529,7 +4529,7 @@
             "barrel_8d_raw": 6.2,
             "hr_season": 12,
             "pa_season": 293,
-            "pa_8d": 38,
+            "pa_8d": 39,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 29.0,
@@ -4575,7 +4575,7 @@
             "iso_use": 0.213,
             "pull_s": 43.2,
             "pit_modifier": 0.682,
-            "hr_rate_8d": 31.6
+            "hr_rate_8d": 30.8
           }
         },
         {
@@ -5158,19 +5158,19 @@
         "home_exp_hr": 0.318,
         "total_exp_hr": 0.36,
         "away_exp_runs": 4.17,
-        "home_exp_runs": 4.52,
-        "total_exp_runs": 8.69,
+        "home_exp_runs": 4.5,
+        "total_exp_runs": 8.67,
         "away_runs_pg": 4.05,
         "home_runs_pg": 3.88,
         "away_hr_pg": 0.97,
         "home_hr_pg": 0.82,
-        "away_era": 4.02,
+        "away_era": 4.01,
         "home_era": 3.94,
         "away_k_pg": 9.06,
         "home_k_pg": 8.58
       },
       "strikeouts": {
-        "away_exp_k": 4.4,
+        "away_exp_k": 4.6,
         "home_exp_k": 3.4,
         "away_lineup_k": 19.3,
         "home_lineup_k": 21.1,
@@ -5178,7 +5178,7 @@
         "home_pit_name": "Sonny Gray",
         "away_pit_k9": 8.9,
         "home_pit_k9": 7.3,
-        "away_avg_ip": 4.8,
+        "away_avg_ip": 4.9,
         "home_avg_ip": 4.9,
         "away_k_prop": null,
         "home_k_prop": null,
