@@ -2591,7 +2591,7 @@
     "xslg_l8d": 0.62,
     "xwoba_l8d": 0.475,
     "bat_speed_l8d": 65.5,
-    "iso_vs_hand": 0,
+    "iso_vs_hand": 0.084,
     "pit_hr9_season": 0
   },
   {
@@ -2704,7 +2704,7 @@
     "xslg_l8d": 0.289,
     "xwoba_l8d": 0.227,
     "bat_speed_l8d": 67.2,
-    "iso_vs_hand": 0,
+    "iso_vs_hand": 0.166,
     "pit_hr9_season": 0
   },
   {
