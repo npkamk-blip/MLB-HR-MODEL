@@ -49,11 +49,11 @@
       "home_pitcher": {
         "name": "Ben Brown",
         "hand": "R",
-        "era": 1.67,
+        "era": 1.8,
         "hr9": 0.14,
         "hard_hit_pct": 42.9,
         "barrel_pct": 6.3,
-        "ip_2026": 64.2,
+        "ip_2026": 65.0,
         "blend_note": "100% 2026",
         "vs_L_hr9": 0.0,
         "vs_R_hr9": 0.29,
@@ -78,9 +78,9 @@
           }
         ],
         "k9": 8.6,
-        "avg_ip": 8.0,
+        "avg_ip": 8.1,
         "gs": 8,
-        "exp_k": 7.1,
+        "exp_k": 7.2,
         "k_prop": null,
         "k_edge": null,
         "opp_team": "Toronto Blue Jays",
@@ -541,16 +541,16 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 5.6,
             "ev": 82.7,
             "la": 11.0,
             "hh": 22.2,
-            "iso": 0.111,
-            "slg": 0.278,
-            "avg": 0.167,
+            "iso": 0.108,
+            "slg": 0.27,
+            "avg": 0.162,
             "pull": 16.7,
-            "k_pct": 15.4,
+            "k_pct": 15.0,
             "xslg": 0.29,
             "xwoba": 0.203,
             "bat_speed": 74.6
@@ -603,7 +603,7 @@
             "barrel_8d_raw": 5.6,
             "hr_season": 4,
             "pa_season": 300,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 10.3,
@@ -649,7 +649,7 @@
             "iso_use": 0.079,
             "pull_s": 35.9,
             "pit_modifier": 0.576,
-            "hr_rate_8d": 15.4
+            "hr_rate_8d": 15.0
           }
         },
         {
@@ -2227,26 +2227,26 @@
             "hr": 7
           },
           "l8d": {
-            "pa": 42,
+            "pa": 43,
             "barrel": 5.9,
             "ev": 83.4,
             "la": 23.6,
             "hh": 20.6,
-            "iso": 0.213,
-            "slg": 0.455,
-            "avg": 0.242,
+            "iso": 0.206,
+            "slg": 0.471,
+            "avg": 0.265,
             "pull": 22.2,
-            "k_pct": 16.7,
+            "k_pct": 16.3,
             "xslg": 0.658,
             "xwoba": 0.401,
             "bat_speed": 69.5
           },
           "l5g": {
-            "ab": 33,
+            "ab": 34,
             "hr": 2,
-            "slg": 0.455,
-            "avg": 0.242,
-            "iso": 0.213
+            "slg": 0.471,
+            "avg": 0.265,
+            "iso": 0.206
           },
           "dk_odds": null,
           "projected": false,
@@ -2289,7 +2289,7 @@
             "barrel_8d_raw": 5.9,
             "hr_season": 7,
             "pa_season": 234,
-            "pa_8d": 42,
+            "pa_8d": 43,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 18.4,
@@ -2335,7 +2335,7 @@
             "iso_use": 0.142,
             "pull_s": 42.5,
             "pit_modifier": 0.576,
-            "hr_rate_8d": 28.6
+            "hr_rate_8d": 27.9
           }
         },
         {
@@ -2648,26 +2648,26 @@
             "hr": 7
           },
           "l8d": {
-            "pa": 42,
+            "pa": 43,
             "barrel": 5.9,
             "ev": 83.4,
             "la": 23.6,
             "hh": 20.6,
-            "iso": 0.213,
-            "slg": 0.455,
-            "avg": 0.242,
+            "iso": 0.206,
+            "slg": 0.471,
+            "avg": 0.265,
             "pull": 22.2,
-            "k_pct": 16.7,
+            "k_pct": 16.3,
             "xslg": 0.658,
             "xwoba": 0.401,
             "bat_speed": 69.5
           },
           "l5g": {
-            "ab": 33,
+            "ab": 34,
             "hr": 2,
-            "slg": 0.455,
-            "avg": 0.242,
-            "iso": 0.213
+            "slg": 0.471,
+            "avg": 0.265,
+            "iso": 0.206
           },
           "dk_odds": null,
           "projected": false,
@@ -2710,7 +2710,7 @@
             "barrel_8d_raw": 5.9,
             "hr_season": 7,
             "pa_season": 234,
-            "pa_8d": 42,
+            "pa_8d": 43,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 18.4,
@@ -2756,7 +2756,7 @@
             "iso_use": 0.142,
             "pull_s": 42.5,
             "pit_modifier": 0.576,
-            "hr_rate_8d": 28.6
+            "hr_rate_8d": 27.9
           }
         },
         {
@@ -2789,16 +2789,16 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 5.6,
             "ev": 82.7,
             "la": 11.0,
             "hh": 22.2,
-            "iso": 0.111,
-            "slg": 0.278,
-            "avg": 0.167,
+            "iso": 0.108,
+            "slg": 0.27,
+            "avg": 0.162,
             "pull": 16.7,
-            "k_pct": 15.4,
+            "k_pct": 15.0,
             "xslg": 0.29,
             "xwoba": 0.203,
             "bat_speed": 74.6
@@ -2851,7 +2851,7 @@
             "barrel_8d_raw": 5.6,
             "hr_season": 4,
             "pa_season": 300,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 10.3,
@@ -2897,7 +2897,7 @@
             "iso_use": 0.079,
             "pull_s": 35.9,
             "pit_modifier": 0.576,
-            "hr_rate_8d": 15.4
+            "hr_rate_8d": 15.0
           }
         },
         {
@@ -5163,9 +5163,9 @@
         "away_exp_hr": 0.144,
         "home_exp_hr": 0.12,
         "total_exp_hr": 0.26,
-        "away_exp_runs": 3.86,
+        "away_exp_runs": 3.9,
         "home_exp_runs": 4.07,
-        "total_exp_runs": 7.93,
+        "total_exp_runs": 7.97,
         "away_runs_pg": 4.04,
         "home_runs_pg": 4.62,
         "away_hr_pg": 0.97,
@@ -5177,7 +5177,7 @@
       },
       "strikeouts": {
         "away_exp_k": 5.2,
-        "home_exp_k": 7.1,
+        "home_exp_k": 7.2,
         "away_lineup_k": 20.9,
         "home_lineup_k": 20.8,
         "away_pit_name": "Kevin Gausman",
@@ -5185,7 +5185,7 @@
         "away_pit_k9": 9.0,
         "home_pit_k9": 8.6,
         "away_avg_ip": 5.6,
-        "home_avg_ip": 8.0,
+        "home_avg_ip": 8.1,
         "away_k_prop": null,
         "home_k_prop": null,
         "away_k_edge": null,
