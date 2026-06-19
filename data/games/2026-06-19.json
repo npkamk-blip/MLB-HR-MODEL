@@ -49,11 +49,11 @@
       "home_pitcher": {
         "name": "Ben Brown",
         "hand": "R",
-        "era": 1.71,
+        "era": 1.69,
         "hr9": 0.14,
         "hard_hit_pct": 42.9,
         "barrel_pct": 6.3,
-        "ip_2026": 63.1,
+        "ip_2026": 64.0,
         "blend_note": "100% 2026",
         "vs_L_hr9": 0.0,
         "vs_R_hr9": 0.29,
@@ -77,8 +77,8 @@
             "usage": 22.6
           }
         ],
-        "k9": 8.8,
-        "avg_ip": 7.9,
+        "k9": 8.7,
+        "avg_ip": 8.0,
         "gs": 8,
         "exp_k": 7.2,
         "k_prop": null,
@@ -232,8 +232,8 @@
         {
           "name": "Nathan Lukes",
           "team": "Toronto Blue Jays",
-          "hr_prob": 5.1,
-          "xgb_prob": 5.1,
+          "hr_prob": 5.2,
+          "xgb_prob": 5.2,
           "rf_prob": 0.8,
           "archetype": "Contact",
           "trend": "Steady",
@@ -259,26 +259,26 @@
             "hr": 2
           },
           "l8d": {
-            "pa": 35,
+            "pa": 36,
             "barrel": 0.0,
             "ev": 78.4,
             "la": 21.5,
             "hh": 6.2,
-            "iso": 0.121,
-            "slg": 0.424,
-            "avg": 0.303,
+            "iso": 0.118,
+            "slg": 0.412,
+            "avg": 0.294,
             "pull": 11.8,
-            "k_pct": 22.9,
+            "k_pct": 22.2,
             "xslg": 0.321,
             "xwoba": 0.249,
             "bat_speed": 64.2
           },
           "l5g": {
-            "ab": 33,
+            "ab": 34,
             "hr": 1,
-            "slg": 0.424,
-            "avg": 0.303,
-            "iso": 0.121
+            "slg": 0.412,
+            "avg": 0.294,
+            "iso": 0.118
           },
           "dk_odds": null,
           "projected": false,
@@ -321,7 +321,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 2,
             "pa_season": 140,
-            "pa_8d": 35,
+            "pa_8d": 36,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.7,
@@ -367,7 +367,7 @@
             "iso_use": 0.12,
             "pull_s": 35.2,
             "pit_modifier": 0.714,
-            "hr_rate_8d": 17.1
+            "hr_rate_8d": 16.7
           }
         },
         {
@@ -400,26 +400,26 @@
             "hr": 1
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 0.0,
             "ev": 82.0,
             "la": 19.4,
             "hh": 22.2,
-            "iso": 0.143,
-            "slg": 0.343,
-            "avg": 0.2,
+            "iso": 0.139,
+            "slg": 0.333,
+            "avg": 0.194,
             "pull": 20.0,
-            "k_pct": 15.4,
+            "k_pct": 15.0,
             "xslg": 0.303,
             "xwoba": 0.231,
             "bat_speed": 68.3
           },
           "l5g": {
-            "ab": 35,
+            "ab": 36,
             "hr": 1,
-            "slg": 0.343,
-            "avg": 0.2,
-            "iso": 0.143
+            "slg": 0.333,
+            "avg": 0.194,
+            "iso": 0.139
           },
           "dk_odds": null,
           "projected": false,
@@ -434,7 +434,7 @@
             "pit_platoon_mult": 0.831,
             "park_factor": 1.1,
             "weather_mult": 1.02,
-            "hot_cold_mult": 0.978,
+            "hot_cold_mult": 0.953,
             "k_mult": 1.0,
             "iso_vs_hand": 0.174,
             "iso_overall": 0.143,
@@ -462,7 +462,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 1,
             "pa_season": 39,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.4,
@@ -508,7 +508,7 @@
             "iso_use": 0.174,
             "pull_s": 37.9,
             "pit_modifier": 0.576,
-            "hr_rate_8d": 15.4
+            "hr_rate_8d": 15.0
           }
         },
         {
@@ -3212,26 +3212,26 @@
             "hr": 1
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 0.0,
             "ev": 82.0,
             "la": 19.4,
             "hh": 22.2,
-            "iso": 0.143,
-            "slg": 0.343,
-            "avg": 0.2,
+            "iso": 0.139,
+            "slg": 0.333,
+            "avg": 0.194,
             "pull": 20.0,
-            "k_pct": 15.4,
+            "k_pct": 15.0,
             "xslg": 0.303,
             "xwoba": 0.231,
             "bat_speed": 68.3
           },
           "l5g": {
-            "ab": 35,
+            "ab": 36,
             "hr": 1,
-            "slg": 0.343,
-            "avg": 0.2,
-            "iso": 0.143
+            "slg": 0.333,
+            "avg": 0.194,
+            "iso": 0.139
           },
           "dk_odds": null,
           "projected": false,
@@ -3246,7 +3246,7 @@
             "pit_platoon_mult": 0.831,
             "park_factor": 1.1,
             "weather_mult": 1.02,
-            "hot_cold_mult": 0.978,
+            "hot_cold_mult": 0.953,
             "k_mult": 1.0,
             "iso_vs_hand": 0.174,
             "iso_overall": 0.143,
@@ -3274,7 +3274,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 1,
             "pa_season": 39,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.4,
@@ -3320,14 +3320,14 @@
             "iso_use": 0.174,
             "pull_s": 37.9,
             "pit_modifier": 0.576,
-            "hr_rate_8d": 15.4
+            "hr_rate_8d": 15.0
           }
         },
         {
           "name": "Nathan Lukes",
           "team": "Toronto Blue Jays",
-          "hr_prob": 5.1,
-          "xgb_prob": 5.1,
+          "hr_prob": 5.2,
+          "xgb_prob": 5.2,
           "rf_prob": 0.8,
           "archetype": "Contact",
           "trend": "Steady",
@@ -3353,26 +3353,26 @@
             "hr": 2
           },
           "l8d": {
-            "pa": 35,
+            "pa": 36,
             "barrel": 0.0,
             "ev": 78.4,
             "la": 21.5,
             "hh": 6.2,
-            "iso": 0.121,
-            "slg": 0.424,
-            "avg": 0.303,
+            "iso": 0.118,
+            "slg": 0.412,
+            "avg": 0.294,
             "pull": 11.8,
-            "k_pct": 22.9,
+            "k_pct": 22.2,
             "xslg": 0.321,
             "xwoba": 0.249,
             "bat_speed": 64.2
           },
           "l5g": {
-            "ab": 33,
+            "ab": 34,
             "hr": 1,
-            "slg": 0.424,
-            "avg": 0.303,
-            "iso": 0.121
+            "slg": 0.412,
+            "avg": 0.294,
+            "iso": 0.118
           },
           "dk_odds": null,
           "projected": false,
@@ -3415,7 +3415,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 2,
             "pa_season": 140,
-            "pa_8d": 35,
+            "pa_8d": 36,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 15.7,
@@ -3461,7 +3461,7 @@
             "iso_use": 0.12,
             "pull_s": 35.2,
             "pit_modifier": 0.714,
-            "hr_rate_8d": 17.1
+            "hr_rate_8d": 16.7
           }
         },
         {
@@ -5160,7 +5160,7 @@
         "wind_angle_cf": 90
       },
       "totals": {
-        "away_exp_hr": 0.147,
+        "away_exp_hr": 0.148,
         "home_exp_hr": 0.104,
         "total_exp_hr": 0.25,
         "away_exp_runs": 3.87,
@@ -5183,9 +5183,9 @@
         "away_pit_name": "Kevin Gausman",
         "home_pit_name": "Ben Brown",
         "away_pit_k9": 8.9,
-        "home_pit_k9": 8.8,
+        "home_pit_k9": 8.7,
         "away_avg_ip": 5.5,
-        "home_avg_ip": 7.9,
+        "home_avg_ip": 8.0,
         "away_k_prop": null,
         "home_k_prop": null,
         "away_k_edge": null,
