@@ -2366,7 +2366,7 @@
             "hr": 10
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 3.8,
             "ev": 83.5,
             "la": 21.0,
@@ -2375,7 +2375,7 @@
             "slg": 0.6,
             "avg": 0.371,
             "pull": 66.7,
-            "k_pct": 30.8,
+            "k_pct": 30.0,
             "xslg": 0.847,
             "xwoba": 0.66,
             "bat_speed": 70.5
@@ -2428,7 +2428,7 @@
             "barrel_8d_raw": 3.8,
             "hr_season": 10,
             "pa_season": 249,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 26.5,
@@ -2474,7 +2474,7 @@
             "iso_use": 0.18,
             "pull_s": 41.8,
             "pit_modifier": 1.163,
-            "hr_rate_8d": 15.4
+            "hr_rate_8d": 15.0
           }
         },
         {
@@ -4339,7 +4339,7 @@
             "hr": 10
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 3.8,
             "ev": 83.5,
             "la": 21.0,
@@ -4348,7 +4348,7 @@
             "slg": 0.6,
             "avg": 0.371,
             "pull": 66.7,
-            "k_pct": 30.8,
+            "k_pct": 30.0,
             "xslg": 0.847,
             "xwoba": 0.66,
             "bat_speed": 70.5
@@ -4401,7 +4401,7 @@
             "barrel_8d_raw": 3.8,
             "hr_season": 10,
             "pa_season": 249,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 26.5,
@@ -4447,7 +4447,7 @@
             "iso_use": 0.18,
             "pull_s": 41.8,
             "pit_modifier": 1.163,
-            "hr_rate_8d": 15.4
+            "hr_rate_8d": 15.0
           }
         },
         {
@@ -5153,7 +5153,7 @@
       "lineup_home_status": "confirmed",
       "weather": {
         "label": "Calm",
-        "temp": 75,
+        "temp": 72,
         "wind_speed": 2,
         "wind_dir": 315,
         "mult": 1.02,
@@ -5172,7 +5172,7 @@
         "home_hr_pg": 1.16,
         "away_era": 4.07,
         "home_era": 4.25,
-        "away_k_pg": 8.99,
+        "away_k_pg": 9.0,
         "home_k_pg": 7.95
       },
       "strikeouts": {
@@ -10403,7 +10403,7 @@
       "lineup_home_status": "confirmed",
       "weather": {
         "label": "Blowing In",
-        "temp": 77,
+        "temp": 76,
         "wind_speed": 12,
         "wind_dir": 296,
         "mult": 0.977,
