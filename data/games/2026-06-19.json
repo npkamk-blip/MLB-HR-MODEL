@@ -962,16 +962,16 @@
             "hr": 11
           },
           "l8d": {
-            "pa": 34,
+            "pa": 35,
             "barrel": 5.3,
             "ev": 78.3,
             "la": 26.2,
             "hh": 15.8,
-            "iso": 0.2,
-            "slg": 0.267,
-            "avg": 0.067,
+            "iso": 0.193,
+            "slg": 0.258,
+            "avg": 0.065,
             "pull": 33.3,
-            "k_pct": 35.3,
+            "k_pct": 34.3,
             "xslg": 0.648,
             "xwoba": 0.411,
             "bat_speed": 67.5
@@ -1024,7 +1024,7 @@
             "barrel_8d_raw": 5.3,
             "hr_season": 11,
             "pa_season": 279,
-            "pa_8d": 34,
+            "pa_8d": 35,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.5,
@@ -1070,7 +1070,7 @@
             "iso_use": 0.133,
             "pull_s": 50.3,
             "pit_modifier": 0.722,
-            "hr_rate_8d": 35.3
+            "hr_rate_8d": 34.3
           }
         },
         {
@@ -1244,16 +1244,16 @@
             "hr": 0
           },
           "l8d": {
-            "pa": 25,
+            "pa": 26,
             "barrel": 0.0,
             "ev": 85.2,
             "la": 15.0,
             "hh": 28.6,
-            "iso": 0.083,
-            "slg": 0.25,
-            "avg": 0.167,
+            "iso": 0.08,
+            "slg": 0.24,
+            "avg": 0.16,
             "pull": 0.0,
-            "k_pct": 20.0,
+            "k_pct": 19.2,
             "xslg": 0.218,
             "xwoba": 0.169,
             "bat_speed": 67.6
@@ -1306,7 +1306,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 0,
             "pa_season": 87,
-            "pa_8d": 25,
+            "pa_8d": 26,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 20.7,
@@ -1352,6 +1352,149 @@
             "iso_use": 0.081,
             "pull_s": 31.7,
             "pit_modifier": 1.112,
+            "hr_rate_8d": 0.0
+          }
+        },
+        {
+          "name": "Nathaniel Lowe",
+          "team": "Cincinnati Reds",
+          "hr_prob": 0.5,
+          "xgb_prob": 0.5,
+          "rf_prob": 6.5,
+          "archetype": "Contact",
+          "trend": "Cooling Off",
+          "confidence": "High",
+          "reasons": [
+            "Barrel 12.7%",
+            "ISO vs hand .262",
+            "HR-friendly park"
+          ],
+          "opp_pitcher": "Cam Schlittler",
+          "bat_hand": "L",
+          "opp_p_hand": "R",
+          "park_factor": 1.25,
+          "l8d_hr_count": 0,
+          "season": {
+            "barrel": 12.7,
+            "ev": 89.1,
+            "la": 13.6,
+            "hh": 41.7,
+            "iso": 0.235,
+            "slg": 0.49,
+            "avg": 0.255,
+            "k": 23.5,
+            "pull": 44.3,
+            "hr": 9
+          },
+          "l8d": {
+            "pa": 30,
+            "barrel": 0.0,
+            "ev": 79.1,
+            "la": 20.7,
+            "hh": 13.6,
+            "iso": 0.042,
+            "slg": 0.375,
+            "avg": 0.333,
+            "pull": 42.9,
+            "k_pct": 23.3,
+            "xslg": 0.441,
+            "xwoba": 0.355,
+            "bat_speed": 73.7
+          },
+          "l5g": {
+            "ab": 23,
+            "hr": 0,
+            "slg": 0.391,
+            "avg": 0.348,
+            "iso": 0.043
+          },
+          "dk_odds": null,
+          "projected": false,
+          "platoon_tag": null,
+          "contact_log": [],
+          "breakdown": {
+            "base_rate": 5.03,
+            "barrel_mult": 1.9,
+            "la_mult": 0.728,
+            "pit_vuln_mult": 0.636,
+            "bat_platoon_mult": 1.062,
+            "pit_platoon_mult": 1.079,
+            "park_factor": 1.25,
+            "weather_mult": 1.057,
+            "hot_cold_mult": 0.85,
+            "k_mult": 1.0,
+            "iso_vs_hand": 0.262,
+            "iso_overall": 0.235,
+            "split_pa": 162.0,
+            "split_ip_vs_bat": 54.2,
+            "slg_vs_bat": 0.307,
+            "pit_slg_overall": 0.286,
+            "split_hr": 9,
+            "split_slg": 0.546,
+            "split_woba": 0.377,
+            "split_k_pct": 22.8,
+            "split_brl": 0.0,
+            "split_iso": 0.262,
+            "split_ip": 54.2,
+            "hr9_split": 0.33,
+            "hr9_season": 0.47,
+            "pit_hard": 39.8,
+            "n_pit_components": 3,
+            "pit_blend_note": "100% 2026",
+            "barrel_use": 12.7,
+            "barrel_season": 12.7,
+            "la_use": 13.6,
+            "la_season": 13.6,
+            "la_8d_raw": 20.7,
+            "barrel_8d_raw": 0.0,
+            "hr_season": 9,
+            "pa_season": 179,
+            "pa_8d": 30,
+            "has_8d": true,
+            "blend_note": "100% 2026 + 8d",
+            "k_season": 23.5,
+            "pitch_bonus": 2.25,
+            "pitch_breakdown": [
+              {
+                "name": "4-Seam Fastball",
+                "usage": 49.1,
+                "pit_rv": 1.7,
+                "bat_rv": 3.3,
+                "combined": 2.66,
+                "bonus": 1.96
+              },
+              {
+                "name": "Cutter",
+                "usage": 29.6,
+                "pit_rv": 1.7,
+                "bat_rv": 0.5,
+                "combined": 0.98,
+                "bonus": 0.44
+              },
+              {
+                "name": "Sinker",
+                "usage": 21.3,
+                "pit_rv": 2.3,
+                "bat_rv": -2.3,
+                "combined": -0.46,
+                "bonus": -0.15
+              }
+            ],
+            "data_conf": {
+              "barrel": 1,
+              "la": 1,
+              "pit_hr9": 1,
+              "pit_hr9_hand": 1,
+              "iso_vs_hand": 1,
+              "park": 1,
+              "pitch_delta": 1,
+              "bat_platoon": 1
+            },
+            "bullpen_hr9": 0.92,
+            "bullpen_vuln": 0.619,
+            "iso_use": 0.262,
+            "pull_s": 44.3,
+            "pit_modifier": 0.636,
             "hr_rate_8d": 0.0
           }
         },
@@ -1494,149 +1637,6 @@
             "pull_s": 23.1,
             "pit_modifier": 1.112,
             "hr_rate_8d": 36.4
-          }
-        },
-        {
-          "name": "Nathaniel Lowe",
-          "team": "Cincinnati Reds",
-          "hr_prob": 0.4,
-          "xgb_prob": 0.4,
-          "rf_prob": 6.5,
-          "archetype": "Contact",
-          "trend": "Cooling Off",
-          "confidence": "High",
-          "reasons": [
-            "Barrel 12.7%",
-            "ISO vs hand .262",
-            "HR-friendly park"
-          ],
-          "opp_pitcher": "Cam Schlittler",
-          "bat_hand": "L",
-          "opp_p_hand": "R",
-          "park_factor": 1.25,
-          "l8d_hr_count": 0,
-          "season": {
-            "barrel": 12.7,
-            "ev": 89.1,
-            "la": 13.6,
-            "hh": 41.7,
-            "iso": 0.235,
-            "slg": 0.49,
-            "avg": 0.255,
-            "k": 23.5,
-            "pull": 44.3,
-            "hr": 9
-          },
-          "l8d": {
-            "pa": 29,
-            "barrel": 0.0,
-            "ev": 79.1,
-            "la": 20.7,
-            "hh": 13.6,
-            "iso": 0.043,
-            "slg": 0.391,
-            "avg": 0.348,
-            "pull": 42.9,
-            "k_pct": 20.7,
-            "xslg": 0.441,
-            "xwoba": 0.355,
-            "bat_speed": 73.7
-          },
-          "l5g": {
-            "ab": 23,
-            "hr": 0,
-            "slg": 0.391,
-            "avg": 0.348,
-            "iso": 0.043
-          },
-          "dk_odds": null,
-          "projected": false,
-          "platoon_tag": null,
-          "contact_log": [],
-          "breakdown": {
-            "base_rate": 5.03,
-            "barrel_mult": 1.9,
-            "la_mult": 0.728,
-            "pit_vuln_mult": 0.636,
-            "bat_platoon_mult": 1.062,
-            "pit_platoon_mult": 1.079,
-            "park_factor": 1.25,
-            "weather_mult": 1.057,
-            "hot_cold_mult": 0.85,
-            "k_mult": 1.0,
-            "iso_vs_hand": 0.262,
-            "iso_overall": 0.235,
-            "split_pa": 162.0,
-            "split_ip_vs_bat": 54.2,
-            "slg_vs_bat": 0.307,
-            "pit_slg_overall": 0.286,
-            "split_hr": 9,
-            "split_slg": 0.546,
-            "split_woba": 0.377,
-            "split_k_pct": 22.8,
-            "split_brl": 0.0,
-            "split_iso": 0.262,
-            "split_ip": 54.2,
-            "hr9_split": 0.33,
-            "hr9_season": 0.47,
-            "pit_hard": 39.8,
-            "n_pit_components": 3,
-            "pit_blend_note": "100% 2026",
-            "barrel_use": 12.7,
-            "barrel_season": 12.7,
-            "la_use": 13.6,
-            "la_season": 13.6,
-            "la_8d_raw": 20.7,
-            "barrel_8d_raw": 0.0,
-            "hr_season": 9,
-            "pa_season": 179,
-            "pa_8d": 29,
-            "has_8d": true,
-            "blend_note": "100% 2026 + 8d",
-            "k_season": 23.5,
-            "pitch_bonus": 2.25,
-            "pitch_breakdown": [
-              {
-                "name": "4-Seam Fastball",
-                "usage": 49.1,
-                "pit_rv": 1.7,
-                "bat_rv": 3.3,
-                "combined": 2.66,
-                "bonus": 1.96
-              },
-              {
-                "name": "Cutter",
-                "usage": 29.6,
-                "pit_rv": 1.7,
-                "bat_rv": 0.5,
-                "combined": 0.98,
-                "bonus": 0.44
-              },
-              {
-                "name": "Sinker",
-                "usage": 21.3,
-                "pit_rv": 2.3,
-                "bat_rv": -2.3,
-                "combined": -0.46,
-                "bonus": -0.15
-              }
-            ],
-            "data_conf": {
-              "barrel": 1,
-              "la": 1,
-              "pit_hr9": 1,
-              "pit_hr9_hand": 1,
-              "iso_vs_hand": 1,
-              "park": 1,
-              "pitch_delta": 1,
-              "bat_platoon": 1
-            },
-            "bullpen_hr9": 0.92,
-            "bullpen_vuln": 0.619,
-            "iso_use": 0.262,
-            "pull_s": 44.3,
-            "pit_modifier": 0.636,
-            "hr_rate_8d": 0.0
           }
         },
         {
@@ -3046,8 +3046,8 @@
         {
           "name": "Nathaniel Lowe",
           "team": "Cincinnati Reds",
-          "hr_prob": 0.4,
-          "xgb_prob": 0.4,
+          "hr_prob": 0.5,
+          "xgb_prob": 0.5,
           "rf_prob": 6.5,
           "archetype": "Contact",
           "trend": "Cooling Off",
@@ -3075,16 +3075,16 @@
             "hr": 9
           },
           "l8d": {
-            "pa": 29,
+            "pa": 30,
             "barrel": 0.0,
             "ev": 79.1,
             "la": 20.7,
             "hh": 13.6,
-            "iso": 0.043,
-            "slg": 0.391,
-            "avg": 0.348,
+            "iso": 0.042,
+            "slg": 0.375,
+            "avg": 0.333,
             "pull": 42.9,
-            "k_pct": 20.7,
+            "k_pct": 23.3,
             "xslg": 0.441,
             "xwoba": 0.355,
             "bat_speed": 73.7
@@ -3137,7 +3137,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 9,
             "pa_season": 179,
-            "pa_8d": 29,
+            "pa_8d": 30,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 23.5,
@@ -3216,16 +3216,16 @@
             "hr": 11
           },
           "l8d": {
-            "pa": 34,
+            "pa": 35,
             "barrel": 5.3,
             "ev": 78.3,
             "la": 26.2,
             "hh": 15.8,
-            "iso": 0.2,
-            "slg": 0.267,
-            "avg": 0.067,
+            "iso": 0.193,
+            "slg": 0.258,
+            "avg": 0.065,
             "pull": 33.3,
-            "k_pct": 35.3,
+            "k_pct": 34.3,
             "xslg": 0.648,
             "xwoba": 0.411,
             "bat_speed": 67.5
@@ -3278,7 +3278,7 @@
             "barrel_8d_raw": 5.3,
             "hr_season": 11,
             "pa_season": 279,
-            "pa_8d": 34,
+            "pa_8d": 35,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 21.5,
@@ -3324,7 +3324,7 @@
             "iso_use": 0.133,
             "pull_s": 50.3,
             "pit_modifier": 0.722,
-            "hr_rate_8d": 35.3
+            "hr_rate_8d": 34.3
           }
         },
         {
@@ -5043,16 +5043,16 @@
             "hr": 0
           },
           "l8d": {
-            "pa": 25,
+            "pa": 26,
             "barrel": 0.0,
             "ev": 85.2,
             "la": 15.0,
             "hh": 28.6,
-            "iso": 0.083,
-            "slg": 0.25,
-            "avg": 0.167,
+            "iso": 0.08,
+            "slg": 0.24,
+            "avg": 0.16,
             "pull": 0.0,
-            "k_pct": 20.0,
+            "k_pct": 19.2,
             "xslg": 0.218,
             "xwoba": 0.169,
             "bat_speed": 67.6
@@ -5105,7 +5105,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 0,
             "pa_season": 87,
-            "pa_8d": 25,
+            "pa_8d": 26,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 20.7,
@@ -5166,7 +5166,7 @@
         "wind_angle_cf": -3
       },
       "totals": {
-        "away_exp_hr": 0.037,
+        "away_exp_hr": 0.038,
         "home_exp_hr": 0.289,
         "total_exp_hr": 0.33,
         "away_exp_runs": 4.56,
@@ -6282,147 +6282,6 @@
           }
         },
         {
-          "name": "Jakob Marsee",
-          "team": "Miami Marlins",
-          "hr_prob": 1.0,
-          "xgb_prob": 1.0,
-          "rf_prob": 0.2,
-          "archetype": "Contact",
-          "trend": "Steady",
-          "confidence": "High",
-          "reasons": [
-            "Pitcher-friendly park"
-          ],
-          "opp_pitcher": "Landen Roupp",
-          "bat_hand": "L",
-          "opp_p_hand": "R",
-          "park_factor": 0.9,
-          "l8d_hr_count": 1,
-          "season": {
-            "barrel": 3.9,
-            "ev": 86.6,
-            "la": 17.7,
-            "hh": 36.1,
-            "iso": 0.106,
-            "slg": 0.308,
-            "avg": 0.202,
-            "k": 23.8,
-            "pull": 39.3,
-            "hr": 4
-          },
-          "l8d": {
-            "pa": 40,
-            "barrel": 3.3,
-            "ev": 81.2,
-            "la": 13.7,
-            "hh": 20.0,
-            "iso": 0.139,
-            "slg": 0.361,
-            "avg": 0.222,
-            "pull": 16.7,
-            "k_pct": 32.5,
-            "xslg": 0.633,
-            "xwoba": 0.464,
-            "bat_speed": 64.4
-          },
-          "l5g": {
-            "ab": 36,
-            "hr": 1,
-            "slg": 0.361,
-            "avg": 0.222,
-            "iso": 0.139
-          },
-          "dk_odds": null,
-          "projected": false,
-          "platoon_tag": null,
-          "contact_log": [],
-          "breakdown": {
-            "base_rate": 1.32,
-            "barrel_mult": 0.348,
-            "la_mult": 0.626,
-            "pit_vuln_mult": 0.633,
-            "bat_platoon_mult": 0.952,
-            "pit_platoon_mult": 0.97,
-            "park_factor": 0.9,
-            "weather_mult": 1.0,
-            "hot_cold_mult": 1.2,
-            "k_mult": 1.0,
-            "iso_vs_hand": 0.097,
-            "iso_overall": 0.106,
-            "split_pa": 230.0,
-            "split_ip_vs_bat": 44.2,
-            "slg_vs_bat": 0.361,
-            "pit_slg_overall": 0.371,
-            "split_hr": 3,
-            "split_slg": 0.31,
-            "split_woba": 0.323,
-            "split_k_pct": 22.6,
-            "split_brl": 0.0,
-            "split_iso": 0.097,
-            "split_ip": 44.2,
-            "hr9_split": 0.6,
-            "hr9_season": 0.56,
-            "pit_hard": 29.9,
-            "n_pit_components": 3,
-            "pit_blend_note": "100% 2026",
-            "barrel_use": 3.9,
-            "barrel_season": 3.9,
-            "la_use": 17.7,
-            "la_season": 17.7,
-            "la_8d_raw": 13.7,
-            "barrel_8d_raw": 3.3,
-            "hr_season": 4,
-            "pa_season": 302,
-            "pa_8d": 40,
-            "has_8d": true,
-            "blend_note": "100% 2026 + 8d",
-            "k_season": 23.8,
-            "pitch_bonus": 0.79,
-            "pitch_breakdown": [
-              {
-                "name": "Sinker",
-                "usage": 43.8,
-                "pit_rv": 0.5,
-                "bat_rv": -1.2,
-                "combined": -0.52,
-                "bonus": -0.34
-              },
-              {
-                "name": "Curveball",
-                "usage": 33.1,
-                "pit_rv": 1.2,
-                "bat_rv": 1.7,
-                "combined": 1.5,
-                "bonus": 0.74
-              },
-              {
-                "name": "Changeup",
-                "usage": 23.0,
-                "pit_rv": 0.4,
-                "bat_rv": 1.6,
-                "combined": 1.12,
-                "bonus": 0.39
-              }
-            ],
-            "data_conf": {
-              "barrel": 1,
-              "la": 1,
-              "pit_hr9": 1,
-              "pit_hr9_hand": 1,
-              "iso_vs_hand": 1,
-              "park": 1,
-              "pitch_delta": 1,
-              "bat_platoon": 1
-            },
-            "bullpen_hr9": 0.99,
-            "bullpen_vuln": 0.707,
-            "iso_use": 0.097,
-            "pull_s": 39.3,
-            "pit_modifier": 0.633,
-            "hr_rate_8d": 15.0
-          }
-        },
-        {
           "name": "Otto Lopez",
           "team": "Miami Marlins",
           "hr_prob": 0.9,
@@ -6559,6 +6418,147 @@
             "pull_s": 31.5,
             "pit_modifier": 0.601,
             "hr_rate_8d": 0.0
+          }
+        },
+        {
+          "name": "Jakob Marsee",
+          "team": "Miami Marlins",
+          "hr_prob": 0.9,
+          "xgb_prob": 0.9,
+          "rf_prob": 0.2,
+          "archetype": "Contact",
+          "trend": "Steady",
+          "confidence": "High",
+          "reasons": [
+            "Pitcher-friendly park"
+          ],
+          "opp_pitcher": "Landen Roupp",
+          "bat_hand": "L",
+          "opp_p_hand": "R",
+          "park_factor": 0.9,
+          "l8d_hr_count": 1,
+          "season": {
+            "barrel": 3.9,
+            "ev": 86.6,
+            "la": 17.7,
+            "hh": 36.1,
+            "iso": 0.106,
+            "slg": 0.308,
+            "avg": 0.202,
+            "k": 23.8,
+            "pull": 39.3,
+            "hr": 4
+          },
+          "l8d": {
+            "pa": 41,
+            "barrel": 3.3,
+            "ev": 81.2,
+            "la": 13.7,
+            "hh": 20.0,
+            "iso": 0.135,
+            "slg": 0.351,
+            "avg": 0.216,
+            "pull": 16.7,
+            "k_pct": 31.7,
+            "xslg": 0.633,
+            "xwoba": 0.464,
+            "bat_speed": 64.4
+          },
+          "l5g": {
+            "ab": 36,
+            "hr": 1,
+            "slg": 0.361,
+            "avg": 0.222,
+            "iso": 0.139
+          },
+          "dk_odds": null,
+          "projected": false,
+          "platoon_tag": null,
+          "contact_log": [],
+          "breakdown": {
+            "base_rate": 1.32,
+            "barrel_mult": 0.348,
+            "la_mult": 0.626,
+            "pit_vuln_mult": 0.633,
+            "bat_platoon_mult": 0.952,
+            "pit_platoon_mult": 0.97,
+            "park_factor": 0.9,
+            "weather_mult": 1.0,
+            "hot_cold_mult": 1.2,
+            "k_mult": 1.0,
+            "iso_vs_hand": 0.097,
+            "iso_overall": 0.106,
+            "split_pa": 230.0,
+            "split_ip_vs_bat": 44.2,
+            "slg_vs_bat": 0.361,
+            "pit_slg_overall": 0.371,
+            "split_hr": 3,
+            "split_slg": 0.31,
+            "split_woba": 0.323,
+            "split_k_pct": 22.6,
+            "split_brl": 0.0,
+            "split_iso": 0.097,
+            "split_ip": 44.2,
+            "hr9_split": 0.6,
+            "hr9_season": 0.56,
+            "pit_hard": 29.9,
+            "n_pit_components": 3,
+            "pit_blend_note": "100% 2026",
+            "barrel_use": 3.9,
+            "barrel_season": 3.9,
+            "la_use": 17.7,
+            "la_season": 17.7,
+            "la_8d_raw": 13.7,
+            "barrel_8d_raw": 3.3,
+            "hr_season": 4,
+            "pa_season": 302,
+            "pa_8d": 41,
+            "has_8d": true,
+            "blend_note": "100% 2026 + 8d",
+            "k_season": 23.8,
+            "pitch_bonus": 0.79,
+            "pitch_breakdown": [
+              {
+                "name": "Sinker",
+                "usage": 43.8,
+                "pit_rv": 0.5,
+                "bat_rv": -1.2,
+                "combined": -0.52,
+                "bonus": -0.34
+              },
+              {
+                "name": "Curveball",
+                "usage": 33.1,
+                "pit_rv": 1.2,
+                "bat_rv": 1.7,
+                "combined": 1.5,
+                "bonus": 0.74
+              },
+              {
+                "name": "Changeup",
+                "usage": 23.0,
+                "pit_rv": 0.4,
+                "bat_rv": 1.6,
+                "combined": 1.12,
+                "bonus": 0.39
+              }
+            ],
+            "data_conf": {
+              "barrel": 1,
+              "la": 1,
+              "pit_hr9": 1,
+              "pit_hr9_hand": 1,
+              "iso_vs_hand": 1,
+              "park": 1,
+              "pitch_delta": 1,
+              "bat_platoon": 1
+            },
+            "bullpen_hr9": 0.99,
+            "bullpen_vuln": 0.707,
+            "iso_use": 0.097,
+            "pull_s": 39.3,
+            "pit_modifier": 0.633,
+            "hr_rate_8d": 14.6
           }
         },
         {
@@ -7577,16 +7577,16 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 27,
+            "pa": 28,
             "barrel": 0.0,
             "ev": 82.1,
             "la": 3.3,
             "hh": 18.2,
-            "iso": 0.136,
-            "slg": 0.318,
-            "avg": 0.182,
+            "iso": 0.131,
+            "slg": 0.348,
+            "avg": 0.217,
             "pull": 0.0,
-            "k_pct": 40.7,
+            "k_pct": 39.3,
             "xslg": 0.295,
             "xwoba": 0.209,
             "bat_speed": 67.1
@@ -7639,7 +7639,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 4,
             "pa_season": 221,
-            "pa_8d": 27,
+            "pa_8d": 28,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 29.4,
@@ -9815,8 +9815,8 @@
         {
           "name": "Jakob Marsee",
           "team": "Miami Marlins",
-          "hr_prob": 1.0,
-          "xgb_prob": 1.0,
+          "hr_prob": 0.9,
+          "xgb_prob": 0.9,
           "rf_prob": 0.2,
           "archetype": "Contact",
           "trend": "Steady",
@@ -9842,16 +9842,16 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 40,
+            "pa": 41,
             "barrel": 3.3,
             "ev": 81.2,
             "la": 13.7,
             "hh": 20.0,
-            "iso": 0.139,
-            "slg": 0.361,
-            "avg": 0.222,
+            "iso": 0.135,
+            "slg": 0.351,
+            "avg": 0.216,
             "pull": 16.7,
-            "k_pct": 32.5,
+            "k_pct": 31.7,
             "xslg": 0.633,
             "xwoba": 0.464,
             "bat_speed": 64.4
@@ -9904,7 +9904,7 @@
             "barrel_8d_raw": 3.3,
             "hr_season": 4,
             "pa_season": 302,
-            "pa_8d": 40,
+            "pa_8d": 41,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 23.8,
@@ -9950,7 +9950,7 @@
             "iso_use": 0.097,
             "pull_s": 39.3,
             "pit_modifier": 0.633,
-            "hr_rate_8d": 15.0
+            "hr_rate_8d": 14.6
           }
         },
         {
@@ -9981,16 +9981,16 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 27,
+            "pa": 28,
             "barrel": 0.0,
             "ev": 82.1,
             "la": 3.3,
             "hh": 18.2,
-            "iso": 0.136,
-            "slg": 0.318,
-            "avg": 0.182,
+            "iso": 0.131,
+            "slg": 0.348,
+            "avg": 0.217,
             "pull": 0.0,
-            "k_pct": 40.7,
+            "k_pct": 39.3,
             "xslg": 0.295,
             "xwoba": 0.209,
             "bat_speed": 67.1
@@ -10043,7 +10043,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 4,
             "pa_season": 221,
-            "pa_8d": 27,
+            "pa_8d": 28,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 29.4,
@@ -10385,7 +10385,7 @@
       },
       "totals": {
         "away_exp_hr": 0.303,
-        "home_exp_hr": 0.05,
+        "home_exp_hr": 0.049,
         "total_exp_hr": 0.35,
         "away_exp_runs": 3.98,
         "home_exp_runs": 4.16,
@@ -10648,8 +10648,8 @@
         {
           "name": "Jackson Chourio",
           "team": "Milwaukee Brewers",
-          "hr_prob": 22.6,
-          "xgb_prob": 22.6,
+          "hr_prob": 21.7,
+          "xgb_prob": 21.7,
           "rf_prob": 6.5,
           "archetype": "Contact",
           "trend": "Steady",
@@ -10676,16 +10676,16 @@
             "hr": 10
           },
           "l8d": {
-            "pa": 48,
+            "pa": 49,
             "barrel": 8.8,
             "ev": 85.6,
             "la": 14.0,
             "hh": 26.5,
-            "iso": 0.418,
-            "slg": 0.744,
-            "avg": 0.326,
+            "iso": 0.432,
+            "slg": 0.773,
+            "avg": 0.341,
             "pull": 20.0,
-            "k_pct": 14.6,
+            "k_pct": 14.3,
             "xslg": 0.798,
             "xwoba": 0.511,
             "bat_speed": 72.9
@@ -10738,7 +10738,7 @@
             "barrel_8d_raw": 8.8,
             "hr_season": 10,
             "pa_season": 178,
-            "pa_8d": 48,
+            "pa_8d": 49,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 24.2,
@@ -10784,7 +10784,7 @@
             "iso_use": 0.256,
             "pull_s": 25.6,
             "pit_modifier": 0.809,
-            "hr_rate_8d": 75.0
+            "hr_rate_8d": 73.5
           }
         },
         {
@@ -11211,8 +11211,8 @@
         {
           "name": "Christian Yelich",
           "team": "Milwaukee Brewers",
-          "hr_prob": 5.7,
-          "xgb_prob": 5.7,
+          "hr_prob": 7.3,
+          "xgb_prob": 7.3,
           "rf_prob": 1.5,
           "archetype": "High K",
           "trend": "Steady",
@@ -11236,7 +11236,7 @@
             "hr": 5
           },
           "l8d": {
-            "pa": 51,
+            "pa": 52,
             "barrel": 8.0,
             "ev": 80.7,
             "la": 16.4,
@@ -11245,7 +11245,7 @@
             "slg": 0.378,
             "avg": 0.267,
             "pull": 23.1,
-            "k_pct": 27.5,
+            "k_pct": 26.9,
             "xslg": 0.666,
             "xwoba": 0.42,
             "bat_speed": 72.0
@@ -11298,7 +11298,7 @@
             "barrel_8d_raw": 8.0,
             "hr_season": 5,
             "pa_season": 187,
-            "pa_8d": 51,
+            "pa_8d": 52,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 28.9,
@@ -11344,7 +11344,7 @@
             "iso_use": 0.176,
             "pull_s": 36.8,
             "pit_modifier": 0.861,
-            "hr_rate_8d": 11.8
+            "hr_rate_8d": 11.5
           }
         },
         {
@@ -11491,8 +11491,8 @@
         {
           "name": "Brice Turang",
           "team": "Milwaukee Brewers",
-          "hr_prob": 2.6,
-          "xgb_prob": 2.6,
+          "hr_prob": 2.7,
+          "xgb_prob": 2.7,
           "rf_prob": 2.0,
           "archetype": "Contact",
           "trend": "Heating Up",
@@ -11516,16 +11516,16 @@
             "hr": 11
           },
           "l8d": {
-            "pa": 47,
+            "pa": 48,
             "barrel": 13.6,
             "ev": 84.7,
             "la": 16.8,
             "hh": 18.2,
-            "iso": 0.182,
-            "slg": 0.341,
-            "avg": 0.159,
+            "iso": 0.178,
+            "slg": 0.356,
+            "avg": 0.178,
             "pull": 9.1,
-            "k_pct": 34.0,
+            "k_pct": 33.3,
             "xslg": 0.708,
             "xwoba": 0.437,
             "bat_speed": 67.0
@@ -11550,7 +11550,7 @@
             "pit_platoon_mult": 1.028,
             "park_factor": 1.1,
             "weather_mult": 1.065,
-            "hot_cold_mult": 1.195,
+            "hot_cold_mult": 1.17,
             "k_mult": 0.969,
             "iso_vs_hand": 0.083,
             "iso_overall": 0.203,
@@ -11578,7 +11578,7 @@
             "barrel_8d_raw": 13.6,
             "hr_season": 11,
             "pa_season": 309,
-            "pa_8d": 47,
+            "pa_8d": 48,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.2,
@@ -11624,7 +11624,7 @@
             "iso_use": 0.083,
             "pull_s": 25.8,
             "pit_modifier": 0.861,
-            "hr_rate_8d": 25.5
+            "hr_rate_8d": 25.0
           }
         },
         {
@@ -13025,8 +13025,8 @@
         {
           "name": "Christian Yelich",
           "team": "Milwaukee Brewers",
-          "hr_prob": 5.7,
-          "xgb_prob": 5.7,
+          "hr_prob": 7.3,
+          "xgb_prob": 7.3,
           "rf_prob": 1.5,
           "archetype": "High K",
           "trend": "Steady",
@@ -13050,7 +13050,7 @@
             "hr": 5
           },
           "l8d": {
-            "pa": 51,
+            "pa": 52,
             "barrel": 8.0,
             "ev": 80.7,
             "la": 16.4,
@@ -13059,7 +13059,7 @@
             "slg": 0.378,
             "avg": 0.267,
             "pull": 23.1,
-            "k_pct": 27.5,
+            "k_pct": 26.9,
             "xslg": 0.666,
             "xwoba": 0.42,
             "bat_speed": 72.0
@@ -13112,7 +13112,7 @@
             "barrel_8d_raw": 8.0,
             "hr_season": 5,
             "pa_season": 187,
-            "pa_8d": 51,
+            "pa_8d": 52,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 28.9,
@@ -13158,14 +13158,14 @@
             "iso_use": 0.176,
             "pull_s": 36.8,
             "pit_modifier": 0.861,
-            "hr_rate_8d": 11.8
+            "hr_rate_8d": 11.5
           }
         },
         {
           "name": "Jackson Chourio",
           "team": "Milwaukee Brewers",
-          "hr_prob": 22.6,
-          "xgb_prob": 22.6,
+          "hr_prob": 21.7,
+          "xgb_prob": 21.7,
           "rf_prob": 6.5,
           "archetype": "Contact",
           "trend": "Steady",
@@ -13192,16 +13192,16 @@
             "hr": 10
           },
           "l8d": {
-            "pa": 48,
+            "pa": 49,
             "barrel": 8.8,
             "ev": 85.6,
             "la": 14.0,
             "hh": 26.5,
-            "iso": 0.418,
-            "slg": 0.744,
-            "avg": 0.326,
+            "iso": 0.432,
+            "slg": 0.773,
+            "avg": 0.341,
             "pull": 20.0,
-            "k_pct": 14.6,
+            "k_pct": 14.3,
             "xslg": 0.798,
             "xwoba": 0.511,
             "bat_speed": 72.9
@@ -13254,7 +13254,7 @@
             "barrel_8d_raw": 8.8,
             "hr_season": 10,
             "pa_season": 178,
-            "pa_8d": 48,
+            "pa_8d": 49,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 24.2,
@@ -13300,14 +13300,14 @@
             "iso_use": 0.256,
             "pull_s": 25.6,
             "pit_modifier": 0.809,
-            "hr_rate_8d": 75.0
+            "hr_rate_8d": 73.5
           }
         },
         {
           "name": "Brice Turang",
           "team": "Milwaukee Brewers",
-          "hr_prob": 2.6,
-          "xgb_prob": 2.6,
+          "hr_prob": 2.7,
+          "xgb_prob": 2.7,
           "rf_prob": 2.0,
           "archetype": "Contact",
           "trend": "Heating Up",
@@ -13331,16 +13331,16 @@
             "hr": 11
           },
           "l8d": {
-            "pa": 47,
+            "pa": 48,
             "barrel": 13.6,
             "ev": 84.7,
             "la": 16.8,
             "hh": 18.2,
-            "iso": 0.182,
-            "slg": 0.341,
-            "avg": 0.159,
+            "iso": 0.178,
+            "slg": 0.356,
+            "avg": 0.178,
             "pull": 9.1,
-            "k_pct": 34.0,
+            "k_pct": 33.3,
             "xslg": 0.708,
             "xwoba": 0.437,
             "bat_speed": 67.0
@@ -13365,7 +13365,7 @@
             "pit_platoon_mult": 1.028,
             "park_factor": 1.1,
             "weather_mult": 1.065,
-            "hot_cold_mult": 1.195,
+            "hot_cold_mult": 1.17,
             "k_mult": 0.969,
             "iso_vs_hand": 0.083,
             "iso_overall": 0.203,
@@ -13393,7 +13393,7 @@
             "barrel_8d_raw": 13.6,
             "hr_season": 11,
             "pa_season": 309,
-            "pa_8d": 47,
+            "pa_8d": 48,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 25.2,
@@ -13439,7 +13439,7 @@
             "iso_use": 0.083,
             "pull_s": 25.8,
             "pit_modifier": 0.861,
-            "hr_rate_8d": 25.5
+            "hr_rate_8d": 25.0
           }
         },
         {
@@ -15552,20 +15552,20 @@
         "wind_angle_cf": 15
       },
       "totals": {
-        "away_exp_hr": 1.192,
+        "away_exp_hr": 1.2,
         "home_exp_hr": 0.138,
-        "total_exp_hr": 1.33,
+        "total_exp_hr": 1.34,
         "away_exp_runs": 4.73,
-        "home_exp_runs": 4.46,
-        "total_exp_runs": 9.19,
-        "away_runs_pg": 5.26,
+        "home_exp_runs": 4.47,
+        "total_exp_runs": 9.2,
+        "away_runs_pg": 5.27,
         "home_runs_pg": 4.99,
         "away_hr_pg": 0.92,
         "home_hr_pg": 1.32,
         "away_era": 3.43,
-        "home_era": 3.36,
+        "home_era": 3.38,
         "away_k_pg": 9.89,
-        "home_k_pg": 8.7
+        "home_k_pg": 8.69
       },
       "strikeouts": {
         "away_exp_k": 8.3,
@@ -17264,16 +17264,16 @@
             "hr": 12
           },
           "l8d": {
-            "pa": 38,
+            "pa": 39,
             "barrel": 4.8,
             "ev": 78.8,
             "la": 9.9,
             "hh": 19.0,
-            "iso": 0.25,
-            "slg": 0.594,
-            "avg": 0.344,
+            "iso": 0.243,
+            "slg": 0.576,
+            "avg": 0.333,
             "pull": 54.5,
-            "k_pct": 23.7,
+            "k_pct": 23.1,
             "xslg": 0.513,
             "xwoba": 0.329,
             "bat_speed": 75.6
@@ -17326,7 +17326,7 @@
             "barrel_8d_raw": 4.8,
             "hr_season": 12,
             "pa_season": 291,
-            "pa_8d": 38,
+            "pa_8d": 39,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 26.5,
@@ -17372,7 +17372,7 @@
             "iso_use": 0.159,
             "pull_s": 45.0,
             "pit_modifier": 1.407,
-            "hr_rate_8d": 31.6
+            "hr_rate_8d": 30.8
           }
         },
         {
@@ -18111,16 +18111,16 @@
             "hr": 0
           },
           "l8d": {
-            "pa": 31,
+            "pa": 32,
             "barrel": 0.0,
             "ev": 79.0,
             "la": 24.3,
             "hh": 14.3,
             "iso": 0.034,
-            "slg": 0.241,
-            "avg": 0.207,
+            "slg": 0.267,
+            "avg": 0.233,
             "pull": 11.1,
-            "k_pct": 19.4,
+            "k_pct": 18.8,
             "xslg": 0.294,
             "xwoba": 0.242,
             "bat_speed": 70.9
@@ -18173,7 +18173,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 0,
             "pa_season": 123,
-            "pa_8d": 31,
+            "pa_8d": 32,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 14.6,
@@ -20242,16 +20242,16 @@
             "hr": 0
           },
           "l8d": {
-            "pa": 31,
+            "pa": 32,
             "barrel": 0.0,
             "ev": 79.0,
             "la": 24.3,
             "hh": 14.3,
             "iso": 0.034,
-            "slg": 0.241,
-            "avg": 0.207,
+            "slg": 0.267,
+            "avg": 0.233,
             "pull": 11.1,
-            "k_pct": 19.4,
+            "k_pct": 18.8,
             "xslg": 0.294,
             "xwoba": 0.242,
             "bat_speed": 70.9
@@ -20304,7 +20304,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 0,
             "pa_season": 123,
-            "pa_8d": 31,
+            "pa_8d": 32,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 14.6,
@@ -20383,16 +20383,16 @@
             "hr": 12
           },
           "l8d": {
-            "pa": 38,
+            "pa": 39,
             "barrel": 4.8,
             "ev": 78.8,
             "la": 9.9,
             "hh": 19.0,
-            "iso": 0.25,
-            "slg": 0.594,
-            "avg": 0.344,
+            "iso": 0.243,
+            "slg": 0.576,
+            "avg": 0.333,
             "pull": 54.5,
-            "k_pct": 23.7,
+            "k_pct": 23.1,
             "xslg": 0.513,
             "xwoba": 0.329,
             "bat_speed": 75.6
@@ -20445,7 +20445,7 @@
             "barrel_8d_raw": 4.8,
             "hr_season": 12,
             "pa_season": 291,
-            "pa_8d": 38,
+            "pa_8d": 39,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 26.5,
@@ -20491,7 +20491,7 @@
             "iso_use": 0.159,
             "pull_s": 45.0,
             "pit_modifier": 1.407,
-            "hr_rate_8d": 31.6
+            "hr_rate_8d": 30.8
           }
         },
         {
@@ -21653,16 +21653,16 @@
             "hr": 3
           },
           "l8d": {
-            "pa": 24,
+            "pa": 25,
             "barrel": 5.0,
             "ev": 84.1,
             "la": 17.4,
             "hh": 15.0,
-            "iso": 0.136,
-            "slg": 0.318,
-            "avg": 0.182,
+            "iso": 0.13,
+            "slg": 0.304,
+            "avg": 0.174,
             "pull": 18.2,
-            "k_pct": 12.5,
+            "k_pct": 12.0,
             "xslg": 0.424,
             "xwoba": 0.281,
             "bat_speed": 66.0
@@ -21715,7 +21715,7 @@
             "barrel_8d_raw": 5.0,
             "hr_season": 3,
             "pa_season": 123,
-            "pa_8d": 24,
+            "pa_8d": 25,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.5,
@@ -21761,7 +21761,7 @@
             "iso_use": 0.12,
             "pull_s": 37.1,
             "pit_modifier": 1.261,
-            "hr_rate_8d": 25.0
+            "hr_rate_8d": 24.0
           }
         },
         {
@@ -22079,16 +22079,16 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 38,
+            "pa": 39,
             "barrel": 0.0,
             "ev": 82.9,
             "la": 15.4,
             "hh": 32.4,
-            "iso": 0.206,
-            "slg": 0.441,
-            "avg": 0.235,
+            "iso": 0.2,
+            "slg": 0.429,
+            "avg": 0.229,
             "pull": 42.9,
-            "k_pct": 18.4,
+            "k_pct": 20.5,
             "xslg": 0.433,
             "xwoba": 0.328,
             "bat_speed": 68.9
@@ -22141,7 +22141,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 4,
             "pa_season": 163,
-            "pa_8d": 38,
+            "pa_8d": 39,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 14.7,
@@ -22187,7 +22187,7 @@
             "iso_use": 0.118,
             "pull_s": 50.0,
             "pit_modifier": 1.261,
-            "hr_rate_8d": 31.6
+            "hr_rate_8d": 30.8
           }
         },
         {
@@ -22650,16 +22650,16 @@
             "hr": 6
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 0.0,
             "ev": 85.7,
             "la": 44.2,
             "hh": 11.8,
-            "iso": 0.139,
-            "slg": 0.25,
-            "avg": 0.111,
+            "iso": 0.135,
+            "slg": 0.243,
+            "avg": 0.108,
             "pull": 44.4,
-            "k_pct": 41.0,
+            "k_pct": 40.0,
             "xslg": 0.306,
             "xwoba": 0.242,
             "bat_speed": 68.2
@@ -22684,7 +22684,7 @@
             "pit_platoon_mult": 0.809,
             "park_factor": 1.02,
             "weather_mult": 1.0,
-            "hot_cold_mult": 0.897,
+            "hot_cold_mult": 0.875,
             "k_mult": 0.969,
             "iso_vs_hand": 0.174,
             "iso_overall": 0.177,
@@ -22712,7 +22712,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 6,
             "pa_season": 210,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 29.5,
@@ -22758,7 +22758,7 @@
             "iso_use": 0.174,
             "pull_s": 57.7,
             "pit_modifier": 1.095,
-            "hr_rate_8d": 15.4
+            "hr_rate_8d": 15.0
           }
         },
         {
@@ -23923,16 +23923,16 @@
             "hr": 6
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 0.0,
             "ev": 85.7,
             "la": 44.2,
             "hh": 11.8,
-            "iso": 0.139,
-            "slg": 0.25,
-            "avg": 0.111,
+            "iso": 0.135,
+            "slg": 0.243,
+            "avg": 0.108,
             "pull": 44.4,
-            "k_pct": 41.0,
+            "k_pct": 40.0,
             "xslg": 0.306,
             "xwoba": 0.242,
             "bat_speed": 68.2
@@ -23957,7 +23957,7 @@
             "pit_platoon_mult": 0.809,
             "park_factor": 1.02,
             "weather_mult": 1.0,
-            "hot_cold_mult": 0.897,
+            "hot_cold_mult": 0.875,
             "k_mult": 0.969,
             "iso_vs_hand": 0.174,
             "iso_overall": 0.177,
@@ -23985,7 +23985,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 6,
             "pa_season": 210,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 29.5,
@@ -24031,7 +24031,7 @@
             "iso_use": 0.174,
             "pull_s": 57.7,
             "pit_modifier": 1.095,
-            "hr_rate_8d": 15.4
+            "hr_rate_8d": 15.0
           }
         },
         {
@@ -24771,16 +24771,16 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 38,
+            "pa": 39,
             "barrel": 0.0,
             "ev": 82.9,
             "la": 15.4,
             "hh": 32.4,
-            "iso": 0.206,
-            "slg": 0.441,
-            "avg": 0.235,
+            "iso": 0.2,
+            "slg": 0.429,
+            "avg": 0.229,
             "pull": 42.9,
-            "k_pct": 18.4,
+            "k_pct": 20.5,
             "xslg": 0.433,
             "xwoba": 0.328,
             "bat_speed": 68.9
@@ -24833,7 +24833,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 4,
             "pa_season": 163,
-            "pa_8d": 38,
+            "pa_8d": 39,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 14.7,
@@ -24879,7 +24879,7 @@
             "iso_use": 0.118,
             "pull_s": 50.0,
             "pit_modifier": 1.261,
-            "hr_rate_8d": 31.6
+            "hr_rate_8d": 30.8
           }
         },
         {
@@ -25911,16 +25911,16 @@
             "hr": 3
           },
           "l8d": {
-            "pa": 24,
+            "pa": 25,
             "barrel": 5.0,
             "ev": 84.1,
             "la": 17.4,
             "hh": 15.0,
-            "iso": 0.136,
-            "slg": 0.318,
-            "avg": 0.182,
+            "iso": 0.13,
+            "slg": 0.304,
+            "avg": 0.174,
             "pull": 18.2,
-            "k_pct": 12.5,
+            "k_pct": 12.0,
             "xslg": 0.424,
             "xwoba": 0.281,
             "bat_speed": 66.0
@@ -25973,7 +25973,7 @@
             "barrel_8d_raw": 5.0,
             "hr_season": 3,
             "pa_season": 123,
-            "pa_8d": 24,
+            "pa_8d": 25,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.5,
@@ -26019,7 +26019,7 @@
             "iso_use": 0.12,
             "pull_s": 37.1,
             "pit_modifier": 1.261,
-            "hr_rate_8d": 25.0
+            "hr_rate_8d": 24.0
           }
         }
       ],
@@ -26047,7 +26047,7 @@
         "away_era": 3.77,
         "home_era": 4.88,
         "away_k_pg": 9.32,
-        "home_k_pg": 8.72
+        "home_k_pg": 8.71
       },
       "strikeouts": {
         "away_exp_k": 4.2,
@@ -26314,7 +26314,7 @@
           "bat_hand": "L",
           "opp_p_hand": "R",
           "park_factor": 1.05,
-          "l8d_hr_count": 1,
+          "l8d_hr_count": 2,
           "season": {
             "barrel": 14.5,
             "ev": 93.4,
@@ -26328,16 +26328,16 @@
             "hr": 9
           },
           "l8d": {
-            "pa": 43,
+            "pa": 44,
             "barrel": 2.0,
             "ev": 84.4,
             "la": 14.2,
             "hh": 28.6,
-            "iso": 0.125,
-            "slg": 0.425,
-            "avg": 0.3,
+            "iso": 0.195,
+            "slg": 0.512,
+            "avg": 0.317,
             "pull": 17.6,
-            "k_pct": 32.6,
+            "k_pct": 31.8,
             "xslg": 0.658,
             "xwoba": 0.457,
             "bat_speed": 75.8
@@ -26362,7 +26362,7 @@
             "pit_platoon_mult": 1.004,
             "park_factor": 1.05,
             "weather_mult": 1.024,
-            "hot_cold_mult": 0.85,
+            "hot_cold_mult": 1.2,
             "k_mult": 0.969,
             "iso_vs_hand": 0.177,
             "iso_overall": 0.173,
@@ -26390,7 +26390,7 @@
             "barrel_8d_raw": 2.0,
             "hr_season": 9,
             "pa_season": 263,
-            "pa_8d": 43,
+            "pa_8d": 44,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 29.7,
@@ -26436,7 +26436,7 @@
             "iso_use": 0.177,
             "pull_s": 40.9,
             "pit_modifier": 1.095,
-            "hr_rate_8d": 14.0
+            "hr_rate_8d": 27.3
           }
         },
         {
@@ -27733,16 +27733,16 @@
             "hr": 10
           },
           "l8d": {
-            "pa": 42,
+            "pa": 43,
             "barrel": 5.0,
             "ev": 82.3,
             "la": 22.0,
             "hh": 23.3,
-            "iso": 0.096,
-            "slg": 0.31,
-            "avg": 0.214,
+            "iso": 0.116,
+            "slg": 0.349,
+            "avg": 0.233,
             "pull": 32.0,
-            "k_pct": 16.7,
+            "k_pct": 16.3,
             "xslg": 0.506,
             "xwoba": 0.349,
             "bat_speed": 70.9
@@ -27795,7 +27795,7 @@
             "barrel_8d_raw": 5.0,
             "hr_season": 10,
             "pa_season": 296,
-            "pa_8d": 42,
+            "pa_8d": 43,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 18.9,
@@ -27841,7 +27841,7 @@
             "iso_use": 0.117,
             "pull_s": 39.5,
             "pit_modifier": 1.069,
-            "hr_rate_8d": 14.3
+            "hr_rate_8d": 14.0
           }
         },
         {
@@ -28015,16 +28015,16 @@
             "hr": 5
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 7.0,
             "ev": 78.7,
             "la": 20.8,
             "hh": 18.6,
-            "iso": 0.333,
-            "slg": 0.606,
-            "avg": 0.273,
+            "iso": 0.323,
+            "slg": 0.588,
+            "avg": 0.265,
             "pull": 30.0,
-            "k_pct": 17.9,
+            "k_pct": 17.5,
             "xslg": 0.668,
             "xwoba": 0.415,
             "bat_speed": 70.2
@@ -28077,7 +28077,7 @@
             "barrel_8d_raw": 7.0,
             "hr_season": 5,
             "pa_season": 184,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 20.7,
@@ -28123,7 +28123,7 @@
             "iso_use": 0.164,
             "pull_s": 40.9,
             "pit_modifier": 1.069,
-            "hr_rate_8d": 46.2
+            "hr_rate_8d": 45.0
           }
         },
         {
@@ -28564,16 +28564,16 @@
             "hr": 7
           },
           "l8d": {
-            "pa": 32,
+            "pa": 33,
             "barrel": 5.7,
             "ev": 85.1,
             "la": 20.2,
             "hh": 25.7,
-            "iso": 0.2,
-            "slg": 0.433,
-            "avg": 0.233,
+            "iso": 0.193,
+            "slg": 0.419,
+            "avg": 0.226,
             "pull": 11.8,
-            "k_pct": 9.4,
+            "k_pct": 9.1,
             "xslg": 0.701,
             "xwoba": 0.429,
             "bat_speed": 70.2
@@ -28626,7 +28626,7 @@
             "barrel_8d_raw": 5.7,
             "hr_season": 7,
             "pa_season": 175,
-            "pa_8d": 32,
+            "pa_8d": 33,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.1,
@@ -28672,7 +28672,7 @@
             "iso_use": 0.212,
             "pull_s": 43.2,
             "pit_modifier": 1.095,
-            "hr_rate_8d": 18.8
+            "hr_rate_8d": 18.2
           }
         }
       ],
@@ -30116,16 +30116,16 @@
             "hr": 5
           },
           "l8d": {
-            "pa": 39,
+            "pa": 40,
             "barrel": 7.0,
             "ev": 78.7,
             "la": 20.8,
             "hh": 18.6,
-            "iso": 0.333,
-            "slg": 0.606,
-            "avg": 0.273,
+            "iso": 0.323,
+            "slg": 0.588,
+            "avg": 0.265,
             "pull": 30.0,
-            "k_pct": 17.9,
+            "k_pct": 17.5,
             "xslg": 0.668,
             "xwoba": 0.415,
             "bat_speed": 70.2
@@ -30178,7 +30178,7 @@
             "barrel_8d_raw": 7.0,
             "hr_season": 5,
             "pa_season": 184,
-            "pa_8d": 39,
+            "pa_8d": 40,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 20.7,
@@ -30224,7 +30224,7 @@
             "iso_use": 0.164,
             "pull_s": 40.9,
             "pit_modifier": 1.069,
-            "hr_rate_8d": 46.2
+            "hr_rate_8d": 45.0
           }
         },
         {
@@ -30244,7 +30244,7 @@
           "bat_hand": "L",
           "opp_p_hand": "R",
           "park_factor": 1.05,
-          "l8d_hr_count": 1,
+          "l8d_hr_count": 2,
           "season": {
             "barrel": 14.5,
             "ev": 93.4,
@@ -30258,16 +30258,16 @@
             "hr": 9
           },
           "l8d": {
-            "pa": 43,
+            "pa": 44,
             "barrel": 2.0,
             "ev": 84.4,
             "la": 14.2,
             "hh": 28.6,
-            "iso": 0.125,
-            "slg": 0.425,
-            "avg": 0.3,
+            "iso": 0.195,
+            "slg": 0.512,
+            "avg": 0.317,
             "pull": 17.6,
-            "k_pct": 32.6,
+            "k_pct": 31.8,
             "xslg": 0.658,
             "xwoba": 0.457,
             "bat_speed": 75.8
@@ -30292,7 +30292,7 @@
             "pit_platoon_mult": 1.004,
             "park_factor": 1.05,
             "weather_mult": 1.024,
-            "hot_cold_mult": 0.85,
+            "hot_cold_mult": 1.2,
             "k_mult": 0.969,
             "iso_vs_hand": 0.177,
             "iso_overall": 0.173,
@@ -30320,7 +30320,7 @@
             "barrel_8d_raw": 2.0,
             "hr_season": 9,
             "pa_season": 263,
-            "pa_8d": 43,
+            "pa_8d": 44,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 29.7,
@@ -30366,7 +30366,7 @@
             "iso_use": 0.177,
             "pull_s": 40.9,
             "pit_modifier": 1.095,
-            "hr_rate_8d": 14.0
+            "hr_rate_8d": 27.3
           }
         },
         {
@@ -30399,16 +30399,16 @@
             "hr": 10
           },
           "l8d": {
-            "pa": 42,
+            "pa": 43,
             "barrel": 5.0,
             "ev": 82.3,
             "la": 22.0,
             "hh": 23.3,
-            "iso": 0.096,
-            "slg": 0.31,
-            "avg": 0.214,
+            "iso": 0.116,
+            "slg": 0.349,
+            "avg": 0.233,
             "pull": 32.0,
-            "k_pct": 16.7,
+            "k_pct": 16.3,
             "xslg": 0.506,
             "xwoba": 0.349,
             "bat_speed": 70.9
@@ -30461,7 +30461,7 @@
             "barrel_8d_raw": 5.0,
             "hr_season": 10,
             "pa_season": 296,
-            "pa_8d": 42,
+            "pa_8d": 43,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 18.9,
@@ -30507,7 +30507,7 @@
             "iso_use": 0.117,
             "pull_s": 39.5,
             "pit_modifier": 1.069,
-            "hr_rate_8d": 14.3
+            "hr_rate_8d": 14.0
           }
         },
         {
@@ -30540,16 +30540,16 @@
             "hr": 7
           },
           "l8d": {
-            "pa": 32,
+            "pa": 33,
             "barrel": 5.7,
             "ev": 85.1,
             "la": 20.2,
             "hh": 25.7,
-            "iso": 0.2,
-            "slg": 0.433,
-            "avg": 0.233,
+            "iso": 0.193,
+            "slg": 0.419,
+            "avg": 0.226,
             "pull": 11.8,
-            "k_pct": 9.4,
+            "k_pct": 9.1,
             "xslg": 0.701,
             "xwoba": 0.429,
             "bat_speed": 70.2
@@ -30602,7 +30602,7 @@
             "barrel_8d_raw": 5.7,
             "hr_season": 7,
             "pa_season": 175,
-            "pa_8d": 32,
+            "pa_8d": 33,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 17.1,
@@ -30648,7 +30648,7 @@
             "iso_use": 0.212,
             "pull_s": 43.2,
             "pit_modifier": 1.095,
-            "hr_rate_8d": 18.8
+            "hr_rate_8d": 18.2
           }
         },
         {
@@ -32194,8 +32194,8 @@
         {
           "name": "Jake McCarthy",
           "team": "Colorado Rockies",
-          "hr_prob": 1.6,
-          "xgb_prob": 1.6,
+          "hr_prob": 1.5,
+          "xgb_prob": 1.5,
           "rf_prob": 1.7,
           "archetype": "Contact",
           "trend": "Cooling Off",
@@ -32221,16 +32221,16 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 40,
+            "pa": 41,
             "barrel": 0.0,
             "ev": 78.4,
             "la": 9.3,
             "hh": 16.7,
-            "iso": 0.026,
-            "slg": 0.289,
-            "avg": 0.263,
+            "iso": 0.051,
+            "slg": 0.333,
+            "avg": 0.282,
             "pull": 9.1,
-            "k_pct": 20.0,
+            "k_pct": 19.5,
             "xslg": 0.459,
             "xwoba": 0.379,
             "bat_speed": 65.3
@@ -32283,7 +32283,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 4,
             "pa_season": 207,
-            "pa_8d": 40,
+            "pa_8d": 41,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.3,
@@ -32506,16 +32506,16 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 30,
+            "pa": 31,
             "barrel": 12.0,
             "ev": 85.6,
             "la": 19.8,
             "hh": 44.0,
-            "iso": 0.214,
-            "slg": 0.607,
-            "avg": 0.393,
+            "iso": 0.207,
+            "slg": 0.586,
+            "avg": 0.379,
             "pull": 43.8,
-            "k_pct": 3.3,
+            "k_pct": 3.2,
             "xslg": 0.631,
             "xwoba": 0.427,
             "bat_speed": 69.3
@@ -32568,7 +32568,7 @@
             "barrel_8d_raw": 12.0,
             "hr_season": 4,
             "pa_season": 242,
-            "pa_8d": 30,
+            "pa_8d": 31,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 20.7,
@@ -32614,7 +32614,7 @@
             "iso_use": 0.125,
             "pull_s": 39.1,
             "pit_modifier": 0.783,
-            "hr_rate_8d": 20.0
+            "hr_rate_8d": 19.4
           }
         },
         {
@@ -32904,6 +32904,149 @@
           }
         },
         {
+          "name": "Jared Triolo",
+          "team": "Pittsburgh Pirates",
+          "hr_prob": 0.4,
+          "xgb_prob": 0.4,
+          "rf_prob": 3.9,
+          "archetype": "Contact",
+          "trend": "Steady",
+          "confidence": "High",
+          "reasons": [
+            "SP 2.0 HR/9",
+            "SP 45.0% HH",
+            "HR-friendly park"
+          ],
+          "opp_pitcher": "Kyle Freeland",
+          "bat_hand": "R",
+          "opp_p_hand": "L",
+          "park_factor": 1.4,
+          "l8d_hr_count": 0,
+          "season": {
+            "barrel": 1.1,
+            "ev": 87.3,
+            "la": 6.8,
+            "hh": 35.6,
+            "iso": 0.032,
+            "slg": 0.262,
+            "avg": 0.23,
+            "k": 26.2,
+            "pull": 30.0,
+            "hr": 0
+          },
+          "l8d": {
+            "pa": 37,
+            "barrel": 0.0,
+            "ev": 80.5,
+            "la": -2.9,
+            "hh": 20.0,
+            "iso": 0.031,
+            "slg": 0.281,
+            "avg": 0.25,
+            "pull": 10.0,
+            "k_pct": 27.0,
+            "xslg": 0.457,
+            "xwoba": 0.351,
+            "bat_speed": 67.0
+          },
+          "l5g": {
+            "ab": 32,
+            "hr": 0,
+            "slg": 0.281,
+            "avg": 0.25,
+            "iso": 0.031
+          },
+          "dk_odds": null,
+          "projected": false,
+          "platoon_tag": "Batter strong vs LHP",
+          "contact_log": [],
+          "breakdown": {
+            "base_rate": 2.8,
+            "barrel_mult": 0.58,
+            "la_mult": 0.678,
+            "pit_vuln_mult": 1.725,
+            "bat_platoon_mult": 1.333,
+            "pit_platoon_mult": 1.166,
+            "park_factor": 1.4,
+            "weather_mult": 1.06,
+            "hot_cold_mult": 0.85,
+            "k_mult": 0.969,
+            "iso_vs_hand": 0.054,
+            "iso_overall": 0.032,
+            "split_pa": 39.0,
+            "split_ip_vs_bat": 48.2,
+            "slg_vs_bat": 0.583,
+            "pit_slg_overall": 0.507,
+            "split_hr": 0,
+            "split_slg": 0.351,
+            "split_woba": 0.333,
+            "split_k_pct": 15.4,
+            "split_brl": 0.0,
+            "split_iso": 0.054,
+            "split_ip": 48.2,
+            "hr9_split": 2.4,
+            "hr9_season": 1.98,
+            "pit_hard": 45.0,
+            "n_pit_components": 3,
+            "pit_blend_note": "100% 2026",
+            "barrel_use": 1.1,
+            "barrel_season": 1.1,
+            "la_use": 6.8,
+            "la_season": 6.8,
+            "la_8d_raw": -2.9,
+            "barrel_8d_raw": 0.0,
+            "hr_season": 0,
+            "pa_season": 141,
+            "pa_8d": 37,
+            "has_8d": true,
+            "blend_note": "100% 2026 + 8d",
+            "k_season": 26.2,
+            "pitch_bonus": -2.8,
+            "pitch_breakdown": [
+              {
+                "name": "4-Seam Fastball",
+                "usage": 39.2,
+                "pit_rv": -4.1,
+                "bat_rv": -2.0,
+                "combined": -2.84,
+                "bonus": -1.67
+              },
+              {
+                "name": "Curveball",
+                "usage": 33.0,
+                "pit_rv": -2.5,
+                "bat_rv": 0.3,
+                "combined": -0.82,
+                "bonus": -0.41
+              },
+              {
+                "name": "Cutter",
+                "usage": 27.8,
+                "pit_rv": 0.3,
+                "bat_rv": -3.1,
+                "combined": -1.74,
+                "bonus": -0.73
+              }
+            ],
+            "data_conf": {
+              "barrel": 1,
+              "la": 1,
+              "pit_hr9": 1,
+              "pit_hr9_hand": 1,
+              "iso_vs_hand": 1,
+              "park": 1,
+              "pitch_delta": 1,
+              "bat_platoon": 1
+            },
+            "bullpen_hr9": 1.4,
+            "bullpen_vuln": 1.321,
+            "iso_use": 0.054,
+            "pull_s": 30.0,
+            "pit_modifier": 1.725,
+            "hr_rate_8d": 0.0
+          }
+        },
+        {
           "name": "Tyler Freeman",
           "team": "Colorado Rockies",
           "hr_prob": 0.4,
@@ -33042,149 +33185,6 @@
             "pull_s": 38.6,
             "pit_modifier": 0.783,
             "hr_rate_8d": 15.0
-          }
-        },
-        {
-          "name": "Jared Triolo",
-          "team": "Pittsburgh Pirates",
-          "hr_prob": 0.3,
-          "xgb_prob": 0.3,
-          "rf_prob": 3.9,
-          "archetype": "Contact",
-          "trend": "Steady",
-          "confidence": "High",
-          "reasons": [
-            "SP 2.0 HR/9",
-            "SP 45.0% HH",
-            "HR-friendly park"
-          ],
-          "opp_pitcher": "Kyle Freeland",
-          "bat_hand": "R",
-          "opp_p_hand": "L",
-          "park_factor": 1.4,
-          "l8d_hr_count": 0,
-          "season": {
-            "barrel": 1.1,
-            "ev": 87.3,
-            "la": 6.8,
-            "hh": 35.6,
-            "iso": 0.032,
-            "slg": 0.262,
-            "avg": 0.23,
-            "k": 26.2,
-            "pull": 30.0,
-            "hr": 0
-          },
-          "l8d": {
-            "pa": 36,
-            "barrel": 0.0,
-            "ev": 80.5,
-            "la": -2.9,
-            "hh": 20.0,
-            "iso": 0.032,
-            "slg": 0.29,
-            "avg": 0.258,
-            "pull": 10.0,
-            "k_pct": 27.8,
-            "xslg": 0.457,
-            "xwoba": 0.351,
-            "bat_speed": 67.0
-          },
-          "l5g": {
-            "ab": 32,
-            "hr": 0,
-            "slg": 0.281,
-            "avg": 0.25,
-            "iso": 0.031
-          },
-          "dk_odds": null,
-          "projected": false,
-          "platoon_tag": "Batter strong vs LHP",
-          "contact_log": [],
-          "breakdown": {
-            "base_rate": 2.8,
-            "barrel_mult": 0.58,
-            "la_mult": 0.678,
-            "pit_vuln_mult": 1.725,
-            "bat_platoon_mult": 1.333,
-            "pit_platoon_mult": 1.166,
-            "park_factor": 1.4,
-            "weather_mult": 1.06,
-            "hot_cold_mult": 0.85,
-            "k_mult": 0.969,
-            "iso_vs_hand": 0.054,
-            "iso_overall": 0.032,
-            "split_pa": 39.0,
-            "split_ip_vs_bat": 48.2,
-            "slg_vs_bat": 0.583,
-            "pit_slg_overall": 0.507,
-            "split_hr": 0,
-            "split_slg": 0.351,
-            "split_woba": 0.333,
-            "split_k_pct": 15.4,
-            "split_brl": 0.0,
-            "split_iso": 0.054,
-            "split_ip": 48.2,
-            "hr9_split": 2.4,
-            "hr9_season": 1.98,
-            "pit_hard": 45.0,
-            "n_pit_components": 3,
-            "pit_blend_note": "100% 2026",
-            "barrel_use": 1.1,
-            "barrel_season": 1.1,
-            "la_use": 6.8,
-            "la_season": 6.8,
-            "la_8d_raw": -2.9,
-            "barrel_8d_raw": 0.0,
-            "hr_season": 0,
-            "pa_season": 141,
-            "pa_8d": 36,
-            "has_8d": true,
-            "blend_note": "100% 2026 + 8d",
-            "k_season": 26.2,
-            "pitch_bonus": -2.8,
-            "pitch_breakdown": [
-              {
-                "name": "4-Seam Fastball",
-                "usage": 39.2,
-                "pit_rv": -4.1,
-                "bat_rv": -2.0,
-                "combined": -2.84,
-                "bonus": -1.67
-              },
-              {
-                "name": "Curveball",
-                "usage": 33.0,
-                "pit_rv": -2.5,
-                "bat_rv": 0.3,
-                "combined": -0.82,
-                "bonus": -0.41
-              },
-              {
-                "name": "Cutter",
-                "usage": 27.8,
-                "pit_rv": 0.3,
-                "bat_rv": -3.1,
-                "combined": -1.74,
-                "bonus": -0.73
-              }
-            ],
-            "data_conf": {
-              "barrel": 1,
-              "la": 1,
-              "pit_hr9": 1,
-              "pit_hr9_hand": 1,
-              "iso_vs_hand": 1,
-              "park": 1,
-              "pitch_delta": 1,
-              "bat_platoon": 1
-            },
-            "bullpen_hr9": 1.4,
-            "bullpen_vuln": 1.321,
-            "iso_use": 0.054,
-            "pull_s": 30.0,
-            "pit_modifier": 1.725,
-            "hr_rate_8d": 0.0
           }
         },
         {
@@ -33643,16 +33643,16 @@
             "hr": 5
           },
           "l8d": {
-            "pa": 37,
+            "pa": 38,
             "barrel": 0.0,
             "ev": 81.4,
             "la": 30.3,
             "hh": 10.7,
-            "iso": 0.139,
-            "slg": 0.361,
-            "avg": 0.222,
+            "iso": 0.135,
+            "slg": 0.378,
+            "avg": 0.243,
             "pull": 20.0,
-            "k_pct": 35.1,
+            "k_pct": 34.2,
             "xslg": 0.218,
             "xwoba": 0.144,
             "bat_speed": 73.1
@@ -33705,7 +33705,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 5,
             "pa_season": 267,
-            "pa_8d": 37,
+            "pa_8d": 38,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 28.1,
@@ -33751,7 +33751,7 @@
             "iso_use": 0.13,
             "pull_s": 36.6,
             "pit_modifier": 0.783,
-            "hr_rate_8d": 16.2
+            "hr_rate_8d": 15.8
           }
         },
         {
@@ -34907,8 +34907,8 @@
         {
           "name": "Jared Triolo",
           "team": "Pittsburgh Pirates",
-          "hr_prob": 0.3,
-          "xgb_prob": 0.3,
+          "hr_prob": 0.4,
+          "xgb_prob": 0.4,
           "rf_prob": 3.9,
           "archetype": "Contact",
           "trend": "Steady",
@@ -34936,16 +34936,16 @@
             "hr": 0
           },
           "l8d": {
-            "pa": 36,
+            "pa": 37,
             "barrel": 0.0,
             "ev": 80.5,
             "la": -2.9,
             "hh": 20.0,
-            "iso": 0.032,
-            "slg": 0.29,
-            "avg": 0.258,
+            "iso": 0.031,
+            "slg": 0.281,
+            "avg": 0.25,
             "pull": 10.0,
-            "k_pct": 27.8,
+            "k_pct": 27.0,
             "xslg": 0.457,
             "xwoba": 0.351,
             "bat_speed": 67.0
@@ -34998,7 +34998,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 0,
             "pa_season": 141,
-            "pa_8d": 36,
+            "pa_8d": 37,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 26.2,
@@ -35195,8 +35195,8 @@
         {
           "name": "Jake McCarthy",
           "team": "Colorado Rockies",
-          "hr_prob": 1.6,
-          "xgb_prob": 1.6,
+          "hr_prob": 1.5,
+          "xgb_prob": 1.5,
           "rf_prob": 1.7,
           "archetype": "Contact",
           "trend": "Cooling Off",
@@ -35222,16 +35222,16 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 40,
+            "pa": 41,
             "barrel": 0.0,
             "ev": 78.4,
             "la": 9.3,
             "hh": 16.7,
-            "iso": 0.026,
-            "slg": 0.289,
-            "avg": 0.263,
+            "iso": 0.051,
+            "slg": 0.333,
+            "avg": 0.282,
             "pull": 9.1,
-            "k_pct": 20.0,
+            "k_pct": 19.5,
             "xslg": 0.459,
             "xwoba": 0.379,
             "bat_speed": 65.3
@@ -35284,7 +35284,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 4,
             "pa_season": 207,
-            "pa_8d": 40,
+            "pa_8d": 41,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 19.3,
@@ -36214,16 +36214,16 @@
             "hr": 5
           },
           "l8d": {
-            "pa": 37,
+            "pa": 38,
             "barrel": 0.0,
             "ev": 81.4,
             "la": 30.3,
             "hh": 10.7,
-            "iso": 0.139,
-            "slg": 0.361,
-            "avg": 0.222,
+            "iso": 0.135,
+            "slg": 0.378,
+            "avg": 0.243,
             "pull": 20.0,
-            "k_pct": 35.1,
+            "k_pct": 34.2,
             "xslg": 0.218,
             "xwoba": 0.144,
             "bat_speed": 73.1
@@ -36276,7 +36276,7 @@
             "barrel_8d_raw": 0.0,
             "hr_season": 5,
             "pa_season": 267,
-            "pa_8d": 37,
+            "pa_8d": 38,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 28.1,
@@ -36322,7 +36322,7 @@
             "iso_use": 0.13,
             "pull_s": 36.6,
             "pit_modifier": 0.783,
-            "hr_rate_8d": 16.2
+            "hr_rate_8d": 15.8
           }
         },
         {
@@ -36355,16 +36355,16 @@
             "hr": 4
           },
           "l8d": {
-            "pa": 30,
+            "pa": 31,
             "barrel": 12.0,
             "ev": 85.6,
             "la": 19.8,
             "hh": 44.0,
-            "iso": 0.214,
-            "slg": 0.607,
-            "avg": 0.393,
+            "iso": 0.207,
+            "slg": 0.586,
+            "avg": 0.379,
             "pull": 43.8,
-            "k_pct": 3.3,
+            "k_pct": 3.2,
             "xslg": 0.631,
             "xwoba": 0.427,
             "bat_speed": 69.3
@@ -36417,7 +36417,7 @@
             "barrel_8d_raw": 12.0,
             "hr_season": 4,
             "pa_season": 242,
-            "pa_8d": 30,
+            "pa_8d": 31,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 20.7,
@@ -36463,7 +36463,7 @@
             "iso_use": 0.125,
             "pull_s": 39.1,
             "pit_modifier": 0.783,
-            "hr_rate_8d": 20.0
+            "hr_rate_8d": 19.4
           }
         }
       ],
@@ -36478,8 +36478,8 @@
         "wind_angle_cf": -140
       },
       "totals": {
-        "away_exp_hr": 0.114,
-        "home_exp_hr": 0.166,
+        "away_exp_hr": 0.115,
+        "home_exp_hr": 0.165,
         "total_exp_hr": 0.28,
         "away_exp_runs": 5.91,
         "home_exp_runs": 5.5,
@@ -36490,7 +36490,7 @@
         "home_hr_pg": 1.08,
         "away_era": 4.22,
         "home_era": 5.55,
-        "away_k_pg": 9.15,
+        "away_k_pg": 9.14,
         "home_k_pg": 7.41
       },
       "strikeouts": {
@@ -36877,8 +36877,8 @@
         {
           "name": "Shea Langeliers",
           "team": "Athletics",
-          "hr_prob": 14.3,
-          "xgb_prob": 14.3,
+          "hr_prob": 13.5,
+          "xgb_prob": 13.5,
           "rf_prob": 6.1,
           "archetype": "Pure Power",
           "trend": "Steady",
@@ -36906,16 +36906,16 @@
             "hr": 19
           },
           "l8d": {
-            "pa": 49,
+            "pa": 44,
             "barrel": 5.9,
             "ev": 86.4,
             "la": 28.9,
             "hh": 23.5,
-            "iso": 0.239,
-            "slg": 0.478,
-            "avg": 0.239,
+            "iso": 0.268,
+            "slg": 0.512,
+            "avg": 0.244,
             "pull": 30.0,
-            "k_pct": 20.4,
+            "k_pct": 20.5,
             "xslg": 0.468,
             "xwoba": 0.317,
             "bat_speed": 75.3
@@ -36940,7 +36940,7 @@
             "pit_platoon_mult": 0.725,
             "park_factor": 0.88,
             "weather_mult": 1.0,
-            "hot_cold_mult": 1.005,
+            "hot_cold_mult": 1.12,
             "k_mult": 1.0,
             "iso_vs_hand": 0.222,
             "iso_overall": 0.254,
@@ -36968,7 +36968,7 @@
             "barrel_8d_raw": 5.9,
             "hr_season": 19,
             "pa_season": 312,
-            "pa_8d": 49,
+            "pa_8d": 44,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 18.9,
@@ -37014,7 +37014,7 @@
             "iso_use": 0.222,
             "pull_s": 38.7,
             "pit_modifier": 0.73,
-            "hr_rate_8d": 36.7
+            "hr_rate_8d": 40.9
           }
         },
         {
@@ -38156,6 +38156,150 @@
           }
         },
         {
+          "name": "Zach Neto",
+          "team": "Los Angeles Angels",
+          "hr_prob": 2.3,
+          "xgb_prob": 2.3,
+          "rf_prob": 8.7,
+          "archetype": "Boom/Bust",
+          "trend": "Heating Up",
+          "confidence": "High",
+          "reasons": [
+            "Barrel 13.1%",
+            "ISO vs hand .222",
+            "SP 2.2 HR/9",
+            "Pitcher-friendly park"
+          ],
+          "opp_pitcher": "Jeffrey Springs",
+          "bat_hand": "R",
+          "opp_p_hand": "L",
+          "park_factor": 0.88,
+          "l8d_hr_count": 2,
+          "season": {
+            "barrel": 13.1,
+            "ev": 89.9,
+            "la": 22.3,
+            "hh": 37.7,
+            "iso": 0.218,
+            "slg": 0.443,
+            "avg": 0.225,
+            "k": 31.7,
+            "pull": 50.0,
+            "hr": 15
+          },
+          "l8d": {
+            "pa": 42,
+            "barrel": 11.8,
+            "ev": 83.0,
+            "la": 14.3,
+            "hh": 23.5,
+            "iso": 0.211,
+            "slg": 0.395,
+            "avg": 0.184,
+            "pull": 43.8,
+            "k_pct": 40.5,
+            "xslg": 1.037,
+            "xwoba": 0.59,
+            "bat_speed": 69.6
+          },
+          "l5g": {
+            "ab": 42,
+            "hr": 3,
+            "slg": 0.452,
+            "avg": 0.19,
+            "iso": 0.262
+          },
+          "dk_odds": null,
+          "projected": false,
+          "platoon_tag": null,
+          "contact_log": [],
+          "breakdown": {
+            "base_rate": 4.49,
+            "barrel_mult": 2.085,
+            "la_mult": 0.74,
+            "pit_vuln_mult": 1.609,
+            "bat_platoon_mult": 1.01,
+            "pit_platoon_mult": 0.969,
+            "park_factor": 0.88,
+            "weather_mult": 1.0,
+            "hot_cold_mult": 1.06,
+            "k_mult": 0.937,
+            "iso_vs_hand": 0.222,
+            "iso_overall": 0.218,
+            "split_pa": 87.0,
+            "split_ip_vs_bat": 53.2,
+            "slg_vs_bat": 0.498,
+            "pit_slg_overall": 0.512,
+            "split_hr": 4,
+            "split_slg": 0.458,
+            "split_woba": 0.368,
+            "split_k_pct": 28.7,
+            "split_brl": 0.0,
+            "split_iso": 0.222,
+            "split_ip": 53.2,
+            "hr9_split": 2.18,
+            "hr9_season": 2.16,
+            "pit_hard": 36.0,
+            "n_pit_components": 3,
+            "pit_blend_note": "100% 2026",
+            "barrel_use": 13.1,
+            "barrel_season": 13.1,
+            "la_use": 22.3,
+            "la_season": 22.3,
+            "la_8d_raw": 14.3,
+            "barrel_8d_raw": 11.8,
+            "hr_season": 15,
+            "pa_season": 334,
+            "pa_8d": 42,
+            "has_8d": true,
+            "blend_note": "100% 2026 + 8d",
+            "k_season": 31.7,
+            "pitch_bonus": 0.06,
+            "pitch_breakdown": [
+              {
+                "name": "4-Seam Fastball",
+                "usage": 47.4,
+                "pit_rv": -1.4,
+                "bat_rv": 1.1,
+                "combined": 0.1,
+                "bonus": 0.07
+              },
+              {
+                "name": "Slider",
+                "usage": 28.7,
+                "pit_rv": 0.6,
+                "bat_rv": 1.2,
+                "combined": 0.96,
+                "bonus": 0.41
+              },
+              {
+                "name": "Changeup",
+                "usage": 23.9,
+                "pit_rv": -1.9,
+                "bat_rv": -0.7,
+                "combined": -1.18,
+                "bonus": -0.42
+              }
+            ],
+            "data_conf": {
+              "barrel": 1,
+              "la": 1,
+              "pit_hr9": 1,
+              "pit_hr9_hand": 1,
+              "iso_vs_hand": 1,
+              "park": 1,
+              "pitch_delta": 1,
+              "bat_platoon": 1
+            },
+            "bullpen_hr9": 1.42,
+            "bullpen_vuln": 1.355,
+            "iso_use": 0.222,
+            "pull_s": 50.0,
+            "pit_modifier": 1.609,
+            "hr_rate_8d": 28.6
+          }
+        },
+        {
           "name": "Zack Gelof",
           "team": "Athletics",
           "hr_prob": 2.3,
@@ -38294,150 +38438,6 @@
             "pull_s": 39.5,
             "pit_modifier": 0.73,
             "hr_rate_8d": 69.8
-          }
-        },
-        {
-          "name": "Zach Neto",
-          "team": "Los Angeles Angels",
-          "hr_prob": 2.0,
-          "xgb_prob": 2.0,
-          "rf_prob": 8.7,
-          "archetype": "Boom/Bust",
-          "trend": "Heating Up",
-          "confidence": "High",
-          "reasons": [
-            "Barrel 13.1%",
-            "ISO vs hand .222",
-            "SP 2.2 HR/9",
-            "Pitcher-friendly park"
-          ],
-          "opp_pitcher": "Jeffrey Springs",
-          "bat_hand": "R",
-          "opp_p_hand": "L",
-          "park_factor": 0.88,
-          "l8d_hr_count": 3,
-          "season": {
-            "barrel": 13.1,
-            "ev": 89.9,
-            "la": 22.3,
-            "hh": 37.7,
-            "iso": 0.218,
-            "slg": 0.443,
-            "avg": 0.225,
-            "k": 31.7,
-            "pull": 50.0,
-            "hr": 15
-          },
-          "l8d": {
-            "pa": 46,
-            "barrel": 11.8,
-            "ev": 83.0,
-            "la": 14.3,
-            "hh": 23.5,
-            "iso": 0.262,
-            "slg": 0.452,
-            "avg": 0.19,
-            "pull": 43.8,
-            "k_pct": 41.3,
-            "xslg": 1.037,
-            "xwoba": 0.59,
-            "bat_speed": 69.6
-          },
-          "l5g": {
-            "ab": 42,
-            "hr": 3,
-            "slg": 0.452,
-            "avg": 0.19,
-            "iso": 0.262
-          },
-          "dk_odds": null,
-          "projected": false,
-          "platoon_tag": null,
-          "contact_log": [],
-          "breakdown": {
-            "base_rate": 4.49,
-            "barrel_mult": 2.085,
-            "la_mult": 0.74,
-            "pit_vuln_mult": 1.609,
-            "bat_platoon_mult": 1.01,
-            "pit_platoon_mult": 0.969,
-            "park_factor": 0.88,
-            "weather_mult": 1.0,
-            "hot_cold_mult": 1.2,
-            "k_mult": 0.937,
-            "iso_vs_hand": 0.222,
-            "iso_overall": 0.218,
-            "split_pa": 87.0,
-            "split_ip_vs_bat": 53.2,
-            "slg_vs_bat": 0.498,
-            "pit_slg_overall": 0.512,
-            "split_hr": 4,
-            "split_slg": 0.458,
-            "split_woba": 0.368,
-            "split_k_pct": 28.7,
-            "split_brl": 0.0,
-            "split_iso": 0.222,
-            "split_ip": 53.2,
-            "hr9_split": 2.18,
-            "hr9_season": 2.16,
-            "pit_hard": 36.0,
-            "n_pit_components": 3,
-            "pit_blend_note": "100% 2026",
-            "barrel_use": 13.1,
-            "barrel_season": 13.1,
-            "la_use": 22.3,
-            "la_season": 22.3,
-            "la_8d_raw": 14.3,
-            "barrel_8d_raw": 11.8,
-            "hr_season": 15,
-            "pa_season": 334,
-            "pa_8d": 46,
-            "has_8d": true,
-            "blend_note": "100% 2026 + 8d",
-            "k_season": 31.7,
-            "pitch_bonus": 0.06,
-            "pitch_breakdown": [
-              {
-                "name": "4-Seam Fastball",
-                "usage": 47.4,
-                "pit_rv": -1.4,
-                "bat_rv": 1.1,
-                "combined": 0.1,
-                "bonus": 0.07
-              },
-              {
-                "name": "Slider",
-                "usage": 28.7,
-                "pit_rv": 0.6,
-                "bat_rv": 1.2,
-                "combined": 0.96,
-                "bonus": 0.41
-              },
-              {
-                "name": "Changeup",
-                "usage": 23.9,
-                "pit_rv": -1.9,
-                "bat_rv": -0.7,
-                "combined": -1.18,
-                "bonus": -0.42
-              }
-            ],
-            "data_conf": {
-              "barrel": 1,
-              "la": 1,
-              "pit_hr9": 1,
-              "pit_hr9_hand": 1,
-              "iso_vs_hand": 1,
-              "park": 1,
-              "pitch_delta": 1,
-              "bat_platoon": 1
-            },
-            "bullpen_hr9": 1.42,
-            "bullpen_vuln": 1.355,
-            "iso_use": 0.222,
-            "pull_s": 50.0,
-            "pit_modifier": 1.609,
-            "hr_rate_8d": 39.1
           }
         },
         {
@@ -39153,8 +39153,8 @@
         {
           "name": "Zach Neto",
           "team": "Los Angeles Angels",
-          "hr_prob": 2.0,
-          "xgb_prob": 2.0,
+          "hr_prob": 2.3,
+          "xgb_prob": 2.3,
           "rf_prob": 8.7,
           "archetype": "Boom/Bust",
           "trend": "Heating Up",
@@ -39169,7 +39169,7 @@
           "bat_hand": "R",
           "opp_p_hand": "L",
           "park_factor": 0.88,
-          "l8d_hr_count": 3,
+          "l8d_hr_count": 2,
           "season": {
             "barrel": 13.1,
             "ev": 89.9,
@@ -39183,16 +39183,16 @@
             "hr": 15
           },
           "l8d": {
-            "pa": 46,
+            "pa": 42,
             "barrel": 11.8,
             "ev": 83.0,
             "la": 14.3,
             "hh": 23.5,
-            "iso": 0.262,
-            "slg": 0.452,
-            "avg": 0.19,
+            "iso": 0.211,
+            "slg": 0.395,
+            "avg": 0.184,
             "pull": 43.8,
-            "k_pct": 41.3,
+            "k_pct": 40.5,
             "xslg": 1.037,
             "xwoba": 0.59,
             "bat_speed": 69.6
@@ -39217,7 +39217,7 @@
             "pit_platoon_mult": 0.969,
             "park_factor": 0.88,
             "weather_mult": 1.0,
-            "hot_cold_mult": 1.2,
+            "hot_cold_mult": 1.06,
             "k_mult": 0.937,
             "iso_vs_hand": 0.222,
             "iso_overall": 0.218,
@@ -39245,7 +39245,7 @@
             "barrel_8d_raw": 11.8,
             "hr_season": 15,
             "pa_season": 334,
-            "pa_8d": 46,
+            "pa_8d": 42,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 31.7,
@@ -39291,7 +39291,7 @@
             "iso_use": 0.222,
             "pull_s": 50.0,
             "pit_modifier": 1.609,
-            "hr_rate_8d": 39.1
+            "hr_rate_8d": 28.6
           }
         },
         {
@@ -40724,8 +40724,8 @@
         {
           "name": "Shea Langeliers",
           "team": "Athletics",
-          "hr_prob": 14.3,
-          "xgb_prob": 14.3,
+          "hr_prob": 13.5,
+          "xgb_prob": 13.5,
           "rf_prob": 6.1,
           "archetype": "Pure Power",
           "trend": "Steady",
@@ -40753,16 +40753,16 @@
             "hr": 19
           },
           "l8d": {
-            "pa": 49,
+            "pa": 44,
             "barrel": 5.9,
             "ev": 86.4,
             "la": 28.9,
             "hh": 23.5,
-            "iso": 0.239,
-            "slg": 0.478,
-            "avg": 0.239,
+            "iso": 0.268,
+            "slg": 0.512,
+            "avg": 0.244,
             "pull": 30.0,
-            "k_pct": 20.4,
+            "k_pct": 20.5,
             "xslg": 0.468,
             "xwoba": 0.317,
             "bat_speed": 75.3
@@ -40787,7 +40787,7 @@
             "pit_platoon_mult": 0.725,
             "park_factor": 0.88,
             "weather_mult": 1.0,
-            "hot_cold_mult": 1.005,
+            "hot_cold_mult": 1.12,
             "k_mult": 1.0,
             "iso_vs_hand": 0.222,
             "iso_overall": 0.254,
@@ -40815,7 +40815,7 @@
             "barrel_8d_raw": 5.9,
             "hr_season": 19,
             "pa_season": 312,
-            "pa_8d": 49,
+            "pa_8d": 44,
             "has_8d": true,
             "blend_note": "100% 2026 + 8d",
             "k_season": 18.9,
@@ -40861,7 +40861,7 @@
             "iso_use": 0.222,
             "pull_s": 38.7,
             "pit_modifier": 0.73,
-            "hr_rate_8d": 36.7
+            "hr_rate_8d": 40.9
           }
         },
         {
@@ -41714,16 +41714,16 @@
         "wind_angle_cf": 113
       },
       "totals": {
-        "away_exp_hr": 0.376,
-        "home_exp_hr": 0.928,
+        "away_exp_hr": 0.379,
+        "home_exp_hr": 0.92,
         "total_exp_hr": 1.3,
-        "away_exp_runs": 4.91,
-        "home_exp_runs": 3.95,
-        "total_exp_runs": 8.86,
-        "away_runs_pg": 4.39,
-        "home_runs_pg": 4.6,
-        "away_hr_pg": 1.13,
-        "home_hr_pg": 1.33,
+        "away_exp_runs": 4.84,
+        "home_exp_runs": 3.9,
+        "total_exp_runs": 8.74,
+        "away_runs_pg": 4.34,
+        "home_runs_pg": 4.54,
+        "away_hr_pg": 1.12,
+        "home_hr_pg": 1.32,
         "away_era": 4.61,
         "home_era": 4.85,
         "away_k_pg": 8.74,
