@@ -5232,7 +5232,7 @@
         "home_hr_pg": 1.12,
         "away_era": 4.43,
         "home_era": 3.9,
-        "away_k_pg": 8.33,
+        "away_k_pg": 8.32,
         "home_k_pg": 8.26
       },
       "strikeouts": {
@@ -20870,7 +20870,7 @@
         "home_hr_pg": 0.88,
         "away_era": 4.48,
         "home_era": 4.15,
-        "away_k_pg": 8.15,
+        "away_k_pg": 8.14,
         "home_k_pg": 8.82
       },
       "strikeouts": {
@@ -26033,9 +26033,9 @@
         "away_hr_pg": 0.92,
         "home_hr_pg": 1.31,
         "away_era": 3.43,
-        "home_era": 3.38,
+        "home_era": 3.37,
         "away_k_pg": 9.88,
-        "home_k_pg": 8.73
+        "home_k_pg": 8.72
       },
       "strikeouts": {
         "away_exp_k": 8.3,
@@ -31352,7 +31352,7 @@
         "k_edge": null,
         "opp_team": "Houston Astros",
         "opp_lineup_k": 19.8,
-        "bullpen_hr9": 1.18
+        "bullpen_hr9": 1.19
       },
       "home_pitcher": {
         "name": "Tatsuya Imai",
@@ -36525,16 +36525,16 @@
         "away_exp_hr": 0.025,
         "home_exp_hr": 0.193,
         "total_exp_hr": 0.22,
-        "away_exp_runs": 5.26,
+        "away_exp_runs": 5.27,
         "home_exp_runs": 3.87,
-        "total_exp_runs": 9.13,
+        "total_exp_runs": 9.14,
         "away_runs_pg": 3.96,
-        "home_runs_pg": 4.48,
+        "home_runs_pg": 4.49,
         "away_hr_pg": 0.93,
-        "home_hr_pg": 1.29,
-        "away_era": 3.77,
+        "home_hr_pg": 1.3,
+        "away_era": 3.79,
         "home_era": 4.89,
-        "away_k_pg": 9.31,
+        "away_k_pg": 9.3,
         "home_k_pg": 8.71
       },
       "strikeouts": {
